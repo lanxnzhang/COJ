@@ -16,11 +16,13 @@ The editor exposes `compound lemma`, `lemma`, and `mk lemma`, backed by the
 requires an OS-level sandbox: Python code must otherwise be considered fully
 trusted.
 
-Open **Processing scope** to run a processor on selected XML files from either
-`data/xml/text/` or `data/xml/trees/`; the two collections are grouped in the
-selector. After a run, text-line results can be filtered by result type,
-candidate count, and file. **Start at result**, Previous/Next, and **Maximum
-displayed** provide range-based browsing without rendering the entire result set.
+Open **Processing scope** to select an entire source group, collection, XML
+document, or individual passage. Parent checkboxes show a partial state when
+only some descendants are selected. A passage-level run receives a temporary
+XML copy containing only those selected blocks. After a run, text-line results
+can be filtered by result type, candidate count, and file. **Start at result**,
+Previous/Next, and **Maximum displayed** provide range-based browsing without
+rendering the entire result set.
 
 Click a result word to open its passage in a separate right-side context drawer.
 The drawer shows only the full transcription and kanji text, with the selected
@@ -37,16 +39,17 @@ open their entries directly in the reader.
 
 ## Manual review and final output
 
-Processor results are proposals. Confirm individual lines or confirm/clear a
-filtered category, optionally hiding confirmed items while reviewing. Results
-with multiple candidates provide a chosen-lemma selector. **Create final output**
-rebuilds XML files from the untouched run inputs and applies only confirmed
-choices; generated processor output remains separate.
+Processor results are proposals. Confirm individual lines or use the checkbox
+above the list to confirm every result on the current page. Filters and global
+actions stay fixed while the result list scrolls. Every result—including a
+single-candidate result—shows its chosen-lemma selector. **Create final output**
+rebuilds XML files from the untouched run inputs and applies only confirmed,
+valid choices; generated processor output remains separate.
 
-For any result, **Add new entry** creates a reviewable dictionary
-draft with a unique ID and automatic form/kana values. Its tags and values can be
-added, edited, deleted, and reopened before finalization. Numeric ID conflicts are
-shown immediately. New manual entries are selected for dictionary output by
-default, but can be deselected. Final reviewed files and a review manifest are
-stored under `scripteditor/runs/<run-id>/final/`; canonical repository data is not
-modified.
+The global **Add new entry** action creates a reviewable dictionary draft with a
+unique ID. Its tags and values can be added, edited, deleted, and reopened
+before finalization. Each manual entry becomes an option in every result's lemma
+selector. Deleting a selected entry marks that selection invalid; leaving a new
+entry unconfirmed excludes every line that selects it and reports a warning.
+Final reviewed files and a review manifest are stored under
+`scripteditor/runs/<run-id>/final/`; canonical repository data is not modified.

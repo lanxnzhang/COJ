@@ -1,6 +1,8 @@
 # TODO
 
 ## Build comprehensive editor
+IMPORTANT NOTE: The development for the comprehensive editor is currently PAUSED. Ignore this part and stop revising this folder unless this note is removed.
+
 The user need a more comprehensive editor tool to facilitate the edit of data. Different functions need to be modularized to allow for the expansion of new features in the future. Create a GUI which allows the user to create, delete, read, update. Create a new folder named compreditor to store all these data and changes. Do not change data in other part of the repository. 
 
 ### Features
@@ -30,7 +32,6 @@ The user need a more comprehensive editor tool to facilitate the edit of data. D
     The user can revise existing items.
   5. Validation
   The entire document is continuously checked. For example: A missing attribute; An element in the wrong location; A duplicate ID; An unclosed tag. These errors appear immediately in the Problems panel. Users can click on an error to navigate directly to it. After adding or deleting content, the interface needs to be updated in real time.
-
 
 
 ## Build script editor
@@ -193,6 +194,28 @@ However, the kanji text (raw text) should be encoded in every block as below log
   4. ID,1_EN_01 should be encoded as EN.1.1 in xml (like MYS.1.1, because it is best to keep the ID format consistent.). 1_EN_01 can be kept somewhere if round trips need.
 
 Make sure you clearly mark and distinguish data only used for round trips with txt and data used for processing and encoding xml data.
+
+### After commit 9594b53
+Optimise the script editor.
+1. processing scope.
+  Layer it. Such as 'Texts under editing - EN - EN 01 - EN 1.1''Uploaded trees - BS - BS.1'.
+  Optimize the UI design for selection. Avoid using separate "Select All" and "Clear" buttons. Instead, place a selection checkbox before each level; clicking it selects that item or the entire level, while clicking again deselects it. When a level is only partially selected, display a visual state that differs from the "fully selected" state.
+2. Keep global settings—such as the processed lines and the filters used for selection—fixed at the top of the page. As the user scrolls, only the processed results at the bottom should move.
+3. 'EN_01.xml · utterance EN.1.1 · line 3' should be 'EN_01.xml · EN.1.1 · line 3', which means do not use the word 'utterance'.
+4. The part 'Before/After' (such as Before / after
+IP-MAT,IP-ARG,C-NP,N,N,LOG,kamu
+IP-MAT,IP-ARG,C-NP,N,N,L051191,LOG,kamu) is useless. Delete it.
+5. The "lemma ID" in the top-right corner of the search results is inconvenient to view and does not update in real-time when changes are made (as shown in the red box in the image D:\Lanxin\Pictures\Screenshots\2026-07-24 230418). Remove this lemma ID.
+6. 'Add New Entry' should be a global setting. Do not put it in every single output. When user adds one new dict entry, they should be able to selete it in every choosing lemma settings. If the user deletes it later, the selection will be invalid, and the user must choose a valid value instead. If the user does not confirm this dictionary entry when generating the final output, the selection of that entry will be disregarded—meaning that no instances of that selection will be included in the final output. In either case, a warning must be displayed to the user, or an issue/problem must be indicated.
+It should be noted that in this case, the chosen lemma must be also displayed in the results for single candidate, even if there is initially only one option.
+7. Do not put the checkbox 'Confirm' together with Selected and Chosen lemma. It looks a bit messy the way it is now.
+8. The "Manual review" function overlaps with the filter above it. Please merge them; do not name this merged filter "Manual review" - just remove that text. Furthermore, this filter is not applicable to the "Dictionary entries" and "Output files" sections; do not display this filter—which applies only to "Text lines"—when the user switches to those sections, to avoid confusion.
+Consider split this filter with the functions 'Create final output' and 'Add new entry'. Do not mess them together to avoid confusion.
+9. Do not use separate "Confirm selected category" and "Clear confirmations" buttons. Such a design is bloated, counterintuitive, and not aesthetically pleasing. Place a selection checkbox above the list of results that remains fixed at the top of the page as the user scrolls. Clicking it selects all results on the current page, while clicking it again deselects them.
+
+
+
+
 
 ## Build interactive editor
 

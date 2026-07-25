@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import uuid
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, render_template, request
@@ -120,6 +121,117 @@ def _script_path(script_id: str) -> Path:
     return item[0]
 
 
+def _collection_name(stem: str) -> str:
+    return stem.split("_", 1)[0]
+
+
+def _file_label(stem: str) -> str:
+    return stem.replace("_", " ")
+
+
+def _document_scope(folder: str, label: str) -> dict:
+    """Build the checkbox hierarchy used by the processing-scope tree."""
+    xml_dir = ROOT / "data" / "xml" / folder
+    collections: dict[str, list[dict]] = {}
+    for path in sorted(xml_dir.glob("*.xml")):
+        file_id = f"{folder}/{path.name}"
+        root = ET.parse(path).getroot()
+        items = [
+            {
+                "id": f"{file_id}#{block_id}",
+                "label": block_id,
+                "value": f"{file_id}#{block_id}",
+                "kind": "item",
+            }
+            for block in root.findall("block")
+            if (block_id := block.get("id"))
+        ]
+        collections.setdefault(_collection_name(path.stem), []).append({
+            "id": file_id,
+            "label": _file_label(path.stem),
+            "value": file_id,
+            "kind": "file",
+            "children": items,
+        })
+
+    children = []
+    for collection, files in collections.items():
+        # Avoid a redundant BS > BS > BS.1 level when a collection consists
+        # of one unsuffixed file.
+        if len(files) == 1 and files[0]["label"] == collection:
+            children.append({
+                "id": f"{folder}/{collection}",
+                "label": collection,
+                "value": files[0]["value"],
+                "kind": "collection",
+                "children": files[0]["children"],
+            })
+        else:
+            children.append({
+                "id": f"{folder}/{collection}",
+                "label": collection,
+                "kind": "collection",
+                "children": files,
+            })
+    return {"id": folder, "label": label, "kind": "group", "children": children}
+
+
+def _prepare_selected_documents(
+    xml_root: Path, run_text: Path, requested: list[str] | None
+) -> list[str]:
+    available = {
+        f"{folder}/{path.name}": path
+        for folder in ("text", "trees")
+        for path in (xml_root / folder).glob("*.xml")
+    }
+    if requested is None:
+        requested = sorted(available)
+    if not isinstance(requested, list):
+        abort(400, description="files must be a list")
+    requested = list(dict.fromkeys(str(name) for name in requested))
+    if not requested:
+        abort(400, description="Select at least one XML document or passage")
+
+    selected: dict[str, set[str] | None] = {}
+    invalid = []
+    for token in requested:
+        file_id, separator, block_id = token.partition("#")
+        if file_id not in available or (separator and not block_id):
+            invalid.append(token)
+            continue
+        if not separator:
+            selected[file_id] = None
+        elif file_id not in selected:
+            selected[file_id] = {block_id}
+        elif selected[file_id] is not None:
+            selected[file_id].add(block_id)
+    if invalid:
+        abort(400, description=f"Unknown XML scope item: {invalid[0]}")
+
+    selected_tokens = []
+    for file_id, block_ids in selected.items():
+        source = available[file_id]
+        destination = run_text / source.name
+        if block_ids is None:
+            shutil.copy2(source, destination)
+            selected_tokens.append(file_id)
+            continue
+
+        tree = ET.parse(source)
+        root = tree.getroot()
+        known_ids = {block.get("id") for block in root.findall("block")}
+        unknown_ids = sorted(block_ids - known_ids)
+        if unknown_ids:
+            abort(400, description=f"Unknown passage in {file_id}: {unknown_ids[0]}")
+        for block in list(root):
+            if block.tag == "block" and block.get("id") not in block_ids:
+                root.remove(block)
+        ET.indent(root, space="  ")
+        tree.write(destination, encoding="utf-8", xml_declaration=True)
+        selected_tokens.extend(f"{file_id}#{block_id}" for block_id in sorted(block_ids))
+    return selected_tokens
+
+
 @app.get("/")
 def index():
     return render_template("index.html")
@@ -132,16 +244,10 @@ def scripts():
 
 @app.get("/api/documents")
 def documents():
-    xml_root = ROOT / "data" / "xml"
-    groups = []
-    for folder, label in (("text", "Texts under active editing"),
-                          ("trees", "Uploaded syntax trees")):
-        files = [
-            {"id": f"{folder}/{path.name}", "name": path.name}
-            for path in sorted((xml_root / folder).glob("*.xml"))
-        ]
-        groups.append({"id": folder, "label": label, "files": files})
-    return jsonify(groups)
+    return jsonify([
+        _document_scope("text", "Texts under editing"),
+        _document_scope("trees", "Uploaded trees"),
+    ])
 
 
 @app.get("/api/dictionary/search")
@@ -288,10 +394,36 @@ def finalize_run(run_id: str):
         shutil.rmtree(final_dir)
     final_dir.mkdir()
 
+    dictionary = Dictionary.from_file(str(run_dir / "data" / "dict" / "dictionary.xml"))
+    proposed_entries = {
+        str(raw.get("id", "")): raw
+        for raw in reviewed_entries
+        if str(raw.get("id", ""))
+    }
+    issues = []
     lines_by_file: dict[str, list[dict]] = {}
     for review in reviewed_lines:
-        if review.get("confirmed"):
-            lines_by_file.setdefault(str(review.get("file", "")), []).append(review)
+        if not review.get("confirmed"):
+            continue
+        lemma = str(review.get("lemma", ""))
+        proposal = proposed_entries.get(lemma)
+        if proposal is not None and proposal.get("category") == "added" and not proposal.get("confirmed"):
+            issues.append({
+                "code": "unconfirmed-entry",
+                "message": f"{lemma} was not included, so its selected text line was excluded.",
+                "review_id": review.get("reviewId", ""),
+            })
+            continue
+        if dictionary.get(lemma) is None and (
+            proposal is None or proposal.get("category") != "added"
+        ):
+            issues.append({
+                "code": "invalid-selection",
+                "message": f"{lemma or 'The selected lemma'} is unavailable; choose a valid lemma.",
+                "review_id": review.get("reviewId", ""),
+            })
+            continue
+        lines_by_file.setdefault(str(review.get("file", "")), []).append(review)
 
     final_files = []
     for source in sorted((run_dir / "data" / "text").glob("*.xml")):
@@ -315,7 +447,6 @@ def finalize_run(run_id: str):
         doc.to_file(str(destination))
         final_files.append(source.name)
 
-    dictionary = Dictionary.from_file(str(run_dir / "data" / "dict" / "dictionary.xml"))
     used_numbers = dictionary.used_numbers()
     for raw in reviewed_entries:
         if not raw.get("confirmed"):
@@ -332,8 +463,10 @@ def finalize_run(run_id: str):
     final_files.append("dictionary.xml")
 
     manifest = {
-        "confirmed_lines": sum(bool(item.get("confirmed")) for item in reviewed_lines),
+        "confirmed_lines": sum(len(items) for items in lines_by_file.values()),
+        "excluded_lines": len(issues),
         "confirmed_dictionary_entries": sum(bool(item.get("confirmed")) for item in reviewed_entries),
+        "issues": issues,
         "files": final_files,
     }
     (final_dir / "review_manifest.json").write_text(
@@ -363,31 +496,14 @@ def run_script():
         abort(400, description="settings must be an object")
 
     xml_root = ROOT / "data" / "xml"
-    available = {
-        f"{folder}/{path.name}": path
-        for folder in ("text", "trees")
-        for path in (xml_root / folder).glob("*.xml")
-    }
     requested_files = payload.get("files")
-    if requested_files is None:
-        selected = sorted(available)
-    elif not isinstance(requested_files, list):
-        abort(400, description="files must be a list")
-    else:
-        selected = list(dict.fromkeys(str(name) for name in requested_files))
-        if not selected:
-            abort(400, description="Select at least one XML file")
-        invalid = [name for name in selected if name not in available]
-        if invalid:
-            abort(400, description=f"Unknown XML file: {invalid[0]}")
 
     run_id = uuid.uuid4().hex[:12]
     run_dir = RUNS / run_id
     (run_dir / "data").mkdir(parents=True)
     run_text = run_dir / "data" / "text"
     run_text.mkdir()
-    for name in selected:
-        shutil.copy2(available[name], run_text / Path(name).name)
+    selected = _prepare_selected_documents(xml_root, run_text, requested_files)
     shutil.copytree(ROOT / "data" / "xml" / "dict", run_dir / "data" / "dict")
     (run_dir / "output").mkdir()
     config = run_dir / "config.json"
