@@ -21,7 +21,7 @@ from coj.core.dictionary import Dictionary, DictEntry
 from coj.core.corpus import CorpusDocument
 from coj.core.kana import phonemic_to_kana
 from coj.core.lemma_id import IDGenerator, LemmaID
-from coj.core.tags import MULTI_VALUE_FIELDS
+from coj.core.tags import DICT_FIELDS, MULTI_VALUE_FIELDS
 
 DICTIONARY_PATH = ROOT / "data" / "xml" / "dict" / "dictionary.xml"
 _dictionary: Dictionary | None = None
@@ -105,6 +105,16 @@ def _entry_from_review(raw: dict) -> DictEntry:
             entry.remove(tag)
         entry.set(tag, cleaned if tag in MULTI_VALUE_FIELDS else (cleaned[0] if cleaned else ""))
     return entry
+
+
+def _produced_dictionary(run_dir: Path) -> Path | None:
+    for candidate in (
+        run_dir / "output" / "dictionary_processed.xml",
+        run_dir / "output" / "dictionary.xml",
+    ):
+        if candidate.is_file():
+            return candidate
+    return None
 
 
 def _builtins() -> list[dict[str, str]]:
@@ -294,21 +304,45 @@ def dictionary_entry(entry_id: str):
     return jsonify(entry_payload(entry))
 
 
+@app.get("/api/dictionary/tags")
+def dictionary_tags():
+    tags = set(DICT_FIELDS)
+    for entry in get_dictionary():
+        tags.update(entry.tags())
+    return jsonify(sorted(tags))
+
+
 @app.post("/api/runs/<run_id>/dictionary/suggest-id")
 def suggest_dictionary_id(run_id: str):
     run_dir = _run_directory(run_id)
     raw = request.get_json(silent=True) or {}
     form = str(raw.get("form", ""))
+    try:
+        start = int(raw.get("start", 1))
+    except (TypeError, ValueError):
+        abort(400, description="Starting number must be a positive integer")
+    if start < 1:
+        abort(400, description="Starting number must be a positive integer")
     dictionary = Dictionary.from_file(str(run_dir / "data" / "dict" / "dictionary.xml"))
     used = dictionary.used_numbers() | _manual_id_reservations.setdefault(run_id, set())
-    for candidate in (run_dir / "output" / "dictionary_processed.xml",
-                      run_dir / "output" / "dictionary.xml"):
-        if candidate.exists():
-            used |= Dictionary.from_file(str(candidate)).used_numbers()
-            break
-    generated = IDGenerator(existing=used, prefix="L", digits=6).next_id()
+    produced = _produced_dictionary(run_dir)
+    if produced is not None:
+        used |= Dictionary.from_file(str(produced)).used_numbers()
+    generated = IDGenerator(
+        existing=used, start=start, prefix="L", digits=6
+    ).next_id()
     _manual_id_reservations[run_id].add(generated.number)
     return jsonify({"id": str(generated), "form": form, "kana": phonemic_to_kana(form)})
+
+
+@app.post("/api/runs/<run_id>/dictionary/generate-kana")
+def generate_dictionary_kana(run_id: str):
+    _run_directory(run_id)
+    raw = request.get_json(silent=True) or {}
+    forms = raw.get("forms", [])
+    if not isinstance(forms, list):
+        abort(400, description="Forms must be a list")
+    return jsonify({"values": [phonemic_to_kana(str(form)) for form in forms]})
 
 
 @app.get("/api/runs/<run_id>/dictionary/check-id/<entry_id>")
@@ -318,13 +352,25 @@ def check_dictionary_id(run_id: str, entry_id: str):
         return jsonify({"valid": False, "conflict": False, "message": "Use an ID such as L000001."})
     proposed = LemmaID.parse(entry_id)
     dictionary = Dictionary.from_file(str(run_dir / "data" / "dict" / "dictionary.xml"))
-    conflicts = [str(entry.eid) for entry in dictionary if entry.eid.number == proposed.number]
+    conflicts = {
+        str(entry.eid) for entry in dictionary if entry.eid.number == proposed.number
+    }
+    produced = _produced_dictionary(run_dir)
+    if produced is not None:
+        conflicts.update(
+            str(entry.eid)
+            for entry in Dictionary.from_file(str(produced))
+            if entry.eid.number == proposed.number
+        )
+    ordered_conflicts = sorted(conflicts)
     return jsonify({
         "valid": True,
-        "conflict": bool(conflicts),
-        "conflicts": conflicts,
-        "message": (f"Numeric portion already used by {', '.join(conflicts)}."
-                    if conflicts else "ID is available."),
+        "conflict": bool(ordered_conflicts),
+        "conflicts": ordered_conflicts,
+        "message": (
+            f"Numeric portion already used by {', '.join(ordered_conflicts)}."
+            if ordered_conflicts else "ID is available."
+        ),
     })
 
 
@@ -389,6 +435,25 @@ def finalize_run(run_id: str):
     if not isinstance(reviewed_lines, list) or not isinstance(reviewed_entries, list):
         abort(400, description="Reviewed lines and dictionary entries must be lists")
 
+    confirmed_added_numbers: dict[int, str] = {}
+    for raw in reviewed_entries:
+        if not raw.get("confirmed") or raw.get("category", "added") != "added":
+            continue
+        entry_id = str(raw.get("id", "")).strip()
+        if not LemmaID.is_valid(entry_id):
+            abort(400, description=f"Invalid lemma ID: {entry_id!r}")
+        parsed = LemmaID.parse(entry_id)
+        conflict = confirmed_added_numbers.get(parsed.number)
+        if conflict is not None:
+            abort(
+                409,
+                description=(
+                    f"Numeric ID conflict between reviewed entries "
+                    f"{conflict} and {entry_id}"
+                ),
+            )
+        confirmed_added_numbers[parsed.number] = entry_id
+
     final_dir = run_dir / "final"
     if final_dir.exists():
         shutil.rmtree(final_dir)
@@ -451,9 +516,15 @@ def finalize_run(run_id: str):
     for raw in reviewed_entries:
         if not raw.get("confirmed"):
             continue
+        category = raw.get("category", "added")
+        entry_id = str(raw.get("id", "")).strip()
+        if category == "deleted":
+            if dictionary.get(entry_id) is not None:
+                removed = dictionary.delete(entry_id)
+                used_numbers.discard(removed.eid.number)
+            continue
         entry = _entry_from_review(raw)
         existing = dictionary.get(entry.eid)
-        category = raw.get("category", "added")
         if category == "added" and entry.eid.number in used_numbers:
             conflicts = [str(item.eid) for item in dictionary if item.eid.number == entry.eid.number]
             abort(409, description=f"Numeric ID conflict for {entry.eid}: {', '.join(conflicts)}")

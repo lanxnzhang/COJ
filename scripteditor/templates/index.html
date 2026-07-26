@@ -49,10 +49,23 @@
                 <div class="range-actions"><button type="button" id="range-prev">Previous</button><button type="button" id="range-next">Next</button></div>
               </div>
             </details>
-            <label class="hide-confirmed"><input type="checkbox" id="hide-confirmed"> Hide confirmed</label>
             <span id="visible-count"></span>
           </div>
-          <label class="page-selection"><input type="checkbox" id="select-page"> <span>Select current page</span></label>
+          <div class="page-selection">
+            <label><input type="checkbox" id="select-page"> <span>Select current page</span></label>
+            <label class="hide-confirmed"><input type="checkbox" id="hide-confirmed"> Hide confirmed</label>
+          </div>
+        </div>
+        <div id="dictionary-tools" class="hidden">
+          <div class="result-filters">
+            <label>Source<select id="dictionary-filter-source"><option value="all">All sources</option><option value="machine">Machine</option><option value="user">User</option></select></label>
+            <label>Type<select id="dictionary-filter-category"><option value="all">All types</option><option value="added">Added</option><option value="revised">Revised</option><option value="deleted">Deleted</option></select></label>
+            <span id="dictionary-visible-count"></span>
+          </div>
+          <div class="page-selection">
+            <label><input type="checkbox" id="select-dictionary-page"> <span>Select current page</span></label>
+            <label class="hide-confirmed"><input type="checkbox" id="hide-confirmed-dictionary"> Hide confirmed</label>
+          </div>
         </div>
       </div>
       <div class="results-scroll">
@@ -62,8 +75,8 @@
       </div>
     </section>
   </main>
-  <aside id="dictionary-drawer" class="dictionary-drawer hidden" aria-label="Dictionary reader">
-    <div class="dictionary-heading"><div><span class="eyebrow">COJ DICTIONARY</span><h2>Dictionary reader</h2></div><button id="close-dictionary" type="button" aria-label="Close dictionary">×</button></div>
+  <aside id="dictionary-drawer" class="dictionary-drawer hidden" aria-label="Dictionary">
+    <div class="dictionary-heading"><h2>Dictionary</h2><button id="close-dictionary" type="button" aria-label="Close dictionary">×</button></div>
     <div class="dictionary-search">
       <input id="dictionary-query" type="search" placeholder="Search form or lemma ID" autocomplete="off">
       <button id="dictionary-search-button" type="button">Search</button>
@@ -91,6 +104,14 @@
       <div id="new-entry-id-message"></div>
       <div id="new-entry-fields"></div>
       <button type="button" id="add-entry-field">Add tag</button>
+      <details class="new-entry-advanced">
+        <summary>Advanced settings</summary>
+        <label>Start unused-ID search at<input id="new-entry-start" type="number" min="1" value="1"></label>
+        <div class="new-entry-advanced-actions">
+          <button type="button" id="generate-entry-id">Generate unused ID</button>
+          <button type="button" id="generate-entry-kana">Generate .KANA from .FORM</button>
+        </div>
+      </details>
       <button type="button" id="save-new-entry" class="primary">Save for review</button>
     </section>
   </aside>

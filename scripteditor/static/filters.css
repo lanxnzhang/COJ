@@ -39,10 +39,11 @@
 .advanced-filter-grid { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 .range-actions { display: flex; gap: 6px; }
 .range-actions button { padding: 7px 10px; border: 1px solid var(--line); border-radius: 4px; background: white; color: var(--green); cursor: pointer; }
-#visible-count { margin-left: auto; color: var(--muted); font-size: 12px; }
+#visible-count, #dictionary-visible-count { margin-left: auto; color: var(--muted); font-size: 12px; }
 .page-selection {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   max-width: 1000px;
   min-height: 38px;
@@ -55,8 +56,9 @@
   font-size: 12px;
   font-weight: 700;
 }
+.page-selection label { display: flex; align-items: center; gap: 8px; }
 .page-selection input, .hide-confirmed input { width: auto; accent-color: var(--green); }
-.hide-confirmed { display: flex !important; align-items: center; grid-template-columns: none !important; gap: 6px; }
+.hide-confirmed { color: var(--muted); font-weight: 500; }
 
 @media (max-width: 800px) {
   .advanced-filter-grid { display: grid; }

@@ -28,7 +28,7 @@ Click a result word to open its passage in a separate right-side context drawer.
 The drawer shows only the full transcription and kanji text, with the selected
 transcription token highlighted, so the review controls remain unobstructed.
 
-## Dictionary reader
+## Dictionary
 
 Use the **Dictionary** button to open or hide the read-only dictionary drawer.
 The default search covers lemma IDs and forms. Advanced search can independently
@@ -47,9 +47,16 @@ rebuilds XML files from the untouched run inputs and applies only confirmed,
 valid choices; generated processor output remains separate.
 
 The global **Add new entry** action creates a reviewable dictionary draft with a
-unique ID. Its tags and values can be added, edited, deleted, and reopened
-before finalization. Each manual entry becomes an option in every result's lemma
-selector. Deleting a selected entry marks that selection invalid; leaving a new
-entry unconfirmed excludes every line that selects it and reports a warning.
+unique ID. Advanced settings can begin the unused-ID search at a chosen number
+and generate `.KANA` values from `.FORM`; tag fields offer existing dictionary
+tags while still accepting custom input. A manual entry is offered only to text
+results whose form matches one of its `.FORM` values.
+
+Dictionary proposals can be filtered by source and change type. Machine and
+user proposals are labeled separately, and every proposal can be edited or
+deleted. Numeric IDs are checked against both the source dictionary and
+machine-generated proposals before saving. Deleting a selected added entry
+marks that selection invalid; leaving a new entry unconfirmed excludes every
+line that selects it and reports a warning.
 Final reviewed files and a review manifest are stored under
 `scripteditor/runs/<run-id>/final/`; canonical repository data is not modified.

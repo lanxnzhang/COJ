@@ -7,10 +7,12 @@ let allLines = [];
 let allDictionaryEntries = [];
 let currentFilteredLines = [];
 let currentPageLines = [];
+let currentDictionaryPage = [];
 let filteredLineCount = 0;
 let currentRunId = null;
 let editingEntryOriginalId = null;
-const deletedManualEntries = new Set();
+let dictionaryTags = [];
+const deletedAddedEntries = new Set();
 
 async function json(url, options) {
   const response = await fetch(url, options);
@@ -94,9 +96,14 @@ function findScopeNode(id, nodes) {
 }
 
 async function loadScripts() {
-  const [scripts, documents] = await Promise.all([json("/api/scripts"), json("/api/documents")]);
+  const [scripts, documents, tags] = await Promise.all([
+    json("/api/scripts"),
+    json("/api/documents"),
+    json("/api/dictionary/tags"),
+  ]);
   $("script").innerHTML = scripts.map(script => `<option value="${script.id}">${escapeHtml(script.name)}</option>`).join("");
   scopeDocuments = documents;
+  dictionaryTags = tags;
   renderScope();
   await loadSettings();
 }
@@ -128,20 +135,35 @@ function settings() {
   }));
 }
 
-function manualEntries() {
-  return allDictionaryEntries.filter(entry => entry.manual);
+function entryForms(entry) {
+  return entry.fields
+    .filter(field => field.tag.toUpperCase() === ".FORM")
+    .flatMap(field => field.values)
+    .map(value => String(value).trim().toLocaleLowerCase())
+    .filter(Boolean);
+}
+
+function manualEntriesForForm(form) {
+  const normalized = String(form || "").trim().toLocaleLowerCase();
+  return allDictionaryEntries.filter(
+    entry => entry.manual && entryForms(entry).includes(normalized),
+  );
 }
 
 function candidateIds(row) {
   return [...new Set([
     ...(row.candidates || []),
     row.new_lemma,
-    ...manualEntries().map(entry => entry.id),
+    ...manualEntriesForForm(row.form).map(entry => entry.id),
   ].filter(Boolean))];
 }
 
+function hasMultipleCandidates(row) {
+  return candidateIds(row).length > 1;
+}
+
 function selectedEntryState(row) {
-  if (!row.selectedLemma || deletedManualEntries.has(row.selectedLemma)) return "invalid";
+  if (!row.selectedLemma || deletedAddedEntries.has(row.selectedLemma)) return "invalid";
   const addedEntry = allDictionaryEntries.find(
     entry => entry.id === row.selectedLemma && entry.category === "added",
   );
@@ -155,7 +177,7 @@ function choiceOptions(row) {
     ids.unshift(row.selectedLemma);
   }
   return ids.map(id => {
-    const unavailable = deletedManualEntries.has(id) || !candidateIds(row).includes(id);
+    const unavailable = deletedAddedEntries.has(id) || !candidateIds(row).includes(id);
     const suffix = unavailable ? " (unavailable)" : "";
     return `<option value="${escapeHtml(id)}" ${id === row.selectedLemma ? "selected" : ""} ${unavailable ? "disabled" : ""}>${escapeHtml(id + suffix)}</option>`;
   }).join("");
@@ -200,7 +222,7 @@ function applyLineFilters() {
   const filtered = allLines.filter(row =>
     (category === "all" || row.category === category) &&
     (file === "all" || row.file === file) &&
-    (candidates === "all" || (candidates === "multiple") === Boolean(row.multiple_candidates)) &&
+    (candidates === "all" || (candidates === "multiple") === hasMultipleCandidates(row)) &&
     (!$("hide-confirmed").checked || !row.confirmed)
   );
   currentFilteredLines = filtered;
@@ -221,16 +243,18 @@ function applyLineFilters() {
 function renderLines(lines, total) {
   $("lines").innerHTML = total ? `${total > lines.length ? `<div class="notice">Browsing ${lines.length.toLocaleString()} of ${total.toLocaleString()} matching changes.</div>` : ""}${lines.map(row => {
     const issue = lineIssue(row);
+    const candidates = candidateIds(row);
+    const multiple = candidates.length > 1;
     return `<article class="${row.confirmed ? "result-confirmed" : ""} ${issue ? "result-problem" : ""}">
       <div class="card-head">
         <label class="result-confirm"><input type="checkbox" data-review-confirm="${escapeHtml(row.reviewId)}" ${row.confirmed ? "checked" : ""}><span class="sr-only">Confirm ${escapeHtml(row.form)}</span></label>
         <button type="button" class="context-word" data-context-result="${escapeHtml(row.reviewId)}" title="Show this word in its passage">${escapeHtml(row.form)}</button>
         <span class="badge ${row.category}">${escapeHtml(row.category)}</span>
-        ${row.multiple_candidates ? '<span class="badge multiple">multiple candidates</span>' : ""}
+        ${multiple ? '<span class="badge multiple">multiple candidates</span>' : ""}
       </div>
       <p>${escapeHtml(row.file)} · ${escapeHtml(row.utterance)} · line ${row.position}</p>
       <div class="path">${row.path.map(escapeHtml).join(" <b>›</b> ")}</div>
-      ${row.multiple_candidates ? `<p class="candidates">Candidates: ${row.candidates.map(id => `<button type="button" class="candidate-link" data-lemma="${escapeHtml(id)}">${escapeHtml(id)}</button>`).join(", ")}</p>` : ""}
+      ${multiple ? `<p class="candidates">Candidates: ${candidates.map(id => `<button type="button" class="candidate-link" data-lemma="${escapeHtml(id)}">${escapeHtml(id)}</button>`).join(", ")}</p>` : ""}
       <div class="lemma-choice">
         <label><span>Chosen lemma</span><select data-review-choice="${escapeHtml(row.reviewId)}">${choiceOptions(row)}</select></label>
         ${issue ? `<p class="selection-warning">${escapeHtml(issue)}</p>` : ""}
@@ -240,17 +264,43 @@ function renderLines(lines, total) {
 }
 
 function renderDictionary(entries) {
-  $("dict-count").textContent = entries.length;
-  $("dictionary").innerHTML = entries.length ? entries.map(entry => `<article>
+  $("dict-count").textContent = allDictionaryEntries.length;
+  $("dictionary").innerHTML = entries.length ? entries.map(entry => `<article class="${entry.confirmed ? "result-confirmed" : ""}">
     <div class="card-head">
       <strong>${escapeHtml(entry.id)}</strong>
       <span class="badge ${entry.category}">${escapeHtml(entry.category)}</span>
-      ${entry.manual ? `<button type="button" data-edit-entry="${escapeHtml(entry.id)}">Edit</button><button type="button" class="danger-link" data-delete-entry="${escapeHtml(entry.id)}">Delete</button>` : ""}
+      <span class="badge ${entry.manual ? "user" : "machine"}">${entry.manual ? "USER" : "MACHINE"}</span>
+      <div class="dictionary-card-actions"><button type="button" data-edit-entry="${escapeHtml(entry.id)}">Edit</button><button type="button" class="danger-link" data-delete-entry="${escapeHtml(entry.id)}">Delete</button></div>
       <label class="dictionary-review-select"><input type="checkbox" data-dictionary-confirm="${escapeHtml(entry.id)}" ${entry.confirmed ? "checked" : ""}> Include in final output</label>
     </div>
     <dl>${entry.fields.map(field => `<dt>${escapeHtml(field.tag)}</dt><dd>${field.values.map(escapeHtml).join(" · ")}</dd>`).join("")}</dl>
-    <details><summary>Full revised entry</summary><pre>${escapeHtml(entry.after || "(new entry)")}</pre></details>
   </article>`).join("") : '<div class="empty">No dictionary changes.</div>';
+}
+
+function updateDictionaryPageSelection() {
+  const checkbox = $("select-dictionary-page");
+  const checked = currentDictionaryPage.filter(entry => entry.confirmed).length;
+  checkbox.disabled = currentDictionaryPage.length === 0;
+  checkbox.checked = currentDictionaryPage.length > 0 && checked === currentDictionaryPage.length;
+  checkbox.indeterminate = checked > 0 && checked < currentDictionaryPage.length;
+  checkbox.nextElementSibling.textContent = currentDictionaryPage.length
+    ? `Select current page (${currentDictionaryPage.length})`
+    : "Select current page";
+}
+
+function applyDictionaryFilters() {
+  const source = $("dictionary-filter-source").value;
+  const category = $("dictionary-filter-category").value;
+  currentDictionaryPage = allDictionaryEntries.filter(entry =>
+    (source === "all" || (source === "user") === Boolean(entry.manual)) &&
+    (category === "all" || entry.category === category) &&
+    (!$("hide-confirmed-dictionary").checked || !entry.confirmed)
+  );
+  $("dictionary-visible-count").textContent =
+    `${currentDictionaryPage.length.toLocaleString()} of ${allDictionaryEntries.length.toLocaleString()} entries`;
+  renderDictionary(currentDictionaryPage);
+  updateDictionaryPageSelection();
+  updateConfirmationCount();
 }
 
 function updateConfirmationCount() {
@@ -328,8 +378,8 @@ async function searchDictionary() {
 
 async function openDictionaryEntry(entryId) {
   const pending = allDictionaryEntries.find(entry => entry.id === entryId);
-  if (pending?.manual) {
-    editManualEntry(entryId);
+  if (pending) {
+    editDictionaryEntry(entryId);
     return;
   }
   openDictionary();
@@ -346,7 +396,18 @@ async function openDictionaryEntry(entryId) {
 }
 
 function entryFieldRow(tag = "", value = "") {
-  return `<div class="entry-field-row"><input class="entry-tag" value="${escapeHtml(tag)}" placeholder=".TAG"><input class="entry-value" value="${escapeHtml(value)}" placeholder="Value"><button type="button" class="remove-entry-field">×</button></div>`;
+  const choices = dictionaryTags.map(choice =>
+    `<button type="button" data-entry-tag-choice="${escapeHtml(choice)}">${escapeHtml(choice)}</button>`
+  ).join("");
+  return `<div class="entry-field-row">
+    <div class="entry-tag-picker">
+      <input class="entry-tag" value="${escapeHtml(tag)}" placeholder=".TAG">
+      <button type="button" class="entry-tag-toggle" aria-label="Choose an existing dictionary tag" aria-expanded="false">▾</button>
+      <div class="entry-tag-menu hidden">${choices}</div>
+    </div>
+    <input class="entry-value" value="${escapeHtml(value)}" placeholder="Value">
+    <button type="button" class="remove-entry-field" aria-label="Remove field">×</button>
+  </div>`;
 }
 
 async function validateNewEntryId() {
@@ -356,12 +417,63 @@ async function validateNewEntryId() {
     message.textContent = "";
     return false;
   }
-  const pendingConflict = allDictionaryEntries.find(entry => entry.id !== id && entry.id !== editingEntryOriginalId && (entry.id.match(/\d+/) || [])[0] === (id.match(/\d+/) || [])[0]);
+  const numeric = (id.match(/\d+/) || [])[0];
+  const pendingConflict = allDictionaryEntries.find(
+    entry => entry.id !== editingEntryOriginalId &&
+      (entry.id.match(/\d+/) || [])[0] === numeric,
+  );
   const result = await json(`/api/runs/${currentRunId}/dictionary/check-id/${encodeURIComponent(id)}`);
-  const conflict = result.conflict || Boolean(pendingConflict);
+  const serverConflicts = (result.conflicts || []).filter(
+    conflictId => !(id === editingEntryOriginalId && conflictId === editingEntryOriginalId),
+  );
+  const conflict = serverConflicts.length > 0 || Boolean(pendingConflict);
   message.classList.toggle("conflict", conflict || !result.valid);
-  message.textContent = pendingConflict ? `Numeric portion already used by pending entry ${pendingConflict.id}.` : result.message;
+  message.textContent = pendingConflict
+    ? `Numeric portion already used by pending entry ${pendingConflict.id}.`
+    : serverConflicts.length
+      ? `Numeric portion already used by ${serverConflicts.join(", ")}.`
+      : result.valid ? "ID is available." : result.message;
   return result.valid && !conflict;
+}
+
+async function generateEntryId() {
+  if (!currentRunId) return;
+  const start = Math.max(1, Number($("new-entry-start").value) || 1);
+  $("new-entry-start").value = start;
+  const suggestion = await json(`/api/runs/${currentRunId}/dictionary/suggest-id`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({start}),
+  });
+  $("new-entry-id").value = suggestion.id;
+  $("new-entry-id-message").textContent =
+    `Generated the first unused ID at or after ${start.toLocaleString()}.`;
+  $("new-entry-id-message").classList.remove("conflict");
+}
+
+async function generateEntryKana() {
+  if (!currentRunId) return;
+  const forms = [...document.querySelectorAll("#new-entry-fields .entry-field-row")]
+    .filter(row => row.querySelector(".entry-tag").value.trim().toUpperCase() === ".FORM")
+    .map(row => row.querySelector(".entry-value").value);
+  if (!forms.length) {
+    $("new-entry-id-message").textContent = "Add at least one .FORM field before generating .KANA.";
+    $("new-entry-id-message").classList.add("conflict");
+    return;
+  }
+  const result = await json(`/api/runs/${currentRunId}/dictionary/generate-kana`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({forms}),
+  });
+  document.querySelectorAll("#new-entry-fields .entry-field-row").forEach(row => {
+    if (row.querySelector(".entry-tag").value.trim().toUpperCase() === ".KANA") row.remove();
+  });
+  result.values.forEach(value =>
+    $("new-entry-fields").insertAdjacentHTML("beforeend", entryFieldRow(".KANA", value))
+  );
+  $("new-entry-id-message").textContent = `Generated ${result.values.length} .KANA value${result.values.length === 1 ? "" : "s"} from .FORM.`;
+  $("new-entry-id-message").classList.remove("conflict");
 }
 
 async function openNewEntryEditor() {
@@ -374,39 +486,36 @@ async function openNewEntryEditor() {
   $("dictionary-reader-entry").classList.add("hidden");
   $("new-entry-editor").classList.remove("hidden");
   $("new-entry-title").textContent = "New dictionary entry";
-  const suggestion = await json(`/api/runs/${currentRunId}/dictionary/suggest-id`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({form: ""}),
-  });
-  $("new-entry-id").value = suggestion.id;
-  $("new-entry-id-message").textContent = "Automatically generated unique ID.";
-  $("new-entry-id-message").classList.remove("conflict");
+  $("new-entry-start").value = 1;
+  await generateEntryId();
   $("new-entry-fields").innerHTML = [
     [".GLOSS", ""], [".MEANING", ""], [".FORM", ""], [".KANA", ""], [".POS", ""],
   ].map(([tag, value]) => entryFieldRow(tag, value)).join("");
 }
 
-function editManualEntry(entryId) {
-  const entry = allDictionaryEntries.find(item => item.id === entryId && item.manual);
+function editDictionaryEntry(entryId) {
+  const entry = allDictionaryEntries.find(item => item.id === entryId);
   if (!entry) return;
   editingEntryOriginalId = entryId;
   openDictionary();
   $("dictionary-reader-entry").classList.add("hidden");
   $("new-entry-editor").classList.remove("hidden");
   $("new-entry-title").textContent = "Edit dictionary entry";
+  $("new-entry-start").value = 1;
   $("new-entry-id").value = entry.id;
   $("new-entry-id-message").textContent = "Changing this ID updates every current selection that uses it.";
   $("new-entry-id-message").classList.remove("conflict");
-  $("new-entry-fields").innerHTML = entry.fields.flatMap(field => field.values.map(value => entryFieldRow(field.tag, value))).join("");
+  $("new-entry-fields").innerHTML = entry.fields.flatMap(field =>
+    (field.values.length ? field.values : [""]).map(value => entryFieldRow(field.tag, value))
+  ).join("");
 }
 
-function deleteManualEntry(entryId) {
-  const entry = allDictionaryEntries.find(item => item.id === entryId && item.manual);
+function deleteDictionaryEntry(entryId) {
+  const entry = allDictionaryEntries.find(item => item.id === entryId);
   if (!entry) return;
   allDictionaryEntries = allDictionaryEntries.filter(item => item !== entry);
-  deletedManualEntries.add(entryId);
-  renderDictionary(allDictionaryEntries);
+  if (entry.category === "added") deletedAddedEntries.add(entryId);
+  applyDictionaryFilters();
   applyLineFilters();
 }
 
@@ -428,22 +537,23 @@ async function saveNewEntry() {
   const previous = allDictionaryEntries.find(item => item.id === editingEntryOriginalId);
   const entry = {
     id,
-    category: "added",
+    category: previous && previous.id === id ? previous.category : "added",
     fields,
     confirmed: previous?.confirmed || false,
-    manual: true,
+    manual: previous?.manual ?? true,
   };
   if (editingEntryOriginalId && editingEntryOriginalId !== id) {
     allLines.forEach(result => {
       result.candidates = result.candidates.map(candidate => candidate === editingEntryOriginalId ? id : candidate);
+      if (result.new_lemma === editingEntryOriginalId) result.new_lemma = id;
       if (result.selectedLemma === editingEntryOriginalId) result.selectedLemma = id;
     });
-    deletedManualEntries.add(editingEntryOriginalId);
+    if (previous?.category === "added") deletedAddedEntries.add(editingEntryOriginalId);
   }
-  deletedManualEntries.delete(id);
+  deletedAddedEntries.delete(id);
   allDictionaryEntries = allDictionaryEntries.filter(item => item.id !== id && item.id !== editingEntryOriginalId);
   allDictionaryEntries.push(entry);
-  renderDictionary(allDictionaryEntries);
+  applyDictionaryFilters();
   closeNewEntryEditor();
   applyLineFilters();
 }
@@ -504,7 +614,7 @@ async function run() {
     $("line-count").textContent = data.lines.length;
     $("dict-count").textContent = data.dictionary.length;
     currentRunId = data.run_id;
-    deletedManualEntries.clear();
+    deletedAddedEntries.clear();
     allLines = data.lines.map((row, index) => {
       const candidates = [...new Set((row.candidates?.length ? row.candidates : [row.new_lemma]).filter(Boolean))];
       return {
@@ -520,7 +630,7 @@ async function run() {
     $("filter-file").innerHTML = '<option value="all">All processed files</option>' + resultFiles.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
     $("console").textContent = data.console || "";
     applyLineFilters();
-    renderDictionary(allDictionaryEntries);
+    applyDictionaryFilters();
     $("files").innerHTML = data.files.length ? data.files.map(file => `<a target="_blank" href="/api/runs/${data.run_id}/files/${encodeURIComponent(file)}">${escapeHtml(file)}</a>`).join("") : '<div class="empty">No output files.</div>';
     $("status").textContent = `Completed run ${data.run_id}. Repository data was not changed.`;
   } catch (error) {
@@ -535,6 +645,7 @@ document.querySelectorAll(".tab").forEach(button => {
     document.querySelectorAll(".tab").forEach(tab => tab.classList.toggle("active", tab === button));
     document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("hidden", panel.id !== button.dataset.tab));
     $("line-tools").classList.toggle("hidden", button.dataset.tab !== "lines");
+    $("dictionary-tools").classList.toggle("hidden", button.dataset.tab !== "dictionary");
   };
 });
 
@@ -580,6 +691,17 @@ $("select-page").onchange = event => {
   applyLineFilters();
 };
 $("hide-confirmed").onchange = applyLineFilters;
+$("select-dictionary-page").onchange = event => {
+  currentDictionaryPage.forEach(entry => {
+    entry.confirmed = event.target.checked;
+  });
+  applyDictionaryFilters();
+  applyLineFilters();
+};
+$("hide-confirmed-dictionary").onchange = applyDictionaryFilters;
+[$("dictionary-filter-source"), $("dictionary-filter-category")].forEach(
+  control => control.oninput = applyDictionaryFilters,
+);
 $("open-dictionary").onclick = openDictionary;
 $("close-dictionary").onclick = closeDictionary;
 $("close-context").onclick = closeContext;
@@ -591,6 +713,8 @@ $("add-global-entry").onclick = openNewEntryEditor;
 $("finalize-review").onclick = finalizeReview;
 $("cancel-new-entry").onclick = closeNewEntryEditor;
 $("add-entry-field").onclick = () => $("new-entry-fields").insertAdjacentHTML("beforeend", entryFieldRow());
+$("generate-entry-id").onclick = generateEntryId;
+$("generate-entry-kana").onclick = generateEntryKana;
 $("save-new-entry").onclick = saveNewEntry;
 $("new-entry-id").oninput = () => {
   clearTimeout($("new-entry-id")._timer);
@@ -607,12 +731,30 @@ document.addEventListener("click", event => {
   }
   const editEntry = event.target.closest("[data-edit-entry]");
   if (editEntry) {
-    editManualEntry(editEntry.dataset.editEntry);
+    editDictionaryEntry(editEntry.dataset.editEntry);
     return;
   }
   const deleteEntry = event.target.closest("[data-delete-entry]");
   if (deleteEntry) {
-    deleteManualEntry(deleteEntry.dataset.deleteEntry);
+    deleteDictionaryEntry(deleteEntry.dataset.deleteEntry);
+    return;
+  }
+  const tagChoice = event.target.closest("[data-entry-tag-choice]");
+  if (tagChoice) {
+    const picker = tagChoice.closest(".entry-tag-picker");
+    picker.querySelector(".entry-tag").value = tagChoice.dataset.entryTagChoice;
+    picker.querySelector(".entry-tag-menu").classList.add("hidden");
+    picker.querySelector(".entry-tag-toggle").setAttribute("aria-expanded", "false");
+    return;
+  }
+  const tagToggle = event.target.closest(".entry-tag-toggle");
+  if (tagToggle) {
+    const menu = tagToggle.closest(".entry-tag-picker").querySelector(".entry-tag-menu");
+    document.querySelectorAll(".entry-tag-menu").forEach(other => {
+      if (other !== menu) other.classList.add("hidden");
+    });
+    menu.classList.toggle("hidden");
+    tagToggle.setAttribute("aria-expanded", String(!menu.classList.contains("hidden")));
     return;
   }
   const removeField = event.target.closest(".remove-entry-field");
@@ -621,7 +763,11 @@ document.addEventListener("click", event => {
     return;
   }
   const link = event.target.closest("[data-lemma]");
-  if (link) openDictionaryEntry(link.dataset.lemma);
+  if (link) {
+    openDictionaryEntry(link.dataset.lemma);
+    return;
+  }
+  document.querySelectorAll(".entry-tag-menu").forEach(menu => menu.classList.add("hidden"));
 });
 
 document.addEventListener("change", event => {
@@ -640,7 +786,7 @@ document.addEventListener("change", event => {
     const entry = allDictionaryEntries.find(item => item.id === event.target.dataset.dictionaryConfirm);
     if (entry) entry.confirmed = event.target.checked;
     applyLineFilters();
-    renderDictionary(allDictionaryEntries);
+    applyDictionaryFilters();
   }
 });
 

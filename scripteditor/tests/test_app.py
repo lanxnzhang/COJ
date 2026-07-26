@@ -6,13 +6,24 @@ import pytest
 
 import scripteditor.app as editor_app
 from coj.core.corpus import CorpusDocument
-from coj.core.dictionary import Dictionary
+from coj.core.dictionary import Dictionary, DictEntry
+from coj.core.kana import phonemic_to_kana
 
 
 @pytest.fixture
 def client():
     editor_app.app.config.update(TESTING=True)
+    editor_app._manual_id_reservations.clear()
     return editor_app.app.test_client()
+
+
+def make_run(tmp_path, run_id="testrun"):
+    run_dir = tmp_path / run_id
+    (run_dir / "data" / "text").mkdir(parents=True)
+    (run_dir / "data" / "dict").mkdir(parents=True)
+    (run_dir / "output").mkdir()
+    Dictionary().to_file(str(run_dir / "data" / "dict" / "dictionary.xml"))
+    return run_dir
 
 
 def test_document_scope_is_layered(client):
@@ -102,6 +113,107 @@ def test_review_ui_uses_global_controls(client):
     html = client.get("/").get_data(as_text=True)
     assert 'id="add-global-entry"' in html
     assert 'id="select-page"' in html
+    assert 'id="select-dictionary-page"' in html
+    assert 'id="dictionary-filter-source"' in html
+    assert 'id="generate-entry-id"' in html
+    assert 'id="generate-entry-kana"' in html
+    assert "<h2>Dictionary</h2>" in html
+    assert "Full revised entry" not in html
+    assert "Dictionary reader</h2>" not in html
     assert "Manual review" not in html
     assert "Confirm selected category" not in html
     assert "Clear confirmations" not in html
+
+
+def test_dictionary_tags_include_known_and_observed_tags(client):
+    response = client.get("/api/dictionary/tags")
+    assert response.status_code == 200
+    tags = response.get_json()
+    assert ".FORM" in tags
+    assert ".KANA" in tags
+    assert tags == sorted(set(tags))
+
+
+def test_manual_id_generation_respects_start_and_machine_output(
+    client, tmp_path, monkeypatch
+):
+    monkeypatch.setattr(editor_app, "RUNS", tmp_path)
+    run_dir = make_run(tmp_path)
+    machine_dictionary = Dictionary()
+    machine_dictionary.add(DictEntry.blank("L090000", form="kamu"))
+    machine_dictionary.to_file(
+        str(run_dir / "output" / "dictionary_processed.xml")
+    )
+
+    response = client.post(
+        "/api/runs/testrun/dictionary/suggest-id",
+        json={"start": 90000},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["id"] == "L090001"
+
+
+def test_check_id_warns_about_machine_generated_entry(
+    client, tmp_path, monkeypatch
+):
+    monkeypatch.setattr(editor_app, "RUNS", tmp_path)
+    run_dir = make_run(tmp_path)
+    machine_dictionary = Dictionary()
+    machine_dictionary.add(DictEntry.blank("L090000", form="kamu"))
+    machine_dictionary.to_file(
+        str(run_dir / "output" / "dictionary_processed.xml")
+    )
+
+    response = client.get(
+        "/api/runs/testrun/dictionary/check-id/N090000"
+    )
+
+    assert response.status_code == 200
+    result = response.get_json()
+    assert result["conflict"] is True
+    assert result["conflicts"] == ["L090000"]
+
+
+def test_generate_kana_uses_each_submitted_form(client, tmp_path, monkeypatch):
+    monkeypatch.setattr(editor_app, "RUNS", tmp_path)
+    make_run(tmp_path)
+
+    response = client.post(
+        "/api/runs/testrun/dictionary/generate-kana",
+        json={"forms": ["kamu", "nusi"]},
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["values"] == [
+        phonemic_to_kana("kamu"),
+        phonemic_to_kana("nusi"),
+    ]
+
+
+def test_finalize_rejects_overlapping_reviewed_entry_numbers(
+    client, tmp_path, monkeypatch
+):
+    monkeypatch.setattr(editor_app, "RUNS", tmp_path)
+    make_run(tmp_path)
+
+    response = client.post("/api/runs/testrun/finalize", json={
+        "lines": [],
+        "dictionary": [
+            {
+                "id": "L090000",
+                "category": "added",
+                "fields": [{"tag": ".FORM", "values": ["kamu"]}],
+                "confirmed": True,
+            },
+            {
+                "id": "N090000",
+                "category": "added",
+                "fields": [{"tag": ".FORM", "values": ["nusi"]}],
+                "confirmed": True,
+            },
+        ],
+    })
+
+    assert response.status_code == 409
+    assert "Numeric ID conflict" in response.get_json()["error"]

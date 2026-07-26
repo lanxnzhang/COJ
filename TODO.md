@@ -213,24 +213,29 @@ It should be noted that in this case, the chosen lemma must be also displayed in
 Consider split this filter with the functions 'Create final output' and 'Add new entry'. Do not mess them together to avoid confusion.
 9. Do not use separate "Confirm selected category" and "Clear confirmations" buttons. Such a design is bloated, counterintuitive, and not aesthetically pleasing. Place a selection checkbox above the list of results that remains fixed at the top of the page as the user scrolls. Clicking it selects all results on the current page, while clicking it again deselects them.
 
-### After commit 51f0268 (editing..)
-1. When users scroll the page using the scrollbar on the far right of the page, they find nothing below. Fix this bug. (Shown in D:\Lanxin\Pictures\Screenshots\001545 and D:\Lanxin\Pictures\Screenshots\001521)
+### After commit 51f0268
+1. When users scroll the page using the scrollbar on the far right of the page, they find nothing below. Fix this bug. (Shown in D:\Lanxin\Pictures\Screenshots\001545 and D:\Lanxin\Pictures\Screenshots\001521). In full-screen, the smaller scrollbar used to scroll through results are positioned very far away from the results themselves. Please arrange them closer together in an aesthetically pleasing layout.
 2. Move the setting 'Hide confirmed'. Put it together with 'Select current page'.
 3. The checkbox for each result should not have a double-layered border; it looks not pleasing (as shown in the red box in the image D:\Lanxin\Pictures\Screenshots\002116). Only keep one border for the checkbox.
-4. Add new entry bug (match the form)
+4. Add new entry:
+  4.1 Match the form: for a new dict entry added by the user, it should only be listed in the results which have the same form. For example, when the user adds a new dict entry having a .form kamu, it should only be listed under the chosen lemma list of kamu but not other words. Also add it in candidates list of kamu.
+  4.2 Advanced setting: when automatically generate an unused new lemma id, the user can manually input a number for the beginning of generating. Add a button in advanced setting, when click it, automatically generate the content of .KANA based on the content of .FORM.
+  4.3 tag choose: Add a small button (like triangle) next to each tag (like .FORM), and when the user clicks it, a dropdown menu will appear where user can choose an existing tag already in the dictionary or enter a new tag manually in the input box.
 5. Dictionary entries editing
-  5.1 Full revised entry not needed
-  5.2 distinguish machine added and manually added
-  5.3 Every entry should be able to be edit and delete.
-  5.4 Bug: machine added and manually added lemma id overlap
-  5.5 move the checkbox
-  5.6 similar with the fuction in text lines
+  5.1 Full revised entry not needed, such as: 
+    Full revised entry
+    ---------------------------------------------------
+    === L000001
+    .GLOSS	
+    .FORM	ugonapar
+    .KANA	ウゴナハ⟨r⟩
+    .POS
+  Delete this part.
+  5.2 distinguish machine added and manually added in the list. Add a tag 'USER' for the manually added entry. Also add a filter like the one in 'Text lines' for 'Dictionary entries', include the function of choosing types. Like the design in text lines, move the checkbox to the top left, add a check box for select all, put the setting 'Hide confirmed' together with 'Select current page'.
+  5.3 Every dict entry in the result list should be able to be edit and delete, not just the manually added ones.
+  5.4 Bug: when machine added and manually added lemma id overlap, the GUI will not warn the user. Instead, the same ID will overwrite the existing one. Fix this bug.
 6. Dictionary search
-  6.1 Residual search results
-  6.2 UI design: COJ DICTIONARY Dictionary reader
-7. (TBD?)Bug: choose EN.1.1 under EN 01, nothing happened. 0 scope items selected
-
-
+  UI design: The title of the dictionary interface should not be named as 'COJ DICTIONARY Dictionary reader'. Just use 'Dictionary' as the title.
 
 
 ## Build interactive editor

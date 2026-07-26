@@ -9,12 +9,13 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font: 14px/1.45 Inter, system-ui, sans-serif; color: var(--ink); background: #f2f5f1; }
-header { height: 58px; padding: 0 24px; background: #183f31; color: white; display: flex; align-items: center; justify-content: space-between; }
+html, body { height: 100%; overflow: hidden; }
+body { display: flex; flex-direction: column; margin: 0; font: 14px/1.45 Inter, system-ui, sans-serif; color: var(--ink); background: #f2f5f1; }
+header { flex: 0 0 58px; height: 58px; padding: 0 24px; background: #183f31; color: white; display: flex; align-items: center; justify-content: space-between; }
 header strong { font: 700 21px Georgia, serif; margin-right: 12px; }
 header span { opacity: .8; }
 .safe { font-size: 12px; border: 1px solid #ffffff55; padding: 5px 9px; border-radius: 20px; }
-main { height: calc(100vh - 58px); display: grid; grid-template-columns: 330px 1fr; overflow: hidden; }
+main { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 330px 1fr; overflow: hidden; }
 aside { padding: 24px; background: var(--paper); border-right: 1px solid var(--line); overflow: auto; }
 .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .13em; color: var(--green); }
 select, input { width: 100%; padding: 8px; border: 1px solid #cdd5cf; border-radius: 5px; background: white; }
@@ -32,8 +33,8 @@ select, input { width: 100%; padding: 8px; border: 1px solid #cdd5cf; border-rad
 #status { margin: 14px 0; color: var(--muted); font-size: 12px; }
 pre { white-space: pre-wrap; word-break: break-word; font: 11px/1.5 ui-monospace, monospace; }
 .results { min-width: 0; overflow: hidden; display: flex; flex-direction: column; padding: 22px 34px 0; }
-.results-controls { flex: 0 0 auto; }
-.results-scroll { min-height: 0; overflow: auto; padding: 0 4px 28px 0; }
+.results-controls { flex: 0 0 auto; width: min(100%, 1020px); }
+.results-scroll { width: min(100%, 1020px); min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 16px 28px 0; scrollbar-gutter: stable; }
 .summary { display: flex; gap: 12px; margin-bottom: 12px; }
 .summary div { min-width: 180px; padding: 10px 18px; border: 1px solid var(--line); border-radius: 8px; background: white; }
 .summary span { display: block; font: 700 24px Georgia, serif; }
@@ -42,13 +43,15 @@ nav { margin-bottom: 10px; border-bottom: 1px solid var(--line); }
 .tab { padding: 9px 15px; border: 0; background: none; color: var(--muted); cursor: pointer; }
 .tab.active { border-bottom: 2px solid var(--green); color: var(--green); font-weight: 700; }
 .hidden { display: none !important; }
-.panel { max-width: 1000px; }
+.panel { width: 100%; }
 article { margin: 10px 0; padding: 15px 18px; border: 1px solid var(--line); border-radius: 7px; background: white; }
 .card-head { display: flex; align-items: center; gap: 10px; }
 .card-head strong { font-size: 16px; }
 .badge { padding: 2px 7px; border-radius: 10px; background: var(--pale); color: var(--green); font-size: 10px; text-transform: uppercase; }
 .badge.new, .badge.added { background: #fff1db; color: var(--amber); }
 .badge.multiple { background: #eee8ff; color: #6244a0; }
+.badge.user { background: #e8e2fb; color: #594095; }
+.badge.machine { background: #e8eff4; color: #496272; }
 article p, .path { color: var(--muted); font-size: 12px; }
 .path, .candidates { font-family: ui-monospace, monospace; }
 .path b { color: #aab2ac; }
@@ -63,10 +66,12 @@ dd { margin: 0 0 5px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 800px) {
+  html, body { height: auto; overflow: visible; }
+  body { display: block; }
   main { display: block; height: auto; overflow: visible; }
   aside { border-right: 0; }
   header { position: sticky; top: 0; }
   .results { padding: 20px; overflow: visible; }
-  .results-scroll { overflow: visible; }
+  .results-scroll { width: 100%; overflow: visible; padding-right: 0; }
   .summary div { min-width: 0; flex: 1; }
 }
