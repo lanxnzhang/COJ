@@ -1,0 +1,302 @@
+from __future__ import annotations
+
+import re
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+from flask import Flask, abort, jsonify, render_template, request
+from werkzeug.exceptions import HTTPException
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA_XML = ROOT / "data" / "xml"
+DICT_PATH = DATA_XML / "dict" / "dictionary.xml"
+sys.path.insert(0, str(ROOT / "src"))
+
+from coj.core.corpus import CorpusDocument, _utterance_to_elem
+from coj.core.dictionary import Dictionary
+
+app = Flask(__name__)
+
+DOCUMENT_SOURCES = {
+    "text": {
+        "label": "Texts under editing",
+        "description": "Current editable corpus documents",
+        "directory": DATA_XML / "text",
+    },
+    "trees": {
+        "label": "Uploaded trees",
+        "description": "Current uploaded syntax-tree documents",
+        "directory": DATA_XML / "trees",
+    },
+}
+
+_dictionary: Dictionary | None = None
+_documents: dict[tuple[str, str], CorpusDocument] = {}
+
+
+@app.errorhandler(HTTPException)
+def json_http_error(error: HTTPException):
+    return jsonify({"error": error.description}), error.code
+
+
+def get_dictionary() -> Dictionary:
+    global _dictionary
+    if _dictionary is None:
+        _dictionary = Dictionary.from_file(str(DICT_PATH))
+    return _dictionary
+
+
+def _document_path(source: str, doc_id: str) -> Path:
+    config = DOCUMENT_SOURCES.get(source)
+    if config is None or not re.fullmatch(r"[A-Za-z0-9_-]+", doc_id):
+        abort(404, description="Document not found")
+    path = config["directory"] / f"{doc_id}.xml"
+    if not path.is_file():
+        abort(404, description=f"Document '{source}/{doc_id}' not found")
+    return path
+
+
+def get_document(source: str, doc_id: str) -> CorpusDocument:
+    key = (source, doc_id)
+    if key not in _documents:
+        _documents[key] = CorpusDocument.from_file(
+            str(_document_path(source, doc_id))
+        )
+    return _documents[key]
+
+
+def _sort_key(doc_id: str) -> tuple[str, int, str]:
+    match = re.match(r"^([A-Z]+)_?(\d*)$", doc_id)
+    if match:
+        return (
+            match.group(1),
+            int(match.group(2)) if match.group(2) else 0,
+            doc_id,
+        )
+    return (doc_id, 0, doc_id)
+
+
+def _document_summary(source: str, path: Path) -> dict:
+    root = ET.parse(path).getroot()
+    blocks = root.findall("block")
+    collection = path.stem.split("_", 1)[0]
+    return {
+        "id": f"{source}/{path.stem}",
+        "source": source,
+        "document_id": path.stem,
+        "label": path.stem.replace("_", " "),
+        "collection": collection,
+        "utterance_count": len(blocks),
+        "filename": root.get("filename", path.name),
+    }
+
+
+def _block_raw_text(block: ET.Element) -> list[dict[str, str]]:
+    raw_text = block.find("raw-text")
+    if raw_text is None:
+        return []
+    return [
+        {
+            "number": sentence.get("n", str(index)),
+            "kanji": sentence.findtext("kanji", ""),
+            "transcription": sentence.findtext("transcription", ""),
+        }
+        for index, sentence in enumerate(raw_text.findall("sentence"), 1)
+    ]
+
+
+def _elem_to_node(elem: ET.Element) -> dict:
+    """Convert a current corpus XML element to the tree renderer payload."""
+    children = [
+        child
+        for child in elem
+        if child.tag not in {"comment", "roundtrip-data", "raw-text"}
+    ]
+    node = {
+        "tag": elem.get("raw_tag") or elem.tag,
+        "attributes": {
+            key: value
+            for key, value in elem.attrib.items()
+            if key not in {"raw_tag", "form", "phon", "lemma"}
+        },
+    }
+    if elem.get("lemma"):
+        node["lemma"] = elem.get("lemma")
+    if children:
+        node["children"] = [_elem_to_node(child) for child in children]
+    else:
+        node["form"] = elem.get("form", "")
+        node["phon"] = elem.get("phon", "")
+    return node
+
+
+def _tree_stats(roots: list[dict]) -> dict[str, int]:
+    nodes = leaves = 0
+
+    def visit(node: dict) -> None:
+        nonlocal nodes, leaves
+        nodes += 1
+        children = node.get("children", [])
+        if children:
+            for child in children:
+                visit(child)
+        else:
+            leaves += 1
+
+    for root in roots:
+        visit(root)
+    return {"nodes": nodes, "leaves": leaves}
+
+
+@app.get("/")
+def index():
+    return render_template("index.html")
+
+
+@app.get("/api/documents")
+def list_documents():
+    groups = []
+    for source, config in DOCUMENT_SOURCES.items():
+        documents = [
+            _document_summary(source, path)
+            for path in sorted(
+                config["directory"].glob("*.xml"),
+                key=lambda item: _sort_key(item.stem),
+            )
+        ]
+        groups.append({
+            "id": source,
+            "label": config["label"],
+            "description": config["description"],
+            "document_count": len(documents),
+            "utterance_count": sum(
+                document["utterance_count"] for document in documents
+            ),
+            "documents": documents,
+        })
+    return jsonify(groups)
+
+
+@app.get("/api/documents/<source>/<doc_id>")
+def document_index(source: str, doc_id: str):
+    document = get_document(source, doc_id)
+    return jsonify([
+        {
+            "sentence_id": utterance.sentence_id or "",
+            "header": utterance.header.raw if utterance.header else "",
+            "token_count": len(utterance.corpus_lines()),
+            "raw_sentence_count": len(
+                _block_raw_text(utterance._block_elem)
+                if utterance._block_elem is not None else []
+            ),
+        }
+        for utterance in document.utterances
+    ])
+
+
+@app.get("/api/utterances/<source>/<doc_id>/<path:sentence_id>/tree")
+def utterance_tree(
+    source: str, doc_id: str, sentence_id: str
+):
+    document = get_document(source, doc_id)
+    utterance = document.find_utterance(sentence_id)
+    if utterance is None:
+        abort(
+            404,
+            description=f"Passage '{sentence_id}' not found in '{source}/{doc_id}'",
+        )
+
+    block = (
+        utterance._block_elem
+        if utterance._block_elem is not None
+        else _utterance_to_elem(utterance)
+    )
+    roots = [
+        _elem_to_node(child)
+        for child in block
+        if child.tag not in {"comment", "roundtrip-data", "raw-text"}
+    ]
+    roundtrip = block.find("roundtrip-data")
+    comment_nodes = (
+        roundtrip.findall("comment")
+        if roundtrip is not None else block.findall("comment")
+    )
+    return jsonify({
+        "source": source,
+        "document_id": doc_id,
+        "sentence_id": utterance.sentence_id or sentence_id,
+        "header": block.get("header", ""),
+        "comments": [comment.get("raw", "") for comment in comment_nodes],
+        "raw_text": _block_raw_text(block),
+        "roots": roots,
+        "stats": _tree_stats(roots),
+    })
+
+
+@app.get("/api/dictionary")
+def search_dictionary():
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify([])
+
+    dictionary = get_dictionary()
+    hits = []
+    id_match = re.fullmatch(r"([A-Za-z]+)(\d+)([A-Za-z]*)", query)
+    if id_match:
+        canonical_id = (
+            id_match.group(1).upper()
+            + id_match.group(2)
+            + id_match.group(3).lower()
+        )
+        entry = dictionary.get(canonical_id)
+        if entry is not None:
+            hits = [entry]
+    else:
+        seen: set[str] = set()
+        folded = query.casefold()
+        for entry in dictionary:
+            values = (
+                entry.get_all(".FORM")
+                + entry.get_all(".GLOSS")
+                + entry.get_all(".MEANING")
+            )
+            if any(folded in value.casefold() for value in values):
+                entry_id = str(entry.eid)
+                if entry_id not in seen:
+                    hits.append(entry)
+                    seen.add(entry_id)
+            if len(hits) >= 50:
+                break
+
+    return jsonify([
+        {
+            "id": str(entry.eid),
+            "gloss": entry.get_first(".GLOSS") or "",
+            "forms": entry.get_all(".FORM"),
+            "pos": entry.get_all(".POS"),
+        }
+        for entry in hits[:50]
+    ])
+
+
+@app.get("/api/dictionary/<entry_id>")
+def dictionary_entry(entry_id: str):
+    entry = get_dictionary().get(entry_id)
+    if entry is None:
+        abort(404, description=f"Entry '{entry_id}' not found")
+    return jsonify({
+        "id": str(entry.eid),
+        "fields": [
+            {
+                "tag": tag,
+                "label": tag.lstrip(".").replace("_", " ").title(),
+                "values": entry.get_all(tag),
+            }
+            for tag in entry.tags()
+        ],
+    })
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5002)

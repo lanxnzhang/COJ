@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>COJ Tree Editor</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">COJ</span>
+      <span class="brand-name">Tree Editor</span>
+    </div>
+    <div class="header-status">
+      <span id="data-summary">Loading current XML data…</span>
+      <span class="current-data-badge">Current repository data</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="navigation-pane documents-pane" aria-label="Documents">
+      <div class="pane-heading">
+        <p class="eyebrow">CORPUS SOURCES</p>
+        <h1>Documents</h1>
+        <p>Browse current text and uploaded-tree XML.</p>
+      </div>
+      <label class="search-field">
+        <span class="sr-only">Filter documents</span>
+        <input id="document-search" type="search" placeholder="Filter documents…" autocomplete="off">
+      </label>
+      <div id="document-groups" class="document-groups">
+        <div class="loading-card">Loading documents…</div>
+      </div>
+    </aside>
+
+    <aside class="navigation-pane passages-pane" aria-label="Passages">
+      <div class="pane-heading compact">
+        <p class="eyebrow">SELECTED DOCUMENT</p>
+        <h2 id="selected-document">Choose a document</h2>
+        <p id="passage-count">Passages will appear here.</p>
+      </div>
+      <div id="passage-list" class="passage-list">
+        <div class="empty-state small">Select a document to browse its passages.</div>
+      </div>
+    </aside>
+
+    <section class="detail-pane">
+      <div class="detail-header">
+        <div>
+          <p id="detail-breadcrumb" class="eyebrow">TREE WORKSPACE</p>
+          <h2 id="detail-title">Select a passage</h2>
+        </div>
+        <div id="tree-stats" class="tree-stats hidden" aria-label="Tree statistics">
+          <span><strong id="node-count">0</strong> nodes</span>
+          <span><strong id="leaf-count">0</strong> leaves</span>
+        </div>
+      </div>
+
+      <nav class="tab-bar" aria-label="Editor views">
+        <button type="button" class="tab active" data-tab="tree">Syntax tree</button>
+        <button type="button" class="tab" data-tab="dict">Dictionary</button>
+      </nav>
+
+      <section class="tab-content" id="tab-tree">
+        <section id="passage-context" class="passage-context hidden" aria-label="Passage text">
+          <div class="section-label">Passage text</div>
+          <div id="raw-text-lines" class="raw-text-lines"></div>
+        </section>
+
+        <div class="tree-toolbar" aria-label="Tree display settings">
+          <div class="toolbar-group">
+            <span class="toolbar-label">Annotations</span>
+            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma IDs</label>
+            <label class="toggle"><input type="checkbox" id="tog-phon" checked> Script tags</label>
+            <label class="toggle"><input type="checkbox" id="tog-meta"> Node metadata</label>
+            <label class="toggle"><input type="checkbox" id="tog-comments"> Round-trip comments</label>
+          </div>
+          <div class="toolbar-group">
+            <span class="toolbar-label">Layout</span>
+            <label class="toggle"><input type="checkbox" id="tog-null"> Null nodes</label>
+            <label class="toggle"><input type="checkbox" id="tog-bottomup" checked> Align leaves</label>
+            <label class="spacing-control">
+              <span>Spacing</span>
+              <input type="range" id="slider-rowh" min="32" max="120" value="52" step="4">
+              <output id="slider-rowh-val">52 px</output>
+            </label>
+          </div>
+        </div>
+
+        <div id="tree-container" class="tree-container">
+          <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">⌘</span>
+            <strong>No passage selected</strong>
+            <p>Choose a document and passage to inspect its syntax tree.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content hidden" id="tab-dict">
+        <div class="dictionary-toolbar">
+          <div>
+            <p class="eyebrow">COJ DICTIONARY</p>
+            <h2>Dictionary</h2>
+            <p>Search lemma IDs, forms, glosses, and meanings.</p>
+          </div>
+          <label class="dictionary-search">
+            <span class="sr-only">Search dictionary</span>
+            <input id="dict-input" type="search" placeholder="Search form, gloss, meaning, or lemma ID…" autocomplete="off">
+          </label>
+        </div>
+        <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
+        <div class="dictionary-layout">
+          <div id="dict-results" class="dictionary-results"></div>
+          <article id="dict-entry" class="dictionary-entry hidden"></article>
+        </div>
+      </section>
+
+      <div id="app-message" class="app-message hidden" role="alert"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

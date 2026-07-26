@@ -237,6 +237,28 @@ Consider split this filter with the functions 'Create final output' and 'Add new
 6. Dictionary search
   UI design: The title of the dictionary interface should not be named as 'COJ DICTIONARY Dictionary reader'. Just use 'Dictionary' as the title.
 
+### After commit d0d908c
+Copy the folder editor and rename the copied folder as texteditor. Make changes within this copied folder; do not affect the original "editor" folder.
+
+
+### TBD (editing...)
+(TBD?)Bug: choose EN.1.1 under EN 01, nothing happened. 0 scope items selected
+Combine editor and scripteditor as a whole
+
+1. Under 'Dictionary entries':
+  There is a checkbox named 'Include in final output' in each entry. Delete the words 'Include in final output' and move the checkbox to the top left of each dict entry, to make the user interface cleaner and more visually appealing.
+2. Compound lemma:
+  rename it as compound
+  revise the logic
+3. Mk lemma:
+  rename it as replace
+  revise the logic
+4. Add new entry:
+
+## Build tree editor
+Copy the folder "editor" and rename the copied folder as "treditor". Make changes within this copied folder; do not affect the original "editor" folder.
+1. Optimize and revise the GUI design to make it more visually appealing and consistent with the scripteditor's style. Use blue (#6F8EC9) as the theme color.
+2. Update the data it uses to keep it consistent with the current repository.
 
 ## Build interactive editor
 
