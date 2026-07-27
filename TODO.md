@@ -221,7 +221,7 @@ Consider split this filter with the functions 'Create final output' and 'Add new
   4.1 Match the form: for a new dict entry added by the user, it should only be listed in the results which have the same form. For example, when the user adds a new dict entry having a .form kamu, it should only be listed under the chosen lemma list of kamu but not other words. Also add it in candidates list of kamu.
   4.2 Advanced setting: when automatically generate an unused new lemma id, the user can manually input a number for the beginning of generating. Add a button in advanced setting, when click it, automatically generate the content of .KANA based on the content of .FORM.
   4.3 tag choose: Add a small button (like triangle) next to each tag (like .FORM), and when the user clicks it, a dropdown menu will appear where user can choose an existing tag already in the dictionary or enter a new tag manually in the input box.
-5. Dictionary entries editing
+  5. Dictionary entries editing
   5.1 Full revised entry not needed, such as: 
     Full revised entry
     ---------------------------------------------------
@@ -259,6 +259,15 @@ Combine editor and scripteditor as a whole
 Copy the folder "editor" and rename the copied folder as "treditor". Make changes within this copied folder; do not affect the original "editor" folder.
 1. Optimize and revise the GUI design to make it more visually appealing and consistent with the scripteditor's style. Use blue (#6F8EC9) as the theme color.
 2. Update the data it uses to keep it consistent with the current repository.
+
+### After commit b0ad5c4
+1. Users can collapse the expanded file directory on the left, thereby providing more space for the browsing view on the right.
+2. For each word displayed in the syntax tree and the text, use italics to represent words with tag 'PHON' or other tag including 'PHON' (such as PHON-KUN), use underlining to represent words with tag 'NLOG', use plain to represent words with tag 'LOG' and others.
+3. The functions to show 'Node metadata' and 'Round-trip comments' is not needed. Delete them.
+4. User can collapse or expand the 'Passage text' part to have more room to view the syntax tree. Rename 'Passage text' as 'Text'. Moreover, user can choose to switch to a two-column view, displaying the kanji text for each line to the left of the transcription.
+5. In the syntax tree, user can select whether to display the Kanji characters corresponding to the transcription of each sentence, placing the characters below the transcription. 
+6. User can choose whether to display lemma ids under leaf's tags. For example, L000035 is under mi, the user can choose to display it under PFX-HON (mi's tag).
+7. Users can click to expand or collapse nodes. When a node is collapsed, the corresponding word forms below are written together without spaces between them.
 
 ## Build interactive editor
 

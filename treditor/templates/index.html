@@ -14,12 +14,16 @@
     </div>
     <div class="header-status">
       <span id="data-summary">Loading current XML data…</span>
+      <button type="button" id="toggle-navigation" class="header-button" aria-expanded="true" aria-controls="pane-documents pane-passages">
+        <span aria-hidden="true">«</span>
+        <span class="navigation-toggle-label">Collapse navigation</span>
+      </button>
       <span class="current-data-badge">Current repository data</span>
     </div>
   </header>
 
   <main class="workspace">
-    <aside class="navigation-pane documents-pane" aria-label="Documents">
+    <aside id="pane-documents" class="navigation-pane documents-pane" aria-label="Documents">
       <div class="pane-heading">
         <p class="eyebrow">CORPUS SOURCES</p>
         <h1>Documents</h1>
@@ -34,7 +38,7 @@
       </div>
     </aside>
 
-    <aside class="navigation-pane passages-pane" aria-label="Passages">
+    <aside id="pane-passages" class="navigation-pane passages-pane" aria-label="Passages">
       <div class="pane-heading compact">
         <p class="eyebrow">SELECTED DOCUMENT</p>
         <h2 id="selected-document">Choose a document</h2>
@@ -63,18 +67,28 @@
       </nav>
 
       <section class="tab-content" id="tab-tree">
-        <section id="passage-context" class="passage-context hidden" aria-label="Passage text">
-          <div class="section-label">Passage text</div>
-          <div id="raw-text-lines" class="raw-text-lines"></div>
+        <section id="text-panel" class="text-panel hidden" aria-label="Text">
+          <header class="text-panel-header">
+            <button type="button" id="toggle-text" class="text-panel-toggle" aria-expanded="true" aria-controls="text-panel-body">
+              <span class="disclosure-icon" aria-hidden="true">⌄</span>
+              <span>Text</span>
+            </button>
+            <div class="text-layout-switch" aria-label="Text layout">
+              <button type="button" class="active" data-text-layout="stacked">Stacked</button>
+              <button type="button" data-text-layout="two-column">Two columns</button>
+            </div>
+          </header>
+          <div id="text-panel-body" class="text-panel-body">
+            <div id="raw-text-lines" class="raw-text-lines"></div>
+          </div>
         </section>
 
         <div class="tree-toolbar" aria-label="Tree display settings">
           <div class="toolbar-group">
             <span class="toolbar-label">Annotations</span>
-            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma IDs</label>
+            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma under leaf tags</label>
             <label class="toggle"><input type="checkbox" id="tog-phon" checked> Script tags</label>
-            <label class="toggle"><input type="checkbox" id="tog-meta"> Node metadata</label>
-            <label class="toggle"><input type="checkbox" id="tog-comments"> Round-trip comments</label>
+            <label class="toggle"><input type="checkbox" id="tog-tree-kanji"> Kanji under transcription</label>
           </div>
           <div class="toolbar-group">
             <span class="toolbar-label">Layout</span>

@@ -92,18 +92,44 @@ def _document_summary(source: str, path: Path) -> dict:
     }
 
 
-def _block_raw_text(block: ET.Element) -> list[dict[str, str]]:
+def _block_raw_text(
+    block: ET.Element, corpus_lines: list | None = None
+) -> list[dict]:
     raw_text = block.find("raw-text")
     if raw_text is None:
         return []
-    return [
+    leaf_tokens = [
         {
+            "text": line.word_form or "",
+            "phon": line.phon_tag or "",
+            "lemma": str(line.lemma_id) if line.lemma_id else "",
+        }
+        for line in (corpus_lines or [])
+        if line.word_form
+    ]
+    token_index = 0
+    sentences = []
+    for index, sentence in enumerate(raw_text.findall("sentence"), 1):
+        transcription = sentence.findtext("transcription", "")
+        tokens = []
+        for word in transcription.split():
+            source = (
+                leaf_tokens[token_index]
+                if token_index < len(leaf_tokens) else {}
+            )
+            tokens.append({
+                "text": word,
+                "phon": source.get("phon", ""),
+                "lemma": source.get("lemma", ""),
+            })
+            token_index += 1
+        sentences.append({
             "number": sentence.get("n", str(index)),
             "kanji": sentence.findtext("kanji", ""),
-            "transcription": sentence.findtext("transcription", ""),
-        }
-        for index, sentence in enumerate(raw_text.findall("sentence"), 1)
-    ]
+            "transcription": transcription,
+            "tokens": tokens,
+        })
+    return sentences
 
 
 def _elem_to_node(elem: ET.Element) -> dict:
@@ -113,14 +139,7 @@ def _elem_to_node(elem: ET.Element) -> dict:
         for child in elem
         if child.tag not in {"comment", "roundtrip-data", "raw-text"}
     ]
-    node = {
-        "tag": elem.get("raw_tag") or elem.tag,
-        "attributes": {
-            key: value
-            for key, value in elem.attrib.items()
-            if key not in {"raw_tag", "form", "phon", "lemma"}
-        },
-    }
+    node = {"tag": elem.get("raw_tag") or elem.tag}
     if elem.get("lemma"):
         node["lemma"] = elem.get("lemma")
     if children:
@@ -217,18 +236,12 @@ def utterance_tree(
         for child in block
         if child.tag not in {"comment", "roundtrip-data", "raw-text"}
     ]
-    roundtrip = block.find("roundtrip-data")
-    comment_nodes = (
-        roundtrip.findall("comment")
-        if roundtrip is not None else block.findall("comment")
-    )
     return jsonify({
         "source": source,
         "document_id": doc_id,
         "sentence_id": utterance.sentence_id or sentence_id,
         "header": block.get("header", ""),
-        "comments": [comment.get("raw", "") for comment in comment_nodes],
-        "raw_text": _block_raw_text(block),
+        "raw_text": _block_raw_text(block, utterance.corpus_lines()),
         "roots": roots,
         "stats": _tree_stats(roots),
     })

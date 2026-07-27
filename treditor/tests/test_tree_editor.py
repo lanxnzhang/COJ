@@ -47,7 +47,7 @@ def test_document_index_uses_canonical_passage_ids(client):
     assert passages[0]["raw_sentence_count"] == 3
 
 
-def test_tree_payload_uses_current_processing_text_and_metadata(client):
+def test_tree_payload_uses_current_processing_text_and_script_tags(client):
     response = client.get(
         "/api/utterances/text/EN_01/EN.1.1/tree"
     )
@@ -55,16 +55,19 @@ def test_tree_payload_uses_current_processing_text_and_metadata(client):
     assert response.status_code == 200
     tree = response.get_json()
     assert tree["sentence_id"] == "EN.1.1"
-    assert tree["raw_text"][0] == {
-        "number": "1",
-        "kanji": "侍",
-        "transcription": "ugonapar eru",
-    }
+    assert tree["raw_text"][0]["number"] == "1"
+    assert tree["raw_text"][0]["kanji"] == "侍"
+    assert tree["raw_text"][0]["transcription"] == "ugonapar eru"
+    assert [token["text"] for token in tree["raw_text"][0]["tokens"]] == [
+        "ugonapar", "eru",
+    ]
+    assert tree["raw_text"][1]["tokens"][-1]["phon"] == "PHON"
     assert tree["stats"] == {"nodes": 21, "leaves": 11}
     kamu = next(node for node in walk(tree["roots"]) if node.get("form") == "kamu")
     assert kamu["tag"] == "N"
-    assert kamu["attributes"]["index"] == "1"
-    assert kamu["attributes"]["inferred_index"] == "1"
+    assert kamu["phon"] == "LOG"
+    assert "attributes" not in kamu
+    assert "comments" not in tree
 
 
 def test_uploaded_tree_source_is_available(client):
@@ -77,6 +80,23 @@ def test_uploaded_tree_source_is_available(client):
 
     assert response.status_code == 200
     assert len(response.get_json()) == first_tree["utterance_count"]
+
+
+def test_text_tokens_expose_nlog_for_shared_text_and_tree_styling(client):
+    tree = client.get(
+        "/api/utterances/text/EN_01/EN.1.3/tree"
+    ).get_json()
+    tokens = [
+        token
+        for sentence in tree["raw_text"]
+        for token in sentence["tokens"]
+    ]
+
+    no = next(
+        token for token in tokens
+        if token["text"] == "no" and token["phon"] == "NLOG"
+    )
+    assert no["phon"] == "NLOG"
 
 
 def test_dictionary_uses_current_multi_value_shape(client):
@@ -106,5 +126,23 @@ def test_interface_uses_blue_theme_and_tree_editor_identity(client):
     assert "<title>COJ Tree Editor</title>" in html
     assert "Current repository data" in html
     assert 'id="raw-text-lines"' in html
-    assert 'id="tog-meta"' in html
+    assert 'id="toggle-navigation"' in html
+    assert 'id="toggle-text"' in html
+    assert 'data-text-layout="two-column"' in html
+    assert 'id="tog-tree-kanji"' in html
+    assert 'id="tog-meta"' not in html
+    assert 'id="tog-comments"' not in html
     assert "--blue: #6f8ec9" in css.lower()
+
+
+def test_interaction_script_supports_typography_and_collapsed_nodes(client):
+    javascript = client.get("/static/app.js").get_data(as_text=True)
+    css = client.get("/static/style.css").get_data(as_text=True)
+
+    assert 'normalized.includes("PHON")' in javascript
+    assert 'normalized === "NLOG"' in javascript
+    assert 'collapsedNodeIds' in javascript
+    assert '.join("")' in javascript
+    assert "script-phon" in css
+    assert "script-nlog" in css
+    assert "navigation-collapsed" in css
