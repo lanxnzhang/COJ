@@ -47,6 +47,19 @@ def test_document_index_uses_canonical_passage_ids(client):
     assert passages[0]["raw_sentence_count"] == 3
 
 
+def test_exact_poem_id_lookup_opens_its_document(client):
+    response = client.get("/api/poems?q=mys.1.1")
+
+    assert response.status_code == 200
+    poem = response.get_json()
+    assert poem["sentence_id"] == "MYS.1.1"
+    assert poem["source"] == "trees"
+    assert poem["document_id"] == "MYS_01"
+
+    missing = client.get("/api/poems?q=NOT.A.POEM")
+    assert missing.status_code == 404
+
+
 def test_tree_payload_uses_current_processing_text_and_script_tags(client):
     response = client.get(
         "/api/utterances/text/EN_01/EN.1.1/tree"
@@ -128,8 +141,17 @@ def test_interface_uses_blue_theme_and_tree_editor_identity(client):
     assert 'id="raw-text-lines"' in html
     assert 'id="toggle-navigation"' in html
     assert 'id="toggle-text"' in html
+    assert 'id="poem-search-form"' not in html
     assert 'data-text-layout="two-column"' in html
+    assert 'id="pane-passages"' not in html
+    assert 'placeholder="Filter or open MYS.1.1…"' in html
     assert 'id="tog-tree-kanji"' in html
+    assert 'id="lemma-position"' in html
+    assert 'id="slider-colw"' in html
+    assert 'id="slider-scale"' in html
+    assert 'id="expand-all"' in html
+    assert 'id="toggle-fullscreen"' in html
+    assert 'id="node-editor"' in html
     assert 'id="tog-meta"' not in html
     assert 'id="tog-comments"' not in html
     assert "--blue: #6f8ec9" in css.lower()
@@ -143,6 +165,15 @@ def test_interaction_script_supports_typography_and_collapsed_nodes(client):
     assert 'normalized === "NLOG"' in javascript
     assert 'collapsedNodeIds' in javascript
     assert '.join("")' in javascript
+    assert "/api/poems?q=" in javascript
+    assert "localStorage.setItem" in javascript
+    assert "data-edit-node-id" in javascript
+    assert "interactive-form" in css
+    assert "text-decoration-style: dotted" not in css
+    assert "tree-kanji-background" not in css
+    assert "collection-node" in javascript
+    assert "inline-passage-list" in javascript
+    assert "position: sticky" in css
     assert "script-phon" in css
     assert "script-nlog" in css
     assert "navigation-collapsed" in css

@@ -248,7 +248,7 @@ Combine editor and scripteditor as a whole
 1. Under 'Dictionary entries':
   There is a checkbox named 'Include in final output' in each entry. Delete the words 'Include in final output' and move the checkbox to the top left of each dict entry, to make the user interface cleaner and more visually appealing.
 2. Compound lemma:
-  rename it as compound
+  Rename it as compound.
   revise the logic
 3. Mk lemma:
   rename it as replace
@@ -268,6 +268,27 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 5. In the syntax tree, user can select whether to display the Kanji characters corresponding to the transcription of each sentence, placing the characters below the transcription. 
 6. User can choose whether to display lemma ids under leaf's tags. For example, L000035 is under mi, the user can choose to display it under PFX-HON (mi's tag).
 7. Users can click to expand or collapse nodes. When a node is collapsed, the corresponding word forms below are written together without spaces between them.
+
+### After commit 7247ae5
+1. User can search a poem like MYS.1.1 to show its syntax tree.
+2. The document is currently displayed in two columns. This is too redundant and takes up too much space; please change it to a single column.
+3. Users can scale the syntactic tree and switch to full-screen mode. The horizontal spacing between words can be adjusted to prevent the tree from becoming excessively wide after collapsing certain nodes.
+4. Added a feature to expand all collapsed nodes with a single click.
+5. Optimize the kanji character layout. Add some spacing around them; the current display looks uncomfortable.
+6. Clicking on a word form within the syntax tree also allows user to navigate to the corresponding dictionary entry.
+7. Add a function that allows users to edit the syntax tree without conflicting with the current display interface. At least, Users can directly modify the content of a node, and add or delete a child node or a sibling node for any given node.
+8. Provide two options for the display position of the lemma ID: one is to display it below the word form (as in previous versions), and the other is to display it below the tag (as in the current version).
+
+#### Revise Further
+1. The single column view mode is NOT for the text. Please restore it to its original state: user can choose to switch to a two-column view, displaying the kanji text for each line to the left of the transcription.
+2. Change the document selection area to a sidebar layout (View D:\Lanxin\Pictures\Screenshots\142232). Do not let the passage selection pop out as a new column; the left sidebar should consist of only one column. Moreover, Refine its hierarchical structure. For example, after expanding "texts under editing," the user can expand or collapse the category "EN," then expand or collapse the category "EN01," and finally select "EN.1.1."
+3. Additionally, when user clicks on a document within the "Uploaded trees" category, that category automatically collapses and the view jumps back to "Texts under editing" (expanding it if it wasn't already open); this behavior makes for a very unpleasant user experience. Instead, when a user clicks on a specific document—such as "MYS 01"—it should remain temporarily pinned at the top of the view without jumping elsewhere. It should stay pinned until the user collapses "MYS 01," swipes up at the "MYS 01" position, or continues to scroll down after reaching the final passage of "MYS 01."
+4. The "open a poem directly" function should be integrated into the "filter documents" search box, and the separate "open a poem directly" search box should be removed to simplify the interface and workflow. The system operates as follows: if a user enters a query that matches multiple documents or yields non-unique results (such as "MYS" or "MYS01"), a list of results is displayed, allowing the user to select a specific passage to open its syntax tree; however, if the user enters a unique passage identifier (such as "MYS.1.1"), the syntax tree for that passage opens directly and immediately.
+5. There is an issue with the current function for adjusting word spacing. First, the adjustment range is too limited. Second, collapsing the syntactic tree causes problems where very long sentences or words are not fully displayed, overlap with adjacent words, or have their corresponding kanji characters cut off or overlapping—issues that did not exist in the previous version. Please attempt to fix this; if a fix is ​​not possible, revert to the previous version and remove this feature.
+6. The current way kanji characters are displayed is terrible. Revert to the display style used in the previous version. Simply add a bit more spacing between the characters and the horizontal line above them, and do not add any unnecessary boxes or background fills around the characters.
+7. For the feature where clicking a word navigates to its corresponding dictionary entry, do not apply any formatting changes to the word—such as adding a dotted line underneath. This will conflict with formatting changes caused by other annotations, thereby leading to misunderstandings. Remove it.
+
+
 
 ## Build interactive editor
 

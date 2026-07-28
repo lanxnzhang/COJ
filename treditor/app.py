@@ -77,8 +77,10 @@ def _sort_key(doc_id: str) -> tuple[str, int, str]:
     return (doc_id, 0, doc_id)
 
 
-def _document_summary(source: str, path: Path) -> dict:
-    root = ET.parse(path).getroot()
+def _document_summary(
+    source: str, path: Path, root: ET.Element | None = None
+) -> dict:
+    root = root if root is not None else ET.parse(path).getroot()
     blocks = root.findall("block")
     collection = path.stem.split("_", 1)[0]
     return {
@@ -90,6 +92,30 @@ def _document_summary(source: str, path: Path) -> dict:
         "utterance_count": len(blocks),
         "filename": root.get("filename", path.name),
     }
+
+
+def find_poem_location(sentence_id: str) -> dict | None:
+    """Find an exact poem ID using the repository's document naming scheme."""
+    match = re.match(r"^([A-Za-z]+)\.(\d+)(?:\.|$)", sentence_id)
+    if match is None:
+        return None
+    prefix = match.group(1).upper()
+    number = int(match.group(2))
+    document_ids = (f"{prefix}_{number:02d}", prefix)
+    for source, config in DOCUMENT_SOURCES.items():
+        for document_id in document_ids:
+            path = config["directory"] / f"{document_id}.xml"
+            if not path.is_file():
+                continue
+            root = ET.parse(path).getroot()
+            for block in root.findall("block"):
+                canonical_id = (block.get("id") or "").strip()
+                if canonical_id.casefold() == match.string.casefold():
+                    return {
+                        **_document_summary(source, path, root),
+                        "sentence_id": canonical_id,
+                    }
+    return None
 
 
 def _block_raw_text(
@@ -195,6 +221,17 @@ def list_documents():
             "documents": documents,
         })
     return jsonify(groups)
+
+
+@app.get("/api/poems")
+def find_poem():
+    sentence_id = request.args.get("q", "").strip()
+    if not sentence_id:
+        abort(400, description="Enter a poem ID, for example MYS.1.1")
+    poem = find_poem_location(sentence_id)
+    if poem is None:
+        abort(404, description=f"Poem '{sentence_id}' was not found")
+    return jsonify(poem)
 
 
 @app.get("/api/documents/<source>/<doc_id>")

@@ -33,7 +33,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -123,13 +124,13 @@ button {
 .workspace {
   height: calc(100vh - var(--header-height));
   display: grid;
-  grid-template-columns: 260px 320px minmax(0, 1fr);
+  grid-template-columns: 330px minmax(0, 1fr);
   overflow: hidden;
   transition: grid-template-columns .2s ease;
 }
 
 .workspace.navigation-collapsed {
-  grid-template-columns: 0 0 minmax(0, 1fr);
+  grid-template-columns: 0 minmax(0, 1fr);
 }
 
 .workspace.navigation-collapsed .navigation-pane {
@@ -193,6 +194,17 @@ button {
   padding: 0 16px 15px;
 }
 
+.tool-button,
+.node-structure-actions button,
+.primary-button,
+.icon-button {
+  border: 1px solid #b9c7df;
+  border-radius: 5px;
+  color: var(--blue-deep);
+  background: white;
+  cursor: pointer;
+}
+
 .search-field input,
 .dictionary-search input {
   width: 100%;
@@ -202,6 +214,12 @@ button {
   outline: none;
   color: var(--ink);
   background: white;
+}
+
+.search-message {
+  margin: -8px 18px 12px;
+  color: var(--muted);
+  font-size: 9px;
 }
 
 .search-field input:focus,
@@ -293,6 +311,96 @@ button {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .1em;
+}
+
+.collection-node > summary,
+.document-node > summary {
+  list-style: none;
+}
+
+.collection-node > summary::-webkit-details-marker,
+.document-node > summary::-webkit-details-marker {
+  display: none;
+}
+
+.collection-node > .collection-heading {
+  cursor: pointer;
+}
+
+.collection-node > .collection-heading::before {
+  content: "›";
+  margin-right: 7px;
+  color: var(--blue-dark);
+  font-size: 15px;
+  transition: transform .15s ease;
+}
+
+.collection-node[open] > .collection-heading::before {
+  transform: rotate(90deg);
+}
+
+.collection-heading strong {
+  margin-right: auto;
+}
+
+.document-node {
+  border-top: 1px solid #e7ebf2;
+}
+
+.document-node > summary {
+  min-height: 45px;
+  padding: 9px 14px 9px 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--paper);
+}
+
+.document-node > summary::before {
+  content: "›";
+  flex: 0 0 auto;
+  color: #8795ab;
+  font-size: 15px;
+  transition: transform .15s ease;
+}
+
+.document-node[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.document-node > summary strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.document-node > summary small {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.document-node.active > summary {
+  color: var(--blue-deep);
+  background: var(--blue-pale);
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.document-node[open].active > summary {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 1px solid #d8e0ee;
+}
+
+.inline-passage-list {
+  background: #f8fafd;
+}
+
+.sidebar-loading {
+  padding: 14px 28px;
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .collection-heading small {
@@ -590,8 +698,10 @@ button {
 .raw-kanji {
   grid-area: kanji;
   margin-top: 1px !important;
+  padding: 2px 5px;
   color: var(--muted);
   font: 13px/1.5 "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+  letter-spacing: .12em;
 }
 
 .raw-text-lines.two-column .raw-text-line {
@@ -637,7 +747,8 @@ button {
 }
 
 .toggle,
-.spacing-control {
+.spacing-control,
+.select-control {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -667,6 +778,53 @@ button {
   min-width: 38px;
   color: var(--muted);
   font: 9px var(--font-mono);
+}
+
+#tab-tree {
+  position: relative;
+}
+
+#tab-tree:fullscreen {
+  padding: 0;
+  background: var(--surface);
+}
+
+#tab-tree:fullscreen .tree-container {
+  height: 100%;
+}
+
+.select-control select {
+  padding: 3px 21px 3px 6px;
+  border: 1px solid #cbd4e4;
+  border-radius: 5px;
+  color: var(--blue-deep);
+  background: white;
+  font-size: 10px;
+}
+
+.select-control select:disabled {
+  opacity: .5;
+}
+
+.toolbar-actions {
+  margin-left: auto;
+}
+
+.tool-button {
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tool-button:hover:not(:disabled),
+.node-structure-actions button:hover {
+  border-color: var(--blue);
+  background: var(--blue-pale);
+}
+
+.tool-button:disabled {
+  cursor: default;
+  opacity: .45;
 }
 
 .tree-container {
@@ -728,6 +886,18 @@ button {
   font: 700 11px var(--font-ui);
 }
 
+.node-edit {
+  fill: #8290a7;
+  cursor: pointer;
+  font: 12px var(--font-ui);
+}
+
+.node-edit:hover,
+.node-edit:focus {
+  fill: var(--blue-dark);
+  outline: none;
+}
+
 .form-label {
   fill: var(--blue-dark);
   font: 650 13px var(--font-ui);
@@ -762,6 +932,10 @@ button {
   fill: var(--blue-dark);
 }
 
+.interactive-form {
+  cursor: pointer;
+}
+
 .kanji-span-line {
   stroke: #d5dce8;
   stroke-width: 1;
@@ -769,7 +943,127 @@ button {
 
 .tree-kanji-label {
   fill: #59667d;
-  font: 13px "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+  font: 14px "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+  letter-spacing: .14em;
+}
+
+.node-editor {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 12;
+  width: min(310px, calc(100% - 24px));
+  max-height: calc(100% - 20px);
+  padding: 16px;
+  overflow-y: auto;
+  border: 1px solid #bdc9dc;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 12px 34px #253a6538;
+}
+
+.node-editor > header {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.node-editor h3 {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font: 700 19px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.icon-button {
+  width: 28px;
+  height: 28px;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.node-editor form,
+.editor-fields {
+  display: grid;
+  gap: 10px;
+}
+
+.node-editor label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.node-editor input {
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid #cbd4e4;
+  border-radius: 5px;
+  outline: none;
+  color: var(--ink);
+  background: white;
+}
+
+.node-editor input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px #6f8ec926;
+}
+
+.primary-button {
+  padding: 8px 10px;
+  color: white;
+  background: var(--blue-dark);
+  font-weight: 700;
+}
+
+.primary-button:hover {
+  border-color: var(--blue-deep);
+  background: var(--blue-deep);
+  filter: brightness(.94);
+}
+
+.node-kind-note,
+.draft-note {
+  margin: 10px 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.node-structure-actions {
+  margin-top: 15px;
+  padding-top: 12px;
+  display: grid;
+  gap: 7px;
+  border-top: 1px solid var(--line);
+}
+
+.node-structure-actions p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.node-structure-actions button {
+  padding: 7px 9px;
+  text-align: left;
+}
+
+.node-structure-actions .danger-button {
+  border-color: #dfbaba;
+  color: var(--danger);
+}
+
+.draft-note {
+  margin: 14px 0 0;
+  padding: 9px;
+  border-radius: 5px;
+  background: var(--blue-wash);
 }
 
 .empty-state,
@@ -962,7 +1256,7 @@ button {
 
 @media (max-width: 1100px) {
   .workspace {
-    grid-template-columns: 220px 270px minmax(0, 1fr);
+    grid-template-columns: 285px minmax(0, 1fr);
   }
 
   .header-status #data-summary {

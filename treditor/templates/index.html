@@ -14,7 +14,7 @@
     </div>
     <div class="header-status">
       <span id="data-summary">Loading current XML data…</span>
-      <button type="button" id="toggle-navigation" class="header-button" aria-expanded="true" aria-controls="pane-documents pane-passages">
+      <button type="button" id="toggle-navigation" class="header-button" aria-expanded="true" aria-controls="pane-documents">
         <span aria-hidden="true">«</span>
         <span class="navigation-toggle-label">Collapse navigation</span>
       </button>
@@ -30,22 +30,12 @@
         <p>Browse current text and uploaded-tree XML.</p>
       </div>
       <label class="search-field">
-        <span class="sr-only">Filter documents</span>
-        <input id="document-search" type="search" placeholder="Filter documents…" autocomplete="off">
+        <span class="sr-only">Filter documents or open a passage</span>
+        <input id="document-search" type="search" placeholder="Filter or open MYS.1.1…" autocomplete="off">
       </label>
+      <p id="search-message" class="search-message">Enter a passage ID to open it directly.</p>
       <div id="document-groups" class="document-groups">
         <div class="loading-card">Loading documents…</div>
-      </div>
-    </aside>
-
-    <aside id="pane-passages" class="navigation-pane passages-pane" aria-label="Passages">
-      <div class="pane-heading compact">
-        <p class="eyebrow">SELECTED DOCUMENT</p>
-        <h2 id="selected-document">Choose a document</h2>
-        <p id="passage-count">Passages will appear here.</p>
-      </div>
-      <div id="passage-list" class="passage-list">
-        <div class="empty-state small">Select a document to browse its passages.</div>
       </div>
     </aside>
 
@@ -86,7 +76,14 @@
         <div class="tree-toolbar" aria-label="Tree display settings">
           <div class="toolbar-group">
             <span class="toolbar-label">Annotations</span>
-            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma under leaf tags</label>
+            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma IDs</label>
+            <label class="select-control">
+              <span>Place below</span>
+              <select id="lemma-position">
+                <option value="tag" selected>tag</option>
+                <option value="form">word form</option>
+              </select>
+            </label>
             <label class="toggle"><input type="checkbox" id="tog-phon" checked> Script tags</label>
             <label class="toggle"><input type="checkbox" id="tog-tree-kanji"> Kanji under transcription</label>
           </div>
@@ -95,10 +92,25 @@
             <label class="toggle"><input type="checkbox" id="tog-null"> Null nodes</label>
             <label class="toggle"><input type="checkbox" id="tog-bottomup" checked> Align leaves</label>
             <label class="spacing-control">
-              <span>Spacing</span>
+              <span>Rows</span>
               <input type="range" id="slider-rowh" min="32" max="120" value="52" step="4">
               <output id="slider-rowh-val">52 px</output>
             </label>
+            <label class="spacing-control">
+              <span>Words</span>
+              <input type="range" id="slider-colw" min="28" max="240" value="68" step="4">
+              <output id="slider-colw-val">68 px</output>
+            </label>
+            <label class="spacing-control">
+              <span>Scale</span>
+              <input type="range" id="slider-scale" min="50" max="180" value="100" step="10">
+              <output id="slider-scale-val">100%</output>
+            </label>
+          </div>
+          <div class="toolbar-group toolbar-actions">
+            <button type="button" id="expand-all" class="tool-button" disabled>Expand all</button>
+            <button type="button" id="reset-tree-draft" class="tool-button hidden">Reset draft</button>
+            <button type="button" id="toggle-fullscreen" class="tool-button">Full screen</button>
           </div>
         </div>
 
@@ -109,6 +121,33 @@
             <p>Choose a document and passage to inspect its syntax tree.</p>
           </div>
         </div>
+
+        <aside id="node-editor" class="node-editor hidden" aria-labelledby="node-editor-title">
+          <header>
+            <div>
+              <p class="eyebrow">BROWSER-LOCAL DRAFT</p>
+              <h3 id="node-editor-title">Edit tree node</h3>
+            </div>
+            <button type="button" id="close-node-editor" class="icon-button" aria-label="Close node editor">×</button>
+          </header>
+          <form id="node-editor-form">
+            <label>Tag <input id="node-tag" required autocomplete="off"></label>
+            <label>Lemma ID <input id="node-lemma" autocomplete="off"></label>
+            <div id="leaf-fields" class="editor-fields">
+              <label>Word form <input id="node-form" autocomplete="off"></label>
+              <label>Script tag <input id="node-phon" autocomplete="off"></label>
+            </div>
+            <p id="node-kind-note" class="node-kind-note"></p>
+            <button type="submit" class="primary-button">Apply node content</button>
+          </form>
+          <div class="node-structure-actions">
+            <p>Structure</p>
+            <button type="button" id="add-child">Add child</button>
+            <button type="button" id="add-sibling">Add sibling after</button>
+            <button type="button" id="delete-node" class="danger-button">Delete node</button>
+          </div>
+          <p class="draft-note">Draft edits persist in this browser and do not change the corpus XML files.</p>
+        </aside>
       </section>
 
       <section class="tab-content hidden" id="tab-dict">

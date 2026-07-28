@@ -4,9 +4,13 @@ const $ = id => document.getElementById(id);
 let documentGroups = [];
 let activeDocument = null;
 let activePassage = null;
+let currentPassages = [];
 let currentTreeData = null;
+let selectedNodeId = null;
 let dictionaryTimer = null;
+let documentSearchTimer = null;
 const collapsedNodeIds = new Set();
+const passageCache = new Map();
 
 async function apiFetch(path) {
   const response = await fetch(path);
@@ -74,6 +78,15 @@ document.querySelectorAll("[data-text-layout]").forEach(button => {
   });
 });
 
+function findDocument(source, documentId) {
+  return documentGroups
+    .flatMap(group => group.documents)
+    .find(documentData =>
+      documentData.source === source
+      && documentData.document_id === documentId
+    );
+}
+
 function groupByCollection(documents) {
   const collections = new Map();
   documents.forEach(document => {
@@ -85,54 +98,106 @@ function groupByCollection(documents) {
   return collections;
 }
 
-function renderDocuments() {
-  const query = $("document-search").value.trim().toLocaleLowerCase();
+function normalizedSearch(value) {
+  return String(value || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function isExactPassageId(value) {
+  return /^[A-Za-z]+\.\d+(?:\.\d+)+$/.test(value.trim());
+}
+
+function matchingDocuments(query, pinnedDocumentId = null) {
+  const normalized = normalizedSearch(query);
+  return documentGroups.map(group => ({
+    ...group,
+    documents: group.documents.filter(documentData => {
+      if (documentData.id === pinnedDocumentId) return true;
+      if (!normalized) return true;
+      return [
+        documentData.label,
+        documentData.document_id,
+        documentData.collection,
+        documentData.filename,
+      ].some(value => normalizedSearch(value).includes(normalized));
+    }),
+  })).filter(group => group.documents.length);
+}
+
+function documentDetailsElement(documentId) {
+  return [...document.querySelectorAll(".document-node")].find(
+    item => item.dataset.documentId === documentId
+  );
+}
+
+function renderDocuments(pinnedDocumentId = null) {
+  const query = $("document-search").value.trim();
   const container = $("document-groups");
   container.innerHTML = "";
+  const groups = matchingDocuments(query, pinnedDocumentId);
+  const resultCount = groups.reduce(
+    (total, group) => total + group.documents.length,
+    0,
+  );
 
-  documentGroups.forEach((group, groupIndex) => {
-    const documents = group.documents.filter(document =>
-      !query || [
-        document.label,
-        document.document_id,
-        document.collection,
-        document.filename,
-      ].some(value => value.toLocaleLowerCase().includes(query))
-    );
-    if (!documents.length) return;
-
+  groups.forEach((group, groupIndex) => {
     const section = document.createElement("details");
     section.className = "document-source";
-    section.open = query !== "" || groupIndex === 0;
+    section.open = Boolean(query)
+      || activeDocument?.source === group.id
+      || groupIndex === 0;
 
     const summary = document.createElement("summary");
     const summaryText = document.createElement("span");
     summaryText.innerHTML = `<strong>${group.label}</strong><small>${group.description}</small>`;
     const count = document.createElement("span");
     count.className = "count-badge";
-    count.textContent = documents.length;
+    count.textContent = group.documents.length;
     summary.append(summaryText, count);
     section.appendChild(summary);
 
     const collectionContainer = document.createElement("div");
     collectionContainer.className = "collection-list";
-    groupByCollection(documents).forEach((items, collection) => {
-      const collectionBlock = document.createElement("section");
-      collectionBlock.className = "collection-block";
-      const heading = document.createElement("div");
+    groupByCollection(group.documents).forEach((items, collection) => {
+      const collectionBlock = document.createElement("details");
+      collectionBlock.className = "collection-node";
+      collectionBlock.open = Boolean(query)
+        || (
+          activeDocument?.source === group.id
+          && activeDocument.collection === collection
+        );
+      const heading = document.createElement("summary");
       heading.className = "collection-heading";
-      heading.innerHTML = `<span>${collection}</span><small>${items.length}</small>`;
+      heading.innerHTML = `<strong>${collection}</strong><small>${items.length}</small>`;
       collectionBlock.appendChild(heading);
 
+      const documents = document.createElement("div");
+      documents.className = "document-node-list";
+
       items.forEach(documentData => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "document-item";
-        button.classList.toggle("active", activeDocument?.id === documentData.id);
-        button.innerHTML = `<span>${documentData.label}</span><small>${documentData.utterance_count.toLocaleString()} passages</small>`;
-        button.addEventListener("click", () => selectDocument(documentData));
-        collectionBlock.appendChild(button);
+        const documentNode = document.createElement("details");
+        documentNode.className = "document-node";
+        documentNode.dataset.documentId = documentData.id;
+        documentNode.classList.toggle(
+          "active", activeDocument?.id === documentData.id
+        );
+        documentNode.open = activeDocument?.id === documentData.id;
+
+        const documentSummary = document.createElement("summary");
+        documentSummary.innerHTML =
+          `<strong>${documentData.label}</strong><small>${documentData.utterance_count.toLocaleString()} passages</small>`;
+        const passageContainer = document.createElement("div");
+        passageContainer.className = "inline-passage-list";
+        passageContainer.innerHTML =
+          '<div class="sidebar-loading">Expand to load passages…</div>';
+        documentNode.append(documentSummary, passageContainer);
+        documentNode.addEventListener("toggle", () => {
+          if (documentNode.open) {
+            selectDocument(documentData, null, passageContainer);
+          }
+        });
+        documents.appendChild(documentNode);
       });
+      collectionBlock.appendChild(documents);
       collectionContainer.appendChild(collectionBlock);
     });
     section.appendChild(collectionContainer);
@@ -141,6 +206,21 @@ function renderDocuments() {
 
   if (!container.children.length) {
     container.innerHTML = '<div class="empty-state small">No documents match this filter.</div>';
+  }
+  if (!query) {
+    $("search-message").textContent =
+      "Enter a passage ID to open it directly.";
+  } else if (isExactPassageId(query)) {
+    $("search-message").textContent = "Opening exact passage…";
+  } else {
+    $("search-message").textContent =
+      `${resultCount} matching document${resultCount === 1 ? "" : "s"}. Expand a document to choose a passage.`;
+  }
+
+  if (query && resultCount === 1 && !isExactPassageId(query)) {
+    const onlyDocument = groups[0].documents[0];
+    const node = documentDetailsElement(onlyDocument.id);
+    if (node) node.open = true;
   }
 }
 
@@ -164,45 +244,118 @@ async function loadDocuments() {
   }
 }
 
-$("document-search").addEventListener("input", renderDocuments);
-
-async function selectDocument(documentData) {
-  if (activeDocument?.id === documentData.id) return;
+async function openExactPassage(query) {
   clearError();
-  activeDocument = documentData;
-  activePassage = null;
-  currentTreeData = null;
-  collapsedNodeIds.clear();
-  renderDocuments();
-  $("selected-document").textContent = documentData.label;
-  $("passage-count").textContent = "Loading passages…";
-  $("detail-breadcrumb").textContent =
-    `${documentData.source === "text" ? "TEXTS UNDER EDITING" : "UPLOADED TREES"} · ${documentData.collection}`;
-  $("detail-title").textContent = "Select a passage";
-  $("tree-stats").classList.add("hidden");
-  $("text-panel").classList.add("hidden");
-  $("tree-container").innerHTML = `
-    <div class="empty-state">
-      <span class="empty-icon" aria-hidden="true">⌘</span>
-      <strong>No passage selected</strong>
-      <p>Choose a passage from ${documentData.label} to inspect its syntax tree.</p>
-    </div>`;
+  const match = await apiFetch(`/api/poems?q=${encodeURIComponent(query)}`);
+  const documentData = findDocument(match.source, match.document_id);
+  if (!documentData) throw new Error("The passage's document is unavailable.");
+  $("document-search").value = match.sentence_id;
+  renderDocuments(documentData.id);
+  const documentNode = documentDetailsElement(documentData.id);
+  if (!documentNode) throw new Error("The passage's document is unavailable.");
+  documentNode.closest(".document-source").open = true;
+  documentNode.closest(".collection-node").open = true;
+  documentNode.open = true;
+  await selectDocument(
+    documentData,
+    match.sentence_id,
+    documentNode.querySelector(".inline-passage-list"),
+  );
+  documentNode.scrollIntoView({block: "nearest"});
+  $("search-message").textContent = `Opened ${match.sentence_id}.`;
+}
 
-  try {
-    const passages = await apiFetch(
-      `/api/documents/${encodeURIComponent(documentData.source)}/${encodeURIComponent(documentData.document_id)}`
+$("document-search").addEventListener("input", event => {
+  clearTimeout(documentSearchTimer);
+  const query = event.target.value.trim();
+  renderDocuments();
+  if (isExactPassageId(query)) {
+    documentSearchTimer = setTimeout(() => {
+      openExactPassage(query).catch(error => {
+        $("search-message").textContent = error.message;
+      });
+    }, 120);
+  }
+});
+
+$("document-search").addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+  const query = event.currentTarget.value.trim();
+  if (!isExactPassageId(query)) return;
+  event.preventDefault();
+  clearTimeout(documentSearchTimer);
+  openExactPassage(query).catch(error => {
+    $("search-message").textContent = error.message;
+  });
+});
+
+async function loadPassages(documentData) {
+  if (!passageCache.has(documentData.id)) {
+    passageCache.set(
+      documentData.id,
+      apiFetch(
+        `/api/documents/${encodeURIComponent(documentData.source)}/${encodeURIComponent(documentData.document_id)}`
+      ),
     );
-    renderPassages(passages);
+  }
+  return passageCache.get(documentData.id);
+}
+
+async function selectDocument(
+  documentData,
+  targetSentenceId = null,
+  passageContainer = null,
+) {
+  clearError();
+  const changedDocument = activeDocument?.id !== documentData.id;
+  activeDocument = documentData;
+  document.querySelectorAll(".document-node").forEach(node => {
+    node.classList.toggle("active", node.dataset.documentId === documentData.id);
+  });
+  if (changedDocument && !targetSentenceId) {
+    activePassage = null;
+    currentTreeData = null;
+    collapsedNodeIds.clear();
+    closeNodeEditor();
+    $("detail-breadcrumb").textContent =
+      `${documentData.source === "text" ? "TEXTS UNDER EDITING" : "UPLOADED TREES"} · ${documentData.collection}`;
+    $("detail-title").textContent = "Select a passage";
+    $("tree-stats").classList.add("hidden");
+    $("text-panel").classList.add("hidden");
+    $("tree-container").innerHTML = `
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">⌘</span>
+        <strong>No passage selected</strong>
+        <p>Choose a passage under ${documentData.label} to inspect its syntax tree.</p>
+      </div>`;
+  }
+  const documentNode =
+    documentDetailsElement(documentData.id);
+  const container = passageContainer
+    || documentNode?.querySelector(".inline-passage-list");
+  if (container) {
+    container.innerHTML = '<div class="sidebar-loading">Loading passages…</div>';
+  }
+  try {
+    currentPassages = await loadPassages(documentData);
+    if (container) renderPassages(documentData, currentPassages, container);
+    if (targetSentenceId) {
+      const target = currentPassages.find(
+        passage => passage.sentence_id === targetSentenceId
+      );
+      if (!target) throw new Error(`Poem '${targetSentenceId}' was not found.`);
+      await selectPassage(target);
+    }
   } catch (error) {
     showError(error);
-    $("passage-count").textContent = "Unable to load passages.";
+    if (container) {
+      container.innerHTML =
+        '<div class="sidebar-loading">Unable to load passages.</div>';
+    }
   }
 }
 
-function renderPassages(passages) {
-  $("passage-count").textContent =
-    `${passages.length.toLocaleString()} passage${passages.length === 1 ? "" : "s"}`;
-  const container = $("passage-list");
+function renderPassages(documentData, passages, container) {
   container.innerHTML = "";
   passages.forEach((passage, index) => {
     const button = document.createElement("button");
@@ -226,9 +379,70 @@ function renderPassages(passages) {
       `${passage.token_count} tokens · ${passage.raw_sentence_count} text segment${passage.raw_sentence_count === 1 ? "" : "s"}`;
     text.append(title, header, meta);
     button.append(position, text);
-    button.addEventListener("click", () => selectPassage(passage, button));
+    button.addEventListener("click", () => {
+      activeDocument = documentData;
+      selectPassage(passage);
+    });
     container.appendChild(button);
   });
+}
+
+function draftStorageKey() {
+  if (!activeDocument || !activePassage) return "";
+  return [
+    "coj-tree-draft",
+    activeDocument.source,
+    activeDocument.document_id,
+    activePassage.sentence_id,
+  ].join(":");
+}
+
+function editableNodeCopy(node) {
+  const copy = {tag: String(node.tag || "NEW")};
+  if (node.lemma) copy.lemma = String(node.lemma);
+  if (node.children?.length) {
+    copy.children = node.children.map(editableNodeCopy);
+  } else {
+    copy.form = String(node.form || "");
+    copy.phon = String(node.phon || "");
+  }
+  return copy;
+}
+
+function restoreTreeDraft(data) {
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem(draftStorageKey()) || "null");
+  } catch {
+    saved = null;
+  }
+  if (Array.isArray(saved)) {
+    data.roots = saved.map(editableNodeCopy);
+    $("reset-tree-draft").classList.remove("hidden");
+  } else {
+    $("reset-tree-draft").classList.add("hidden");
+  }
+}
+
+function saveTreeDraft() {
+  if (!currentTreeData) return;
+  localStorage.setItem(
+    draftStorageKey(),
+    JSON.stringify(currentTreeData.roots.map(editableNodeCopy)),
+  );
+  $("reset-tree-draft").classList.remove("hidden");
+}
+
+function calculateTreeStats(roots) {
+  let nodes = 0;
+  let leaves = 0;
+  const visit = node => {
+    nodes += 1;
+    if (node.children?.length) node.children.forEach(visit);
+    else leaves += 1;
+  };
+  roots.forEach(visit);
+  return {nodes, leaves};
 }
 
 async function selectPassage(passage) {
@@ -252,7 +466,10 @@ async function selectPassage(passage) {
       `/api/utterances/${encodeURIComponent(activeDocument.source)}/${encodeURIComponent(activeDocument.document_id)}/${encodeURIComponent(passage.sentence_id)}/tree`
     );
     collapsedNodeIds.clear();
+    closeNodeEditor();
+    restoreTreeDraft(data);
     prepareTreeData(data);
+    data.stats = calculateTreeStats(data.roots);
     currentTreeData = data;
     $("node-count").textContent = data.stats.nodes.toLocaleString();
     $("leaf-count").textContent = data.stats.leaves.toLocaleString();
@@ -311,6 +528,14 @@ function rowHeight() {
   return Number($("slider-rowh").value);
 }
 
+function columnSpacing() {
+  return Number($("slider-colw").value);
+}
+
+function treeScale() {
+  return Number($("slider-scale").value) / 100;
+}
+
 function prepareTreeData(data) {
   const leaves = [];
   const assignIds = (node, path) => {
@@ -343,26 +568,58 @@ function treeOptions() {
     treeKanji: $("tog-tree-kanji").checked,
     nullNodes: $("tog-null").checked,
     bottomUp: $("tog-bottomup").checked,
+    lemmaPosition: $("lemma-position").value,
   };
 }
 
-$("slider-rowh").addEventListener("input", event => {
-  $("slider-rowh-val").textContent = `${event.target.value} px`;
-  if (currentTreeData) renderSvgTree(currentTreeData);
+[
+  ["slider-rowh", "slider-rowh-val", value => `${value} px`],
+  ["slider-colw", "slider-colw-val", value => `${value} px`],
+  ["slider-scale", "slider-scale-val", value => `${value}%`],
+].forEach(([sliderId, outputId, format]) => {
+  $(sliderId).addEventListener("input", event => {
+    $(outputId).textContent = format(event.target.value);
+    if (currentTreeData) renderSvgTree(currentTreeData);
+  });
 });
 
-["tog-lemma", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
+["tog-lemma", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
   .forEach(id => {
     $(id).addEventListener("change", () => {
+      $("lemma-position").disabled = !$("tog-lemma").checked;
       if (currentTreeData) renderSvgTree(currentTreeData);
     });
   });
 
+$("expand-all").addEventListener("click", () => {
+  collapsedNodeIds.clear();
+  if (currentTreeData) renderSvgTree(currentTreeData);
+});
+
+function updateFullscreenButton() {
+  $("toggle-fullscreen").textContent =
+    document.fullscreenElement === $("tab-tree")
+      ? "Exit full screen"
+      : "Full screen";
+}
+
+$("toggle-fullscreen").addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await $("tab-tree").requestFullscreen();
+    }
+  } catch (error) {
+    showError(new Error(`Full-screen mode is unavailable: ${error.message}`));
+  }
+});
+document.addEventListener("fullscreenchange", updateFullscreenButton);
+
 const SVG_NS = "http://www.w3.org/2000/svg";
 const HORIZONTAL_PADDING = 38;
-const ANNOTATION_HEIGHT = 92;
+const ANNOTATION_HEIGHT = 112;
 const CHARACTER_WIDTH = 7.4;
-const MINIMUM_COLUMN = 68;
 
 function svgElement(tag, attributes = {}, text = null) {
   const element = document.createElementNS(SVG_NS, tag);
@@ -391,7 +648,11 @@ function buildDisplayNode(node, options) {
   if (collapsedNodeIds.has(node._nodeId)) {
     const collapsedTokens = leaves
       .filter(leaf => leaf.form)
-      .map(leaf => ({text: leaf.form, phon: leaf.phon || ""}));
+      .map(leaf => ({
+        text: leaf.form,
+        phon: leaf.phon || "",
+        lemma: leaf.lemma || "",
+      }));
     return {
       ...node,
       children: undefined,
@@ -424,20 +685,20 @@ function buildDisplayNode(node, options) {
 function labelWidth(node, options) {
   let width = node.tag.length * CHARACTER_WIDTH;
   if (!node.children) {
-    if (node.form) width = Math.max(width, node.form.length * CHARACTER_WIDTH);
+    if (node.form) {
+      width = Math.max(width, node.form.length * CHARACTER_WIDTH);
+    }
     if (options.phon && node.phon) {
       width = Math.max(width, node.phon.length * CHARACTER_WIDTH);
     }
     if (options.lemma && node.lemma) {
       width = Math.max(width, node.lemma.length * CHARACTER_WIDTH);
     }
+    if (options.treeKanji && node._kanjiWidth) {
+      width = Math.max(width, node._kanjiWidth);
+    }
   }
   return width + 20;
-}
-
-function widestLeafLabel(node, options) {
-  if (!node.children) return labelWidth(node, options);
-  return Math.max(...node.children.map(child => widestLeafLabel(child, options)));
 }
 
 function leafPositions(node) {
@@ -445,12 +706,17 @@ function leafPositions(node) {
   return node.children.flatMap(leafPositions);
 }
 
-function assignHorizontalPosition(node, counter) {
+function assignHorizontalPosition(node, counter, options) {
   if (!node.children) {
-    node._x = counter.value++;
+    const extraSpacing = Math.max(0, columnSpacing() - 28);
+    node._slotWidth = labelWidth(node, options) + extraSpacing;
+    node._x = counter.value + node._slotWidth / 2;
+    counter.value += node._slotWidth;
     return;
   }
-  node.children.forEach(child => assignHorizontalPosition(child, counter));
+  node.children.forEach(child =>
+    assignHorizontalPosition(child, counter, options)
+  );
   const positions = leafPositions(node);
   node._x = positions.reduce((total, value) => total + value, 0) / positions.length;
 }
@@ -474,8 +740,8 @@ function alignRowsFromBottom(node, totalHeight) {
   node.children?.forEach(child => alignRowsFromBottom(child, totalHeight));
 }
 
-function xPosition(value, columnWidth) {
-  return HORIZONTAL_PADDING + (value + 0.5) * columnWidth;
+function xPosition(value) {
+  return HORIZONTAL_PADDING + value;
 }
 
 function yPosition(row, topPadding) {
@@ -486,7 +752,12 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
   const centerX = xPosition(node._x, columnWidth);
   const centerY = yPosition(node._row, topPadding);
   const hasLemma = options.lemma && Boolean(node.lemma);
-  const edgeOffset = hasLemma ? 22 : 9;
+  const lemmaUnderForm = hasLemma
+    && options.lemmaPosition === "form"
+    && !node.children
+    && !node._collapsed;
+  const lemmaUnderTag = hasLemma && !lemmaUnderForm;
+  const edgeOffset = lemmaUnderTag ? 22 : 9;
 
   if (node.tag) {
     svg.appendChild(svgElement("text", {
@@ -502,6 +773,18 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
       "text-anchor": "middle",
     }, node.tag));
   }
+  if (node._nodeId !== undefined) {
+    svg.appendChild(svgElement("text", {
+      x: centerX - Math.max(18, node.tag.length * 3.5 + 10),
+      y: centerY + 5,
+      class: "node-edit",
+      "data-edit-node-id": node._nodeId,
+      role: "button",
+      tabindex: "0",
+      "aria-label": `Edit ${node.tag || "node"}`,
+      "text-anchor": "middle",
+    }, "✎"));
+  }
   if (node._toggleable) {
     svg.appendChild(svgElement("text", {
       x: centerX + Math.max(18, node.tag.length * 3.5 + 8),
@@ -513,7 +796,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
       "text-anchor": "middle",
     }, node._collapsed ? "+" : "−"));
   }
-  if (hasLemma) {
+  if (lemmaUnderTag) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: centerY + 19,
@@ -561,7 +844,12 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     });
     node._collapsedTokens.forEach(token => {
       combined.appendChild(svgElement("tspan", {
-        class: scriptStyleClass(token.phon, true),
+        class: `${scriptStyleClass(token.phon, true)}${token.lemma ? " interactive-form" : ""}`,
+        ...(token.lemma ? {
+          "data-lemma": token.lemma,
+          role: "link",
+          tabindex: "0",
+        } : {}),
       }, token.text));
     });
     svg.appendChild(combined);
@@ -569,11 +857,26 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
-      class: `form-label ${scriptStyleClass(node.phon, true)}`,
+      class: `form-label ${scriptStyleClass(node.phon, true)}${node.lemma ? " interactive-form" : ""}`,
+      ...(node.lemma ? {
+        "data-lemma": node.lemma,
+        role: "link",
+        tabindex: "0",
+      } : {}),
       "text-anchor": "middle",
     }, node.form));
   }
   offset += 17;
+  if (lemmaUnderForm) {
+    svg.appendChild(svgElement("text", {
+      x: centerX,
+      y: offset,
+      class: "lemma-label interactive-lemma",
+      "data-lemma": node.lemma,
+      "text-anchor": "middle",
+    }, node.lemma));
+    offset += 17;
+  }
   if (options.phon && node.phon) {
     svg.appendChild(svgElement("text", {
       x: centerX,
@@ -589,9 +892,27 @@ function visibleLeafUnits(node) {
   return node.children.flatMap(visibleLeafUnits);
 }
 
+function assignCollapsedKanjiWidths(data, tree) {
+  const kanjiByNumber = new Map(
+    data.raw_text
+      .filter(sentence => sentence.kanji)
+      .map(sentence => [sentence.number, sentence.kanji]),
+  );
+  visibleLeafUnits(tree).forEach(unit => {
+    delete unit._kanjiWidth;
+    if (!unit._collapsed) return;
+    const numbers = unit._sentenceNumbers || [unit._sentenceNumber];
+    const text = numbers
+      .map(number => kanjiByNumber.get(number))
+      .filter(Boolean)
+      .join("　");
+    if (text) unit._kanjiWidth = Array.from(text).length * 16 + 24;
+  });
+}
+
 function renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding) {
   const units = visibleLeafUnits(tree);
-  const baseY = yPosition(maxRow, topPadding) + 76;
+  const baseY = yPosition(maxRow, topPadding) + 86;
   const groups = new Map();
   data.raw_text.forEach(sentence => {
     if (!sentence.kanji) return;
@@ -600,35 +921,42 @@ function renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding) {
       return numbers.includes(sentence.number);
     });
     if (!matches.length) return;
-    const left = xPosition(matches[0]._x, columnWidth);
-    const right = xPosition(matches[matches.length - 1]._x, columnWidth);
+    const first = matches[0];
+    const last = matches[matches.length - 1];
+    const left = xPosition(
+      first._x - (first._slotWidth || columnSpacing()) / 2 + 10
+    );
+    const right = xPosition(
+      last._x + (last._slotWidth || columnSpacing()) / 2 - 10
+    );
     const key = `${left}:${right}`;
     if (!groups.has(key)) groups.set(key, {left, right, kanji: []});
     groups.get(key).kanji.push(sentence.kanji);
   });
   groups.forEach(group => {
     const {left, right} = group;
-    if (right > left) {
-      svg.appendChild(svgElement("line", {
-        x1: left,
-        y1: baseY - 12,
-        x2: right,
-        y2: baseY - 12,
-        class: "kanji-span-line",
-      }));
-    }
+    const text = group.kanji.join("　");
+    const center = (left + right) / 2;
+    svg.appendChild(svgElement("line", {
+      x1: left,
+      y1: baseY - 19,
+      x2: right,
+      y2: baseY - 19,
+      class: "kanji-span-line",
+    }));
     svg.appendChild(svgElement("text", {
-      x: (left + right) / 2,
+      x: center,
       y: baseY,
       class: "tree-kanji-label",
       "text-anchor": "middle",
-    }, group.kanji.join("　")));
+    }, text));
   });
 }
 
 function renderSvgTree(data) {
   const container = $("tree-container");
   container.innerHTML = "";
+  $("expand-all").disabled = collapsedNodeIds.size === 0;
   const options = treeOptions();
   const roots = data.roots
     .map(root => buildDisplayNode(root, options))
@@ -647,11 +975,10 @@ function renderSvgTree(data) {
           ...new Set(roots.flatMap(root => root._sentenceNumbers || [])),
         ],
       };
-  const columnWidth = Math.max(
-    MINIMUM_COLUMN, widestLeafLabel(tree, options)
-  );
+  assignCollapsedKanjiWidths(data, tree);
+  const columnWidth = columnSpacing();
   const counter = {value: 0};
-  assignHorizontalPosition(tree, counter);
+  assignHorizontalPosition(tree, counter, options);
 
   let maxRow;
   if (options.bottomUp) {
@@ -668,12 +995,13 @@ function renderSvgTree(data) {
   }
 
   const topPadding = 38;
-  const width = counter.value * columnWidth + HORIZONTAL_PADDING * 2;
+  const width = counter.value + HORIZONTAL_PADDING * 2;
   const height = topPadding + maxRow * rowHeight() + ANNOTATION_HEIGHT
-    + (options.treeKanji ? 28 : 0);
+    + (options.treeKanji ? 48 : 0);
+  const scale = treeScale();
   const svg = svgElement("svg", {
-    width,
-    height,
+    width: width * scale,
+    height: height * scale,
     viewBox: `0 0 ${width} ${height}`,
     class: "tree-svg",
     role: "img",
@@ -697,7 +1025,123 @@ function toggleTreeNode(nodeId) {
   renderSvgTree(currentTreeData);
 }
 
+function findNodeLocation(nodeId, nodes = currentTreeData?.roots || []) {
+  for (let index = 0; index < nodes.length; index += 1) {
+    const node = nodes[index];
+    if (node._nodeId === nodeId) return {node, nodes, index};
+    const nested = findNodeLocation(nodeId, node.children || []);
+    if (nested) return nested;
+  }
+  return null;
+}
+
+function closeNodeEditor() {
+  selectedNodeId = null;
+  $("node-editor").classList.add("hidden");
+}
+
+function openNodeEditor(nodeId) {
+  const location = findNodeLocation(nodeId);
+  if (!location) return;
+  selectedNodeId = nodeId;
+  const {node} = location;
+  const isLeaf = !node.children?.length;
+  $("node-tag").value = node.tag || "";
+  $("node-form").value = isLeaf ? node.form || "" : "";
+  $("node-phon").value = isLeaf ? node.phon || "" : "";
+  $("node-lemma").value = node.lemma || "";
+  $("leaf-fields").classList.toggle("hidden", !isLeaf);
+  $("node-kind-note").textContent = isLeaf
+    ? "This is a leaf node; its word, script tag, and lemma can be edited."
+    : `This branch has ${node.children.length} child node${node.children.length === 1 ? "" : "s"}.`;
+  $("node-editor").classList.remove("hidden");
+  $("node-tag").focus();
+}
+
+function refreshEditedTree() {
+  collapsedNodeIds.clear();
+  prepareTreeData(currentTreeData);
+  currentTreeData.stats = calculateTreeStats(currentTreeData.roots);
+  $("node-count").textContent = currentTreeData.stats.nodes.toLocaleString();
+  $("leaf-count").textContent = currentTreeData.stats.leaves.toLocaleString();
+  saveTreeDraft();
+  renderSvgTree(currentTreeData);
+}
+
+$("close-node-editor").addEventListener("click", closeNodeEditor);
+
+$("node-editor-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const location = findNodeLocation(selectedNodeId);
+  if (!location) return;
+  const {node} = location;
+  node.tag = $("node-tag").value.trim() || "NEW";
+  const lemma = $("node-lemma").value.trim();
+  if (lemma) node.lemma = lemma;
+  else delete node.lemma;
+  if (!node.children?.length) {
+    node.form = $("node-form").value;
+    node.phon = $("node-phon").value.trim();
+  }
+  refreshEditedTree();
+  openNodeEditor(node._nodeId);
+});
+
+$("add-child").addEventListener("click", () => {
+  const location = findNodeLocation(selectedNodeId);
+  if (!location) return;
+  const {node} = location;
+  if (node.children?.length) {
+    node.children.push({tag: "NEW", form: "", phon: ""});
+  } else {
+    const child = {
+      tag: node.tag || "NEW",
+      form: node.form || "",
+      phon: node.phon || "",
+    };
+    if (node.lemma) child.lemma = node.lemma;
+    node.children = [child];
+    delete node.form;
+    delete node.phon;
+    delete node.lemma;
+  }
+  refreshEditedTree();
+  openNodeEditor(node._nodeId);
+});
+
+$("add-sibling").addEventListener("click", () => {
+  const location = findNodeLocation(selectedNodeId);
+  if (!location) return;
+  location.nodes.splice(
+    location.index + 1,
+    0,
+    {tag: "NEW", form: "", phon: ""},
+  );
+  refreshEditedTree();
+  openNodeEditor(selectedNodeId);
+});
+
+$("delete-node").addEventListener("click", () => {
+  const location = findNodeLocation(selectedNodeId);
+  if (!location) return;
+  location.nodes.splice(location.index, 1);
+  closeNodeEditor();
+  refreshEditedTree();
+});
+
+$("reset-tree-draft").addEventListener("click", async () => {
+  localStorage.removeItem(draftStorageKey());
+  $("reset-tree-draft").classList.add("hidden");
+  closeNodeEditor();
+  if (activePassage) await selectPassage(activePassage);
+});
+
 $("tree-container").addEventListener("click", event => {
+  const editNodeId = event.target.closest("[data-edit-node-id]")?.dataset.editNodeId;
+  if (editNodeId !== undefined) {
+    openNodeEditor(editNodeId);
+    return;
+  }
   const lemma = event.target.closest("[data-lemma]")?.dataset.lemma;
   if (lemma) {
     setTab("dict");
@@ -710,6 +1154,18 @@ $("tree-container").addEventListener("click", event => {
 
 $("tree-container").addEventListener("keydown", event => {
   if (!["Enter", " "].includes(event.key)) return;
+  const editNodeId = event.target.closest("[data-edit-node-id]")?.dataset.editNodeId;
+  if (editNodeId !== undefined) {
+    event.preventDefault();
+    openNodeEditor(editNodeId);
+    return;
+  }
+  const lemma = event.target.closest("[data-lemma]")?.dataset.lemma;
+  if (lemma) {
+    event.preventDefault();
+    showDictionaryEntry(lemma);
+    return;
+  }
   const nodeId = event.target.closest("[data-node-id]")?.dataset.nodeId;
   if (!nodeId) return;
   event.preventDefault();
