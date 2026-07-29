@@ -34,8 +34,9 @@
 .selection-warning { margin: 0 !important; color: #9a4c00 !important; font-weight: 700; }
 .review-issues { flex-basis: 100%; padding-top: 7px; border-top: 1px solid #e4c78f; color: #8b4a00; font-size: 12px; }
 .review-issues p { margin: 2px 0; }
-.dictionary-review-select { margin-left: auto; }
-.dictionary-card-actions { display: flex; gap: 5px; }
+.dictionary-review-select { flex: 0 0 auto; display: inline-flex; align-items: center; cursor: pointer; }
+.dictionary-review-select input { width: 17px; height: 17px; margin: 0; accent-color: var(--green); cursor: pointer; }
+.dictionary-card-actions { display: flex; gap: 5px; margin-left: auto; }
 .danger-link { color: #a33b2b !important; }
 .new-entry-editor { margin-top: 18px; padding: 16px; border: 1px solid #bfcac1; border-radius: 7px; background: white; }
 .new-entry-heading { display: flex; align-items: center; justify-content: space-between; }

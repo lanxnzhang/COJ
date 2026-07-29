@@ -1,6 +1,6 @@
 # TODO
 
-## Build comprehensive editor
+## Build comprehensive editor (PAUSED)
 IMPORTANT NOTE: The development for the comprehensive editor is currently PAUSED. Ignore this part and stop revising this folder unless this note is removed.
 
 The user need a more comprehensive editor tool to facilitate the edit of data. Different functions need to be modularized to allow for the expansion of new features in the future. Create a GUI which allows the user to create, delete, read, update. Create a new folder named compreditor to store all these data and changes. Do not change data in other part of the repository. 
@@ -237,16 +237,22 @@ Consider split this filter with the functions 'Create final output' and 'Add new
 6. Dictionary search
   UI design: The title of the dictionary interface should not be named as 'COJ DICTIONARY Dictionary reader'. Just use 'Dictionary' as the title.
 
-### After commit d0d908c
-Copy the folder editor and rename the copied folder as texteditor. Make changes within this copied folder; do not affect the original "editor" folder.
+### After commit feaf983
+1. Under 'Dictionary entries':
+  There is a checkbox named 'Include in final output' in each entry. Delete the words 'Include in final output' and move the checkbox to the top left of each dict entry, to make the user interface cleaner and more visually appealing.
+2. In Processing scope, when choose EN.1.1 under EN 01, nothing happened. Refine it - allow user to select individual passages for processing, such as selecting EN.1.1, EN.1.3, and SM.1.1. Display the total number of documents and passages selected by the user.
+3. In Processing scope, when user clicks on a specific document—such as "EN 01"—it (and its upper categories, such as EN and Texts under editing, to show the hierarchy) should remain temporarily pinned at the top of the view without jumping elsewhere. It should stay pinned until the user collapses "EN 01," swipes up at the "EN 01" position, or continues to scroll down after reaching the final passage of "EN 01."
+
+#### Revise Further
+1. You misunderstand my requirement. Do not add Texts underediting EN in the title of EN 01 (and others). Delete them. What I mean is pin EN 01, EN, and Texts under editing on the top when user scrolls the passages under EN 01. Refer to the design of vs code's outline. 
+2. 'Console output' is not needed. Delete it.
 
 
 ### TBD (editing...)
-(TBD?)Bug: choose EN.1.1 under EN 01, nothing happened. 0 scope items selected
+(TBD?)
 Combine editor and scripteditor as a whole
 
-1. Under 'Dictionary entries':
-  There is a checkbox named 'Include in final output' in each entry. Delete the words 'Include in final output' and move the checkbox to the top left of each dict entry, to make the user interface cleaner and more visually appealing.
+1. I choose EN1.1, EN.1.3, EN.1.4 and click run processor. Nothing happened. It still only allows the user to choose a whole document otherwise it won't run. Fix it.
 2. Compound lemma:
   Rename it as compound.
   revise the logic
@@ -287,6 +293,11 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 5. There is an issue with the current function for adjusting word spacing. First, the adjustment range is too limited. Second, collapsing the syntactic tree causes problems where very long sentences or words are not fully displayed, overlap with adjacent words, or have their corresponding kanji characters cut off or overlapping—issues that did not exist in the previous version. Please attempt to fix this; if a fix is ​​not possible, revert to the previous version and remove this feature.
 6. The current way kanji characters are displayed is terrible. Revert to the display style used in the previous version. Simply add a bit more spacing between the characters and the horizontal line above them, and do not add any unnecessary boxes or background fills around the characters.
 7. For the feature where clicking a word navigates to its corresponding dictionary entry, do not apply any formatting changes to the word—such as adding a dotted line underneath. This will conflict with formatting changes caused by other annotations, thereby leading to misunderstandings. Remove it.
+
+### TBD
+1. 句法树折叠优化（被折叠的显示+，没被折叠的不显示符号，只有鼠标悬停时才显示-）
+
+
 
 
 

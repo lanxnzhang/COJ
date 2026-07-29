@@ -69,6 +69,48 @@ def test_partial_scope_writes_only_selected_passage(tmp_path):
     assert [block.get("id") for block in blocks] == ["EN.1.2"]
 
 
+def test_partial_scope_combines_passages_from_multiple_documents(tmp_path):
+    xml_root = tmp_path / "xml"
+    text_dir = xml_root / "text"
+    (xml_root / "trees").mkdir(parents=True)
+    text_dir.mkdir()
+    CorpusDocument.from_text(
+        '=N(" kamu ")\nIP-MAT,N,LOG,kamu\nID,1_EN_01\n\n'
+        '=N(" nusi ")\nIP-MAT,N,LOG,nusi\nID,3_EN_01\n',
+        filename="EN_01.txt",
+    ).to_file(str(text_dir / "EN_01.xml"))
+    CorpusDocument.from_text(
+        '=N(" mori ")\nIP-MAT,N,LOG,mori\nID,1_SM_01\n',
+        filename="SM_01.txt",
+    ).to_file(str(text_dir / "SM_01.xml"))
+    destination = tmp_path / "selected"
+    destination.mkdir()
+
+    selected = editor_app._prepare_selected_documents(
+        xml_root,
+        destination,
+        [
+            "text/EN_01.xml#EN.1.1",
+            "text/EN_01.xml#EN.1.3",
+            "text/SM_01.xml#SM.1.1",
+        ],
+    )
+
+    assert selected == [
+        "text/EN_01.xml#EN.1.1",
+        "text/EN_01.xml#EN.1.3",
+        "text/SM_01.xml#SM.1.1",
+    ]
+    assert [
+        block.get("id")
+        for block in ET.parse(destination / "EN_01.xml").getroot().findall("block")
+    ] == ["EN.1.1", "EN.1.3"]
+    assert [
+        block.get("id")
+        for block in ET.parse(destination / "SM_01.xml").getroot().findall("block")
+    ] == ["SM.1.1"]
+
+
 def test_unconfirmed_new_entry_selection_is_excluded(client, tmp_path, monkeypatch):
     monkeypatch.setattr(editor_app, "RUNS", tmp_path)
     run_dir = tmp_path / "testrun"
@@ -121,8 +163,32 @@ def test_review_ui_uses_global_controls(client):
     assert "Full revised entry" not in html
     assert "Dictionary reader</h2>" not in html
     assert "Manual review" not in html
+    assert "Console output" not in html
+    assert 'id="console"' not in html
     assert "Confirm selected category" not in html
     assert "Clear confirmations" not in html
+
+
+def test_scope_and_dictionary_card_ui_are_compact_and_selectable(client):
+    javascript = client.get("/static/app.js").get_data(as_text=True)
+    filters = client.get("/static/filters.css").get_data(as_text=True)
+    review = client.get("/static/review.css").get_data(as_text=True)
+
+    assert "Include in final output" not in javascript
+    assert 'type="checkbox" checked data-scope-id=' not in javascript
+    assert "scope-document-label" not in javascript
+    assert '$("console")' not in javascript
+    assert "selectedDocuments.size.toLocaleString()" in javascript
+    assert "selectedPassages.length.toLocaleString()" in javascript
+    assert ".scope-group[open] > summary" in filters
+    assert ".scope-collection[open] > summary" in filters
+    assert ".scope-document[open] > summary" in filters
+    assert "top: 0" in filters
+    assert "top: 29px" in filters
+    assert "top: 58px" in filters
+    assert "position: sticky" in filters
+    assert ".dictionary-review-select input" in review
+    assert ".dictionary-card-actions" in review
 
 
 def test_dictionary_tags_include_known_and_observed_tags(client):

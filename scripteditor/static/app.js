@@ -37,12 +37,17 @@ function linkLemmaIds(value) {
 function scopeNodeHtml(node, depth = 0) {
   const children = node.children || [];
   const open = depth === 0 ? "open" : "";
-  const checkbox = `<input type="checkbox" checked data-scope-id="${escapeHtml(node.id)}">`;
+  const checkbox = `<input type="checkbox" data-scope-id="${escapeHtml(node.id)}" aria-label="Select ${escapeHtml(node.label)}">`;
+  const isDocument = Boolean(
+    node.value
+    && children.length
+    && children.every(child => child.kind === "item")
+  );
   const label = `<span>${escapeHtml(node.label)}</span>`;
   if (!children.length) {
     return `<label class="scope-node scope-leaf" style="--depth:${depth}">${checkbox}${label}</label>`;
   }
-  return `<details class="scope-branch" data-scope-branch="${escapeHtml(node.id)}" ${open}>
+  return `<details class="scope-branch scope-${escapeHtml(node.kind)}${isDocument ? " scope-document" : ""}" data-scope-branch="${escapeHtml(node.id)}" ${open}>
     <summary style="--depth:${depth}">${checkbox}${label}<small>${children.length}</small></summary>
     <div>${children.map(child => scopeNodeHtml(child, depth + 1)).join("")}</div>
   </details>`;
@@ -65,9 +70,22 @@ function updateScopeStates() {
     const checked = descendants.filter(input => input.checked).length;
     own.checked = descendants.length > 0 && checked === descendants.length;
     own.indeterminate = checked > 0 && checked < descendants.length;
+    branch.classList.toggle("scope-selected", own.checked);
+    branch.classList.toggle("scope-partial", own.indeterminate);
   });
-  const selected = selectedProcessFiles();
-  $("scope-count").textContent = `${selected.length.toLocaleString()} scope item${selected.length === 1 ? "" : "s"} selected`;
+  document.querySelectorAll(".scope-leaf").forEach(leaf => {
+    leaf.classList.toggle("scope-selected", leaf.querySelector("input").checked);
+  });
+  const selectedPassages = [
+    ...document.querySelectorAll(".scope-leaf input[data-scope-id]:checked"),
+  ].map(input => findScopeNode(input.dataset.scopeId, scopeDocuments))
+    .filter(node => node?.value?.includes("#"));
+  const selectedDocuments = new Set(
+    selectedPassages.map(node => node.value.split("#", 1)[0])
+  );
+  $("scope-count").textContent =
+    `${selectedDocuments.size.toLocaleString()} document${selectedDocuments.size === 1 ? "" : "s"} · `
+    + `${selectedPassages.length.toLocaleString()} passage${selectedPassages.length === 1 ? "" : "s"} selected`;
 }
 
 function selectedProcessFiles() {
@@ -267,11 +285,11 @@ function renderDictionary(entries) {
   $("dict-count").textContent = allDictionaryEntries.length;
   $("dictionary").innerHTML = entries.length ? entries.map(entry => `<article class="${entry.confirmed ? "result-confirmed" : ""}">
     <div class="card-head">
+      <label class="dictionary-review-select" title="Select for final output"><input type="checkbox" data-dictionary-confirm="${escapeHtml(entry.id)}" ${entry.confirmed ? "checked" : ""}><span class="sr-only">Select ${escapeHtml(entry.id)} for final output</span></label>
       <strong>${escapeHtml(entry.id)}</strong>
       <span class="badge ${entry.category}">${escapeHtml(entry.category)}</span>
       <span class="badge ${entry.manual ? "user" : "machine"}">${entry.manual ? "USER" : "MACHINE"}</span>
       <div class="dictionary-card-actions"><button type="button" data-edit-entry="${escapeHtml(entry.id)}">Edit</button><button type="button" class="danger-link" data-delete-entry="${escapeHtml(entry.id)}">Delete</button></div>
-      <label class="dictionary-review-select"><input type="checkbox" data-dictionary-confirm="${escapeHtml(entry.id)}" ${entry.confirmed ? "checked" : ""}> Include in final output</label>
     </div>
     <dl>${entry.fields.map(field => `<dt>${escapeHtml(field.tag)}</dt><dd>${field.values.map(escapeHtml).join(" · ")}</dd>`).join("")}</dl>
   </article>`).join("") : '<div class="empty">No dictionary changes.</div>';
@@ -628,7 +646,6 @@ async function run() {
     allDictionaryEntries = data.dictionary.map(entry => ({...entry, confirmed: false, manual: false}));
     const resultFiles = [...new Set(data.lines.map(row => row.file))].sort();
     $("filter-file").innerHTML = '<option value="all">All processed files</option>' + resultFiles.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("");
-    $("console").textContent = data.console || "";
     applyLineFilters();
     applyDictionaryFilters();
     $("files").innerHTML = data.files.length ? data.files.map(file => `<a target="_blank" href="/api/runs/${data.run_id}/files/${encodeURIComponent(file)}">${escapeHtml(file)}</a>`).join("") : '<div class="empty">No output files.</div>';

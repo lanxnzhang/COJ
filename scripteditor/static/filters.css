@@ -18,9 +18,29 @@
 .scope-branch summary::after { content: "›"; order: -1; color: var(--muted); transform: rotate(0); }
 .scope-branch[open] > summary::after { transform: rotate(90deg); }
 .scope-node:hover, .scope-branch summary:hover { background: var(--pale); }
+.scope-node.scope-selected, .scope-branch.scope-selected > summary { background: #e5f1e8; }
+.scope-branch.scope-partial > summary { background: #f5f8f5; }
 .scope-tree input, .scope-tree input[type=checkbox] { width: 15px; height: 15px; margin: 0; accent-color: var(--green); }
 .scope-branch summary small { margin-left: auto; color: var(--muted); }
-.scope-count { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
+.scope-group[open] > summary,
+.scope-collection[open] > summary,
+.scope-document[open] > summary {
+  position: sticky;
+  border-bottom: 1px solid #cfdad1;
+  background: white;
+  box-shadow: 0 3px 8px #17211b12;
+}
+.scope-group[open] > summary { top: 0; z-index: 8; }
+.scope-collection[open] > summary { top: 29px; z-index: 9; }
+.scope-document[open] > summary { top: 58px; z-index: 10; }
+.scope-document.scope-collection[open] > summary { top: 29px; }
+.scope-group[open].scope-selected > summary,
+.scope-group[open].scope-partial > summary,
+.scope-collection[open].scope-selected > summary,
+.scope-collection[open].scope-partial > summary,
+.scope-document[open].scope-selected > summary,
+.scope-document[open].scope-partial > summary { background: #edf5ef; }
+.scope-count { margin: 7px 0 0; color: var(--green); font-size: 11px; font-weight: 700; }
 .result-filters {
   display: flex;
   align-items: end;

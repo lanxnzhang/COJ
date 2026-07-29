@@ -18,9 +18,14 @@ trusted.
 
 Open **Processing scope** to select an entire source group, collection, XML
 document, or individual passage. Parent checkboxes show a partial state when
-only some descendants are selected. A passage-level run receives a temporary
-XML copy containing only those selected blocks. After a run, text-line results
-can be filtered by result type, candidate count, and file. **Start at result**,
+only some descendants are selected. The scope starts empty and reports both the
+number of distinct documents and the number of passages selected. An expanded
+document and its open collection and source remain as separate stacked headers,
+like the VS Code Outline, while its passage list scrolls. A passage-level run
+receives a temporary XML copy containing only those selected blocks. Processor
+status is summarized directly below **Run processor**; redundant raw console
+output is not shown. After a run, text-line results can be filtered by result
+type, candidate count, and file. **Start at result**,
 Previous/Next, and **Maximum displayed** provide range-based browsing without
 rendering the entire result set.
 
@@ -54,9 +59,10 @@ results whose form matches one of its `.FORM` values.
 
 Dictionary proposals can be filtered by source and change type. Machine and
 user proposals are labeled separately, and every proposal can be edited or
-deleted. Numeric IDs are checked against both the source dictionary and
-machine-generated proposals before saving. Deleting a selected added entry
-marks that selection invalid; leaving a new entry unconfirmed excludes every
-line that selects it and reports a warning.
+deleted. The compact checkbox at the top left of each proposal controls whether
+it is included in final output. Numeric IDs are checked against both the source
+dictionary and machine-generated proposals before saving. Deleting a selected
+added entry marks that selection invalid; leaving a new entry unconfirmed
+excludes every line that selects it and reports a warning.
 Final reviewed files and a review manifest are stored under
 `scripteditor/runs/<run-id>/final/`; canonical repository data is not modified.
