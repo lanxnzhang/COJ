@@ -294,8 +294,23 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 6. The current way kanji characters are displayed is terrible. Revert to the display style used in the previous version. Simply add a bit more spacing between the characters and the horizontal line above them, and do not add any unnecessary boxes or background fills around the characters.
 7. For the feature where clicking a word navigates to its corresponding dictionary entry, do not apply any formatting changes to the word—such as adding a dotted line underneath. This will conflict with formatting changes caused by other annotations, thereby leading to misunderstandings. Remove it.
 
+### After commit 927c05b
+1. Optimize node display during syntax tree collapse. The "-" symbol is not displayed under normal conditions; it only appears when the mouse hovers over a node. A "+" symbol is displayed after the node is collapsed, as it is now.
+2. When a user opens the webpage, the default settings should have "lemma IDs," "script tags," and "align leaves" unchecked, while "kanji under transcription" and "Null nodes" should be checked.
+3. Add an "Edit" button. The syntax tree can only be edited when the user clicks this button; only then will a pen icon appear next to the syntax tree nodes.
+4. Add an activity bar to the left of the sidebar. Click the icon in the activity bar to expand or collapse the sidebar. Remove the current "collapse navigation" button; user feedback indicates it is counterintuitive and hard to notice.
+5. Design a corresponding icon for the current sidebar that displays the syntax tree of the clicked document.
+6. Design a sidebar with search functionality and an icon for it that can be placed in the activity bar. Users can search the text content across the entire data and browse the search results in the middle. When an open syntax tree page is displayed in the center of the screen, a new tab appears to show the search results. Users can switch between the two pages or close either or both of them.
+7. Delete the "Current repository data" content at the top.
+8. Sections of the syntax tree can also be collapsed or expanded, making it convenient for users who simply wish to browse the full text.
+9. Move statistical data  "115 documents · 5,665 passages" from the top of the page to below the "documents" section. Delete "Browse current text and uploaded-tree XML" under "documents".
+
+
 ### TBD
-1. 句法树折叠优化（被折叠的显示+，没被折叠的不显示符号，只有鼠标悬停时才显示-）
+1. 词典位置
+2. 图标设计
+3. BUG:折叠tree时，无法看到tree的图标，无法滚动查看完整text
+4. 完善搜索和词典编辑
 
 
 

@@ -12,161 +12,236 @@
       <span class="brand-mark">COJ</span>
       <span class="brand-name">Tree Editor</span>
     </div>
-    <div class="header-status">
-      <span id="data-summary">Loading current XML data…</span>
-      <button type="button" id="toggle-navigation" class="header-button" aria-expanded="true" aria-controls="pane-documents">
-        <span aria-hidden="true">«</span>
-        <span class="navigation-toggle-label">Collapse navigation</span>
-      </button>
-      <span class="current-data-badge">Current repository data</span>
-    </div>
   </header>
 
   <main class="workspace">
-    <aside id="pane-documents" class="navigation-pane documents-pane" aria-label="Documents">
-      <div class="pane-heading">
-        <p class="eyebrow">CORPUS SOURCES</p>
-        <h1>Documents</h1>
-        <p>Browse current text and uploaded-tree XML.</p>
-      </div>
-      <label class="search-field">
-        <span class="sr-only">Filter documents or open a passage</span>
-        <input id="document-search" type="search" placeholder="Filter or open MYS.1.1…" autocomplete="off">
-      </label>
-      <p id="search-message" class="search-message">Enter a passage ID to open it directly.</p>
-      <div id="document-groups" class="document-groups">
-        <div class="loading-card">Loading documents…</div>
-      </div>
+    <nav class="activity-bar" aria-label="Primary activity">
+      <button type="button" id="activity-explorer" class="activity-button active" data-sidebar-view="explorer" aria-label="Documents" title="Documents" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 3.5h8l4 4v13H5z"/>
+          <path d="M13 3.5v4h4M8 11h6M8 15h6"/>
+          <circle cx="8" cy="11" r="1"/><circle cx="14" cy="11" r="1"/><circle cx="11" cy="15" r="1"/>
+        </svg>
+        <span class="sr-only">Documents</span>
+      </button>
+      <button type="button" id="activity-search" class="activity-button" data-sidebar-view="search" aria-label="Search corpus" title="Search corpus" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5"/>
+          <path d="m15.5 15.5 5 5"/>
+        </svg>
+        <span class="sr-only">Search corpus</span>
+      </button>
+    </nav>
+
+    <aside id="primary-sidebar" class="navigation-pane" aria-label="Sidebar">
+      <section id="sidebar-explorer" class="sidebar-view documents-pane" aria-label="Documents">
+        <div class="pane-heading">
+          <p class="eyebrow">CORPUS SOURCES</p>
+          <h1>Documents</h1>
+          <p id="data-summary" class="sidebar-data-summary">Loading XML data…</p>
+        </div>
+        <label class="search-field">
+          <span class="sr-only">Filter documents or open a passage</span>
+          <input id="document-search" type="search" placeholder="Filter or open MYS.1.1…" autocomplete="off">
+        </label>
+        <p id="search-message" class="search-message">Enter a passage ID to open it directly.</p>
+        <div id="document-groups" class="document-groups">
+          <div class="loading-card">Loading documents…</div>
+        </div>
+      </section>
+
+      <section id="sidebar-search" class="sidebar-view search-sidebar hidden" aria-label="Search">
+        <div class="pane-heading">
+          <p class="eyebrow">CURRENT CORPUS</p>
+          <h1>Search</h1>
+        </div>
+        <form id="global-search-form" class="global-search-form">
+          <label class="search-field">
+            <span class="sr-only">Search all corpus text</span>
+            <input id="global-search" type="search" placeholder="Search text across all data…" autocomplete="off">
+          </label>
+          <button type="submit" class="primary-button">Search</button>
+        </form>
+        <p id="global-search-message" class="search-message">Search transcriptions, kanji, headers, and word forms.</p>
+      </section>
     </aside>
 
     <section class="detail-pane">
-      <div class="detail-header">
-        <div>
-          <p id="detail-breadcrumb" class="eyebrow">TREE WORKSPACE</p>
-          <h2 id="detail-title">Select a passage</h2>
+      <nav id="editor-tabs" class="editor-tabs hidden" aria-label="Open editors">
+        <div id="editor-tab-tree" class="editor-tab hidden" data-editor-tab="tree">
+          <button type="button" class="editor-tab-label" data-editor-page="tree">
+            <span class="editor-tab-icon" aria-hidden="true">⌘</span>
+            <span id="editor-tree-label">Syntax tree</span>
+          </button>
+          <button type="button" class="editor-tab-close" data-close-editor="tree" aria-label="Close syntax tree">×</button>
         </div>
-        <div id="tree-stats" class="tree-stats hidden" aria-label="Tree statistics">
-          <span><strong id="node-count">0</strong> nodes</span>
-          <span><strong id="leaf-count">0</strong> leaves</span>
+        <div id="editor-tab-search" class="editor-tab hidden" data-editor-tab="search">
+          <button type="button" class="editor-tab-label" data-editor-page="search">
+            <span class="editor-tab-icon" aria-hidden="true">⌕</span>
+            <span>Search results</span>
+          </button>
+          <button type="button" class="editor-tab-close" data-close-editor="search" aria-label="Close search results">×</button>
         </div>
-      </div>
-
-      <nav class="tab-bar" aria-label="Editor views">
-        <button type="button" class="tab active" data-tab="tree">Syntax tree</button>
-        <button type="button" class="tab" data-tab="dict">Dictionary</button>
       </nav>
 
-      <section class="tab-content" id="tab-tree">
-        <section id="text-panel" class="text-panel hidden" aria-label="Text">
-          <header class="text-panel-header">
-            <button type="button" id="toggle-text" class="text-panel-toggle" aria-expanded="true" aria-controls="text-panel-body">
-              <span class="disclosure-icon" aria-hidden="true">⌄</span>
-              <span>Text</span>
-            </button>
-            <div class="text-layout-switch" aria-label="Text layout">
-              <button type="button" class="active" data-text-layout="stacked">Stacked</button>
-              <button type="button" data-text-layout="two-column">Two columns</button>
-            </div>
-          </header>
-          <div id="text-panel-body" class="text-panel-body">
-            <div id="raw-text-lines" class="raw-text-lines"></div>
-          </div>
-        </section>
-
-        <div class="tree-toolbar" aria-label="Tree display settings">
-          <div class="toolbar-group">
-            <span class="toolbar-label">Annotations</span>
-            <label class="toggle"><input type="checkbox" id="tog-lemma" checked> Lemma IDs</label>
-            <label class="select-control">
-              <span>Place below</span>
-              <select id="lemma-position">
-                <option value="tag" selected>tag</option>
-                <option value="form">word form</option>
-              </select>
-            </label>
-            <label class="toggle"><input type="checkbox" id="tog-phon" checked> Script tags</label>
-            <label class="toggle"><input type="checkbox" id="tog-tree-kanji"> Kanji under transcription</label>
-          </div>
-          <div class="toolbar-group">
-            <span class="toolbar-label">Layout</span>
-            <label class="toggle"><input type="checkbox" id="tog-null"> Null nodes</label>
-            <label class="toggle"><input type="checkbox" id="tog-bottomup" checked> Align leaves</label>
-            <label class="spacing-control">
-              <span>Rows</span>
-              <input type="range" id="slider-rowh" min="32" max="120" value="52" step="4">
-              <output id="slider-rowh-val">52 px</output>
-            </label>
-            <label class="spacing-control">
-              <span>Words</span>
-              <input type="range" id="slider-colw" min="28" max="240" value="68" step="4">
-              <output id="slider-colw-val">68 px</output>
-            </label>
-            <label class="spacing-control">
-              <span>Scale</span>
-              <input type="range" id="slider-scale" min="50" max="180" value="100" step="10">
-              <output id="slider-scale-val">100%</output>
-            </label>
-          </div>
-          <div class="toolbar-group toolbar-actions">
-            <button type="button" id="expand-all" class="tool-button" disabled>Expand all</button>
-            <button type="button" id="reset-tree-draft" class="tool-button hidden">Reset draft</button>
-            <button type="button" id="toggle-fullscreen" class="tool-button">Full screen</button>
-          </div>
-        </div>
-
-        <div id="tree-container" class="tree-container">
-          <div class="empty-state">
-            <span class="empty-icon" aria-hidden="true">⌘</span>
-            <strong>No passage selected</strong>
-            <p>Choose a document and passage to inspect its syntax tree.</p>
-          </div>
-        </div>
-
-        <aside id="node-editor" class="node-editor hidden" aria-labelledby="node-editor-title">
-          <header>
-            <div>
-              <p class="eyebrow">BROWSER-LOCAL DRAFT</p>
-              <h3 id="node-editor-title">Edit tree node</h3>
-            </div>
-            <button type="button" id="close-node-editor" class="icon-button" aria-label="Close node editor">×</button>
-          </header>
-          <form id="node-editor-form">
-            <label>Tag <input id="node-tag" required autocomplete="off"></label>
-            <label>Lemma ID <input id="node-lemma" autocomplete="off"></label>
-            <div id="leaf-fields" class="editor-fields">
-              <label>Word form <input id="node-form" autocomplete="off"></label>
-              <label>Script tag <input id="node-phon" autocomplete="off"></label>
-            </div>
-            <p id="node-kind-note" class="node-kind-note"></p>
-            <button type="submit" class="primary-button">Apply node content</button>
-          </form>
-          <div class="node-structure-actions">
-            <p>Structure</p>
-            <button type="button" id="add-child">Add child</button>
-            <button type="button" id="add-sibling">Add sibling after</button>
-            <button type="button" id="delete-node" class="danger-button">Delete node</button>
-          </div>
-          <p class="draft-note">Draft edits persist in this browser and do not change the corpus XML files.</p>
-        </aside>
+      <section id="editor-empty" class="editor-empty">
+        <span class="empty-icon" aria-hidden="true">⌘</span>
+        <strong>No editor is open</strong>
+        <p>Select a passage or search the corpus to begin.</p>
       </section>
 
-      <section class="tab-content hidden" id="tab-dict">
-        <div class="dictionary-toolbar">
+      <section id="editor-page-tree" class="editor-page hidden">
+        <div class="detail-header">
           <div>
-            <p class="eyebrow">COJ DICTIONARY</p>
-            <h2>Dictionary</h2>
-            <p>Search lemma IDs, forms, glosses, and meanings.</p>
+            <p id="detail-breadcrumb" class="eyebrow">TREE WORKSPACE</p>
+            <h2 id="detail-title">Select a passage</h2>
           </div>
-          <label class="dictionary-search">
-            <span class="sr-only">Search dictionary</span>
-            <input id="dict-input" type="search" placeholder="Search form, gloss, meaning, or lemma ID…" autocomplete="off">
-          </label>
+          <div id="tree-stats" class="tree-stats hidden" aria-label="Tree statistics">
+            <span><strong id="node-count">0</strong> nodes</span>
+            <span><strong id="leaf-count">0</strong> leaves</span>
+          </div>
         </div>
-        <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
-        <div class="dictionary-layout">
-          <div id="dict-results" class="dictionary-results"></div>
-          <article id="dict-entry" class="dictionary-entry hidden"></article>
-        </div>
+
+        <nav class="tab-bar" aria-label="Tree editor views">
+          <button type="button" class="tab active" data-tab="tree">Syntax tree</button>
+          <button type="button" class="tab" data-tab="dict">Dictionary</button>
+        </nav>
+
+        <section class="tab-content" id="tab-tree">
+          <section id="text-panel" class="text-panel hidden" aria-label="Text">
+            <header class="text-panel-header">
+              <button type="button" id="toggle-text" class="text-panel-toggle" aria-expanded="true" aria-controls="text-panel-body">
+                <span class="disclosure-icon" aria-hidden="true">⌄</span>
+                <span>Text</span>
+              </button>
+              <div class="text-layout-switch" aria-label="Text layout">
+                <button type="button" class="active" data-text-layout="stacked">Stacked</button>
+                <button type="button" data-text-layout="two-column">Two columns</button>
+              </div>
+            </header>
+            <div id="text-panel-body" class="text-panel-body">
+              <div id="raw-text-lines" class="raw-text-lines"></div>
+            </div>
+          </section>
+
+          <section id="tree-panel" class="tree-panel">
+            <header class="tree-panel-header">
+              <button type="button" id="toggle-tree-panel" class="tree-panel-toggle" aria-expanded="true" aria-controls="tree-panel-body">
+                <span class="disclosure-icon" aria-hidden="true">⌄</span>
+                <span>Tree diagram</span>
+              </button>
+            </header>
+            <div id="tree-panel-body" class="tree-panel-body">
+              <div class="tree-toolbar" aria-label="Tree display settings">
+                <div class="toolbar-group">
+                  <span class="toolbar-label">Annotations</span>
+                  <label class="toggle"><input type="checkbox" id="tog-lemma"> Lemma IDs</label>
+                  <label class="select-control">
+                    <span>Place below</span>
+                    <select id="lemma-position" disabled>
+                      <option value="tag" selected>tag</option>
+                      <option value="form">word form</option>
+                    </select>
+                  </label>
+                  <label class="toggle"><input type="checkbox" id="tog-phon"> Script tags</label>
+                  <label class="toggle"><input type="checkbox" id="tog-tree-kanji" checked> Kanji under transcription</label>
+                </div>
+                <div class="toolbar-group">
+                  <span class="toolbar-label">Layout</span>
+                  <label class="toggle"><input type="checkbox" id="tog-null" checked> Null nodes</label>
+                  <label class="toggle"><input type="checkbox" id="tog-bottomup"> Align leaves</label>
+                  <label class="spacing-control">
+                    <span>Rows</span>
+                    <input type="range" id="slider-rowh" min="32" max="120" value="52" step="4">
+                    <output id="slider-rowh-val">52 px</output>
+                  </label>
+                  <label class="spacing-control">
+                    <span>Words</span>
+                    <input type="range" id="slider-colw" min="28" max="240" value="68" step="4">
+                    <output id="slider-colw-val">68 px</output>
+                  </label>
+                  <label class="spacing-control">
+                    <span>Scale</span>
+                    <input type="range" id="slider-scale" min="50" max="180" value="100" step="10">
+                    <output id="slider-scale-val">100%</output>
+                  </label>
+                </div>
+                <div class="toolbar-group toolbar-actions">
+                  <button type="button" id="toggle-edit-mode" class="tool-button" aria-pressed="false">Edit</button>
+                  <button type="button" id="expand-all" class="tool-button" disabled>Expand all</button>
+                  <button type="button" id="reset-tree-draft" class="tool-button hidden">Reset draft</button>
+                  <button type="button" id="toggle-fullscreen" class="tool-button">Full screen</button>
+                </div>
+              </div>
+
+              <div id="tree-container" class="tree-container">
+                <div class="empty-state">
+                  <span class="empty-icon" aria-hidden="true">⌘</span>
+                  <strong>No passage selected</strong>
+                  <p>Choose a document and passage to inspect its syntax tree.</p>
+                </div>
+              </div>
+
+              <aside id="node-editor" class="node-editor hidden" aria-labelledby="node-editor-title">
+                <header>
+                  <div>
+                    <p class="eyebrow">BROWSER-LOCAL DRAFT</p>
+                    <h3 id="node-editor-title">Edit tree node</h3>
+                  </div>
+                  <button type="button" id="close-node-editor" class="icon-button" aria-label="Close node editor">×</button>
+                </header>
+                <form id="node-editor-form">
+                  <label>Tag <input id="node-tag" required autocomplete="off"></label>
+                  <label>Lemma ID <input id="node-lemma" autocomplete="off"></label>
+                  <div id="leaf-fields" class="editor-fields">
+                    <label>Word form <input id="node-form" autocomplete="off"></label>
+                    <label>Script tag <input id="node-phon" autocomplete="off"></label>
+                  </div>
+                  <p id="node-kind-note" class="node-kind-note"></p>
+                  <button type="submit" class="primary-button">Apply node content</button>
+                </form>
+                <div class="node-structure-actions">
+                  <p>Structure</p>
+                  <button type="button" id="add-child">Add child</button>
+                  <button type="button" id="add-sibling">Add sibling after</button>
+                  <button type="button" id="delete-node" class="danger-button">Delete node</button>
+                </div>
+                <p class="draft-note">Draft edits persist in this browser and do not change the corpus XML files.</p>
+              </aside>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-content hidden" id="tab-dict">
+          <div class="dictionary-toolbar">
+            <div>
+              <p class="eyebrow">COJ DICTIONARY</p>
+              <h2>Dictionary</h2>
+              <p>Search lemma IDs, forms, glosses, and meanings.</p>
+            </div>
+            <label class="dictionary-search">
+              <span class="sr-only">Search dictionary</span>
+              <input id="dict-input" type="search" placeholder="Search form, gloss, meaning, or lemma ID…" autocomplete="off">
+            </label>
+          </div>
+          <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
+          <div class="dictionary-layout">
+            <div id="dict-results" class="dictionary-results"></div>
+            <article id="dict-entry" class="dictionary-entry hidden"></article>
+          </div>
+        </section>
+      </section>
+
+      <section id="editor-page-search" class="editor-page search-page hidden">
+        <header class="search-results-header">
+          <div>
+            <p class="eyebrow">CORPUS SEARCH</p>
+            <h2 id="search-results-title">Search results</h2>
+          </div>
+          <span id="search-result-count" class="search-result-count"></span>
+        </header>
+        <p id="search-results-message" class="search-results-message">Enter a search in the sidebar.</p>
+        <div id="search-results" class="search-results"></div>
       </section>
 
       <div id="app-message" class="app-message hidden" role="alert"></div>

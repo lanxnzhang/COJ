@@ -33,6 +33,7 @@ DOCUMENT_SOURCES = {
 
 _dictionary: Dictionary | None = None
 _documents: dict[tuple[str, str], CorpusDocument] = {}
+_search_index: list[dict] | None = None
 
 
 @app.errorhandler(HTTPException)
@@ -116,6 +117,72 @@ def find_poem_location(sentence_id: str) -> dict | None:
                         "sentence_id": canonical_id,
                     }
     return None
+
+
+def _searchable_passages() -> list[dict]:
+    """Build a reusable index of the text exposed by every corpus passage."""
+    global _search_index
+    if _search_index is not None:
+        return _search_index
+
+    passages = []
+    for source, config in DOCUMENT_SOURCES.items():
+        paths = sorted(
+            config["directory"].glob("*.xml"),
+            key=lambda item: _sort_key(item.stem),
+        )
+        for path in paths:
+            root = ET.parse(path).getroot()
+            document = _document_summary(source, path, root)
+            for block in root.findall("block"):
+                sentence_id = (block.get("id") or "").strip()
+                header = (block.get("header") or "").strip()
+                text_parts = [header]
+                preview_parts = []
+                raw_text = block.find("raw-text")
+                if raw_text is not None:
+                    for sentence in raw_text.findall("sentence"):
+                        kanji = (sentence.findtext("kanji", "") or "").strip()
+                        transcription = (
+                            sentence.findtext("transcription", "") or ""
+                        ).strip()
+                        text_parts.extend((kanji, transcription))
+                        preview_parts.extend(
+                            part for part in (kanji, transcription) if part
+                        )
+                text_parts.extend(
+                    form
+                    for elem in block.iter()
+                    if (form := (elem.get("form") or "").strip())
+                )
+                searchable = " ".join(part for part in text_parts if part)
+                passages.append({
+                    **document,
+                    "sentence_id": sentence_id,
+                    "header": header,
+                    "preview": " · ".join(preview_parts) or header,
+                    "_searchable": searchable.casefold(),
+                })
+
+    _search_index = passages
+    return passages
+
+
+def _search_preview(preview: str, query: str, limit: int = 220) -> str:
+    """Return a compact passage preview centered around the first match."""
+    if len(preview) <= limit:
+        return preview
+    position = preview.casefold().find(query.casefold())
+    if position < 0:
+        return preview[: limit - 1].rstrip() + "…"
+    start = max(0, position - limit // 3)
+    end = min(len(preview), start + limit)
+    start = max(0, end - limit)
+    return (
+        ("…" if start else "")
+        + preview[start:end].strip()
+        + ("…" if end < len(preview) else "")
+    )
 
 
 def _block_raw_text(
@@ -232,6 +299,30 @@ def find_poem():
     if poem is None:
         abort(404, description=f"Poem '{sentence_id}' was not found")
     return jsonify(poem)
+
+
+@app.get("/api/search")
+def search_corpus():
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify([])
+
+    folded = query.casefold()
+    hits = []
+    for passage in _searchable_passages():
+        if folded not in passage["_searchable"]:
+            continue
+        hits.append({
+            key: value
+            for key, value in passage.items()
+            if key != "_searchable"
+        })
+        hits[-1]["preview"] = _search_preview(
+            hits[-1]["preview"], query
+        )
+        if len(hits) >= 200:
+            break
+    return jsonify(hits)
 
 
 @app.get("/api/documents/<source>/<doc_id>")

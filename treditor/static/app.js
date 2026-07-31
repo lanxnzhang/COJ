@@ -9,6 +9,10 @@ let currentTreeData = null;
 let selectedNodeId = null;
 let dictionaryTimer = null;
 let documentSearchTimer = null;
+let globalSearchTimer = null;
+let editMode = false;
+let currentEditorPage = null;
+const openEditorPages = new Set();
 const collapsedNodeIds = new Set();
 const passageCache = new Map();
 
@@ -49,19 +53,84 @@ document.querySelectorAll(".tab").forEach(button => {
   button.addEventListener("click", () => setTab(button.dataset.tab));
 });
 
-$("toggle-navigation").addEventListener("click", event => {
+function showSidebarView(name) {
   const workspace = document.querySelector(".workspace");
-  workspace.classList.toggle("navigation-collapsed");
-  const isCollapsed = workspace.classList.contains("navigation-collapsed");
-  event.currentTarget.setAttribute("aria-expanded", String(!isCollapsed));
-  event.currentTarget.querySelector("[aria-hidden]").textContent = isCollapsed ? "»" : "«";
-  event.currentTarget.querySelector(".navigation-toggle-label").textContent =
-    isCollapsed ? "Expand navigation" : "Collapse navigation";
+  workspace.classList.remove("sidebar-collapsed");
+  document.querySelectorAll("[data-sidebar-view]").forEach(button => {
+    const active = button.dataset.sidebarView === name;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  document.querySelectorAll(".sidebar-view").forEach(view => {
+    view.classList.toggle("hidden", view.id !== `sidebar-${name}`);
+  });
+  if (name === "search") $("global-search").focus();
+}
+
+document.querySelectorAll("[data-sidebar-view]").forEach(button => {
+  button.addEventListener("click", () => {
+    const workspace = document.querySelector(".workspace");
+    const alreadyActive = button.classList.contains("active");
+    if (alreadyActive && !workspace.classList.contains("sidebar-collapsed")) {
+      workspace.classList.add("sidebar-collapsed");
+      button.setAttribute("aria-pressed", "false");
+      return;
+    }
+    showSidebarView(button.dataset.sidebarView);
+  });
+});
+
+function showEditorPage(name) {
+  openEditorPages.add(name);
+  currentEditorPage = name;
+  $("editor-tabs").classList.remove("hidden");
+  document.querySelectorAll("[data-editor-tab]").forEach(tab => {
+    const pageName = tab.dataset.editorTab;
+    tab.classList.toggle("hidden", !openEditorPages.has(pageName));
+    tab.classList.toggle("active", pageName === name);
+  });
+  document.querySelectorAll(".editor-page").forEach(page => {
+    page.classList.toggle("hidden", page.id !== `editor-page-${name}`);
+  });
+  $("editor-empty").classList.add("hidden");
+}
+
+function closeEditorPage(name) {
+  openEditorPages.delete(name);
+  $(`editor-tab-${name}`).classList.add("hidden");
+  $(`editor-page-${name}`).classList.add("hidden");
+  if (name === "tree") closeNodeEditor();
+  if (currentEditorPage !== name) return;
+  const nextPage = [...openEditorPages].at(-1);
+  if (nextPage) {
+    showEditorPage(nextPage);
+  } else {
+    currentEditorPage = null;
+    $("editor-tabs").classList.add("hidden");
+    $("editor-empty").classList.remove("hidden");
+  }
+}
+
+document.querySelectorAll("[data-editor-page]").forEach(button => {
+  button.addEventListener("click", () => showEditorPage(button.dataset.editorPage));
+});
+
+document.querySelectorAll("[data-close-editor]").forEach(button => {
+  button.addEventListener("click", () => closeEditorPage(button.dataset.closeEditor));
 });
 
 $("toggle-text").addEventListener("click", event => {
   const panel = $("text-panel");
   const collapsed = panel.classList.toggle("collapsed");
+  event.currentTarget.setAttribute("aria-expanded", String(!collapsed));
+  event.currentTarget.querySelector(".disclosure-icon").textContent =
+    collapsed ? "›" : "⌄";
+});
+
+$("toggle-tree-panel").addEventListener("click", event => {
+  const panel = $("tree-panel");
+  const collapsed = panel.classList.toggle("collapsed");
+  $("tab-tree").classList.toggle("tree-collapsed", collapsed);
   event.currentTarget.setAttribute("aria-expanded", String(!collapsed));
   event.currentTarget.querySelector(".disclosure-icon").textContent =
     collapsed ? "›" : "⌄";
@@ -289,6 +358,86 @@ $("document-search").addEventListener("keydown", event => {
   });
 });
 
+function renderCorpusSearchResults(results, query) {
+  const container = $("search-results");
+  container.innerHTML = "";
+  $("search-results-title").textContent = `Search: ${query}`;
+  $("search-result-count").textContent =
+    `${results.length}${results.length === 200 ? "+" : ""} result${results.length === 1 ? "" : "s"}`;
+  $("search-results-message").textContent = results.length
+    ? "Select a result to open its syntax tree."
+    : "No corpus text matched this search.";
+  results.forEach(result => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "corpus-search-result";
+    const heading = document.createElement("span");
+    heading.className = "corpus-search-result-heading";
+    const sentence = document.createElement("strong");
+    sentence.textContent = result.sentence_id;
+    const location = document.createElement("span");
+    location.textContent =
+      `${result.label} · ${result.source === "text" ? "Texts under editing" : "Uploaded trees"}`;
+    heading.append(sentence, location);
+    const preview = document.createElement("span");
+    preview.className = "corpus-search-preview";
+    preview.textContent = result.preview || result.header || "No text preview";
+    button.append(heading, preview);
+    button.addEventListener("click", async () => {
+      const documentData = findDocument(result.source, result.document_id);
+      if (!documentData) {
+        showError(new Error("This result's document is unavailable."));
+        return;
+      }
+      await selectDocument(documentData, result.sentence_id);
+    });
+    container.appendChild(button);
+  });
+}
+
+async function performCorpusSearch(query) {
+  const normalized = query.trim();
+  showEditorPage("search");
+  $("search-results").innerHTML = "";
+  if (!normalized) {
+    $("global-search-message").textContent =
+      "Search transcriptions, kanji, headers, and word forms.";
+    $("search-results-title").textContent = "Search results";
+    $("search-result-count").textContent = "";
+    $("search-results-message").textContent = "Enter a search in the sidebar.";
+    return;
+  }
+  clearError();
+  $("global-search-message").textContent = "Searching…";
+  $("search-results-message").textContent = "Searching the current corpus…";
+  try {
+    const results = await apiFetch(
+      `/api/search?q=${encodeURIComponent(normalized)}`
+    );
+    $("global-search-message").textContent =
+      `${results.length}${results.length === 200 ? "+" : ""} result${results.length === 1 ? "" : "s"}.`;
+    renderCorpusSearchResults(results, normalized);
+  } catch (error) {
+    showError(error);
+    $("global-search-message").textContent = "Search failed.";
+    $("search-results-message").textContent = "The corpus search could not be completed.";
+  }
+}
+
+$("global-search-form").addEventListener("submit", event => {
+  event.preventDefault();
+  clearTimeout(globalSearchTimer);
+  performCorpusSearch($("global-search").value);
+});
+
+$("global-search").addEventListener("input", event => {
+  clearTimeout(globalSearchTimer);
+  globalSearchTimer = setTimeout(
+    () => performCorpusSearch(event.target.value),
+    300,
+  );
+});
+
 async function loadPassages(documentData) {
   if (!passageCache.has(documentData.id)) {
     passageCache.set(
@@ -448,7 +597,10 @@ function calculateTreeStats(roots) {
 async function selectPassage(passage) {
   if (!activeDocument) return;
   clearError();
+  setEditMode(false);
   activePassage = passage;
+  $("editor-tree-label").textContent = passage.sentence_id || "Syntax tree";
+  showEditorPage("tree");
   document.querySelectorAll(".passage-item").forEach(button => {
     button.classList.toggle(
       "active",
@@ -758,9 +910,10 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     && !node._collapsed;
   const lemmaUnderTag = hasLemma && !lemmaUnderForm;
   const edgeOffset = lemmaUnderTag ? 22 : 9;
+  const controls = svgElement("g", {class: "tree-node-controls"});
 
   if (node.tag) {
-    svg.appendChild(svgElement("text", {
+    controls.appendChild(svgElement("text", {
       x: centerX,
       y: centerY + 5,
       class: `tree-label${node._toggleable ? " node-toggle" : ""}${node._collapsed ? " collapsed" : ""}`,
@@ -773,8 +926,8 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
       "text-anchor": "middle",
     }, node.tag));
   }
-  if (node._nodeId !== undefined) {
-    svg.appendChild(svgElement("text", {
+  if (editMode && node._nodeId !== undefined) {
+    controls.appendChild(svgElement("text", {
       x: centerX - Math.max(18, node.tag.length * 3.5 + 10),
       y: centerY + 5,
       class: "node-edit",
@@ -786,16 +939,17 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     }, "✎"));
   }
   if (node._toggleable) {
-    svg.appendChild(svgElement("text", {
+    controls.appendChild(svgElement("text", {
       x: centerX + Math.max(18, node.tag.length * 3.5 + 8),
       y: centerY + 5,
-      class: "node-disclosure",
+      class: `node-disclosure ${node._collapsed ? "collapsed" : "expanded"}`,
       "data-node-id": node._nodeId,
       role: "button",
       "aria-hidden": "true",
       "text-anchor": "middle",
     }, node._collapsed ? "+" : "−"));
   }
+  svg.appendChild(controls);
   if (lemmaUnderTag) {
     svg.appendChild(svgElement("text", {
       x: centerX,
@@ -1035,12 +1189,27 @@ function findNodeLocation(nodeId, nodes = currentTreeData?.roots || []) {
   return null;
 }
 
+function setEditMode(enabled) {
+  editMode = Boolean(enabled);
+  const button = $("toggle-edit-mode");
+  button.setAttribute("aria-pressed", String(editMode));
+  button.classList.toggle("active", editMode);
+  button.textContent = editMode ? "Done editing" : "Edit";
+  if (!editMode) closeNodeEditor();
+  if (currentTreeData) renderSvgTree(currentTreeData);
+}
+
+$("toggle-edit-mode").addEventListener("click", () => {
+  setEditMode(!editMode);
+});
+
 function closeNodeEditor() {
   selectedNodeId = null;
   $("node-editor").classList.add("hidden");
 }
 
 function openNodeEditor(nodeId) {
+  if (!editMode) return;
   const location = findNodeLocation(nodeId);
   if (!location) return;
   selectedNodeId = nodeId;
