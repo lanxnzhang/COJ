@@ -10,8 +10,11 @@ let selectedNodeId = null;
 let dictionaryTimer = null;
 let documentSearchTimer = null;
 let globalSearchTimer = null;
+let popupDictionaryTimer = null;
 let editMode = false;
 let currentEditorPage = null;
+let activeSidebarView = "explorer";
+const corpusSearchState = {query: "", page: 1, perPage: 25};
 const openEditorPages = new Set();
 const collapsedNodeIds = new Set();
 const passageCache = new Map();
@@ -40,20 +43,8 @@ function clearError() {
   $("app-message").textContent = "";
 }
 
-function setTab(name) {
-  document.querySelectorAll(".tab").forEach(button => {
-    button.classList.toggle("active", button.dataset.tab === name);
-  });
-  document.querySelectorAll(".tab-content").forEach(content => {
-    content.classList.toggle("hidden", content.id !== `tab-${name}`);
-  });
-}
-
-document.querySelectorAll(".tab").forEach(button => {
-  button.addEventListener("click", () => setTab(button.dataset.tab));
-});
-
 function showSidebarView(name) {
+  activeSidebarView = name;
   const workspace = document.querySelector(".workspace");
   workspace.classList.remove("sidebar-collapsed");
   document.querySelectorAll("[data-sidebar-view]").forEach(button => {
@@ -61,11 +52,25 @@ function showSidebarView(name) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
+  $("activity-dictionary").classList.remove("active");
+  $("activity-dictionary").setAttribute("aria-pressed", "false");
   document.querySelectorAll(".sidebar-view").forEach(view => {
     view.classList.toggle("hidden", view.id !== `sidebar-${name}`);
   });
   if (name === "search") $("global-search").focus();
 }
+
+$("activity-dictionary").addEventListener("click", () => {
+  document.querySelectorAll(".activity-button").forEach(button => {
+    button.classList.toggle("active", button === $("activity-dictionary"));
+    button.setAttribute(
+      "aria-pressed",
+      String(button === $("activity-dictionary")),
+    );
+  });
+  showEditorPage("dictionary");
+  $("dict-input").focus();
+});
 
 document.querySelectorAll("[data-sidebar-view]").forEach(button => {
   button.addEventListener("click", () => {
@@ -92,6 +97,16 @@ function showEditorPage(name) {
   document.querySelectorAll(".editor-page").forEach(page => {
     page.classList.toggle("hidden", page.id !== `editor-page-${name}`);
   });
+  document.querySelectorAll("[data-sidebar-view]").forEach(button => {
+    const active = name !== "dictionary"
+      && button.dataset.sidebarView === activeSidebarView;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  $("activity-dictionary").classList.toggle("active", name === "dictionary");
+  $("activity-dictionary").setAttribute(
+    "aria-pressed", String(name === "dictionary")
+  );
   $("editor-empty").classList.add("hidden");
 }
 
@@ -108,6 +123,13 @@ function closeEditorPage(name) {
     currentEditorPage = null;
     $("editor-tabs").classList.add("hidden");
     $("editor-empty").classList.remove("hidden");
+    $("activity-dictionary").classList.remove("active");
+    $("activity-dictionary").setAttribute("aria-pressed", "false");
+    document.querySelectorAll("[data-sidebar-view]").forEach(button => {
+      const active = button.dataset.sidebarView === activeSidebarView;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
   }
 }
 
@@ -358,13 +380,52 @@ $("document-search").addEventListener("keydown", event => {
   });
 });
 
-function renderCorpusSearchResults(results, query) {
+function appendHighlightedText(container, text, query) {
+  if (!query) {
+    container.textContent = text;
+    return;
+  }
+  const foldedText = text.toLocaleLowerCase();
+  const foldedQuery = query.toLocaleLowerCase();
+  let cursor = 0;
+  let position = foldedText.indexOf(foldedQuery);
+  while (position >= 0) {
+    container.append(document.createTextNode(text.slice(cursor, position)));
+    const mark = document.createElement("mark");
+    mark.textContent = text.slice(position, position + query.length);
+    container.appendChild(mark);
+    cursor = position + query.length;
+    position = foldedText.indexOf(foldedQuery, cursor);
+  }
+  container.append(document.createTextNode(text.slice(cursor)));
+}
+
+function checkedValues(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+    .map(input => input.value);
+}
+
+function corpusSearchParameters(page = 1) {
+  const fields = checkedValues("corpus-field");
+  return new URLSearchParams({
+    q: corpusSearchState.query,
+    sources: $("corpus-search-scope").value,
+    fields: fields.join(","),
+    match: $("corpus-search-match").value,
+    case_sensitive: String($("corpus-search-case").checked),
+    page: String(page),
+    per_page: String(corpusSearchState.perPage),
+  });
+}
+
+function renderCorpusSearchResults(payload) {
+  const {results, query, total, page, pages, per_page: perPage} = payload;
   const container = $("search-results");
   container.innerHTML = "";
   $("search-results-title").textContent = `Search: ${query}`;
   $("search-result-count").textContent =
-    `${results.length}${results.length === 200 ? "+" : ""} result${results.length === 1 ? "" : "s"}`;
-  $("search-results-message").textContent = results.length
+    `${total.toLocaleString()} result${total === 1 ? "" : "s"}`;
+  $("search-results-message").textContent = total
     ? "Select a result to open its syntax tree."
     : "No corpus text matched this search.";
   results.forEach(result => {
@@ -374,15 +435,24 @@ function renderCorpusSearchResults(results, query) {
     const heading = document.createElement("span");
     heading.className = "corpus-search-result-heading";
     const sentence = document.createElement("strong");
-    sentence.textContent = result.sentence_id;
+    appendHighlightedText(sentence, result.sentence_id, query);
     const location = document.createElement("span");
     location.textContent =
       `${result.label} · ${result.source === "text" ? "Texts under editing" : "Uploaded trees"}`;
     heading.append(sentence, location);
     const preview = document.createElement("span");
     preview.className = "corpus-search-preview";
-    preview.textContent = result.preview || result.header || "No text preview";
-    button.append(heading, preview);
+    appendHighlightedText(
+      preview,
+      result.preview || result.header || "No text preview",
+      query,
+    );
+    const fields = document.createElement("span");
+    fields.className = "corpus-search-fields";
+    fields.textContent = result.matching_fields
+      .map(field => field.replace("_", " "))
+      .join(" · ");
+    button.append(heading, preview, fields);
     button.addEventListener("click", async () => {
       const documentData = findDocument(result.source, result.document_id);
       if (!documentData) {
@@ -393,10 +463,20 @@ function renderCorpusSearchResults(results, query) {
     });
     container.appendChild(button);
   });
+
+  corpusSearchState.page = page;
+  corpusSearchState.perPage = perPage;
+  const pagination = $("search-pagination");
+  pagination.classList.toggle("hidden", total <= 10);
+  $("search-page-status").textContent = `Page ${page} of ${Math.max(pages, 1)}`;
+  $("search-page-previous").disabled = page <= 1;
+  $("search-page-next").disabled = page >= pages;
+  $("search-page-size").value = String(perPage);
 }
 
-async function performCorpusSearch(query) {
+async function performCorpusSearch(query, page = 1) {
   const normalized = query.trim();
+  corpusSearchState.query = normalized;
   showEditorPage("search");
   $("search-results").innerHTML = "";
   if (!normalized) {
@@ -405,18 +485,17 @@ async function performCorpusSearch(query) {
     $("search-results-title").textContent = "Search results";
     $("search-result-count").textContent = "";
     $("search-results-message").textContent = "Enter a search in the sidebar.";
+    $("search-pagination").classList.add("hidden");
     return;
   }
   clearError();
   $("global-search-message").textContent = "Searching…";
   $("search-results-message").textContent = "Searching the current corpus…";
   try {
-    const results = await apiFetch(
-      `/api/search?q=${encodeURIComponent(normalized)}`
-    );
+    const payload = await apiFetch(`/api/search?${corpusSearchParameters(page)}`);
     $("global-search-message").textContent =
-      `${results.length}${results.length === 200 ? "+" : ""} result${results.length === 1 ? "" : "s"}.`;
-    renderCorpusSearchResults(results, normalized);
+      `${payload.total.toLocaleString()} result${payload.total === 1 ? "" : "s"}.`;
+    renderCorpusSearchResults(payload);
   } catch (error) {
     showError(error);
     $("global-search-message").textContent = "Search failed.";
@@ -436,6 +515,35 @@ $("global-search").addEventListener("input", event => {
     () => performCorpusSearch(event.target.value),
     300,
   );
+});
+
+$("search-page-previous").addEventListener("click", () => {
+  performCorpusSearch(corpusSearchState.query, corpusSearchState.page - 1);
+});
+
+$("search-page-next").addEventListener("click", () => {
+  performCorpusSearch(corpusSearchState.query, corpusSearchState.page + 1);
+});
+
+$("search-page-size").addEventListener("change", event => {
+  corpusSearchState.perPage = Number(event.target.value);
+  performCorpusSearch(corpusSearchState.query, 1);
+});
+
+[
+  "corpus-search-scope",
+  "corpus-search-match",
+  "corpus-search-case",
+].forEach(id => {
+  $(id).addEventListener("change", () => {
+    if (corpusSearchState.query) performCorpusSearch(corpusSearchState.query, 1);
+  });
+});
+
+document.querySelectorAll('input[name="corpus-field"]').forEach(input => {
+  input.addEventListener("change", () => {
+    if (corpusSearchState.query) performCorpusSearch(corpusSearchState.query, 1);
+  });
 });
 
 async function loadPassages(documentData) {
@@ -611,7 +719,6 @@ async function selectPassage(passage) {
   $("detail-breadcrumb").textContent =
     `${activeDocument.label} · ${passage.token_count} tokens`;
   $("tree-container").innerHTML = '<div class="loading-card">Rendering syntax tree…</div>';
-  setTab("tree");
 
   try {
     const data = await apiFetch(
@@ -998,12 +1105,11 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     });
     node._collapsedTokens.forEach(token => {
       combined.appendChild(svgElement("tspan", {
-        class: `${scriptStyleClass(token.phon, true)}${token.lemma ? " interactive-form" : ""}`,
-        ...(token.lemma ? {
-          "data-lemma": token.lemma,
-          role: "link",
-          tabindex: "0",
-        } : {}),
+        class: `${scriptStyleClass(token.phon, true)} interactive-form`,
+        "data-dictionary-query": token.lemma || token.text,
+        ...(token.lemma ? {"data-lemma": token.lemma} : {}),
+        role: "link",
+        tabindex: "0",
       }, token.text));
     });
     svg.appendChild(combined);
@@ -1011,12 +1117,11 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
-      class: `form-label ${scriptStyleClass(node.phon, true)}${node.lemma ? " interactive-form" : ""}`,
-      ...(node.lemma ? {
-        "data-lemma": node.lemma,
-        role: "link",
-        tabindex: "0",
-      } : {}),
+      class: `form-label ${scriptStyleClass(node.phon, true)} interactive-form`,
+      "data-dictionary-query": node.lemma || node.form,
+      ...(node.lemma ? {"data-lemma": node.lemma} : {}),
+      role: "link",
+      tabindex: "0",
       "text-anchor": "middle",
     }, node.form));
   }
@@ -1313,9 +1418,13 @@ $("tree-container").addEventListener("click", event => {
   }
   const lemma = event.target.closest("[data-lemma]")?.dataset.lemma;
   if (lemma) {
-    setTab("dict");
-    $("dict-input").value = lemma;
-    showDictionaryEntry(lemma);
+    openDictionaryPopupEntry(lemma);
+    return;
+  }
+  const dictionaryQuery = event.target.closest("[data-dictionary-query]")
+    ?.dataset.dictionaryQuery;
+  if (dictionaryQuery) {
+    openDictionaryPopupLookup(dictionaryQuery);
     return;
   }
   toggleTreeNode(event.target.closest("[data-node-id]")?.dataset.nodeId);
@@ -1332,7 +1441,14 @@ $("tree-container").addEventListener("keydown", event => {
   const lemma = event.target.closest("[data-lemma]")?.dataset.lemma;
   if (lemma) {
     event.preventDefault();
-    showDictionaryEntry(lemma);
+    openDictionaryPopupEntry(lemma);
+    return;
+  }
+  const dictionaryQuery = event.target.closest("[data-dictionary-query]")
+    ?.dataset.dictionaryQuery;
+  if (dictionaryQuery) {
+    event.preventDefault();
+    openDictionaryPopupLookup(dictionaryQuery);
     return;
   }
   const nodeId = event.target.closest("[data-node-id]")?.dataset.nodeId;
@@ -1341,100 +1457,190 @@ $("tree-container").addEventListener("keydown", event => {
   toggleTreeNode(nodeId);
 });
 
-$("dict-input").addEventListener("input", event => {
-  clearTimeout(dictionaryTimer);
-  const query = event.target.value.trim();
-  if (!query) {
-    $("dict-results").innerHTML = "";
-    $("dict-entry").classList.add("hidden");
-    $("dict-message").textContent =
-      "Enter a search term to read the current dictionary.";
+function dictionarySearchParameters(query, useAdvanced) {
+  const parameters = new URLSearchParams({q: query});
+  if (useAdvanced) {
+    parameters.set("fields", checkedValues("dictionary-field").join(","));
+    parameters.set("match", $("dictionary-search-match").value);
+    parameters.set(
+      "case_sensitive", String($("dictionary-search-case").checked)
+    );
+  }
+  return parameters;
+}
+
+function renderDictionaryResults(results, container, target) {
+  container.innerHTML = "";
+  results.forEach(entry => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "dictionary-result";
+    const heading = document.createElement("span");
+    heading.className = "dictionary-result-heading";
+    const id = document.createElement("strong");
+    id.textContent = entry.id;
+    const gloss = document.createElement("span");
+    gloss.textContent = entry.gloss;
+    heading.append(id, gloss);
+    const forms = document.createElement("span");
+    forms.className = "dictionary-result-forms";
+    forms.textContent = entry.forms.join(", ") || "No form";
+    const pos = document.createElement("small");
+    pos.textContent = entry.pos.join(" · ") || "No part of speech";
+    button.append(heading, forms, pos);
+    button.addEventListener("click", () => showDictionaryEntry(entry.id, target));
+    container.appendChild(button);
+  });
+}
+
+function renderDictionaryEntry(entry, article) {
+  article.innerHTML = "";
+  const header = document.createElement("div");
+  header.className = "dictionary-entry-heading";
+  const eyebrow = document.createElement("span");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = "LEMMA";
+  const title = document.createElement("h3");
+  title.textContent = entry.id;
+  header.append(eyebrow, title);
+  const fields = document.createElement("dl");
+  fields.className = "dictionary-fields";
+  entry.fields.forEach(field => {
+    const term = document.createElement("dt");
+    term.textContent = field.label;
+    const description = document.createElement("dd");
+    if (field.values.length) {
+      field.values.forEach(value => {
+        const item = document.createElement("div");
+        item.textContent = value || "—";
+        description.appendChild(item);
+      });
+    } else {
+      description.textContent = "—";
+    }
+    fields.append(term, description);
+  });
+  article.append(header, fields);
+  article.classList.remove("hidden");
+}
+
+async function searchDictionary(query, target = "workspace") {
+  const isPopup = target === "popup";
+  const message = $(isPopup ? "popup-dict-message" : "dict-message");
+  const resultsContainer = $(isPopup ? "popup-dict-results" : "dict-results");
+  const entryContainer = $(isPopup ? "popup-dict-entry" : "dict-entry");
+  if (!query.trim()) {
+    resultsContainer.innerHTML = "";
+    entryContainer.classList.add("hidden");
+    message.textContent = "Enter a search term to read the current dictionary.";
     return;
   }
-  dictionaryTimer = setTimeout(() => searchDictionary(query), 250);
-});
-
-async function searchDictionary(query) {
   clearError();
-  $("dict-message").textContent = "Searching…";
+  message.textContent = "Searching…";
   try {
     const results = await apiFetch(
-      `/api/dictionary?q=${encodeURIComponent(query)}`
+      `/api/dictionary?${dictionarySearchParameters(query.trim(), !isPopup)}`
     );
-    $("dict-message").textContent =
-      `${results.length} result${results.length === 1 ? "" : "s"}${results.length === 50 ? " (first 50)" : ""}`;
-    $("dict-entry").classList.add("hidden");
-    const container = $("dict-results");
-    container.innerHTML = "";
-    results.forEach(entry => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "dictionary-result";
-      const heading = document.createElement("span");
-      heading.className = "dictionary-result-heading";
-      const id = document.createElement("strong");
-      id.textContent = entry.id;
-      const gloss = document.createElement("span");
-      gloss.textContent = entry.gloss;
-      heading.append(id, gloss);
-      const forms = document.createElement("span");
-      forms.className = "dictionary-result-forms";
-      forms.textContent = entry.forms.join(", ") || "No form";
-      const pos = document.createElement("small");
-      pos.textContent = entry.pos.join(" · ") || "No part of speech";
-      button.append(heading, forms, pos);
-      button.addEventListener("click", () => showDictionaryEntry(entry.id));
-      container.appendChild(button);
-    });
+    message.textContent =
+      `${results.length} result${results.length === 1 ? "" : "s"}${results.length === 100 ? " (first 100)" : ""}`;
+    entryContainer.classList.add("hidden");
+    renderDictionaryResults(results, resultsContainer, target);
   } catch (error) {
     showError(error);
-    $("dict-message").textContent = "Search failed.";
+    message.textContent = "Search failed.";
   }
 }
 
-async function showDictionaryEntry(entryId) {
+async function showDictionaryEntry(entryId, target = "workspace") {
+  const isPopup = target === "popup";
+  const message = $(isPopup ? "popup-dict-message" : "dict-message");
+  const article = $(isPopup ? "popup-dict-entry" : "dict-entry");
   clearError();
-  setTab("dict");
-  $("dict-message").textContent = `Opening ${entryId}…`;
+  if (!isPopup) showEditorPage("dictionary");
+  message.textContent = `Opening ${entryId}…`;
   try {
     const entry = await apiFetch(
       `/api/dictionary/${encodeURIComponent(entryId)}`
     );
-    $("dict-input").value = entry.id;
-    $("dict-message").textContent = "Complete dictionary entry";
-    const article = $("dict-entry");
-    article.innerHTML = "";
-    const header = document.createElement("div");
-    header.className = "dictionary-entry-heading";
-    const eyebrow = document.createElement("span");
-    eyebrow.className = "eyebrow";
-    eyebrow.textContent = "LEMMA";
-    const title = document.createElement("h3");
-    title.textContent = entry.id;
-    header.append(eyebrow, title);
-    const fields = document.createElement("dl");
-    fields.className = "dictionary-fields";
-    entry.fields.forEach(field => {
-      const term = document.createElement("dt");
-      term.textContent = field.label;
-      const description = document.createElement("dd");
-      if (field.values.length) {
-        field.values.forEach(value => {
-          const item = document.createElement("div");
-          item.textContent = value || "—";
-          description.appendChild(item);
-        });
-      } else {
-        description.textContent = "—";
-      }
-      fields.append(term, description);
-    });
-    article.append(header, fields);
-    article.classList.remove("hidden");
+    $(isPopup ? "popup-dict-input" : "dict-input").value = entry.id;
+    message.textContent = "Complete dictionary entry";
+    if (isPopup) $("popup-dict-results").innerHTML = "";
+    renderDictionaryEntry(entry, article);
   } catch (error) {
     showError(error);
-    $("dict-message").textContent = "Entry could not be opened.";
+    message.textContent = "Entry could not be opened.";
   }
 }
+
+function openDictionaryPopup() {
+  $("dictionary-popup").classList.remove("hidden", "collapsed");
+  $("collapse-dictionary-popup").textContent = "›";
+  $("collapse-dictionary-popup").setAttribute(
+    "aria-label", "Collapse dictionary popup"
+  );
+  $("toggle-dictionary-popup").textContent = "Dictionary popup is open";
+}
+
+function closeDictionaryPopup() {
+  $("dictionary-popup").classList.add("hidden");
+  $("toggle-dictionary-popup").textContent = "Open side popup";
+}
+
+function openDictionaryPopupEntry(entryId) {
+  openDictionaryPopup();
+  showDictionaryEntry(entryId, "popup");
+}
+
+function openDictionaryPopupLookup(query) {
+  openDictionaryPopup();
+  $("popup-dict-input").value = query;
+  searchDictionary(query, "popup");
+}
+
+$("dictionary-search-form").addEventListener("submit", event => {
+  event.preventDefault();
+  clearTimeout(dictionaryTimer);
+  searchDictionary($("dict-input").value, "workspace");
+});
+
+$("dict-input").addEventListener("input", event => {
+  clearTimeout(dictionaryTimer);
+  dictionaryTimer = setTimeout(
+    () => searchDictionary(event.target.value, "workspace"), 250
+  );
+});
+
+$("popup-dictionary-form").addEventListener("submit", event => {
+  event.preventDefault();
+  clearTimeout(popupDictionaryTimer);
+  searchDictionary($("popup-dict-input").value, "popup");
+});
+
+$("popup-dict-input").addEventListener("input", event => {
+  clearTimeout(popupDictionaryTimer);
+  popupDictionaryTimer = setTimeout(
+    () => searchDictionary(event.target.value, "popup"), 250
+  );
+});
+
+$("toggle-dictionary-popup").addEventListener("click", () => {
+  if ($("dictionary-popup").classList.contains("hidden")) {
+    openDictionaryPopup();
+    $("popup-dict-input").focus();
+  } else {
+    closeDictionaryPopup();
+  }
+});
+
+$("close-dictionary-popup").addEventListener("click", closeDictionaryPopup);
+
+$("collapse-dictionary-popup").addEventListener("click", event => {
+  const collapsed = $("dictionary-popup").classList.toggle("collapsed");
+  event.currentTarget.textContent = collapsed ? "‹" : "›";
+  event.currentTarget.setAttribute(
+    "aria-label",
+    `${collapsed ? "Expand" : "Collapse"} dictionary popup`,
+  );
+});
 
 loadDocuments();

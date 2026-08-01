@@ -305,13 +305,28 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 8. Sections of the syntax tree can also be collapsed or expanded, making it convenient for users who simply wish to browse the full text.
 9. Move statistical data  "115 documents · 5,665 passages" from the top of the page to below the "documents" section. Delete "Browse current text and uploaded-tree XML" under "documents".
 
+### After commit b7002bf
+1. When user collapses the tree diagram to expand the text, it is impossible to scroll through the full text or view the title "tree diagram". Please fix this bug. Additionally, rename "tree diagram" to "syntax tree."
+2. Highlight search results.
+3. Delete the content 'CORPUS SOURCES' above 'Documents'. Delete the content 'CURRENT CORPUS' above 'Search'.
+4. In the search function, users can set the search scope. Moreover, When there is a large number of search results, allow users to select the maximum number of results displayed per page and navigate between pages. This feature is hidden when the number of results is small to avoid a cluttered page layout.
+5. Add advanced search functions. 
+6. Design and add a dictionary icon to the activity bar. When user clicks it, it will open a new tab for dictionary. Basically, user can directly search word form, lemma id, gloss, and meaning. Also add an advanced search function which allows user to choose data categories and search the dictionary. Users can also choose to have the dictionary appear as a pop-up window on the right, which can be expanded or collapsed. This design is intended to allow users to quickly consult the dictionary while clicking on words in the syntax tree or during general use. Delete the previous dictionary function in Documents section.
+
 
 ### TBD
-1. 词典位置
-2. 图标设计
-3. BUG:折叠tree时，无法看到tree的图标，无法滚动查看完整text
-4. 完善搜索和词典编辑
+1. 词典
+词典侧边栏的设计
+词典图标修改
+词典高级搜索
+词典悬浮窗quick search的机制修改
+词典搜索结果页面显示
+2. 搜索
+逻辑和功能
 
+3. 图标设计
+
+4. 编辑器合并
 
 
 

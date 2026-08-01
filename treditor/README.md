@@ -24,14 +24,18 @@ The Documents search filters sources and documents; an exact passage ID such as
 `MYS.1.1` opens its syntax tree directly. The activity bar switches between the
 hierarchical Documents sidebar and corpus-wide Search, and clicking an active
 activity icon collapses the sidebar. Corpus search covers transcriptions,
-kanji, headers, and word forms across both current data sources. Search results
-and syntax trees open as separate, switchable, closable editor tabs.
+kanji, headers, and word forms across both current data sources. Advanced
+controls restrict the source and searched categories and support contains,
+whole-word, exact-field, and case-sensitive matching. Matches are highlighted;
+larger result sets expose a page-size selector and page navigation. Search
+results and syntax trees open as separate, switchable, closable editor tabs.
 
 An expanded active document stays pinned while its passage list is scrolled and
-releases at the end of that document. The Text and Tree diagram sections can
+releases at the end of that document. The Text and Syntax tree sections can
 each be collapsed; collapsing the tree gives the text section the available
-workspace for full-text browsing. Text can switch between stacked and
-two-column kanji/transcription layouts.
+workspace and a dedicated scrollbar for full-text browsing while keeping the
+Syntax tree heading visible. Text can switch between stacked and two-column
+kanji/transcription layouts.
 
 PHON-family forms are italic, NLOG forms are underlined, and other forms remain
 plain in both Text and the syntax tree. Tree controls can show script tags,
@@ -42,7 +46,14 @@ displayed full-screen, and given much narrower or wider word spacing.
 Variable-width leaf slots keep long words, collapsed forms, and kanji from
 overlapping without making every column equally wide. Hover a non-leaf tag to
 reveal its collapse control; collapsed nodes retain a visible `+`. Clicking
-either a lemma ID or a word form opens its current dictionary entry.
+either a lemma ID or a word form opens a right-side dictionary quick-reference
+drawer.
+
+The activity bar's dictionary icon opens a separate, closable Dictionary tab.
+Its basic search covers word forms, lemma IDs, glosses, and meanings. Advanced
+controls can restrict those categories and select the match behavior. The same
+dictionary can be opened as a collapsible right-side popup for consultation
+without leaving a syntax tree.
 
 Click **Edit** to reveal pencil controls beside the displayed nodes. A pencil
 opens the editing drawer, which can change node content and add or delete child

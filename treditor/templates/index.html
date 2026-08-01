@@ -31,12 +31,19 @@
         </svg>
         <span class="sr-only">Search corpus</span>
       </button>
+      <button type="button" id="activity-dictionary" class="activity-button" aria-label="Open dictionary" title="Dictionary" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4.5 5.5A3.5 3.5 0 0 1 8 2h4v17H8a3.5 3.5 0 0 0-3.5 3z"/>
+          <path d="M19.5 5.5A3.5 3.5 0 0 0 16 2h-4v17h4a3.5 3.5 0 0 1 3.5 3z"/>
+          <path d="M7.5 7H10M14 7h2.5"/>
+        </svg>
+        <span class="sr-only">Dictionary</span>
+      </button>
     </nav>
 
     <aside id="primary-sidebar" class="navigation-pane" aria-label="Sidebar">
       <section id="sidebar-explorer" class="sidebar-view documents-pane" aria-label="Documents">
         <div class="pane-heading">
-          <p class="eyebrow">CORPUS SOURCES</p>
           <h1>Documents</h1>
           <p id="data-summary" class="sidebar-data-summary">Loading XML data…</p>
         </div>
@@ -52,7 +59,6 @@
 
       <section id="sidebar-search" class="sidebar-view search-sidebar hidden" aria-label="Search">
         <div class="pane-heading">
-          <p class="eyebrow">CURRENT CORPUS</p>
           <h1>Search</h1>
         </div>
         <form id="global-search-form" class="global-search-form">
@@ -62,6 +68,33 @@
           </label>
           <button type="submit" class="primary-button">Search</button>
         </form>
+        <details id="corpus-search-advanced" class="advanced-search">
+          <summary>Advanced search</summary>
+          <div class="advanced-search-fields">
+            <label>Scope
+              <select id="corpus-search-scope">
+                <option value="text,trees">All corpus data</option>
+                <option value="text">Texts under editing</option>
+                <option value="trees">Uploaded trees</option>
+              </select>
+            </label>
+            <fieldset>
+              <legend>Search in</legend>
+              <label><input type="checkbox" name="corpus-field" value="transcription" checked> Transcription</label>
+              <label><input type="checkbox" name="corpus-field" value="kanji" checked> Kanji</label>
+              <label><input type="checkbox" name="corpus-field" value="header" checked> Headers</label>
+              <label><input type="checkbox" name="corpus-field" value="word_forms" checked> Word forms</label>
+            </fieldset>
+            <label>Match
+              <select id="corpus-search-match">
+                <option value="contains">Contains</option>
+                <option value="whole">Whole word</option>
+                <option value="exact">Exact field</option>
+              </select>
+            </label>
+            <label class="advanced-checkbox"><input type="checkbox" id="corpus-search-case"> Match case</label>
+          </div>
+        </details>
         <p id="global-search-message" class="search-message">Search transcriptions, kanji, headers, and word forms.</p>
       </section>
     </aside>
@@ -82,6 +115,13 @@
           </button>
           <button type="button" class="editor-tab-close" data-close-editor="search" aria-label="Close search results">×</button>
         </div>
+        <div id="editor-tab-dictionary" class="editor-tab hidden" data-editor-tab="dictionary">
+          <button type="button" class="editor-tab-label" data-editor-page="dictionary">
+            <span class="editor-tab-icon" aria-hidden="true">▤</span>
+            <span>Dictionary</span>
+          </button>
+          <button type="button" class="editor-tab-close" data-close-editor="dictionary" aria-label="Close dictionary">×</button>
+        </div>
       </nav>
 
       <section id="editor-empty" class="editor-empty">
@@ -101,11 +141,6 @@
             <span><strong id="leaf-count">0</strong> leaves</span>
           </div>
         </div>
-
-        <nav class="tab-bar" aria-label="Tree editor views">
-          <button type="button" class="tab active" data-tab="tree">Syntax tree</button>
-          <button type="button" class="tab" data-tab="dict">Dictionary</button>
-        </nav>
 
         <section class="tab-content" id="tab-tree">
           <section id="text-panel" class="text-panel hidden" aria-label="Text">
@@ -128,7 +163,7 @@
             <header class="tree-panel-header">
               <button type="button" id="toggle-tree-panel" class="tree-panel-toggle" aria-expanded="true" aria-controls="tree-panel-body">
                 <span class="disclosure-icon" aria-hidden="true">⌄</span>
-                <span>Tree diagram</span>
+                <span>Syntax tree</span>
               </button>
             </header>
             <div id="tree-panel-body" class="tree-panel-body">
@@ -212,24 +247,6 @@
           </section>
         </section>
 
-        <section class="tab-content hidden" id="tab-dict">
-          <div class="dictionary-toolbar">
-            <div>
-              <p class="eyebrow">COJ DICTIONARY</p>
-              <h2>Dictionary</h2>
-              <p>Search lemma IDs, forms, glosses, and meanings.</p>
-            </div>
-            <label class="dictionary-search">
-              <span class="sr-only">Search dictionary</span>
-              <input id="dict-input" type="search" placeholder="Search form, gloss, meaning, or lemma ID…" autocomplete="off">
-            </label>
-          </div>
-          <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
-          <div class="dictionary-layout">
-            <div id="dict-results" class="dictionary-results"></div>
-            <article id="dict-entry" class="dictionary-entry hidden"></article>
-          </div>
-        </section>
       </section>
 
       <section id="editor-page-search" class="editor-page search-page hidden">
@@ -242,7 +259,80 @@
         </header>
         <p id="search-results-message" class="search-results-message">Enter a search in the sidebar.</p>
         <div id="search-results" class="search-results"></div>
+        <nav id="search-pagination" class="search-pagination hidden" aria-label="Search result pages">
+          <button type="button" id="search-page-previous">Previous</button>
+          <span id="search-page-status">Page 1 of 1</span>
+          <button type="button" id="search-page-next">Next</button>
+          <label>Results per page
+            <select id="search-page-size">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </nav>
       </section>
+
+      <section id="editor-page-dictionary" class="editor-page dictionary-page hidden">
+        <div class="dictionary-toolbar">
+          <div>
+            <h2>Dictionary</h2>
+            <p>Search word forms, lemma IDs, glosses, and meanings.</p>
+          </div>
+          <button type="button" id="toggle-dictionary-popup" class="tool-button">Open side popup</button>
+        </div>
+        <form id="dictionary-search-form" class="dictionary-search-form">
+          <label class="dictionary-search">
+            <span class="sr-only">Search dictionary</span>
+            <input id="dict-input" type="search" placeholder="Search form, gloss, meaning, or lemma ID…" autocomplete="off">
+          </label>
+          <button type="submit" class="primary-button">Search</button>
+        </form>
+        <details id="dictionary-advanced" class="advanced-search dictionary-advanced">
+          <summary>Advanced search</summary>
+          <div class="advanced-search-fields horizontal">
+            <fieldset>
+              <legend>Search in</legend>
+              <label><input type="checkbox" name="dictionary-field" value="form" checked> Word forms</label>
+              <label><input type="checkbox" name="dictionary-field" value="lemma" checked> Lemma IDs</label>
+              <label><input type="checkbox" name="dictionary-field" value="gloss" checked> Glosses</label>
+              <label><input type="checkbox" name="dictionary-field" value="meaning" checked> Meanings</label>
+            </fieldset>
+            <label>Match
+              <select id="dictionary-search-match">
+                <option value="contains">Contains</option>
+                <option value="whole">Whole word</option>
+                <option value="exact">Exact field</option>
+              </select>
+            </label>
+            <label class="advanced-checkbox"><input type="checkbox" id="dictionary-search-case"> Match case</label>
+          </div>
+        </details>
+        <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
+        <div class="dictionary-layout">
+          <div id="dict-results" class="dictionary-results"></div>
+          <article id="dict-entry" class="dictionary-entry hidden"></article>
+        </div>
+      </section>
+
+      <aside id="dictionary-popup" class="dictionary-popup hidden" aria-label="Dictionary quick reference">
+        <header>
+          <strong>Dictionary</strong>
+          <div>
+            <button type="button" id="collapse-dictionary-popup" class="icon-button" aria-label="Collapse dictionary popup">›</button>
+            <button type="button" id="close-dictionary-popup" class="icon-button" aria-label="Close dictionary popup">×</button>
+          </div>
+        </header>
+        <div id="dictionary-popup-body" class="dictionary-popup-body">
+          <form id="popup-dictionary-form" class="popup-dictionary-form">
+            <input id="popup-dict-input" type="search" placeholder="Quick dictionary search…" autocomplete="off" aria-label="Quick dictionary search">
+          </form>
+          <p id="popup-dict-message" class="dictionary-message">Click a tree word or enter a search.</p>
+          <div id="popup-dict-results" class="dictionary-results"></div>
+          <article id="popup-dict-entry" class="dictionary-entry hidden"></article>
+        </div>
+      </aside>
 
       <div id="app-message" class="app-message hidden" role="alert"></div>
     </section>

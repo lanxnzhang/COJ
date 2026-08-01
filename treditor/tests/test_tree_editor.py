@@ -65,15 +65,41 @@ def test_corpus_search_finds_text_across_all_documents(client):
     response = client.get("/api/search?q=ugonapar")
 
     assert response.status_code == 200
-    results = response.get_json()
-    first = results[0]
+    payload = response.get_json()
+    first = payload["results"][0]
+    assert payload["total"] >= 1
+    assert payload["page"] == 1
+    assert payload["per_page"] == 25
     assert first["source"] == "text"
     assert first["document_id"] == "EN_01"
     assert first["sentence_id"] == "EN.1.1"
     assert "ugonapar" in first["preview"]
-    assert "_searchable" not in first
+    assert "transcription" in first["matching_fields"]
+    assert "_fields" not in first
 
-    assert client.get("/api/search").get_json() == []
+    empty = client.get("/api/search").get_json()
+    assert empty["results"] == []
+
+
+def test_corpus_search_supports_scope_advanced_fields_and_pagination(client):
+    scoped = client.get(
+        "/api/search?q=ugonapar&sources=text&fields=transcription"
+        "&match=whole&per_page=10&page=1"
+    ).get_json()
+
+    assert scoped["results"]
+    assert all(result["source"] == "text" for result in scoped["results"])
+    assert all(
+        result["matching_fields"] == ["transcription"]
+        for result in scoped["results"]
+    )
+
+    paged = client.get(
+        "/api/search?q=no&fields=word_forms&match=exact&per_page=10&page=2"
+    ).get_json()
+    assert paged["total"] > 10
+    assert paged["page"] == 2
+    assert len(paged["results"]) <= 10
 
 
 def test_tree_payload_uses_current_processing_text_and_script_tags(client):
@@ -145,6 +171,12 @@ def test_dictionary_uses_current_multi_value_shape(client):
     ).get_json()
     assert lowercase_id[0]["id"] == results[0]["id"]
 
+    advanced = client.get(
+        f"/api/dictionary?q={results[0]['id'].lower()}"
+        "&fields=lemma&match=exact"
+    ).get_json()
+    assert [entry["id"] for entry in advanced] == [results[0]["id"]]
+
 
 def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     html = client.get("/").get_data(as_text=True)
@@ -157,12 +189,19 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="toggle-navigation"' not in html
     assert 'id="activity-explorer"' in html
     assert 'id="activity-search"' in html
+    assert 'id="activity-dictionary"' in html
     assert 'id="primary-sidebar"' in html
     assert 'id="global-search-form"' in html
+    assert 'id="corpus-search-scope"' in html
+    assert 'id="corpus-search-match"' in html
+    assert 'id="search-pagination"' in html
     assert 'id="editor-tab-tree"' in html
     assert 'id="editor-tab-search"' in html
+    assert 'id="editor-tab-dictionary"' in html
     assert 'id="toggle-text"' in html
     assert 'id="toggle-tree-panel"' in html
+    assert "Tree diagram" not in html
+    assert "Syntax tree" in html
     assert 'id="toggle-edit-mode"' in html
     assert 'data-text-layout="two-column"' in html
     assert 'placeholder="Filter or open MYS.1.1…"' in html
@@ -177,6 +216,12 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="expand-all"' in html
     assert 'id="toggle-fullscreen"' in html
     assert 'id="node-editor"' in html
+    assert 'id="tab-dict"' not in html
+    assert 'id="editor-page-dictionary"' in html
+    assert 'id="dictionary-advanced"' in html
+    assert 'id="dictionary-popup"' in html
+    assert "CORPUS SOURCES" not in html
+    assert "CURRENT CORPUS" not in html
     assert "--blue: #6f8ec9" in css.lower()
 
 
@@ -188,7 +233,7 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert 'normalized === "NLOG"' in javascript
     assert "collapsedNodeIds" in javascript
     assert "/api/poems?q=" in javascript
-    assert "/api/search?q=" in javascript
+    assert "/api/search?" in javascript
     assert "localStorage.setItem" in javascript
     assert "data-edit-node-id" in javascript
     assert "showEditorPage" in javascript
@@ -206,3 +251,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert ".editor-tabs" in css
     assert ".node-disclosure.expanded" in css
     assert ".tree-node-controls:hover" in css
+    assert "appendHighlightedText" in javascript
+    assert "corpusSearchParameters" in javascript
+    assert "search-page-previous" in javascript
+    assert "openDictionaryPopupEntry" in javascript
+    assert ".dictionary-popup.collapsed" in css
+    assert "#tab-tree.tree-collapsed" in css

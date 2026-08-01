@@ -35,6 +35,20 @@ _dictionary: Dictionary | None = None
 _documents: dict[tuple[str, str], CorpusDocument] = {}
 _search_index: list[dict] | None = None
 
+CORPUS_SEARCH_FIELDS = (
+    "header",
+    "transcription",
+    "kanji",
+    "word_forms",
+)
+DICTIONARY_SEARCH_FIELDS = (
+    "lemma",
+    "form",
+    "gloss",
+    "meaning",
+)
+SEARCH_PAGE_SIZES = {10, 25, 50, 100}
+
 
 @app.errorhandler(HTTPException)
 def json_http_error(error: HTTPException):
@@ -137,8 +151,12 @@ def _searchable_passages() -> list[dict]:
             for block in root.findall("block"):
                 sentence_id = (block.get("id") or "").strip()
                 header = (block.get("header") or "").strip()
-                text_parts = [header]
-                preview_parts = []
+                field_values = {
+                    "header": [header] if header else [],
+                    "transcription": [],
+                    "kanji": [],
+                    "word_forms": [],
+                }
                 raw_text = block.find("raw-text")
                 if raw_text is not None:
                     for sentence in raw_text.findall("sentence"):
@@ -146,22 +164,20 @@ def _searchable_passages() -> list[dict]:
                         transcription = (
                             sentence.findtext("transcription", "") or ""
                         ).strip()
-                        text_parts.extend((kanji, transcription))
-                        preview_parts.extend(
-                            part for part in (kanji, transcription) if part
-                        )
-                text_parts.extend(
+                        if kanji:
+                            field_values["kanji"].append(kanji)
+                        if transcription:
+                            field_values["transcription"].append(transcription)
+                field_values["word_forms"] = [
                     form
                     for elem in block.iter()
                     if (form := (elem.get("form") or "").strip())
-                )
-                searchable = " ".join(part for part in text_parts if part)
+                ]
                 passages.append({
                     **document,
                     "sentence_id": sentence_id,
                     "header": header,
-                    "preview": " · ".join(preview_parts) or header,
-                    "_searchable": searchable.casefold(),
+                    "_fields": field_values,
                 })
 
     _search_index = passages
@@ -183,6 +199,33 @@ def _search_preview(preview: str, query: str, limit: int = 220) -> str:
         + preview[start:end].strip()
         + ("…" if end < len(preview) else "")
     )
+
+
+def _search_values_match(
+    values: list[str],
+    query: str,
+    match_mode: str,
+    case_sensitive: bool,
+) -> bool:
+    if not case_sensitive:
+        values = [value.casefold() for value in values]
+        query = query.casefold()
+    if match_mode == "exact":
+        return any(value.strip() == query for value in values)
+    if match_mode == "whole":
+        pattern = re.compile(rf"(?<!\w){re.escape(query)}(?!\w)")
+        return any(pattern.search(value) for value in values)
+    return any(query in value for value in values)
+
+
+def _requested_values(name: str, allowed: tuple[str, ...]) -> list[str]:
+    requested = {
+        value.strip()
+        for value in request.args.get(name, "").split(",")
+        if value.strip()
+    }
+    selected = [value for value in allowed if value in requested]
+    return selected or list(allowed)
 
 
 def _block_raw_text(
@@ -305,24 +348,77 @@ def find_poem():
 def search_corpus():
     query = request.args.get("q", "").strip()
     if not query:
-        return jsonify([])
+        return jsonify({
+            "query": "",
+            "total": 0,
+            "page": 1,
+            "per_page": 25,
+            "pages": 0,
+            "results": [],
+        })
 
-    folded = query.casefold()
+    sources = _requested_values("sources", tuple(DOCUMENT_SOURCES))
+    fields = _requested_values("fields", CORPUS_SEARCH_FIELDS)
+    match_mode = request.args.get("match", "contains")
+    if match_mode not in {"contains", "whole", "exact"}:
+        match_mode = "contains"
+    case_sensitive = request.args.get("case_sensitive") == "true"
+    page = max(request.args.get("page", 1, type=int) or 1, 1)
+    requested_page_size = request.args.get("per_page", 25, type=int) or 25
+    per_page = (
+        requested_page_size
+        if requested_page_size in SEARCH_PAGE_SIZES
+        else 25
+    )
+
     hits = []
     for passage in _searchable_passages():
-        if folded not in passage["_searchable"]:
+        if passage["source"] not in sources:
             continue
-        hits.append({
+        matching_fields = [
+            field
+            for field in fields
+            if _search_values_match(
+                passage["_fields"][field],
+                query,
+                match_mode,
+                case_sensitive,
+            )
+        ]
+        if not matching_fields:
+            continue
+        preview_values = passage["_fields"][matching_fields[0]]
+        preview = next(
+            (
+                value
+                for value in preview_values
+                if _search_values_match(
+                    [value], query, match_mode, case_sensitive
+                )
+            ),
+            preview_values[0] if preview_values else passage["header"],
+        )
+        hit = {
             key: value
             for key, value in passage.items()
-            if key != "_searchable"
-        })
-        hits[-1]["preview"] = _search_preview(
-            hits[-1]["preview"], query
-        )
-        if len(hits) >= 200:
-            break
-    return jsonify(hits)
+            if key != "_fields"
+        }
+        hit["preview"] = _search_preview(preview, query)
+        hit["matching_fields"] = matching_fields
+        hits.append(hit)
+
+    total = len(hits)
+    pages = (total + per_page - 1) // per_page
+    page = min(page, pages) if pages else 1
+    start = (page - 1) * per_page
+    return jsonify({
+        "query": query,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": pages,
+        "results": hits[start:start + per_page],
+    })
 
 
 @app.get("/api/documents/<source>/<doc_id>")
@@ -381,34 +477,32 @@ def search_dictionary():
     if not query:
         return jsonify([])
 
+    fields = _requested_values("fields", DICTIONARY_SEARCH_FIELDS)
+    match_mode = request.args.get("match", "contains")
+    if match_mode not in {"contains", "whole", "exact"}:
+        match_mode = "contains"
+    case_sensitive = request.args.get("case_sensitive") == "true"
     dictionary = get_dictionary()
     hits = []
-    id_match = re.fullmatch(r"([A-Za-z]+)(\d+)([A-Za-z]*)", query)
-    if id_match:
-        canonical_id = (
-            id_match.group(1).upper()
-            + id_match.group(2)
-            + id_match.group(3).lower()
-        )
-        entry = dictionary.get(canonical_id)
-        if entry is not None:
-            hits = [entry]
-    else:
-        seen: set[str] = set()
-        folded = query.casefold()
-        for entry in dictionary:
-            values = (
-                entry.get_all(".FORM")
-                + entry.get_all(".GLOSS")
-                + entry.get_all(".MEANING")
+    for entry in dictionary:
+        values_by_field = {
+            "lemma": [str(entry.eid)],
+            "form": entry.get_all(".FORM"),
+            "gloss": entry.get_all(".GLOSS"),
+            "meaning": entry.get_all(".MEANING"),
+        }
+        if any(
+            _search_values_match(
+                values_by_field[field],
+                query,
+                match_mode,
+                case_sensitive,
             )
-            if any(folded in value.casefold() for value in values):
-                entry_id = str(entry.eid)
-                if entry_id not in seen:
-                    hits.append(entry)
-                    seen.add(entry_id)
-            if len(hits) >= 50:
-                break
+            for field in fields
+        ):
+            hits.append(entry)
+        if len(hits) >= 100:
+            break
 
     return jsonify([
         {
@@ -417,7 +511,7 @@ def search_dictionary():
             "forms": entry.get_all(".FORM"),
             "pos": entry.get_all(".POS"),
         }
-        for entry in hits[:50]
+        for entry in hits
     ])
 
 
