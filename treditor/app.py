@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import sys
+import threading
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -14,7 +15,8 @@ DICT_PATH = DATA_XML / "dict" / "dictionary.xml"
 sys.path.insert(0, str(ROOT / "src"))
 
 from coj.core.corpus import CorpusDocument, _utterance_to_elem
-from coj.core.dictionary import Dictionary
+from coj.core.dictionary import DictEntry, Dictionary
+from coj.core.tags import MULTI_VALUE_FIELDS, REQUIRED_FIELDS
 
 app = Flask(__name__)
 
@@ -34,18 +36,16 @@ DOCUMENT_SOURCES = {
 _dictionary: Dictionary | None = None
 _documents: dict[tuple[str, str], CorpusDocument] = {}
 _search_index: list[dict] | None = None
+_search_index_signature: tuple | None = None
+_lemma_frequency_cache: dict[str, int] = {}
+_dictionary_write_lock = threading.Lock()
 
 CORPUS_SEARCH_FIELDS = (
     "header",
     "transcription",
     "kanji",
     "word_forms",
-)
-DICTIONARY_SEARCH_FIELDS = (
-    "lemma",
-    "form",
-    "gloss",
-    "meaning",
+    "lemma_ids",
 )
 SEARCH_PAGE_SIZES = {10, 25, 50, 100}
 
@@ -133,13 +133,28 @@ def find_poem_location(sentence_id: str) -> dict | None:
     return None
 
 
+def _corpus_signature() -> tuple:
+    return tuple(
+        (
+            source,
+            path.name,
+            path.stat().st_mtime_ns,
+            path.stat().st_size,
+        )
+        for source, config in DOCUMENT_SOURCES.items()
+        for path in sorted(config["directory"].glob("*.xml"))
+    )
+
+
 def _searchable_passages() -> list[dict]:
-    """Build a reusable index of the text exposed by every corpus passage."""
-    global _search_index
-    if _search_index is not None:
+    """Build a reusable index, refreshing when corpus XML changes."""
+    global _search_index, _search_index_signature, _lemma_frequency_cache
+    signature = _corpus_signature()
+    if _search_index is not None and signature == _search_index_signature:
         return _search_index
 
     passages = []
+    lemma_frequencies: dict[str, int] = {}
     for source, config in DOCUMENT_SOURCES.items():
         paths = sorted(
             config["directory"].glob("*.xml"),
@@ -156,6 +171,7 @@ def _searchable_passages() -> list[dict]:
                     "transcription": [],
                     "kanji": [],
                     "word_forms": [],
+                    "lemma_ids": [],
                 }
                 raw_text = block.find("raw-text")
                 if raw_text is not None:
@@ -173,15 +189,44 @@ def _searchable_passages() -> list[dict]:
                     for elem in block.iter()
                     if (form := (elem.get("form") or "").strip())
                 ]
+                lemma_forms: dict[str, list[str]] = {}
+                for elem in block.iter():
+                    lemma = (elem.get("lemma") or "").strip()
+                    form = (elem.get("form") or "").strip()
+                    if not lemma:
+                        continue
+                    lemma_forms.setdefault(lemma, [])
+                    if form:
+                        lemma_forms[lemma].append(form)
+                    if source == "text" and form:
+                        lemma_frequencies[lemma] = (
+                            lemma_frequencies.get(lemma, 0) + 1
+                        )
+                field_values["lemma_ids"] = list(lemma_forms)
                 passages.append({
                     **document,
                     "sentence_id": sentence_id,
                     "header": header,
                     "_fields": field_values,
+                    "_lemma_forms": lemma_forms,
+                    "_roots": [
+                        _elem_to_node(child)
+                        for child in block
+                        if child.tag not in {
+                            "comment", "roundtrip-data", "raw-text"
+                        }
+                    ],
                 })
 
     _search_index = passages
+    _search_index_signature = signature
+    _lemma_frequency_cache = lemma_frequencies
     return passages
+
+
+def _lemma_frequency(lemma_id: str) -> int:
+    _searchable_passages()
+    return _lemma_frequency_cache.get(lemma_id, 0)
 
 
 def _search_preview(preview: str, query: str, limit: int = 220) -> str:
@@ -226,6 +271,130 @@ def _requested_values(name: str, allowed: tuple[str, ...]) -> list[str]:
     }
     selected = [value for value in allowed if value in requested]
     return selected or list(allowed)
+
+
+def _dictionary_tag_ids() -> tuple[str, ...]:
+    tags = {tag for entry in get_dictionary() for tag in entry.tags()}
+    ordered = sorted(tags, key=lambda tag: (tag not in REQUIRED_FIELDS, tag))
+    return ("lemma", *ordered)
+
+
+def _dictionary_tag_metadata() -> list[dict]:
+    counts: dict[str, int] = {}
+    for entry in get_dictionary():
+        for tag in entry.tags():
+            counts[tag] = counts.get(tag, 0) + 1
+    return [
+        {
+            "id": tag,
+            "label": (
+                "Lemma ID"
+                if tag == "lemma"
+                else tag.lstrip(".").replace("_", " ").title()
+            ),
+            "entry_count": len(get_dictionary()) if tag == "lemma" else counts[tag],
+            "multi_valued": tag in MULTI_VALUE_FIELDS,
+        }
+        for tag in _dictionary_tag_ids()
+    ]
+
+
+def _entry_values_by_tag(entry: DictEntry) -> dict[str, list[str]]:
+    return {
+        "lemma": [str(entry.eid)],
+        **{tag: entry.get_all(tag) for tag in entry.tags()},
+    }
+
+
+def _dictionary_match_score(
+    entry: DictEntry,
+    query: str,
+    fields: list[str],
+    match_mode: str,
+    case_sensitive: bool,
+) -> int | None:
+    values_by_tag = _entry_values_by_tag(entry)
+    field_weights = {
+        "lemma": 90,
+        ".FORM": 80,
+        ".KANA": 70,
+        ".GLOSS": 35,
+        ".MEANING": 30,
+        ".POS": 25,
+    }
+    best_score: int | None = None
+    comparison_query = query if case_sensitive else query.casefold()
+    whole_pattern = re.compile(
+        rf"(?<!\w){re.escape(comparison_query)}(?!\w)"
+    )
+    for field in fields:
+        for raw_value in values_by_tag.get(field, []):
+            value = raw_value if case_sensitive else raw_value.casefold()
+            if not _search_values_match(
+                [raw_value], query, match_mode, case_sensitive
+            ):
+                continue
+            if value.strip() == comparison_query:
+                quality = 1000
+            elif value.startswith(comparison_query):
+                quality = 700
+            elif whole_pattern.search(value):
+                quality = 500
+            else:
+                quality = 300
+            score = quality + field_weights.get(field, 10)
+            best_score = max(best_score or score, score)
+    return best_score
+
+
+def _dictionary_result_payload(
+    entry: DictEntry,
+    score: int = 0,
+    frequencies: dict[str, int] | None = None,
+) -> dict:
+    if frequencies is None:
+        _searchable_passages()
+        frequencies = _lemma_frequency_cache
+    return {
+        "id": str(entry.eid),
+        "gloss": entry.get_first(".GLOSS") or "",
+        "forms": entry.get_all(".FORM"),
+        "kana": entry.get_all(".KANA"),
+        "pos": entry.get_all(".POS"),
+        "frequency": frequencies.get(str(entry.eid), 0),
+        "relevance": score,
+    }
+
+
+def _entry_from_request(entry_id: str) -> DictEntry:
+    payload = request.get_json(silent=True) or {}
+    fields = payload.get("fields")
+    if not isinstance(fields, dict):
+        abort(400, description="Dictionary fields must be an object")
+    try:
+        entry = DictEntry(entry_id)
+    except (TypeError, ValueError) as error:
+        abort(400, description=f"Invalid lemma ID: {error}")
+    allowed = set(_dictionary_tag_ids()) - {"lemma"}
+    for tag, raw_values in fields.items():
+        if tag not in allowed:
+            abort(400, description=f"Unknown dictionary tag '{tag}'")
+        values = raw_values if isinstance(raw_values, list) else [raw_values]
+        clean_values = [str(value).strip() for value in values]
+        if tag in MULTI_VALUE_FIELDS:
+            entry.set(tag, clean_values)
+        else:
+            entry.set(tag, clean_values[0] if clean_values else "")
+    entry.normalise()
+    return entry
+
+
+def _save_dictionary(dictionary: Dictionary) -> None:
+    global _dictionary
+    temporary_path = DICT_PATH.with_name(f".{DICT_PATH.stem}.tmp.xml")
+    dictionary.to_file(str(temporary_path))
+    temporary_path.replace(DICT_PATH)
+    _dictionary = dictionary
 
 
 def _block_raw_text(
@@ -304,6 +473,239 @@ def _tree_stats(roots: list[dict]) -> dict[str, int]:
     return {"nodes": nodes, "leaves": leaves}
 
 
+TGREP_LINKS = (
+    "$..",
+    "$,,",
+    "<<",
+    ">>",
+    "..",
+    ",,",
+    "$.",
+    "$,",
+    "<",
+    ">",
+    ".",
+    ",",
+    "$",
+)
+TGREP_FIELDS = {"tag", "form", "lemma", "phon"}
+
+
+def _read_tgrep_descriptor(query: str, position: int) -> tuple[str, int]:
+    """Read one node description without treating regex punctuation as links."""
+    start = position
+    field_match = re.match(r"(?:tag|form|lemma|phon)=", query[position:])
+    if field_match:
+        position += field_match.end()
+    if position >= len(query):
+        raise ValueError("A node description is required after '='")
+    if query[position] == "/":
+        position += 1
+        escaped = False
+        while position < len(query):
+            character = query[position]
+            if character == "/" and not escaped:
+                position += 1
+                if position < len(query) and query[position] == "i":
+                    position += 1
+                return query[start:position], position
+            escaped = character == "\\" and not escaped
+            if character != "\\":
+                escaped = False
+            position += 1
+        raise ValueError("The regular expression is missing its closing '/'")
+    while position < len(query):
+        if query[position].isspace() or query[position] in "&!<>$.,()":
+            break
+        position += 1
+    if position == start or query[start:position].endswith("="):
+        raise ValueError("A node description is required")
+    return query[start:position], position
+
+
+def _compile_tgrep_descriptor(description: str) -> tuple[str, re.Pattern | str]:
+    field = "tag"
+    value = description
+    if "=" in description:
+        candidate, value = description.split("=", 1)
+        if candidate not in TGREP_FIELDS:
+            raise ValueError(f"Unknown node field '{candidate}'")
+        field = candidate
+    if value in {"*", "__"}:
+        return field, "*"
+    regex_match = re.fullmatch(r"/(.*)/(i?)", value, flags=re.DOTALL)
+    if regex_match:
+        flags = re.IGNORECASE if regex_match.group(2) else 0
+        try:
+            return field, re.compile(regex_match.group(1), flags)
+        except re.error as error:
+            raise ValueError(f"Invalid regular expression: {error}") from error
+    if not value:
+        raise ValueError("A node description cannot be empty")
+    return field, value
+
+
+def _parse_tgrep_query(
+    query: str,
+) -> tuple[tuple[str, re.Pattern | str], list[tuple[bool, str, tuple]]]:
+    """Parse the flat, AND-linked core of TGrep2 query syntax."""
+    position = 0
+
+    def skip_space() -> None:
+        nonlocal position
+        while position < len(query) and query[position].isspace():
+            position += 1
+
+    skip_space()
+    if not query:
+        raise ValueError("Enter a TGrep2 pattern")
+    anchor_text, position = _read_tgrep_descriptor(query, position)
+    anchor = _compile_tgrep_descriptor(anchor_text)
+    clauses = []
+    while True:
+        skip_space()
+        if position >= len(query):
+            break
+        if query[position] == "&":
+            position += 1
+            skip_space()
+        negated = position < len(query) and query[position] == "!"
+        if negated:
+            position += 1
+        link = next(
+            (item for item in TGREP_LINKS if query.startswith(item, position)),
+            None,
+        )
+        if link is None:
+            raise ValueError(
+                f"Expected a supported relationship near '{query[position:]}'"
+            )
+        position += len(link)
+        skip_space()
+        target_text, position = _read_tgrep_descriptor(query, position)
+        clauses.append((negated, link, _compile_tgrep_descriptor(target_text)))
+    return anchor, clauses
+
+
+def _tgrep_tree_context(roots: list[dict]) -> dict:
+    nodes = []
+    parents: dict[int, dict | None] = {}
+    spans: dict[int, tuple[int, int]] = {}
+    leaf_position = 0
+
+    def visit(node: dict, parent: dict | None) -> None:
+        nonlocal leaf_position
+        nodes.append(node)
+        parents[id(node)] = parent
+        children = node.get("children", [])
+        start = leaf_position
+        if children:
+            for child in children:
+                visit(child, node)
+        else:
+            leaf_position += 1
+        spans[id(node)] = (start, max(start, leaf_position - 1))
+
+    for root in roots:
+        visit(root, None)
+    return {"roots": roots, "nodes": nodes, "parents": parents, "spans": spans}
+
+
+def _tgrep_is_ancestor(ancestor: dict, node: dict, context: dict) -> bool:
+    parent = context["parents"].get(id(node))
+    while parent is not None:
+        if parent is ancestor:
+            return True
+        parent = context["parents"].get(id(parent))
+    return False
+
+
+def _tgrep_siblings(node: dict, context: dict) -> list[dict]:
+    parent = context["parents"].get(id(node))
+    return parent.get("children", []) if parent is not None else context["roots"]
+
+
+def _tgrep_related_nodes(node: dict, link: str, context: dict) -> list[dict]:
+    nodes = context["nodes"]
+    parent = context["parents"].get(id(node))
+    if link == "<":
+        return node.get("children", [])
+    if link == "<<":
+        return [candidate for candidate in nodes if _tgrep_is_ancestor(node, candidate, context)]
+    if link == ">":
+        return [parent] if parent is not None else []
+    if link == ">>":
+        return [candidate for candidate in nodes if _tgrep_is_ancestor(candidate, node, context)]
+
+    siblings = _tgrep_siblings(node, context)
+    sibling_index = siblings.index(node)
+    if link == "$":
+        return [candidate for candidate in siblings if candidate is not node]
+    if link == "$.":
+        return siblings[sibling_index + 1:sibling_index + 2]
+    if link == "$..":
+        return siblings[sibling_index + 1:]
+    if link == "$,":
+        return siblings[max(0, sibling_index - 1):sibling_index]
+    if link == "$,,":
+        return siblings[:sibling_index]
+
+    node_start, node_end = context["spans"][id(node)]
+    if link == ".":
+        return [
+            candidate for candidate in nodes
+            if context["spans"][id(candidate)][0] == node_end + 1
+        ]
+    if link == "..":
+        return [
+            candidate for candidate in nodes
+            if context["spans"][id(candidate)][0] > node_end
+        ]
+    if link == ",":
+        return [
+            candidate for candidate in nodes
+            if context["spans"][id(candidate)][1] + 1 == node_start
+        ]
+    if link == ",,":
+        return [
+            candidate for candidate in nodes
+            if context["spans"][id(candidate)][1] < node_start
+        ]
+    return []
+
+
+def _tgrep_node_matches(
+    node: dict, descriptor: tuple[str, re.Pattern | str]
+) -> bool:
+    field, expected = descriptor
+    value = str(node.get(field, ""))
+    if expected == "*":
+        return True
+    if isinstance(expected, re.Pattern):
+        return expected.search(value) is not None
+    return value == expected
+
+
+def _tgrep_query_matches(node: dict, parsed_query: tuple, context: dict) -> bool:
+    anchor, clauses = parsed_query
+    if not _tgrep_node_matches(node, anchor):
+        return False
+    for negated, link, target in clauses:
+        found = any(
+            _tgrep_node_matches(candidate, target)
+            for candidate in _tgrep_related_nodes(node, link, context)
+        )
+        if found == negated:
+            return False
+    return True
+def _tgrep_forms(node: dict) -> list[str]:
+    children = node.get("children", [])
+    if children:
+        return [form for child in children for form in _tgrep_forms(child)]
+    form = str(node.get("form", "")).strip()
+    return [form] if form else []
+
+
 @app.get("/")
 def index():
     return render_template("index.html")
@@ -347,6 +749,7 @@ def find_poem():
 @app.get("/api/search")
 def search_corpus():
     query = request.args.get("q", "").strip()
+    lemma_id = request.args.get("lemma_id", "").strip()
     if not query:
         return jsonify({
             "query": "",
@@ -375,36 +778,63 @@ def search_corpus():
     for passage in _searchable_passages():
         if passage["source"] not in sources:
             continue
-        matching_fields = [
-            field
-            for field in fields
-            if _search_values_match(
-                passage["_fields"][field],
-                query,
-                match_mode,
-                case_sensitive,
-            )
-        ]
+        if lemma_id:
+            if passage["source"] != "text":
+                continue
+            lemma_forms = passage["_lemma_forms"].get(lemma_id, [])
+            matching_fields = ["lemma"] if lemma_forms else []
+        else:
+            matching_fields = [
+                field
+                for field in fields
+                if _search_values_match(
+                    passage["_fields"][field],
+                    query,
+                    match_mode,
+                    case_sensitive,
+                )
+            ]
+            lemma_forms = [
+                form
+                for candidate in passage["_fields"]["lemma_ids"]
+                if "lemma_ids" in matching_fields
+                and _search_values_match(
+                    [candidate], query, match_mode, case_sensitive
+                )
+                for form in passage["_lemma_forms"].get(candidate, [])
+            ]
         if not matching_fields:
             continue
-        preview_values = passage["_fields"][matching_fields[0]]
-        preview = next(
-            (
-                value
-                for value in preview_values
-                if _search_values_match(
-                    [value], query, match_mode, case_sensitive
-                )
-            ),
-            preview_values[0] if preview_values else passage["header"],
-        )
+        if lemma_id or lemma_forms:
+            preview = next(
+                (
+                    value
+                    for value in passage["_fields"]["transcription"]
+                    if any(form in value.split() for form in lemma_forms)
+                ),
+                " ".join(lemma_forms) or query,
+            )
+        else:
+            preview_values = passage["_fields"][matching_fields[0]]
+            preview = next(
+                (
+                    value
+                    for value in preview_values
+                    if _search_values_match(
+                        [value], query, match_mode, case_sensitive
+                    )
+                ),
+                preview_values[0] if preview_values else passage["header"],
+            )
         hit = {
             key: value
             for key, value in passage.items()
-            if key != "_fields"
+            if key not in {"_fields", "_lemma_forms", "_roots"}
         }
-        hit["preview"] = _search_preview(preview, query)
+        preview_query = lemma_forms[0] if lemma_forms else query
+        hit["preview"] = _search_preview(preview, preview_query)
         hit["matching_fields"] = matching_fields
+        hit["highlight_terms"] = list(dict.fromkeys(lemma_forms)) or [query]
         hits.append(hit)
 
     total = len(hits)
@@ -413,6 +843,90 @@ def search_corpus():
     start = (page - 1) * per_page
     return jsonify({
         "query": query,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": pages,
+        "lemma_id": lemma_id,
+        "occurrence_total": _lemma_frequency(lemma_id) if lemma_id else None,
+        "results": hits[start:start + per_page],
+    })
+
+
+@app.get("/api/tgrep")
+def search_syntax_trees():
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify({
+            "query": "",
+            "search_type": "tgrep2",
+            "total": 0,
+            "page": 1,
+            "per_page": 25,
+            "pages": 0,
+            "results": [],
+        })
+    try:
+        parsed_query = _parse_tgrep_query(query)
+    except ValueError as error:
+        abort(400, description=str(error))
+
+    sources = _requested_values("sources", tuple(DOCUMENT_SOURCES))
+    page = max(request.args.get("page", 1, type=int) or 1, 1)
+    requested_page_size = request.args.get("per_page", 25, type=int) or 25
+    per_page = (
+        requested_page_size
+        if requested_page_size in SEARCH_PAGE_SIZES
+        else 25
+    )
+    hits = []
+    for passage in _searchable_passages():
+        if passage["source"] not in sources:
+            continue
+        context = _tgrep_tree_context(passage["_roots"])
+        matching_nodes = [
+            node
+            for node in context["nodes"]
+            if _tgrep_query_matches(node, parsed_query, context)
+        ]
+        if not matching_nodes:
+            continue
+        highlight_terms = list(dict.fromkeys(
+            form
+            for node in matching_nodes
+            for form in _tgrep_forms(node)
+        ))[:50]
+        transcription = " ".join(passage["_fields"]["transcription"])
+        preview = (
+            transcription
+            or " ".join(highlight_terms)
+            or passage["header"]
+        )
+        hit = {
+            key: value
+            for key, value in passage.items()
+            if key not in {"_fields", "_lemma_forms", "_roots"}
+        }
+        hit.update({
+            "preview": _search_preview(
+                preview, highlight_terms[0] if highlight_terms else query
+            ),
+            "matching_fields": ["syntax_tree"],
+            "highlight_terms": highlight_terms,
+            "match_count": len(matching_nodes),
+            "match_labels": list(dict.fromkeys(
+                str(node.get("tag", "")) for node in matching_nodes
+            )),
+        })
+        hits.append(hit)
+
+    total = len(hits)
+    pages = (total + per_page - 1) // per_page
+    page = min(page, pages) if pages else 1
+    start = (page - 1) * per_page
+    return jsonify({
+        "query": query,
+        "search_type": "tgrep2",
         "total": total,
         "page": page,
         "per_page": per_page,
@@ -477,42 +991,46 @@ def search_dictionary():
     if not query:
         return jsonify([])
 
-    fields = _requested_values("fields", DICTIONARY_SEARCH_FIELDS)
+    fields = _requested_values("fields", _dictionary_tag_ids())
     match_mode = request.args.get("match", "contains")
     if match_mode not in {"contains", "whole", "exact"}:
         match_mode = "contains"
     case_sensitive = request.args.get("case_sensitive") == "true"
     dictionary = get_dictionary()
-    hits = []
+    scored_hits = []
     for entry in dictionary:
-        values_by_field = {
-            "lemma": [str(entry.eid)],
-            "form": entry.get_all(".FORM"),
-            "gloss": entry.get_all(".GLOSS"),
-            "meaning": entry.get_all(".MEANING"),
-        }
-        if any(
-            _search_values_match(
-                values_by_field[field],
-                query,
-                match_mode,
-                case_sensitive,
-            )
-            for field in fields
-        ):
-            hits.append(entry)
-        if len(hits) >= 100:
-            break
-
+        score = _dictionary_match_score(
+            entry, query, fields, match_mode, case_sensitive
+        )
+        if score is not None:
+            scored_hits.append((score, entry))
+    scored_hits.sort(key=lambda item: (-item[0], str(item[1].eid)))
+    _searchable_passages()
     return jsonify([
-        {
-            "id": str(entry.eid),
-            "gloss": entry.get_first(".GLOSS") or "",
-            "forms": entry.get_all(".FORM"),
-            "pos": entry.get_all(".POS"),
-        }
-        for entry in hits
+        _dictionary_result_payload(entry, score, _lemma_frequency_cache)
+        for score, entry in scored_hits[:100]
     ])
+
+
+@app.get("/api/dictionary/tags")
+def dictionary_tags():
+    return jsonify(_dictionary_tag_metadata())
+
+
+@app.post("/api/dictionary")
+def create_dictionary_entry():
+    payload = request.get_json(silent=True) or {}
+    entry_id = str(payload.get("id") or "").strip()
+    if not entry_id:
+        abort(400, description="A lemma ID is required")
+    with _dictionary_write_lock:
+        dictionary = Dictionary.from_file(str(DICT_PATH))
+        if dictionary.get(entry_id) is not None:
+            abort(409, description=f"Entry '{entry_id}' already exists")
+        entry = _entry_from_request(entry_id)
+        dictionary.add(entry)
+        _save_dictionary(dictionary)
+    return jsonify(_dictionary_result_payload(entry)), 201
 
 
 @app.get("/api/dictionary/<entry_id>")
@@ -522,15 +1040,29 @@ def dictionary_entry(entry_id: str):
         abort(404, description=f"Entry '{entry_id}' not found")
     return jsonify({
         "id": str(entry.eid),
+        "frequency": _lemma_frequency(str(entry.eid)),
         "fields": [
             {
                 "tag": tag,
                 "label": tag.lstrip(".").replace("_", " ").title(),
                 "values": entry.get_all(tag),
+                "multi_valued": tag in MULTI_VALUE_FIELDS,
             }
             for tag in entry.tags()
         ],
     })
+
+
+@app.put("/api/dictionary/<entry_id>")
+def update_dictionary_entry(entry_id: str):
+    with _dictionary_write_lock:
+        dictionary = Dictionary.from_file(str(DICT_PATH))
+        if dictionary.get(entry_id) is None:
+            abort(404, description=f"Entry '{entry_id}' not found")
+        entry = _entry_from_request(entry_id)
+        dictionary.add(entry, allow_update=True)
+        _save_dictionary(dictionary)
+    return jsonify(_dictionary_result_payload(entry))
 
 
 if __name__ == "__main__":

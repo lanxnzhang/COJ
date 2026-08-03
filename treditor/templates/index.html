@@ -31,11 +31,11 @@
         </svg>
         <span class="sr-only">Search corpus</span>
       </button>
-      <button type="button" id="activity-dictionary" class="activity-button" aria-label="Open dictionary" title="Dictionary" aria-pressed="false">
+      <button type="button" id="activity-dictionary" class="activity-button" data-sidebar-view="dictionary" data-open-editor="dictionary" aria-label="Dictionary" title="Dictionary" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4.5 5.5A3.5 3.5 0 0 1 8 2h4v17H8a3.5 3.5 0 0 0-3.5 3z"/>
-          <path d="M19.5 5.5A3.5 3.5 0 0 0 16 2h-4v17h4a3.5 3.5 0 0 1 3.5 3z"/>
-          <path d="M7.5 7H10M14 7h2.5"/>
+          <rect x="4" y="2.5" width="16" height="19" rx="2"/>
+          <path d="M8 2.5v19M11 16l2.2-8h1.6l2.2 8M11.8 13h4.4"/>
+          <path d="M5.6 7.2h.8M5.6 11.2h.8M5.6 15.2h.8"/>
         </svg>
         <span class="sr-only">Dictionary</span>
       </button>
@@ -61,41 +61,106 @@
         <div class="pane-heading">
           <h1>Search</h1>
         </div>
-        <form id="global-search-form" class="global-search-form">
-          <label class="search-field">
-            <span class="sr-only">Search all corpus text</span>
-            <input id="global-search" type="search" placeholder="Search text across all data…" autocomplete="off">
+        <div class="search-mode-switch" role="tablist" aria-label="Search type">
+          <button type="button" id="search-mode-text" class="active" role="tab" aria-selected="true">Text &amp; lemma</button>
+          <button type="button" id="search-mode-tgrep" role="tab" aria-selected="false">TGrep2</button>
+        </div>
+        <div id="text-search-controls">
+          <form id="global-search-form" class="global-search-form">
+            <label class="search-field">
+              <span class="sr-only">Search all corpus text and lemma IDs</span>
+              <input id="global-search" type="search" placeholder="Search text or L000530…" autocomplete="off">
+            </label>
+            <button type="submit" class="primary-button">Search</button>
+          </form>
+          <details id="corpus-search-advanced" class="advanced-search">
+            <summary>Advanced search</summary>
+            <div class="advanced-search-fields">
+              <label>Scope
+                <select id="corpus-search-scope">
+                  <option value="text,trees">All corpus data</option>
+                  <option value="text">Texts under editing</option>
+                  <option value="trees">Uploaded trees</option>
+                </select>
+              </label>
+              <fieldset>
+                <legend>Search in</legend>
+                <label><input type="checkbox" name="corpus-field" value="transcription" checked> Transcription</label>
+                <label><input type="checkbox" name="corpus-field" value="kanji" checked> Kanji</label>
+                <label><input type="checkbox" name="corpus-field" value="header" checked> Headers</label>
+                <label><input type="checkbox" name="corpus-field" value="word_forms" checked> Word forms</label>
+                <label><input type="checkbox" name="corpus-field" value="lemma_ids" checked> Lemma IDs</label>
+              </fieldset>
+              <label>Match
+                <select id="corpus-search-match">
+                  <option value="contains">Contains</option>
+                  <option value="whole">Whole word</option>
+                  <option value="exact">Exact field</option>
+                </select>
+              </label>
+              <label class="advanced-checkbox"><input type="checkbox" id="corpus-search-case"> Match case</label>
+            </div>
+          </details>
+        </div>
+        <div id="tgrep-search-controls" class="hidden">
+          <form id="tgrep-search-form" class="global-search-form">
+            <label class="search-field">
+              <span class="sr-only">Search syntax-tree structure with TGrep2</span>
+              <input id="tgrep-search" type="text" placeholder="IP-MAT &lt;&lt; NP" autocomplete="off" spellcheck="false">
+            </label>
+            <button type="submit" class="primary-button">Search</button>
+          </form>
+          <label class="tgrep-scope">Scope
+            <select id="tgrep-search-scope">
+              <option value="text,trees">All corpus data</option>
+              <option value="text">Texts under editing</option>
+              <option value="trees">Uploaded trees</option>
+            </select>
           </label>
+          <details class="advanced-search tgrep-help">
+            <summary>TGrep2 pattern help</summary>
+            <div class="tgrep-help-content">
+              <p>Node labels are exact; wrap a label in <code>/…/</code> for a regular expression. Multiple relationships are ANDed.</p>
+              <dl>
+                <div><dt><code>A &lt; B</code></dt><dd>A immediately dominates B</dd></div>
+                <div><dt><code>A &lt;&lt; B</code></dt><dd>A dominates B</dd></div>
+                <div><dt><code>A &gt; B</code></dt><dd>A is immediately dominated by B</dd></div>
+                <div><dt><code>A $ B</code></dt><dd>A and B are sisters</dd></div>
+                <div><dt><code>A . B</code></dt><dd>A immediately precedes B</dd></div>
+                <div><dt><code>A .. B</code></dt><dd>A precedes B</dd></div>
+                <div><dt><code>A !&lt;&lt; B</code></dt><dd>A does not dominate B</dd></div>
+              </dl>
+              <p>COJ selectors: <code>tag=</code>, <code>form=</code>, <code>lemma=</code>, and <code>phon=</code>. Use <code>__</code> for any node.</p>
+              <div class="tgrep-examples" aria-label="Example patterns">
+                <button type="button" data-tgrep-example="IP-MAT &lt;&lt; NP">IP-MAT &lt;&lt; NP</button>
+                <button type="button" data-tgrep-example="IP-MAT &lt; IP-ARG &lt; VB">IP-MAT &lt; IP-ARG &lt; VB</button>
+                <button type="button" data-tgrep-example="lemma=L000530">lemma=L000530</button>
+              </div>
+              <p class="tgrep-help-note">This editor supports the flat core of TGrep2 patterns; grouped subpatterns and named-node backreferences are not included.</p>
+            </div>
+          </details>
+        </div>
+        <p id="global-search-message" class="search-message">Search transcriptions, kanji, headers, word forms, and lemma IDs.</p>
+      </section>
+
+      <section id="sidebar-dictionary" class="sidebar-view dictionary-sidebar hidden" aria-label="Dictionary">
+        <div class="pane-heading">
+          <h1>Dictionary</h1>
+          <p id="dictionary-sidebar-summary">Loading dictionary fields…</p>
+        </div>
+        <form id="dictionary-sidebar-search" class="sidebar-dictionary-search">
+          <input id="dictionary-sidebar-input" type="search" placeholder="Find a dictionary entry…" autocomplete="off" aria-label="Find a dictionary entry">
           <button type="submit" class="primary-button">Search</button>
         </form>
-        <details id="corpus-search-advanced" class="advanced-search">
-          <summary>Advanced search</summary>
-          <div class="advanced-search-fields">
-            <label>Scope
-              <select id="corpus-search-scope">
-                <option value="text,trees">All corpus data</option>
-                <option value="text">Texts under editing</option>
-                <option value="trees">Uploaded trees</option>
-              </select>
-            </label>
-            <fieldset>
-              <legend>Search in</legend>
-              <label><input type="checkbox" name="corpus-field" value="transcription" checked> Transcription</label>
-              <label><input type="checkbox" name="corpus-field" value="kanji" checked> Kanji</label>
-              <label><input type="checkbox" name="corpus-field" value="header" checked> Headers</label>
-              <label><input type="checkbox" name="corpus-field" value="word_forms" checked> Word forms</label>
-            </fieldset>
-            <label>Match
-              <select id="corpus-search-match">
-                <option value="contains">Contains</option>
-                <option value="whole">Whole word</option>
-                <option value="exact">Exact field</option>
-              </select>
-            </label>
-            <label class="advanced-checkbox"><input type="checkbox" id="corpus-search-case"> Match case</label>
-          </div>
-        </details>
-        <p id="global-search-message" class="search-message">Search transcriptions, kanji, headers, and word forms.</p>
+        <div class="dictionary-sidebar-actions">
+          <button type="button" id="new-dictionary-entry" class="primary-button">＋ New entry</button>
+          <button type="button" id="edit-dictionary-entry" class="tool-button" disabled>✎ Edit open entry</button>
+        </div>
+        <div class="dictionary-sidebar-selection">
+          <span>Open entry</span>
+          <strong id="dictionary-selected-entry">None selected</strong>
+          <p>Select a dictionary result to enable editing.</p>
+        </div>
       </section>
     </aside>
 
@@ -294,12 +359,11 @@
           <div class="advanced-search-fields horizontal">
             <fieldset>
               <legend>Search in</legend>
-              <label><input type="checkbox" name="dictionary-field" value="form" checked> Word forms</label>
-              <label><input type="checkbox" name="dictionary-field" value="lemma" checked> Lemma IDs</label>
-              <label><input type="checkbox" name="dictionary-field" value="gloss" checked> Glosses</label>
-              <label><input type="checkbox" name="dictionary-field" value="meaning" checked> Meanings</label>
+              <div id="dictionary-field-options" class="dictionary-field-options">
+                <span>Loading dictionary tags…</span>
+              </div>
             </fieldset>
-            <label>Match
+            <label><span class="match-option-label" title="Contains: query appears anywhere. Whole word: query must be a complete word. Exact field: the entire selected field must equal the query.">Match <span aria-hidden="true">ⓘ</span></span>
               <select id="dictionary-search-match">
                 <option value="contains">Contains</option>
                 <option value="whole">Whole word</option>
@@ -314,6 +378,25 @@
           <div id="dict-results" class="dictionary-results"></div>
           <article id="dict-entry" class="dictionary-entry hidden"></article>
         </div>
+        <aside id="dictionary-entry-editor" class="dictionary-entry-editor hidden" aria-labelledby="dictionary-entry-editor-title">
+          <header>
+            <div>
+              <p class="eyebrow">DICTIONARY XML</p>
+              <h3 id="dictionary-entry-editor-title">New dictionary entry</h3>
+            </div>
+            <button type="button" id="close-dictionary-entry-editor" class="icon-button" aria-label="Close dictionary entry editor">×</button>
+          </header>
+          <form id="dictionary-entry-form">
+            <label>Lemma ID <input id="dictionary-entry-id" required placeholder="L123456" autocomplete="off"></label>
+            <div id="dictionary-entry-fields" class="dictionary-entry-fields"></div>
+            <div class="dictionary-add-field">
+              <select id="dictionary-add-field" aria-label="Dictionary field to add"></select>
+              <button type="button" id="add-dictionary-field" class="tool-button">Add field</button>
+            </div>
+            <p id="dictionary-editor-message" class="dictionary-message">One value per line for fields that accept multiple values.</p>
+            <button type="submit" class="primary-button">Save entry</button>
+          </form>
+        </aside>
       </section>
 
       <aside id="dictionary-popup" class="dictionary-popup hidden" aria-label="Dictionary quick reference">

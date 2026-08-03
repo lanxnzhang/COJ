@@ -313,8 +313,40 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 5. Add advanced search functions. 
 6. Design and add a dictionary icon to the activity bar. When user clicks it, it will open a new tab for dictionary. Basically, user can directly search word form, lemma id, gloss, and meaning. Also add an advanced search function which allows user to choose data categories and search the dictionary. Users can also choose to have the dictionary appear as a pop-up window on the right, which can be expanded or collapsed. This design is intended to allow users to quickly consult the dictionary while clicking on words in the syntax tree or during general use. Delete the previous dictionary function in Documents section.
 
+### After commit c837543
+1. Design and add a side bar for dictionary. Currently it doesn't have one when user clicks the activity bar. Add functionality to the sidebar to trigger editing and adding dictionary entries.
+2. Revise the dictionary icon. It is difficult for users to associate the current icon with the dictionary.
+3. Refine the advanced search function in dictionary. It should allow users to choose all tags in the dictionary (such asKana, Note and other tags) but not just the current meanings and glossings, to search. When users hover their mouse over the "match" option in the advanced search, they will see a brief explanation of these three modes ('contains', 'whole word', and 'exact field').
+4. The quick search in the dictionary pop-up should only match the lemma ID, kana, and word form; do not match meanings or glosses. Search results are displayed based on relevance; for instance, results with the highest relevance are shown first.
+5. Make the POS and gloss information stand out more in the dictionary's pop-up search results, and optimize the layout and display. This information is second in importance only to the word form itself, yet the current font size and color make it very uncomfortable to read.
+6. Make the POS and gloss information stand out more in the dictionary's tab search results. Also display kana and frequency in search results. Frequency represents the total number of occurrences of the corresponding lemma ID's word within the database's text, excluding the dictionary entry itself. This figure must be updated in real time. When a user clicks on the frequency number, they will be directed to the search results page displaying the occurrences of words associated with that lemma ID; the search results must also be highlighted. Kana and frequency do not need to be displayed in the search results of dictionary side pop up.
+
+### After commit c837543 (2)
+1. The current search function is still very imperfect. It cannot search for the lemma ID. Also add TGrep2 Search function to help user search the structure of syntax tree.
+
+### After commit c837543 (3)
+1. There are issues with the highlighting of current search results. For example, when users search L051650, it will also highlight L000520 which sometimes has the same word form with L051650, but it is wrong - only L051650's word form should be highlighted.
+2. User can choose whether to display kanji text and sentence number in search results. Sentence number could be like: [1] amatobuya [2] karu no miti pa.
+3. The current occurrences in the dictionary is wrong. First, it should be named as frequency in dictionary. Second, there are errors in its search and statistical results. For example, when user uses TGrep2 to search lemma=L051650, it has 266 results. However, in dictionary, it shows 0 occurrences, so obviously it is wrong. Please fix this.
+4. In dictionary entry search results, the color of the kana is a bit too faint and hard to see clearly. Use a darker color, but avoid making it too black so as not to distract the user too much.
+5. In the text&lemma section in the search function, user still can not correctly search lemma ids. In general, the search result for lemma ids should match its corresponding branches. For example, in 
+ <NUM lemma="L080703">
+   <NUM lemma="L002003" phon="PHON" form="mi" index="1" inferred_index="1" />
+   <NUM index="2" lemma="L002032" phon="PHON" form="swo" />
+ </NUM>
+when user searchs L002003, it should match mi. When user searchs L080703(if it is a compound lemma id), it should match leaves within this branch, miswo. 
+6. Users can choose whether to display sentence numbers in the syntax tree.
+7. When a user opens a syntax tree from the search results, the corresponding search result shoule be highlighted or otherwise marked within both the syntax tree and the text. If a user searches for components not selected for display in the syntax tree—such as lemma IDs or script tags—these components should be displayed in this situtation, and the corresponding results should be highlighted or marked. When a user opens a syntax tree from another location—such as the "Documents" entry point—these highlight markers and display states are reset, reverting them to the settings the user had selected during standard browsing. This means that this type of hightlighting is a specific state tailored for displaying search results. 
+8. Extend the tgrep2 search functionality to allow searching for combining two attributes on the same node without conflicting with existing search features. For example, it should allow user to search a word form 'no' is written in PHON, and moreover, a NP includes a word form 'no' written in PHON.
+
+### After commit c837543 (4)
+The last update introduced a critical bug and failed to implement the features I wanted. I’ve already reverted the changes. Let’s try again—this time, making modifications bit by bit.
+1. There are issues with the highlighting of current search results. For example, when users search L051650, it will also highlight L000520 which sometimes has the same word form with L051650, but it is wrong - only L051650's word form should be highlighted.
+
+
 
 ### TBD
+BUG:1.高亮机制 2.search里选择是否显示汉字 3.无法搜索lemma id 4.occurence错误
 1. 词典
 词典侧边栏的设计
 词典图标修改
@@ -327,6 +359,11 @@ Copy the folder "editor" and rename the copied folder as "treditor". Make change
 3. 图标设计
 
 4. 编辑器合并
+
+5. 文本编辑和添加功能，以及如何将搜索功能和它们联合使用
+
+6. 升级 tgrep2
+7. 重命名 two columns, Text and Lemmas
 
 
 

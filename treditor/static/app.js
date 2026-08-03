@@ -14,13 +14,22 @@ let popupDictionaryTimer = null;
 let editMode = false;
 let currentEditorPage = null;
 let activeSidebarView = "explorer";
-const corpusSearchState = {query: "", page: 1, perPage: 25};
+let dictionaryTags = [];
+let selectedDictionaryEntryId = null;
+let dictionaryEditorMode = "create";
+const corpusSearchState = {
+  mode: "text",
+  query: "",
+  page: 1,
+  perPage: 25,
+  lemmaId: "",
+};
 const openEditorPages = new Set();
 const collapsedNodeIds = new Set();
 const passageCache = new Map();
 
-async function apiFetch(path) {
-  const response = await fetch(path);
+async function apiFetch(path, options = {}) {
+  const response = await fetch(path, options);
   let data;
   try {
     data = await response.json();
@@ -52,36 +61,38 @@ function showSidebarView(name) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  $("activity-dictionary").classList.remove("active");
-  $("activity-dictionary").setAttribute("aria-pressed", "false");
   document.querySelectorAll(".sidebar-view").forEach(view => {
     view.classList.toggle("hidden", view.id !== `sidebar-${name}`);
   });
-  if (name === "search") $("global-search").focus();
+  if (name === "search") {
+    (corpusSearchState.mode === "tgrep"
+      ? $("tgrep-search")
+      : $("global-search")).focus();
+  }
+  if (name === "dictionary") $("dictionary-sidebar-input").focus();
 }
-
-$("activity-dictionary").addEventListener("click", () => {
-  document.querySelectorAll(".activity-button").forEach(button => {
-    button.classList.toggle("active", button === $("activity-dictionary"));
-    button.setAttribute(
-      "aria-pressed",
-      String(button === $("activity-dictionary")),
-    );
-  });
-  showEditorPage("dictionary");
-  $("dict-input").focus();
-});
 
 document.querySelectorAll("[data-sidebar-view]").forEach(button => {
   button.addEventListener("click", () => {
     const workspace = document.querySelector(".workspace");
     const alreadyActive = button.classList.contains("active");
     if (alreadyActive && !workspace.classList.contains("sidebar-collapsed")) {
+      if (
+        button.dataset.openEditor
+        && !openEditorPages.has(button.dataset.openEditor)
+      ) {
+        showEditorPage(button.dataset.openEditor);
+        return;
+      }
       workspace.classList.add("sidebar-collapsed");
       button.setAttribute("aria-pressed", "false");
       return;
     }
     showSidebarView(button.dataset.sidebarView);
+    if (button.dataset.openEditor) {
+      showEditorPage(button.dataset.openEditor);
+      $("dict-input").focus();
+    }
   });
 });
 
@@ -98,15 +109,10 @@ function showEditorPage(name) {
     page.classList.toggle("hidden", page.id !== `editor-page-${name}`);
   });
   document.querySelectorAll("[data-sidebar-view]").forEach(button => {
-    const active = name !== "dictionary"
-      && button.dataset.sidebarView === activeSidebarView;
+    const active = button.dataset.sidebarView === activeSidebarView;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  $("activity-dictionary").classList.toggle("active", name === "dictionary");
-  $("activity-dictionary").setAttribute(
-    "aria-pressed", String(name === "dictionary")
-  );
   $("editor-empty").classList.add("hidden");
 }
 
@@ -123,8 +129,6 @@ function closeEditorPage(name) {
     currentEditorPage = null;
     $("editor-tabs").classList.add("hidden");
     $("editor-empty").classList.remove("hidden");
-    $("activity-dictionary").classList.remove("active");
-    $("activity-dictionary").setAttribute("aria-pressed", "false");
     document.querySelectorAll("[data-sidebar-view]").forEach(button => {
       const active = button.dataset.sidebarView === activeSidebarView;
       button.classList.toggle("active", active);
@@ -380,22 +384,39 @@ $("document-search").addEventListener("keydown", event => {
   });
 });
 
-function appendHighlightedText(container, text, query) {
-  if (!query) {
+function appendHighlightedText(container, text, queryOrTerms) {
+  const terms = (Array.isArray(queryOrTerms) ? queryOrTerms : [queryOrTerms])
+    .filter(Boolean)
+    .sort((left, right) => right.length - left.length);
+  if (!terms.length) {
     container.textContent = text;
     return;
   }
   const foldedText = text.toLocaleLowerCase();
-  const foldedQuery = query.toLocaleLowerCase();
   let cursor = 0;
-  let position = foldedText.indexOf(foldedQuery);
-  while (position >= 0) {
-    container.append(document.createTextNode(text.slice(cursor, position)));
+  while (cursor < text.length) {
+    let nextMatch = null;
+    terms.forEach(term => {
+      const position = foldedText.indexOf(term.toLocaleLowerCase(), cursor);
+      if (position >= 0 && (
+        nextMatch === null
+        || position < nextMatch.position
+        || (position === nextMatch.position && term.length > nextMatch.term.length)
+      )) {
+        nextMatch = {position, term};
+      }
+    });
+    if (nextMatch === null) break;
+    container.append(
+      document.createTextNode(text.slice(cursor, nextMatch.position))
+    );
     const mark = document.createElement("mark");
-    mark.textContent = text.slice(position, position + query.length);
+    mark.textContent = text.slice(
+      nextMatch.position,
+      nextMatch.position + nextMatch.term.length,
+    );
     container.appendChild(mark);
-    cursor = position + query.length;
-    position = foldedText.indexOf(foldedQuery, cursor);
+    cursor = nextMatch.position + nextMatch.term.length;
   }
   container.append(document.createTextNode(text.slice(cursor)));
 }
@@ -407,7 +428,7 @@ function checkedValues(name) {
 
 function corpusSearchParameters(page = 1) {
   const fields = checkedValues("corpus-field");
-  return new URLSearchParams({
+  const parameters = new URLSearchParams({
     q: corpusSearchState.query,
     sources: $("corpus-search-scope").value,
     fields: fields.join(","),
@@ -416,18 +437,63 @@ function corpusSearchParameters(page = 1) {
     page: String(page),
     per_page: String(corpusSearchState.perPage),
   });
+  if (corpusSearchState.lemmaId) {
+    parameters.set("lemma_id", corpusSearchState.lemmaId);
+  }
+  return parameters;
+}
+
+function tgrepSearchParameters(page = 1) {
+  return new URLSearchParams({
+    q: corpusSearchState.query,
+    sources: $("tgrep-search-scope").value,
+    page: String(page),
+    per_page: String(corpusSearchState.perPage),
+  });
+}
+
+function setSearchMode(mode, focus = true) {
+  corpusSearchState.mode = mode;
+  const structural = mode === "tgrep";
+  $("text-search-controls").classList.toggle("hidden", structural);
+  $("tgrep-search-controls").classList.toggle("hidden", !structural);
+  $("search-mode-text").classList.toggle("active", !structural);
+  $("search-mode-tgrep").classList.toggle("active", structural);
+  $("search-mode-text").setAttribute("aria-selected", String(!structural));
+  $("search-mode-tgrep").setAttribute("aria-selected", String(structural));
+  corpusSearchState.query = (structural
+    ? $("tgrep-search").value
+    : $("global-search").value).trim();
+  $("global-search-message").textContent = structural
+    ? "Search syntax-tree relationships with a TGrep2 pattern."
+    : "Search transcriptions, kanji, headers, word forms, and lemma IDs.";
+  if (focus) (structural ? $("tgrep-search") : $("global-search")).focus();
+}
+
+function corpusFieldLabel(field) {
+  return ({
+    lemma_ids: "lemma IDs",
+    syntax_tree: "syntax tree",
+  })[field] || field.replaceAll("_", " ");
 }
 
 function renderCorpusSearchResults(payload) {
   const {results, query, total, page, pages, per_page: perPage} = payload;
   const container = $("search-results");
   container.innerHTML = "";
-  $("search-results-title").textContent = `Search: ${query}`;
-  $("search-result-count").textContent =
-    `${total.toLocaleString()} result${total === 1 ? "" : "s"}`;
+  $("search-results-title").textContent = payload.lemma_id
+    ? `Occurrences: ${payload.lemma_id}`
+    : payload.search_type === "tgrep2"
+      ? `TGrep2: ${query}`
+      : `Search: ${query}`;
+  $("search-result-count").textContent = payload.lemma_id
+    ? `${payload.occurrence_total.toLocaleString()} occurrence${payload.occurrence_total === 1 ? "" : "s"} in ${total.toLocaleString()} passage${total === 1 ? "" : "s"}`
+    : `${total.toLocaleString()} result${total === 1 ? "" : "s"}`;
   $("search-results-message").textContent = total
     ? "Select a result to open its syntax tree."
-    : "No corpus text matched this search.";
+    : payload.search_type === "tgrep2"
+      ? "No syntax tree matched this pattern."
+      : "No corpus text matched this search.";
   results.forEach(result => {
     const button = document.createElement("button");
     button.type = "button";
@@ -435,7 +501,8 @@ function renderCorpusSearchResults(payload) {
     const heading = document.createElement("span");
     heading.className = "corpus-search-result-heading";
     const sentence = document.createElement("strong");
-    appendHighlightedText(sentence, result.sentence_id, query);
+    const highlightTerms = result.highlight_terms || [query];
+    appendHighlightedText(sentence, result.sentence_id, highlightTerms);
     const location = document.createElement("span");
     location.textContent =
       `${result.label} · ${result.source === "text" ? "Texts under editing" : "Uploaded trees"}`;
@@ -445,12 +512,15 @@ function renderCorpusSearchResults(payload) {
     appendHighlightedText(
       preview,
       result.preview || result.header || "No text preview",
-      query,
+      highlightTerms,
     );
     const fields = document.createElement("span");
     fields.className = "corpus-search-fields";
     fields.textContent = result.matching_fields
-      .map(field => field.replace("_", " "))
+      .map(corpusFieldLabel)
+      .concat(result.match_count
+        ? [`${result.match_count} matching node${result.match_count === 1 ? "" : "s"}`]
+        : [])
       .join(" · ");
     button.append(heading, preview, fields);
     button.addEventListener("click", async () => {
@@ -474,14 +544,16 @@ function renderCorpusSearchResults(payload) {
   $("search-page-size").value = String(perPage);
 }
 
-async function performCorpusSearch(query, page = 1) {
+async function performCorpusSearch(query, page = 1, preserveLemma = false) {
   const normalized = query.trim();
+  setSearchMode("text", false);
   corpusSearchState.query = normalized;
+  if (!preserveLemma) corpusSearchState.lemmaId = "";
   showEditorPage("search");
   $("search-results").innerHTML = "";
   if (!normalized) {
     $("global-search-message").textContent =
-      "Search transcriptions, kanji, headers, and word forms.";
+      "Search transcriptions, kanji, headers, word forms, and lemma IDs.";
     $("search-results-title").textContent = "Search results";
     $("search-result-count").textContent = "";
     $("search-results-message").textContent = "Enter a search in the sidebar.";
@@ -503,6 +575,48 @@ async function performCorpusSearch(query, page = 1) {
   }
 }
 
+async function performTgrepSearch(query, page = 1) {
+  const normalized = query.trim();
+  setSearchMode("tgrep", false);
+  corpusSearchState.query = normalized;
+  corpusSearchState.lemmaId = "";
+  showEditorPage("search");
+  $("search-results").innerHTML = "";
+  if (!normalized) {
+    $("global-search-message").textContent =
+      "Enter a TGrep2 pattern such as IP-MAT << NP.";
+    $("search-results-title").textContent = "TGrep2 results";
+    $("search-result-count").textContent = "";
+    $("search-results-message").textContent =
+      "Enter a structural pattern in the sidebar.";
+    $("search-pagination").classList.add("hidden");
+    return;
+  }
+  clearError();
+  $("global-search-message").textContent = "Searching tree structure…";
+  $("search-results-message").textContent = "Evaluating the TGrep2 pattern…";
+  try {
+    const payload = await apiFetch(`/api/tgrep?${tgrepSearchParameters(page)}`);
+    $("global-search-message").textContent =
+      `${payload.total.toLocaleString()} matching passage${payload.total === 1 ? "" : "s"}.`;
+    renderCorpusSearchResults(payload);
+  } catch (error) {
+    showError(error);
+    $("global-search-message").textContent = error.message;
+    $("search-results-message").textContent =
+      "The structural search could not be completed.";
+  }
+}
+
+function performActiveSearch(page) {
+  return corpusSearchState.mode === "tgrep"
+    ? performTgrepSearch(corpusSearchState.query, page)
+    : performCorpusSearch(corpusSearchState.query, page, true);
+}
+
+$("search-mode-text").addEventListener("click", () => setSearchMode("text"));
+$("search-mode-tgrep").addEventListener("click", () => setSearchMode("tgrep"));
+
 $("global-search-form").addEventListener("submit", event => {
   event.preventDefault();
   clearTimeout(globalSearchTimer);
@@ -517,17 +631,35 @@ $("global-search").addEventListener("input", event => {
   );
 });
 
+$("tgrep-search-form").addEventListener("submit", event => {
+  event.preventDefault();
+  performTgrepSearch($("tgrep-search").value);
+});
+
+$("tgrep-search-scope").addEventListener("change", () => {
+  if (corpusSearchState.mode === "tgrep" && corpusSearchState.query) {
+    performTgrepSearch(corpusSearchState.query, 1);
+  }
+});
+
+document.querySelectorAll("[data-tgrep-example]").forEach(button => {
+  button.addEventListener("click", () => {
+    $("tgrep-search").value = button.dataset.tgrepExample;
+    performTgrepSearch(button.dataset.tgrepExample);
+  });
+});
+
 $("search-page-previous").addEventListener("click", () => {
-  performCorpusSearch(corpusSearchState.query, corpusSearchState.page - 1);
+  performActiveSearch(corpusSearchState.page - 1);
 });
 
 $("search-page-next").addEventListener("click", () => {
-  performCorpusSearch(corpusSearchState.query, corpusSearchState.page + 1);
+  performActiveSearch(corpusSearchState.page + 1);
 });
 
 $("search-page-size").addEventListener("change", event => {
   corpusSearchState.perPage = Number(event.target.value);
-  performCorpusSearch(corpusSearchState.query, 1);
+  performActiveSearch(1);
 });
 
 [
@@ -536,13 +668,17 @@ $("search-page-size").addEventListener("change", event => {
   "corpus-search-case",
 ].forEach(id => {
   $(id).addEventListener("change", () => {
-    if (corpusSearchState.query) performCorpusSearch(corpusSearchState.query, 1);
+    if (corpusSearchState.mode === "text" && corpusSearchState.query) {
+      performCorpusSearch(corpusSearchState.query, 1);
+    }
   });
 });
 
 document.querySelectorAll('input[name="corpus-field"]').forEach(input => {
   input.addEventListener("change", () => {
-    if (corpusSearchState.query) performCorpusSearch(corpusSearchState.query, 1);
+    if (corpusSearchState.mode === "text" && corpusSearchState.query) {
+      performCorpusSearch(corpusSearchState.query, 1);
+    }
   });
 });
 
@@ -1465,32 +1601,78 @@ function dictionarySearchParameters(query, useAdvanced) {
     parameters.set(
       "case_sensitive", String($("dictionary-search-case").checked)
     );
+  } else {
+    parameters.set("fields", "lemma,.KANA,.FORM");
+    parameters.set("match", "contains");
   }
   return parameters;
 }
 
 function renderDictionaryResults(results, container, target) {
   container.innerHTML = "";
+  const isPopup = target === "popup";
   results.forEach(entry => {
+    const card = document.createElement("article");
+    card.className = `dictionary-result${isPopup ? " popup-result" : ""}`;
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "dictionary-result";
+    button.className = "dictionary-result-main";
     const heading = document.createElement("span");
-    heading.className = "dictionary-result-heading";
+    heading.className = "dictionary-result-primary";
+    const forms = document.createElement("strong");
+    forms.textContent = entry.forms.join(", ") || "No word form";
     const id = document.createElement("strong");
+    id.className = "dictionary-result-id";
     id.textContent = entry.id;
+    heading.append(forms, id);
+    const linguistic = document.createElement("span");
+    linguistic.className = "dictionary-result-linguistic";
+    const pos = document.createElement("span");
+    pos.className = "dictionary-result-pos";
+    pos.textContent = entry.pos.join(" · ") || "POS not recorded";
     const gloss = document.createElement("span");
-    gloss.textContent = entry.gloss;
-    heading.append(id, gloss);
-    const forms = document.createElement("span");
-    forms.className = "dictionary-result-forms";
-    forms.textContent = entry.forms.join(", ") || "No form";
-    const pos = document.createElement("small");
-    pos.textContent = entry.pos.join(" · ") || "No part of speech";
-    button.append(heading, forms, pos);
+    gloss.className = "dictionary-result-gloss";
+    gloss.textContent = entry.gloss || "Gloss not recorded";
+    linguistic.append(pos, gloss);
+    button.append(heading, linguistic);
     button.addEventListener("click", () => showDictionaryEntry(entry.id, target));
-    container.appendChild(button);
+    card.appendChild(button);
+    if (!isPopup) {
+      const supplemental = document.createElement("footer");
+      supplemental.className = "dictionary-result-supplemental";
+      const kana = document.createElement("span");
+      kana.className = "dictionary-result-kana";
+      kana.textContent = entry.kana.join(" · ") || "Kana not recorded";
+      const frequency = document.createElement("button");
+      frequency.type = "button";
+      frequency.className = "dictionary-frequency";
+      frequency.textContent = `${entry.frequency.toLocaleString()} occurrence${entry.frequency === 1 ? "" : "s"}`;
+      frequency.title = `Find corpus occurrences of ${entry.id}`;
+      frequency.addEventListener("click", () => {
+        openLemmaOccurrences(entry);
+      });
+      supplemental.append(kana, frequency);
+      card.appendChild(supplemental);
+    }
+    container.appendChild(card);
   });
+}
+
+function setSelectedDictionaryEntry(entryId) {
+  selectedDictionaryEntryId = entryId;
+  $("dictionary-selected-entry").textContent = entryId || "None selected";
+  $("edit-dictionary-entry").disabled = !entryId;
+}
+
+function openLemmaOccurrences(entry) {
+  const query = entry.forms[0] || entry.id;
+  setSearchMode("text", false);
+  corpusSearchState.lemmaId = entry.id;
+  corpusSearchState.query = query;
+  $("global-search").value = query;
+  $("corpus-search-scope").value = "text";
+  showSidebarView("search");
+  performCorpusSearch(query, 1, true);
 }
 
 function renderDictionaryEntry(entry, article) {
@@ -1565,6 +1747,7 @@ async function showDictionaryEntry(entryId, target = "workspace") {
     $(isPopup ? "popup-dict-input" : "dict-input").value = entry.id;
     message.textContent = "Complete dictionary entry";
     if (isPopup) $("popup-dict-results").innerHTML = "";
+    setSelectedDictionaryEntry(entry.id);
     renderDictionaryEntry(entry, article);
   } catch (error) {
     showError(error);
@@ -1596,6 +1779,181 @@ function openDictionaryPopupLookup(query) {
   $("popup-dict-input").value = query;
   searchDictionary(query, "popup");
 }
+
+function dictionaryTagLabel(tag) {
+  return dictionaryTags.find(item => item.id === tag)?.label
+    || tag.replace(/^\./, "").replaceAll("_", " ");
+}
+
+async function loadDictionaryTags() {
+  try {
+    dictionaryTags = await apiFetch("/api/dictionary/tags");
+    const options = $("dictionary-field-options");
+    options.innerHTML = "";
+    const defaultFields = new Set([
+      "lemma", ".FORM", ".GLOSS", ".MEANING",
+    ]);
+    dictionaryTags.forEach(tag => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "dictionary-field";
+      input.value = tag.id;
+      input.checked = defaultFields.has(tag.id);
+      label.title = `${tag.entry_count.toLocaleString()} entries use this field`;
+      label.append(input, ` ${tag.label}`);
+      options.appendChild(label);
+    });
+    $("dictionary-sidebar-summary").textContent =
+      `${dictionaryTags.length - 1} searchable XML tags`;
+    refreshDictionaryAddFieldOptions();
+  } catch (error) {
+    showError(error);
+    $("dictionary-field-options").textContent =
+      "Dictionary tags could not be loaded.";
+  }
+}
+
+function refreshDictionaryAddFieldOptions() {
+  const select = $("dictionary-add-field");
+  const present = new Set(
+    [...document.querySelectorAll("[data-dictionary-editor-tag]")]
+      .map(row => row.dataset.dictionaryEditorTag)
+  );
+  select.innerHTML = "";
+  dictionaryTags
+    .filter(tag => tag.id !== "lemma" && !present.has(tag.id))
+    .forEach(tag => {
+      const option = document.createElement("option");
+      option.value = tag.id;
+      option.textContent = tag.label;
+      select.appendChild(option);
+    });
+  $("add-dictionary-field").disabled = !select.options.length;
+}
+
+function addDictionaryEditorField(tag, values = []) {
+  if (!tag || document.querySelector(
+    `[data-dictionary-editor-tag="${CSS.escape(tag)}"]`
+  )) return;
+  const row = document.createElement("label");
+  row.className = "dictionary-editor-field";
+  row.dataset.dictionaryEditorTag = tag;
+  const heading = document.createElement("span");
+  const name = document.createElement("strong");
+  name.textContent = dictionaryTagLabel(tag);
+  const code = document.createElement("code");
+  code.textContent = tag;
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "dictionary-editor-remove";
+  remove.textContent = "Remove";
+  remove.addEventListener("click", () => {
+    row.remove();
+    refreshDictionaryAddFieldOptions();
+  });
+  heading.append(name, code, remove);
+  const input = document.createElement("textarea");
+  input.rows = Math.min(Math.max(values.length, 2), 6);
+  input.value = values.join("\n");
+  input.placeholder = "Enter a value; use one line per value";
+  row.append(heading, input);
+  $("dictionary-entry-fields").appendChild(row);
+  refreshDictionaryAddFieldOptions();
+}
+
+function openDictionaryEntryEditor(entry = null) {
+  dictionaryEditorMode = entry ? "edit" : "create";
+  $("dictionary-entry-editor-title").textContent = entry
+    ? `Edit ${entry.id}`
+    : "New dictionary entry";
+  $("dictionary-entry-id").value = entry?.id || "";
+  $("dictionary-entry-id").disabled = Boolean(entry);
+  $("dictionary-entry-fields").innerHTML = "";
+  const fields = entry?.fields || [
+    {tag: ".FORM", values: []},
+    {tag: ".KANA", values: []},
+    {tag: ".POS", values: []},
+    {tag: ".GLOSS", values: []},
+    {tag: ".MEANING", values: []},
+  ];
+  fields.forEach(field => addDictionaryEditorField(field.tag, field.values));
+  refreshDictionaryAddFieldOptions();
+  $("dictionary-editor-message").textContent =
+    "One value per line for fields that accept multiple values.";
+  $("dictionary-entry-editor").classList.remove("hidden");
+  $("dictionary-entry-id").focus();
+}
+
+function closeDictionaryEntryEditor() {
+  $("dictionary-entry-editor").classList.add("hidden");
+}
+
+async function editSelectedDictionaryEntry() {
+  if (!selectedDictionaryEntryId) return;
+  try {
+    const entry = await apiFetch(
+      `/api/dictionary/${encodeURIComponent(selectedDictionaryEntryId)}`
+    );
+    showEditorPage("dictionary");
+    openDictionaryEntryEditor(entry);
+  } catch (error) {
+    showError(error);
+  }
+}
+
+$("dictionary-sidebar-search").addEventListener("submit", event => {
+  event.preventDefault();
+  const query = $("dictionary-sidebar-input").value.trim();
+  showEditorPage("dictionary");
+  $("dict-input").value = query;
+  searchDictionary(query, "workspace");
+});
+
+$("new-dictionary-entry").addEventListener("click", () => {
+  showEditorPage("dictionary");
+  openDictionaryEntryEditor();
+});
+
+$("edit-dictionary-entry").addEventListener(
+  "click", editSelectedDictionaryEntry
+);
+
+$("close-dictionary-entry-editor").addEventListener(
+  "click", closeDictionaryEntryEditor
+);
+
+$("add-dictionary-field").addEventListener("click", () => {
+  addDictionaryEditorField($("dictionary-add-field").value);
+});
+
+$("dictionary-entry-form").addEventListener("submit", async event => {
+  event.preventDefault();
+  const entryId = $("dictionary-entry-id").value.trim();
+  const fields = {};
+  document.querySelectorAll("[data-dictionary-editor-tag]").forEach(row => {
+    fields[row.dataset.dictionaryEditorTag] = row.querySelector("textarea")
+      .value.split("\n").map(value => value.trim());
+  });
+  $("dictionary-editor-message").textContent = "Saving dictionary XML…";
+  try {
+    const isCreate = dictionaryEditorMode === "create";
+    const path = isCreate
+      ? "/api/dictionary"
+      : `/api/dictionary/${encodeURIComponent(entryId)}`;
+    await apiFetch(path, {
+      method: isCreate ? "POST" : "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({id: entryId, fields}),
+    });
+    closeDictionaryEntryEditor();
+    setSelectedDictionaryEntry(entryId);
+    await loadDictionaryTags();
+    await showDictionaryEntry(entryId, "workspace");
+  } catch (error) {
+    $("dictionary-editor-message").textContent = error.message;
+  }
+});
 
 $("dictionary-search-form").addEventListener("submit", event => {
   event.preventDefault();
@@ -1643,4 +2001,5 @@ $("collapse-dictionary-popup").addEventListener("click", event => {
   );
 });
 
+loadDictionaryTags();
 loadDocuments();

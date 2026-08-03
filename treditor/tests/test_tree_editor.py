@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 import treditor.app as tree_editor
+from coj.core.dictionary import DictEntry, Dictionary
 
 
 @pytest.fixture
@@ -10,6 +11,8 @@ def client():
     tree_editor.app.config.update(TESTING=True)
     tree_editor._documents.clear()
     tree_editor._search_index = None
+    tree_editor._search_index_signature = None
+    tree_editor._lemma_frequency_cache = {}
     return tree_editor.app.test_client()
 
 
@@ -102,6 +105,57 @@ def test_corpus_search_supports_scope_advanced_fields_and_pagination(client):
     assert len(paged["results"]) <= 10
 
 
+def test_corpus_search_indexes_lemma_ids_and_highlights_their_forms(client):
+    response = client.get(
+        "/api/search?q=l000530&fields=lemma_ids&match=exact"
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["total"] > 0
+    first = payload["results"][0]
+    assert first["matching_fields"] == ["lemma_ids"]
+    assert "to" in first["highlight_terms"]
+    assert "to" in first["preview"].split()
+    assert "_roots" not in first
+
+
+def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
+    dominated = client.get(
+        "/api/tgrep?q=IP-MAT%20%3C%3C%20NP&sources=text&per_page=10"
+    )
+    assert dominated.status_code == 200
+    payload = dominated.get_json()
+    assert payload["search_type"] == "tgrep2"
+    assert payload["total"] > 0
+    assert payload["results"][0]["matching_fields"] == ["syntax_tree"]
+    assert payload["results"][0]["match_count"] >= 1
+    assert "_roots" not in payload["results"][0]
+
+    multiple_links = client.get(
+        "/api/tgrep?q=IP-MAT%20%3C%20IP-ARG%20%3C%20VB&sources=text"
+    ).get_json()
+    assert multiple_links["total"] > 0
+
+    annotation = client.get(
+        "/api/tgrep?q=lemma%3DL000530&sources=text"
+    ).get_json()
+    assert annotation["total"] > 0
+    assert "to" in annotation["results"][0]["highlight_terms"]
+    regex_negation = client.get(
+        "/api/tgrep?q=%2FIP-.%2A%2F%20%21%3C%3C%20NP&sources=text"
+    )
+    assert regex_negation.status_code == 200
+    assert regex_negation.get_json()["total"] > 0
+
+
+def test_tgrep_search_returns_clear_errors_for_unsupported_patterns(client):
+    response = client.get("/api/tgrep?q=IP-MAT%20%3C%20%28NP%20%3C%20N%29")
+
+    assert response.status_code == 400
+    assert "node description" in response.get_json()["error"].lower()
+
+
 def test_tree_payload_uses_current_processing_text_and_script_tags(client):
     response = client.get("/api/utterances/text/EN_01/EN.1.1/tree")
 
@@ -178,6 +232,91 @@ def test_dictionary_uses_current_multi_value_shape(client):
     assert [entry["id"] for entry in advanced] == [results[0]["id"]]
 
 
+def test_dictionary_search_exposes_all_tags_ranking_and_live_frequency(client):
+    tags = client.get("/api/dictionary/tags").get_json()
+    tag_ids = {tag["id"] for tag in tags}
+    assert {"lemma", ".FORM", ".KANA", ".NOTE", ".CORRESP"} <= tag_ids
+
+    restricted = client.get(
+        "/api/dictionary?q=negative&fields=lemma,.FORM,.KANA"
+    ).get_json()
+    assert restricted == []
+    meanings = client.get(
+        "/api/dictionary?q=negative&fields=.MEANING"
+    ).get_json()
+    assert meanings
+
+    ranked = client.get(
+        "/api/dictionary?q=kamu&fields=lemma,.FORM,.KANA"
+    ).get_json()
+    assert ranked
+    assert ranked[0]["forms"][0] == "kamu"
+    assert [entry["relevance"] for entry in ranked] == sorted(
+        [entry["relevance"] for entry in ranked], reverse=True
+    )
+    assert isinstance(ranked[0]["kana"], list)
+    assert isinstance(ranked[0]["frequency"], int)
+
+    occurrences = client.get(
+        f"/api/search?q=kamu&sources=text&lemma_id={ranked[0]['id']}"
+    ).get_json()
+    assert occurrences["occurrence_total"] == ranked[0]["frequency"]
+    assert all(
+        result["source"] == "text" for result in occurrences["results"]
+    )
+    assert all(
+        result["highlight_terms"] for result in occurrences["results"]
+    )
+
+
+def test_dictionary_entries_can_be_added_and_edited_safely(
+    client, tmp_path, monkeypatch
+):
+    dictionary_path = tmp_path / "dictionary.xml"
+    dictionary = Dictionary()
+    seed = DictEntry("L900001")
+    seed.set(".GLOSS", "SEED")
+    seed.set(".MEANING", ["seed entry"])
+    seed.set(".FORM", ["tane"])
+    seed.set(".KANA", ["タネ"])
+    seed.set(".POS", ["noun"])
+    seed.set(".NOTE", ["test note"])
+    dictionary.add(seed)
+    dictionary.to_file(str(dictionary_path))
+    monkeypatch.setattr(tree_editor, "DICT_PATH", dictionary_path)
+    tree_editor._dictionary = None
+
+    created = client.post("/api/dictionary", json={
+        "id": "L900002",
+        "fields": {
+            ".GLOSS": ["NEW"],
+            ".MEANING": ["new entry"],
+            ".FORM": ["atarasi"],
+            ".KANA": ["アタラシ"],
+            ".POS": ["adjective"],
+            ".NOTE": ["created in editor"],
+        },
+    })
+    assert created.status_code == 201
+
+    updated = client.put("/api/dictionary/L900002", json={
+        "fields": {
+            ".GLOSS": ["UPDATED"],
+            ".MEANING": ["updated entry"],
+            ".FORM": ["atarasi", "atarasiku"],
+            ".KANA": ["アタラシ", "アタラシク"],
+            ".POS": ["adjective"],
+            ".NOTE": ["updated in editor"],
+        },
+    })
+    assert updated.status_code == 200
+    saved = Dictionary.from_file(str(dictionary_path)).get("L900002")
+    assert saved is not None
+    assert saved.get_first(".GLOSS") == "UPDATED"
+    assert saved.get_all(".FORM") == ["atarasi", "atarasiku"]
+    tree_editor._dictionary = None
+
+
 def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     html = client.get("/").get_data(as_text=True)
     css = client.get("/static/style.css").get_data(as_text=True)
@@ -190,10 +329,18 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="activity-explorer"' in html
     assert 'id="activity-search"' in html
     assert 'id="activity-dictionary"' in html
+    assert 'data-sidebar-view="dictionary"' in html
     assert 'id="primary-sidebar"' in html
     assert 'id="global-search-form"' in html
     assert 'id="corpus-search-scope"' in html
     assert 'id="corpus-search-match"' in html
+    assert 'value="lemma_ids" checked' in html
+    assert 'id="search-mode-text"' in html
+    assert 'id="search-mode-tgrep"' in html
+    assert 'id="tgrep-search-form"' in html
+    assert 'id="tgrep-search-scope"' in html
+    assert "TGrep2 pattern help" in html
+    assert "lemma=L000530" in html
     assert 'id="search-pagination"' in html
     assert 'id="editor-tab-tree"' in html
     assert 'id="editor-tab-search"' in html
@@ -220,6 +367,12 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="editor-page-dictionary"' in html
     assert 'id="dictionary-advanced"' in html
     assert 'id="dictionary-popup"' in html
+    assert 'id="sidebar-dictionary"' in html
+    assert 'id="new-dictionary-entry"' in html
+    assert 'id="edit-dictionary-entry"' in html
+    assert 'id="dictionary-entry-editor"' in html
+    assert 'id="dictionary-field-options"' in html
+    assert "Contains: query appears anywhere" in html
     assert "CORPUS SOURCES" not in html
     assert "CURRENT CORPUS" not in html
     assert "--blue: #6f8ec9" in css.lower()
@@ -233,6 +386,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert 'normalized === "NLOG"' in javascript
     assert "collapsedNodeIds" in javascript
     assert "/api/poems?q=" in javascript
+    assert "/api/tgrep?" in javascript
+    assert 'setSearchMode("tgrep"' in javascript
+    assert 'lemma_ids: "lemma IDs"' in javascript
     assert "/api/search?" in javascript
     assert "localStorage.setItem" in javascript
     assert "data-edit-node-id" in javascript
@@ -255,5 +411,12 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "corpusSearchParameters" in javascript
     assert "search-page-previous" in javascript
     assert "openDictionaryPopupEntry" in javascript
+    assert '"lemma,.KANA,.FORM"' in javascript
+    assert "openLemmaOccurrences" in javascript
+    assert "loadDictionaryTags" in javascript
+    assert "dictionary-entry-form" in javascript
     assert ".dictionary-popup.collapsed" in css
     assert "#tab-tree.tree-collapsed" in css
+    assert ".dictionary-result-pos" in css
+    assert ".dictionary-result-gloss" in css
+    assert ".dictionary-frequency" in css

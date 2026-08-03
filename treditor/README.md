@@ -24,11 +24,20 @@ The Documents search filters sources and documents; an exact passage ID such as
 `MYS.1.1` opens its syntax tree directly. The activity bar switches between the
 hierarchical Documents sidebar and corpus-wide Search, and clicking an active
 activity icon collapses the sidebar. Corpus search covers transcriptions,
-kanji, headers, and word forms across both current data sources. Advanced
+kanji, headers, word forms, and lemma IDs across both current data sources. Advanced
 controls restrict the source and searched categories and support contains,
-whole-word, exact-field, and case-sensitive matching. Matches are highlighted;
-larger result sets expose a page-size selector and page navigation. Search
-results and syntax trees open as separate, switchable, closable editor tabs.
+whole-word, exact-field, and case-sensitive matching. Larger result sets expose
+a page-size selector and page navigation. Search results and syntax trees open
+as separate, switchable, closable editor tabs.
+
+The Search sidebar also has a TGrep2 mode for structural syntax-tree searches.
+It supports exact or `/regular-expression/` node labels; immediate and
+transitive dominance (`<`, `<<`, `>`, `>>`); precedence (`.`, `..`, `,`,
+`,,`); sister relationships (`$`, `$.`, `$..`, `$,`, `$,,`); negated links;
+and multiple ANDed relationships. COJ-specific `tag=`, `form=`, `lemma=`, and
+`phon=` selectors expose the annotations stored on tree nodes. The in-app help
+includes runnable examples. Grouped patterns and named-node backreferences are
+outside this editor's supported TGrep2 subset.
 
 An expanded active document stays pinned while its passage list is scrolled and
 releases at the end of that document. The Text and Syntax tree sections can
@@ -49,11 +58,20 @@ reveal its collapse control; collapsed nodes retain a visible `+`. Clicking
 either a lemma ID or a word form opens a right-side dictionary quick-reference
 drawer.
 
-The activity bar's dictionary icon opens a separate, closable Dictionary tab.
-Its basic search covers word forms, lemma IDs, glosses, and meanings. Advanced
-controls can restrict those categories and select the match behavior. The same
-dictionary can be opened as a collapsible right-side popup for consultation
-without leaving a syntax tree.
+The activity bar's dictionary-book icon opens both a Dictionary sidebar and a
+separate, closable Dictionary tab. The sidebar provides quick search plus
+**New entry** and **Edit open entry** actions. The field editor discovers the
+real XML tag vocabulary and saves additions and edits atomically to
+`data/xml/dict/dictionary.xml`.
+
+Full dictionary search can target any current tag—including Kana, Note,
+Correspondence, POS, and other optional fields—and explains its contains,
+whole-word, and exact-field modes on hover. Results emphasize word form, POS,
+and gloss and also display kana and a live corpus frequency. Selecting the
+frequency opens lemma-specific, highlighted corpus results. The collapsible
+right-side quick-reference popup intentionally searches only lemma IDs, kana,
+and word forms; its relevance-ranked results emphasize POS and gloss without
+the extra kana/frequency row.
 
 Click **Edit** to reveal pencil controls beside the displayed nodes. A pencil
 opens the editing drawer, which can change node content and add or delete child
