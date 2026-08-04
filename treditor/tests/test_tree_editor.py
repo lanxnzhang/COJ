@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 import pytest
 
 import treditor.app as tree_editor
@@ -147,6 +149,63 @@ def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
     )
     assert regex_negation.status_code == 200
     assert regex_negation.get_json()["total"] > 0
+
+
+def test_tgrep_search_supports_bracketed_same_node_predicates(client):
+    simple_query = urlencode({
+        "q": "[form=no & phon=PHON]",
+        "sources": "text,trees",
+    })
+    simple = client.get(f"/api/tgrep?{simple_query}")
+    assert simple.status_code == 200
+    payload = simple.get_json()
+    assert payload["total"] > 0
+    assert all(
+        result["highlight_terms"] == ["no"]
+        for result in payload["results"]
+    )
+
+    nested_query = urlencode({
+        "q": "NP << [form=no & phon=PHON]",
+        "sources": "text,trees",
+    })
+    nested = client.get(f"/api/tgrep?{nested_query}")
+    assert nested.status_code == 200
+    assert nested.get_json()["total"] > 0
+
+    description, clauses = tree_editor._parse_tgrep_query(
+        "[form=no & phon=PHON]"
+    )
+    assert description == (("form", "no"), ("phon", "PHON"))
+    assert clauses == []
+    assert tree_editor._tgrep_node_matches(
+        {"tag": "P", "form": "no", "phon": "PHON"}, description
+    )
+    assert not tree_editor._tgrep_node_matches(
+        {"tag": "P", "form": "no", "phon": "NLOG"}, description
+    )
+
+    existing_query = urlencode({
+        "q": "IP-MAT < IP-ARG & < VB",
+        "sources": "text",
+    })
+    existing = client.get(f"/api/tgrep?{existing_query}")
+    assert existing.status_code == 200
+    assert existing.get_json()["total"] > 0
+
+
+def test_tgrep_bracketed_predicates_return_clear_syntax_errors(client):
+    missing_bracket = client.get(
+        "/api/tgrep?" + urlencode({"q": "[form=no & phon=PHON"})
+    )
+    assert missing_bracket.status_code == 400
+    assert "closing ']'" in missing_bracket.get_json()["error"]
+
+    unbracketed = client.get(
+        "/api/tgrep?" + urlencode({"q": "form=no & phon=PHON"})
+    )
+    assert unbracketed.status_code == 400
+    assert "supported relationship" in unbracketed.get_json()["error"]
 
 
 def test_tgrep_search_returns_clear_errors_for_unsupported_patterns(client):
@@ -340,6 +399,8 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="tgrep-search-form"' in html
     assert 'id="tgrep-search-scope"' in html
     assert "TGrep2 pattern help" in html
+    assert "[form=no &amp; phon=PHON]" in html
+    assert "NP &lt;&lt; [form=no &amp; phon=PHON]" in html
     assert "lemma=L000530" in html
     assert 'id="search-pagination"' in html
     assert 'id="editor-tab-tree"' in html

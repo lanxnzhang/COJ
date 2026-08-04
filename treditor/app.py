@@ -489,6 +489,8 @@ TGREP_LINKS = (
     "$",
 )
 TGREP_FIELDS = {"tag", "form", "lemma", "phon"}
+TgrepConstraint = tuple[str, re.Pattern | str]
+TgrepDescription = tuple[TgrepConstraint, ...]
 
 
 def _read_tgrep_descriptor(query: str, position: int) -> tuple[str, int]:
@@ -515,7 +517,7 @@ def _read_tgrep_descriptor(query: str, position: int) -> tuple[str, int]:
             position += 1
         raise ValueError("The regular expression is missing its closing '/'")
     while position < len(query):
-        if query[position].isspace() or query[position] in "&!<>$.,()":
+        if query[position].isspace() or query[position] in "&!<>$.,()[]":
             break
         position += 1
     if position == start or query[start:position].endswith("="):
@@ -545,9 +547,49 @@ def _compile_tgrep_descriptor(description: str) -> tuple[str, re.Pattern | str]:
     return field, value
 
 
+def _read_tgrep_description(
+    query: str, position: int
+) -> tuple[TgrepDescription, int]:
+    """Read one node predicate, optionally grouped in square brackets."""
+    if position >= len(query) or query[position] != "[":
+        text, position = _read_tgrep_descriptor(query, position)
+        return (_compile_tgrep_descriptor(text),), position
+
+    position += 1
+    constraints = []
+    while True:
+        while position < len(query) and query[position].isspace():
+            position += 1
+        if position >= len(query):
+            raise ValueError(
+                "The bracketed node predicate is missing its closing ']'"
+            )
+        if query[position] == "]":
+            if not constraints:
+                raise ValueError("A bracketed node predicate cannot be empty")
+            return tuple(constraints), position + 1
+
+        text, position = _read_tgrep_descriptor(query, position)
+        constraints.append(_compile_tgrep_descriptor(text))
+
+        while position < len(query) and query[position].isspace():
+            position += 1
+        if position >= len(query):
+            raise ValueError(
+                "The bracketed node predicate is missing its closing ']'"
+            )
+        if query[position] == "]":
+            return tuple(constraints), position + 1
+        if query[position] != "&":
+            raise ValueError(
+                "Expected '&' or ']' inside the bracketed node predicate"
+            )
+        position += 1
+
+
 def _parse_tgrep_query(
     query: str,
-) -> tuple[tuple[str, re.Pattern | str], list[tuple[bool, str, tuple]]]:
+) -> tuple[TgrepDescription, list[tuple[bool, str, TgrepDescription]]]:
     """Parse the flat, AND-linked core of TGrep2 query syntax."""
     position = 0
 
@@ -559,8 +601,7 @@ def _parse_tgrep_query(
     skip_space()
     if not query:
         raise ValueError("Enter a TGrep2 pattern")
-    anchor_text, position = _read_tgrep_descriptor(query, position)
-    anchor = _compile_tgrep_descriptor(anchor_text)
+    anchor, position = _read_tgrep_description(query, position)
     clauses = []
     while True:
         skip_space()
@@ -582,8 +623,8 @@ def _parse_tgrep_query(
             )
         position += len(link)
         skip_space()
-        target_text, position = _read_tgrep_descriptor(query, position)
-        clauses.append((negated, link, _compile_tgrep_descriptor(target_text)))
+        target, position = _read_tgrep_description(query, position)
+        clauses.append((negated, link, target))
     return anchor, clauses
 
 
@@ -675,15 +716,18 @@ def _tgrep_related_nodes(node: dict, link: str, context: dict) -> list[dict]:
 
 
 def _tgrep_node_matches(
-    node: dict, descriptor: tuple[str, re.Pattern | str]
+    node: dict, description: TgrepDescription
 ) -> bool:
-    field, expected = descriptor
-    value = str(node.get(field, ""))
-    if expected == "*":
-        return True
-    if isinstance(expected, re.Pattern):
-        return expected.search(value) is not None
-    return value == expected
+    for field, expected in description:
+        value = str(node.get(field, ""))
+        if expected == "*":
+            continue
+        if isinstance(expected, re.Pattern):
+            if expected.search(value) is None:
+                return False
+        elif value != expected:
+            return False
+    return True
 
 
 def _tgrep_query_matches(node: dict, parsed_query: tuple, context: dict) -> bool:

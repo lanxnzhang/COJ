@@ -35,9 +35,13 @@ It supports exact or `/regular-expression/` node labels; immediate and
 transitive dominance (`<`, `<<`, `>`, `>>`); precedence (`.`, `..`, `,`,
 `,,`); sister relationships (`$`, `$.`, `$..`, `$,`, `$,,`); negated links;
 and multiple ANDed relationships. COJ-specific `tag=`, `form=`, `lemma=`, and
-`phon=` selectors expose the annotations stored on tree nodes. The in-app help
-includes runnable examples. Grouped patterns and named-node backreferences are
-outside this editor's supported TGrep2 subset.
+`phon=` selectors expose the annotations stored on tree nodes. Multiple
+attributes that must belong to the same node are enclosed in square brackets,
+for example `[form=no & phon=PHON]`. Bracketed predicates can participate in
+relationships, as in `NP << [form=no & phon=PHON]`; outside brackets, `&`
+retains its original role of joining relationship clauses. The in-app help
+includes runnable examples. Parenthesized subpatterns and named-node
+backreferences are outside this editor's supported TGrep2 subset.
 
 An expanded active document stays pinned while its passage list is scrolled and
 releases at the end of that document. The Text and Syntax tree sections can

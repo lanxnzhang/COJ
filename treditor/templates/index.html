@@ -130,11 +130,13 @@
                 <div><dt><code>A .. B</code></dt><dd>A precedes B</dd></div>
                 <div><dt><code>A !&lt;&lt; B</code></dt><dd>A does not dominate B</dd></div>
               </dl>
-              <p>COJ selectors: <code>tag=</code>, <code>form=</code>, <code>lemma=</code>, and <code>phon=</code>. Use <code>__</code> for any node.</p>
+              <p>COJ selectors: <code>tag=</code>, <code>form=</code>, <code>lemma=</code>, and <code>phon=</code>. Use <code>__</code> for any node. Multiple attributes on one node must be grouped in brackets, for example <code>[form=no &amp; phon=PHON]</code>.</p>
               <div class="tgrep-examples" aria-label="Example patterns">
                 <button type="button" data-tgrep-example="IP-MAT &lt;&lt; NP">IP-MAT &lt;&lt; NP</button>
                 <button type="button" data-tgrep-example="IP-MAT &lt; IP-ARG &lt; VB">IP-MAT &lt; IP-ARG &lt; VB</button>
                 <button type="button" data-tgrep-example="lemma=L000530">lemma=L000530</button>
+                <button type="button" data-tgrep-example="[form=no &amp; phon=PHON]">[form=no &amp; phon=PHON]</button>
+                <button type="button" data-tgrep-example="NP &lt;&lt; [form=no &amp; phon=PHON]">NP &lt;&lt; [form=no &amp; phon=PHON]</button>
               </div>
               <p class="tgrep-help-note">This editor supports the flat core of TGrep2 patterns; grouped subpatterns and named-node backreferences are not included.</p>
             </div>

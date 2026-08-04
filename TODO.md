@@ -343,6 +343,8 @@ when user searchs L002003, it should match mi. When user searchs L080703(if it i
 The last update introduced a critical bug and failed to implement the features I wanted. I’ve already reverted the changes. Let’s try again—this time, making modifications bit by bit.
 1. There are issues with the highlighting of current search results. For example, when users search L051650, it will also highlight L000520 which sometimes has the same word form with L051650, but it is wrong - only L051650's word form should be highlighted.
 
+### After commit 8c999ef
+Extend the tgrep2 search functionality to allow searching for combining two attributes on the same node without conflicting with existing search features. For example, it should allow user to search a word form 'no' is written in PHON, and moreover, a NP includes a word form 'no' written in PHON.
 
 
 ### TBD
