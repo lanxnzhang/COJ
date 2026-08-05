@@ -86,7 +86,17 @@ def test_corpus_search_finds_text_across_all_documents(client):
     ]
     assert first["text_segments"][0]["transcription"] == "ugonapar eru"
     assert "transcription" in first["matching_fields"]
+    assert "header" not in first["matching_fields"]
     assert "_fields" not in first
+
+    spelling = client.get(
+        "/api/search?q=no&sources=text&per_page=10"
+    ).get_json()
+    assert spelling["results"]
+    assert all(
+        "header" not in result["matching_fields"]
+        for result in spelling["results"]
+    )
 
     empty = client.get("/api/search").get_json()
     assert empty["results"] == []
@@ -128,6 +138,56 @@ def test_corpus_search_indexes_lemma_ids_and_highlights_their_forms(client):
     assert "_roots" not in first
 
 
+def test_search_highlights_exact_lemma_leaf_and_kanji_sentence_fallback(client):
+    first_lemma = client.get(
+        "/api/search",
+        query_string={
+            "q": "L051650",
+            "sources": "trees",
+            "per_page": 100,
+        },
+    ).get_json()
+    first_result = next(
+        result for result in first_lemma["results"]
+        if result["sentence_id"] == "KH.9"
+    )
+    first_range = first_result["highlights"]["transcription"]
+    assert first_range == [{"segment": 3, "start": 10, "end": 12}]
+
+    second_lemma = client.get(
+        "/api/search",
+        query_string={
+            "q": "L000520",
+            "sources": "trees",
+            "per_page": 100,
+        },
+    ).get_json()
+    second_result = next(
+        result for result in second_lemma["results"]
+        if result["sentence_id"] == "KH.9"
+    )
+    second_range = second_result["highlights"]["transcription"]
+    assert second_range == [{"segment": 3, "start": 17, "end": 19}]
+
+    kanji_text = first_result["text_segments"][3]["kanji"]
+    kanji_search = client.get(
+        "/api/search",
+        query_string={
+            "q": kanji_text,
+            "fields": "kanji",
+            "match": "exact",
+            "sources": "trees",
+        },
+    ).get_json()
+    kanji_result = kanji_search["results"][0]
+    assert kanji_result["highlights"]["kanji"] == [
+        {"segment": 3, "start": 0, "end": len(kanji_text)}
+    ]
+    assert kanji_result["highlights"]["transcription_when_kanji_hidden"] == [
+        {"segment": 3, "start": 0, "end": 19}
+    ]
+
+
 def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
     dominated = client.get(
         "/api/tgrep?q=IP-MAT%20%3C%3C%20NP&sources=text&per_page=10"
@@ -142,6 +202,31 @@ def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
     assert "kanji" in payload["results"][0]
     assert payload["results"][0]["text_segments"]
     assert "_roots" not in payload["results"][0]
+
+    phrase = client.get(
+        "/api/tgrep?q=IP-ARG&sources=text&per_page=10"
+    ).get_json()["results"][0]
+    phrase_ranges = phrase["highlights"]["transcription"]
+    highlighted_text = [
+        phrase["text_segments"][item["segment"]]["transcription"]
+        [item["start"]:item["end"]]
+        for item in phrase_ranges
+    ]
+    assert "kamu nusi papuri ra moromoro kikosi myese to" in highlighted_text
+
+    offset_tree = client.get(
+        "/api/tgrep?q=form%3Dsumyera&sources=text&per_page=100"
+    ).get_json()
+    offset_result = next(
+        result for result in offset_tree["results"]
+        if result["sentence_id"] == "SM.4.40"
+    )
+    offset_highlights = [
+        offset_result["text_segments"][item["segment"]]["transcription"]
+        [item["start"]:item["end"]]
+        for item in offset_result["highlights"]["transcription"]
+    ]
+    assert offset_highlights == ["sumyera", "sumyera"]
 
     multiple_links = client.get(
         "/api/tgrep?q=IP-MAT%20%3C%20IP-ARG%20%3C%20VB&sources=text"
@@ -407,6 +492,7 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="global-search-form"' in html
     assert 'id="corpus-search-scope"' in html
     assert 'id="corpus-search-match"' in html
+    assert 'value="header"' not in html
     assert 'value="lemma_ids" checked' in html
     assert 'id="search-mode-text"' in html
     assert 'id="search-mode-tgrep"' in html
@@ -484,7 +570,8 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert ".editor-tabs" in css
     assert ".node-disclosure.expanded" in css
     assert ".tree-node-controls:hover" in css
-    assert "appendHighlightedText" in javascript
+    assert "appendHighlightedText" not in javascript
+    assert "appendRangedText" in javascript
     assert "corpusSearchParameters" in javascript
     assert "search-page-previous" in javascript
     assert "updateSearchResultDisplay" in javascript

@@ -356,6 +356,9 @@ The current occurrences in the dictionary is wrong. First, it should be named as
 You misunderstand my meaning for 'User can choose whether to display sentence number in search results.'. Please revise this function. Display sentence number in search results means: for example, currently, the text in search result is displayed as: kamukazeno isenoumi no opwisi ni papimotoporopu sitadami no ipapimotopori utite si yamamu; after choosing to display sentence number, it becomes: [1] kamukazeno [2] isenoumi no [3] opwisi ni [4] papimotoporopu [5] sitadami no [6] ipapimotopori [7] utite si yamamu
 The same way for displaying sentence numbers also applies to kanji text when user chooses to display sentence numbers: [1] 加牟加是能 [2] 伊勢能宇美能 [3] 意斐志爾...
 
+### After commit 76a69e5
+There are issues with the highlighting of current search results. The search results appear to be highlighted based on text matching rather than highlighting the actual corresponding search results. For example, when users search L051650, it will also highlight L000520 which sometimes has the same word form with L051650, but it is wrong - only L051650's word form should be highlighted.
+Please remove the current search result highlighting feature and create a new one. It should only highlight the transcriptions corresponding to the search results. Specially, when the user searches for kanji characters, the system should highlight the corresponding characters if they are displayed in the search results; if the characters themselves are not displayed, it should highlight the entire sentence-level text transcription containing them. When a TGrep2 search result points to a phrase or sentence, the entire phrase or sentence should be highlighted; for such results spanning multiple words, the highlighting should appear as a continuous block rather than being broken up between words.
 
 
 ### TBD

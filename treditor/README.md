@@ -24,13 +24,20 @@ The Documents search filters sources and documents; an exact passage ID such as
 `MYS.1.1` opens its syntax tree directly. The activity bar switches between the
 hierarchical Documents sidebar and corpus-wide Search, and clicking an active
 activity icon collapses the sidebar. Corpus search covers transcriptions,
-kanji, headers, word forms, and lemma IDs across both current data sources. Advanced
+kanji, word forms, and lemma IDs across both current data sources. Advanced
 controls restrict the source and searched categories and support contains,
 whole-word, exact-field, and case-sensitive matching. Result display controls
 can add kanji text and prefix each transcription or kanji segment with its
 raw-text sentence number. Larger result sets expose a
 page-size selector and page navigation. Search results and syntax trees open
 as separate, switchable, closable editor tabs.
+
+Search highlighting is derived from the matching corpus nodes rather than
+repeated word-form text. Lemma and word-form searches therefore mark only the
+corresponding transcription tokens. Kanji searches mark the matching
+characters when kanji is shown, or the corresponding full transcription
+segment when it is hidden. TGrep2 phrase matches use one continuous highlight
+range across all words in each matched segment.
 
 The Search sidebar also has a TGrep2 mode for structural syntax-tree searches.
 It supports exact or `/regular-expression/` node labels; immediate and

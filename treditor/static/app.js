@@ -11,6 +11,7 @@ let dictionaryTimer = null;
 let documentSearchTimer = null;
 let globalSearchTimer = null;
 let popupDictionaryTimer = null;
+let currentSearchPayload = null;
 let editMode = false;
 let currentEditorPage = null;
 let activeSidebarView = "explorer";
@@ -384,43 +385,6 @@ $("document-search").addEventListener("keydown", event => {
   });
 });
 
-function appendHighlightedText(container, text, queryOrTerms) {
-  const terms = (Array.isArray(queryOrTerms) ? queryOrTerms : [queryOrTerms])
-    .filter(Boolean)
-    .sort((left, right) => right.length - left.length);
-  if (!terms.length) {
-    container.textContent = text;
-    return;
-  }
-  const foldedText = text.toLocaleLowerCase();
-  let cursor = 0;
-  while (cursor < text.length) {
-    let nextMatch = null;
-    terms.forEach(term => {
-      const position = foldedText.indexOf(term.toLocaleLowerCase(), cursor);
-      if (position >= 0 && (
-        nextMatch === null
-        || position < nextMatch.position
-        || (position === nextMatch.position && term.length > nextMatch.term.length)
-      )) {
-        nextMatch = {position, term};
-      }
-    });
-    if (nextMatch === null) break;
-    container.append(
-      document.createTextNode(text.slice(cursor, nextMatch.position))
-    );
-    const mark = document.createElement("mark");
-    mark.textContent = text.slice(
-      nextMatch.position,
-      nextMatch.position + nextMatch.term.length,
-    );
-    container.appendChild(mark);
-    cursor = nextMatch.position + nextMatch.term.length;
-  }
-  container.append(document.createTextNode(text.slice(cursor)));
-}
-
 function checkedValues(name) {
   return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
     .map(input => input.value);
@@ -466,7 +430,7 @@ function setSearchMode(mode, focus = true) {
     : $("global-search").value).trim();
   $("global-search-message").textContent = structural
     ? "Search syntax-tree relationships with a TGrep2 pattern."
-    : "Search transcriptions, kanji, headers, word forms, and lemma IDs.";
+    : "Search transcriptions, kanji, word forms, and lemma IDs.";
   if (focus) (structural ? $("tgrep-search") : $("global-search")).focus();
 }
 
@@ -487,6 +451,7 @@ function updateSearchResultDisplay() {
     "show-sentence-numbers",
     $("search-show-sentence-numbers").checked,
   );
+  if (currentSearchPayload) renderCorpusSearchResults(currentSearchPayload);
 }
 
 ["search-show-kanji", "search-show-sentence-numbers"].forEach(id => {
@@ -494,30 +459,70 @@ function updateSearchResultDisplay() {
 });
 updateSearchResultDisplay();
 
-function appendSearchResultText(container, segments, field, fallback, terms) {
+function appendRangedText(container, text, ranges) {
+  const normalized = (ranges || [])
+    .map(range => ({
+      start: Math.max(0, Math.min(text.length, Number(range.start))),
+      end: Math.max(0, Math.min(text.length, Number(range.end))),
+    }))
+    .filter(range => range.end > range.start)
+    .sort((left, right) => left.start - right.start || left.end - right.end)
+    .reduce((merged, range) => {
+      const previous = merged.at(-1);
+      if (previous && range.start <= previous.end) {
+        previous.end = Math.max(previous.end, range.end);
+      } else {
+        merged.push(range);
+      }
+      return merged;
+    }, []);
+  let cursor = 0;
+  normalized.forEach(range => {
+    container.append(document.createTextNode(text.slice(cursor, range.start)));
+    const mark = document.createElement("mark");
+    mark.textContent = text.slice(range.start, range.end);
+    container.appendChild(mark);
+    cursor = range.end;
+  });
+  container.append(document.createTextNode(text.slice(cursor)));
+}
+
+function appendSearchResultText(container, segments, field, fallback, ranges) {
+  const available = (segments || [])
+    .map((segment, index) => ({segment, index}))
+    .filter(item => item.segment[field]);
+  const appendVersion = (target, showNumbers) => {
+    if (!available.length) {
+      appendRangedText(target, fallback, []);
+      return;
+    }
+    available.forEach((item, position) => {
+      if (position) target.append(" ");
+      if (showNumbers) {
+        const number = document.createElement("span");
+        number.className = "search-segment-number";
+        number.textContent = `[${item.segment.number}] `;
+        target.appendChild(number);
+      }
+      appendRangedText(
+        target,
+        item.segment[field],
+        (ranges || []).filter(range => range.segment === item.index),
+      );
+    });
+  };
+
   const plain = document.createElement("span");
   plain.className = "search-text-without-numbers";
-  appendHighlightedText(plain, fallback, terms);
-
+  appendVersion(plain, false);
   const numbered = document.createElement("span");
   numbered.className = "search-text-with-numbers";
-  const available = (segments || []).filter(segment => segment[field]);
-  if (!available.length) {
-    appendHighlightedText(numbered, fallback, terms);
-  } else {
-    available.forEach((segment, index) => {
-      if (index) numbered.append(" ");
-      const number = document.createElement("span");
-      number.className = "search-segment-number";
-      number.textContent = `[${segment.number}] `;
-      numbered.appendChild(number);
-      appendHighlightedText(numbered, segment[field], terms);
-    });
-  }
+  appendVersion(numbered, true);
   container.append(plain, numbered);
 }
 
 function renderCorpusSearchResults(payload) {
+  currentSearchPayload = payload;
   const {results, query, total, page, pages, per_page: perPage} = payload;
   const container = $("search-results");
   container.innerHTML = "";
@@ -541,20 +546,25 @@ function renderCorpusSearchResults(payload) {
     const heading = document.createElement("span");
     heading.className = "corpus-search-result-heading";
     const sentence = document.createElement("strong");
-    const highlightTerms = result.highlight_terms || [query];
-    appendHighlightedText(sentence, result.sentence_id, highlightTerms);
+    sentence.textContent = result.sentence_id;
     const location = document.createElement("span");
     location.textContent =
       `${result.label} · ${result.source === "text" ? "Texts under editing" : "Uploaded trees"}`;
     heading.append(sentence, location);
     const transcription = document.createElement("span");
     transcription.className = "corpus-search-preview corpus-search-transcription";
+    const transcriptionHighlights = [
+      ...(result.highlights?.transcription || []),
+      ...($("search-show-kanji").checked
+        ? []
+        : result.highlights?.transcription_when_kanji_hidden || []),
+    ];
     appendSearchResultText(
       transcription,
       result.text_segments,
       "transcription",
       result.transcription || result.preview || result.header || "No transcription",
-      highlightTerms,
+      transcriptionHighlights,
     );
     const kanji = document.createElement("span");
     kanji.className = "corpus-search-kanji";
@@ -563,7 +573,7 @@ function renderCorpusSearchResults(payload) {
       result.text_segments,
       "kanji",
       result.kanji || "No kanji text",
-      highlightTerms,
+      result.highlights?.kanji || [],
     );
     const fields = document.createElement("span");
     fields.className = "corpus-search-fields";
@@ -601,10 +611,11 @@ async function performCorpusSearch(query, page = 1, preserveLemma = false) {
   corpusSearchState.query = normalized;
   if (!preserveLemma) corpusSearchState.lemmaId = "";
   showEditorPage("search");
+  currentSearchPayload = null;
   $("search-results").innerHTML = "";
   if (!normalized) {
     $("global-search-message").textContent =
-      "Search transcriptions, kanji, headers, word forms, and lemma IDs.";
+      "Search transcriptions, kanji, word forms, and lemma IDs.";
     $("search-results-title").textContent = "Search results";
     $("search-result-count").textContent = "";
     $("search-results-message").textContent = "Enter a search in the sidebar.";
@@ -632,6 +643,7 @@ async function performTgrepSearch(query, page = 1) {
   corpusSearchState.query = normalized;
   corpusSearchState.lemmaId = "";
   showEditorPage("search");
+  currentSearchPayload = null;
   $("search-results").innerHTML = "";
   if (!normalized) {
     $("global-search-message").textContent =
