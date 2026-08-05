@@ -1357,6 +1357,25 @@ button {
   font: 700 12px var(--font-ui);
 }
 
+.tree-search-highlight {
+  fill: #ffe58a;
+  fill-opacity: .82;
+  stroke: #d4a900;
+  stroke-width: 1;
+}
+
+.tree-search-hit-label {
+  paint-order: stroke;
+  stroke: #ffe58a;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.tree-container.search-result-context .tree-svg {
+  border-color: #e2bd35;
+  box-shadow: 0 4px 20px #a77a1d26;
+}
+
 .node-toggle,
 .node-disclosure {
   cursor: pointer;

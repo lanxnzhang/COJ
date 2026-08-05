@@ -355,23 +355,12 @@ def _full_transcription_highlights(
     ]
 
 
-def _word_span_highlights(
-    passage: dict, word_spans: list[tuple[int, int]]
-) -> list[dict]:
-    """Map tree leaf spans to continuous raw-transcription character ranges."""
-    tree_forms = []
-
-    def collect_forms(node: dict) -> None:
-        children = node.get("children", [])
-        if children:
-            for child in children:
-                collect_forms(child)
-        elif form := str(node.get("form", "")).strip():
-            tree_forms.append(form)
-
-    for root in passage["_roots"]:
-        collect_forms(root)
-
+def _form_word_alignment(passage: dict, context: dict) -> tuple[list, list, dict]:
+    form_nodes = [
+        node for node in context["nodes"]
+        if not node.get("children") and str(node.get("form", "")).strip()
+    ]
+    tree_forms = [str(node.get("form", "")).strip() for node in form_nodes]
     word_locations = []
     transcription_words = []
     for segment_index, segment in enumerate(passage["_text_segments"]):
@@ -394,6 +383,17 @@ def _word_span_highlights(
                     (form_start + offset, word_start + offset)
                     for offset in range(form_count)
                 )
+    return form_nodes, word_locations, form_to_word
+
+
+def _word_span_highlights(
+    passage: dict,
+    word_spans: list[tuple[int, int]],
+    context: dict | None = None,
+) -> list[dict]:
+    """Map tree leaf spans to continuous raw-transcription character ranges."""
+    context = context or _tgrep_tree_context(passage["_roots"])
+    _, word_locations, form_to_word = _form_word_alignment(passage, context)
 
     highlights = []
     for first_word, last_word in word_spans:
@@ -419,6 +419,35 @@ def _word_span_highlights(
     return _merge_highlight_ranges(highlights)
 
 
+def _tree_paths_for_text_ranges(
+    passage: dict, ranges: list[dict], context: dict
+) -> list[str]:
+    form_nodes, word_locations, form_to_word = _form_word_alignment(
+        passage, context
+    )
+    matching_words = {
+        word_index
+        for word_index, (segment, start, end) in enumerate(word_locations)
+        for item in ranges
+        if item["segment"] == segment
+        and item["start"] < end
+        and item["end"] > start
+    }
+    word_to_forms: dict[int, list[int]] = {}
+    for form_index, word_index in form_to_word.items():
+        word_to_forms.setdefault(word_index, []).append(form_index)
+    node_ids = {
+        id(form_nodes[form_index])
+        for word_index in matching_words
+        for form_index in word_to_forms.get(word_index, [])
+    }
+    return [
+        context["paths"][id(node)]
+        for node in context["nodes"]
+        if id(node) in node_ids
+    ]
+
+
 def _ordinary_search_highlights(
     passage: dict,
     matching_fields: list[str],
@@ -426,7 +455,7 @@ def _ordinary_search_highlights(
     match_mode: str,
     case_sensitive: bool,
     lemma_id: str,
-) -> dict[str, list[dict]]:
+) -> tuple[dict[str, list[dict]], dict]:
     transcription = []
     kanji = []
     kanji_fallback = []
@@ -443,48 +472,76 @@ def _ordinary_search_highlights(
         kanji_fallback.extend(
             _full_transcription_highlights(passage, matched_segments)
         )
+    context = _tgrep_tree_context(passage["_roots"])
     matching_nodes = []
-    context = None
-    if lemma_id or {"lemma_ids", "word_forms"} & set(matching_fields):
-        context = _tgrep_tree_context(passage["_roots"])
-        if lemma_id:
-            matching_nodes.extend(
-                node for node in context["nodes"]
-                if str(node.get("lemma", "")) == lemma_id
+    if lemma_id:
+        matching_nodes.extend(
+            node for node in context["nodes"]
+            if str(node.get("lemma", "")) == lemma_id
+        )
+    elif "lemma_ids" in matching_fields:
+        matching_nodes.extend(
+            node for node in context["nodes"]
+            if _search_values_match(
+                [str(node.get("lemma", ""))],
+                query,
+                match_mode,
+                case_sensitive,
             )
-        elif "lemma_ids" in matching_fields:
-            matching_nodes.extend(
-                node for node in context["nodes"]
-                if _search_values_match(
-                    [str(node.get("lemma", ""))],
-                    query,
-                    match_mode,
-                    case_sensitive,
-                )
+        )
+    if "word_forms" in matching_fields:
+        matching_nodes.extend(
+            node for node in context["nodes"]
+            if _search_values_match(
+                [str(node.get("form", ""))],
+                query,
+                match_mode,
+                case_sensitive,
             )
-        if "word_forms" in matching_fields:
-            matching_nodes.extend(
-                node for node in context["nodes"]
-                if _search_values_match(
-                    [str(node.get("form", ""))],
-                    query,
-                    match_mode,
-                    case_sensitive,
-                )
-            )
+        )
     word_spans = [
         span for node in matching_nodes
-        if context is not None
-        and (span := context["form_spans"].get(id(node))) is not None
+        if (span := context["form_spans"].get(id(node))) is not None
     ]
-    transcription.extend(_word_span_highlights(passage, word_spans))
-    return {
+    transcription.extend(_word_span_highlights(passage, word_spans, context))
+    highlights = {
         "transcription": _merge_highlight_ranges(transcription),
         "kanji": _merge_highlight_ranges(kanji),
         "transcription_when_kanji_hidden": _merge_highlight_ranges(
             kanji_fallback
         ),
     }
+    node_paths = {
+        context["paths"][id(node)] for node in matching_nodes
+    }
+    node_paths.update(_tree_paths_for_text_ranges(
+        passage,
+        [*highlights["transcription"], *kanji_fallback],
+        context,
+    ))
+    matched_kanji_segments = {item["segment"] for item in kanji}
+    tree_context = {
+        "node_ids": [
+            context["paths"][id(node)]
+            for node in context["nodes"]
+            if context["paths"][id(node)] in node_paths
+        ],
+        "show_lemma": bool(lemma_id or "lemma_ids" in matching_fields),
+        "show_phon": False,
+        "show_kanji": bool(kanji),
+        "show_null": any(
+            not node.get("children")
+            and not str(node.get("form", ""))
+            and not str(node.get("phon", ""))
+            for node in matching_nodes
+        ),
+        "sentence_numbers": [
+            segment["number"]
+            for index, segment in enumerate(passage["_text_segments"])
+            if index in matched_kanji_segments
+        ],
+    }
+    return highlights, tree_context
 
 
 def _requested_values(name: str, allowed: tuple[str, ...]) -> list[str]:
@@ -857,19 +914,21 @@ def _tgrep_tree_context(roots: list[dict]) -> dict:
     parents: dict[int, dict | None] = {}
     spans: dict[int, tuple[int, int]] = {}
     form_spans: dict[int, tuple[int, int] | None] = {}
+    paths: dict[int, str] = {}
     leaf_position = 0
     form_leaf_position = 0
 
-    def visit(node: dict, parent: dict | None) -> None:
+    def visit(node: dict, parent: dict | None, path: str) -> None:
         nonlocal leaf_position, form_leaf_position
         nodes.append(node)
         parents[id(node)] = parent
+        paths[id(node)] = path
         children = node.get("children", [])
         start = leaf_position
         form_start = form_leaf_position
         if children:
-            for child in children:
-                visit(child, node)
+            for index, child in enumerate(children):
+                visit(child, node, f"{path}.{index}")
         else:
             leaf_position += 1
             if str(node.get("form", "")).strip():
@@ -881,14 +940,15 @@ def _tgrep_tree_context(roots: list[dict]) -> dict:
             else None
         )
 
-    for root in roots:
-        visit(root, None)
+    for index, root in enumerate(roots):
+        visit(root, None, str(index))
     return {
         "roots": roots,
         "nodes": nodes,
         "parents": parents,
         "spans": spans,
         "form_spans": form_spans,
+        "paths": paths,
     }
 
 
@@ -971,17 +1031,31 @@ def _tgrep_node_matches(
 
 
 def _tgrep_query_matches(node: dict, parsed_query: tuple, context: dict) -> bool:
+    return _tgrep_query_evidence(node, parsed_query, context) is not None
+
+
+def _tgrep_query_evidence(
+    node: dict, parsed_query: tuple, context: dict
+) -> list[dict] | None:
+    """Return the anchor and positive relationship nodes proving a match."""
     anchor, clauses = parsed_query
     if not _tgrep_node_matches(node, anchor):
-        return False
+        return None
+    evidence = [node]
     for negated, link, target in clauses:
-        found = any(
-            _tgrep_node_matches(candidate, target)
+        related_matches = [
+            candidate
             for candidate in _tgrep_related_nodes(node, link, context)
-        )
-        if found == negated:
-            return False
-    return True
+            if _tgrep_node_matches(candidate, target)
+        ]
+        if negated:
+            if related_matches:
+                return None
+        elif not related_matches:
+            return None
+        else:
+            evidence.extend(related_matches)
+    return evidence
 def _tgrep_forms(node: dict) -> list[str]:
     children = node.get("children", [])
     if children:
@@ -1128,7 +1202,7 @@ def search_corpus():
             query,
         )
         hit["text_segments"] = passage["_text_segments"]
-        hit["highlights"] = _ordinary_search_highlights(
+        hit["highlights"], hit["tree_context"] = _ordinary_search_highlights(
             passage,
             matching_fields,
             query,
@@ -1190,18 +1264,30 @@ def search_syntax_trees():
         if requested_page_size in SEARCH_PAGE_SIZES
         else 25
     )
+    anchor, clauses = parsed_query
+    query_fields = {
+        field
+        for description in [anchor, *(target for _, _, target in clauses)]
+        for field, _ in description
+    }
     hits = []
     for passage in _searchable_passages():
         if passage["source"] not in sources:
             continue
         context = _tgrep_tree_context(passage["_roots"])
-        matching_nodes = [
-            node
-            for node in context["nodes"]
-            if _tgrep_query_matches(node, parsed_query, context)
-        ]
+        matching_nodes = []
+        evidence_nodes = []
+        for node in context["nodes"]:
+            evidence = _tgrep_query_evidence(node, parsed_query, context)
+            if evidence is not None:
+                matching_nodes.append(node)
+                evidence_nodes.extend(evidence)
         if not matching_nodes:
             continue
+        evidence_ids = {id(node) for node in evidence_nodes}
+        evidence_nodes = [
+            node for node in context["nodes"] if id(node) in evidence_ids
+        ]
         highlight_terms = list(dict.fromkeys(
             form
             for node in matching_nodes
@@ -1242,9 +1328,25 @@ def search_syntax_trees():
                             span := context["form_spans"].get(id(node))
                         ) is not None
                     ],
+                    context,
                 ),
                 "kanji": [],
                 "transcription_when_kanji_hidden": [],
+            },
+            "tree_context": {
+                "node_ids": [
+                    context["paths"][id(node)] for node in evidence_nodes
+                ],
+                "show_lemma": "lemma" in query_fields,
+                "show_phon": "phon" in query_fields,
+                "show_kanji": False,
+                "show_null": any(
+                    not node.get("children")
+                    and not str(node.get("form", ""))
+                    and not str(node.get("phon", ""))
+                    for node in evidence_nodes
+                ),
+                "sentence_numbers": [],
             },
             "matching_fields": ["syntax_tree"],
             "highlight_terms": highlight_terms,

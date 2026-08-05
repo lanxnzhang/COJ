@@ -12,6 +12,7 @@ let documentSearchTimer = null;
 let globalSearchTimer = null;
 let popupDictionaryTimer = null;
 let currentSearchPayload = null;
+let activeTreeSearchContext = null;
 let editMode = false;
 let currentEditorPage = null;
 let activeSidebarView = "explorer";
@@ -590,7 +591,12 @@ function renderCorpusSearchResults(payload) {
         showError(new Error("This result's document is unavailable."));
         return;
       }
-      await selectDocument(documentData, result.sentence_id);
+      await selectDocument(
+        documentData,
+        result.sentence_id,
+        null,
+        result.tree_context || null,
+      );
     });
     container.appendChild(button);
   });
@@ -761,6 +767,7 @@ async function selectDocument(
   documentData,
   targetSentenceId = null,
   passageContainer = null,
+  treeSearchContext = null,
 ) {
   clearError();
   const changedDocument = activeDocument?.id !== documentData.id;
@@ -769,6 +776,7 @@ async function selectDocument(
     node.classList.toggle("active", node.dataset.documentId === documentData.id);
   });
   if (changedDocument && !targetSentenceId) {
+    activeTreeSearchContext = null;
     activePassage = null;
     currentTreeData = null;
     collapsedNodeIds.clear();
@@ -778,6 +786,7 @@ async function selectDocument(
     $("detail-title").textContent = "Select a passage";
     $("tree-stats").classList.add("hidden");
     $("text-panel").classList.add("hidden");
+    $("tree-container").classList.remove("search-result-context");
     $("tree-container").innerHTML = `
       <div class="empty-state">
         <span class="empty-icon" aria-hidden="true">⌘</span>
@@ -800,7 +809,7 @@ async function selectDocument(
         passage => passage.sentence_id === targetSentenceId
       );
       if (!target) throw new Error(`Poem '${targetSentenceId}' was not found.`);
-      await selectPassage(target);
+      await selectPassage(target, treeSearchContext);
     }
   } catch (error) {
     showError(error);
@@ -901,10 +910,13 @@ function calculateTreeStats(roots) {
   return {nodes, leaves};
 }
 
-async function selectPassage(passage) {
+async function selectPassage(passage, treeSearchContext = null) {
   if (!activeDocument) return;
   clearError();
   setEditMode(false);
+  activeTreeSearchContext = treeSearchContext;
+  $("lemma-position").disabled = !$("tog-lemma").checked
+    && !activeTreeSearchContext?.show_lemma;
   activePassage = passage;
   $("editor-tree-label").textContent = passage.sentence_id || "Syntax tree";
   showEditorPage("tree");
@@ -916,7 +928,11 @@ async function selectPassage(passage) {
   });
   $("detail-title").textContent = passage.sentence_id;
   $("detail-breadcrumb").textContent =
-    `${activeDocument.label} · ${passage.token_count} tokens`;
+    `${activeDocument.label} · ${passage.token_count} tokens${activeTreeSearchContext ? " · SEARCH RESULT" : ""}`;
+  $("tree-container").classList.toggle(
+    "search-result-context",
+    Boolean(activeTreeSearchContext),
+  );
   $("tree-container").innerHTML = '<div class="loading-card">Rendering syntax tree…</div>';
 
   try {
@@ -925,7 +941,11 @@ async function selectPassage(passage) {
     );
     collapsedNodeIds.clear();
     closeNodeEditor();
-    restoreTreeDraft(data);
+    if (activeTreeSearchContext) {
+      $("reset-tree-draft").classList.add("hidden");
+    } else {
+      restoreTreeDraft(data);
+    }
     prepareTreeData(data);
     data.stats = calculateTreeStats(data.roots);
     currentTreeData = data;
@@ -1020,13 +1040,16 @@ function prepareTreeData(data) {
 }
 
 function treeOptions() {
+  const searchContext = activeTreeSearchContext || {};
   return {
-    lemma: $("tog-lemma").checked,
-    phon: $("tog-phon").checked,
-    treeKanji: $("tog-tree-kanji").checked,
-    nullNodes: $("tog-null").checked,
+    lemma: $("tog-lemma").checked || Boolean(searchContext.show_lemma),
+    phon: $("tog-phon").checked || Boolean(searchContext.show_phon),
+    treeKanji: $("tog-tree-kanji").checked || Boolean(searchContext.show_kanji),
+    nullNodes: $("tog-null").checked || Boolean(searchContext.show_null),
     bottomUp: $("tog-bottomup").checked,
     lemmaPosition: $("lemma-position").value,
+    highlightedNodeIds: new Set(searchContext.node_ids || []),
+    highlightedSentenceNumbers: new Set(searchContext.sentence_numbers || []),
   };
 }
 
@@ -1044,7 +1067,8 @@ function treeOptions() {
 ["tog-lemma", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
   .forEach(id => {
     $(id).addEventListener("change", () => {
-      $("lemma-position").disabled = !$("tog-lemma").checked;
+      $("lemma-position").disabled = !$("tog-lemma").checked
+        && !activeTreeSearchContext?.show_lemma;
       if (currentTreeData) renderSvgTree(currentTreeData);
     });
   });
@@ -1216,9 +1240,23 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     && !node._collapsed;
   const lemmaUnderTag = hasLemma && !lemmaUnderForm;
   const edgeOffset = lemmaUnderTag ? 22 : 9;
-  const controls = svgElement("g", {class: "tree-node-controls"});
+  const searchHit = options.highlightedNodeIds.has(node._nodeId);
+  const controls = svgElement("g", {
+    class: `tree-node-controls${searchHit ? " search-result-node" : ""}`,
+  });
 
   if (node.tag) {
+    if (searchHit) {
+      const highlightWidth = Math.max(26, node.tag.length * 7.5 + 14);
+      controls.appendChild(svgElement("rect", {
+        x: centerX - highlightWidth / 2,
+        y: centerY - 12,
+        width: highlightWidth,
+        height: 22,
+        rx: 5,
+        class: "tree-search-highlight",
+      }));
+    }
     controls.appendChild(svgElement("text", {
       x: centerX,
       y: centerY + 5,
@@ -1260,7 +1298,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: centerY + 19,
-      class: "lemma-label interactive-lemma",
+      class: `lemma-label interactive-lemma${searchHit ? " tree-search-hit-label" : ""}`,
       "data-lemma": node.lemma,
       "text-anchor": "middle",
     }, node.lemma));
@@ -1299,12 +1337,12 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     const combined = svgElement("text", {
       x: centerX,
       y: offset,
-      class: "form-label",
+      class: `form-label${searchHit ? " tree-search-hit-label" : ""}`,
       "text-anchor": "middle",
     });
     node._collapsedTokens.forEach(token => {
       combined.appendChild(svgElement("tspan", {
-        class: `${scriptStyleClass(token.phon, true)} interactive-form`,
+        class: `${scriptStyleClass(token.phon, true)} interactive-form${searchHit ? " tree-search-hit-label" : ""}`,
         "data-dictionary-query": token.lemma || token.text,
         ...(token.lemma ? {"data-lemma": token.lemma} : {}),
         role: "link",
@@ -1316,7 +1354,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
-      class: `form-label ${scriptStyleClass(node.phon, true)} interactive-form`,
+      class: `form-label ${scriptStyleClass(node.phon, true)} interactive-form${searchHit ? " tree-search-hit-label" : ""}`,
       "data-dictionary-query": node.lemma || node.form,
       ...(node.lemma ? {"data-lemma": node.lemma} : {}),
       role: "link",
@@ -1329,7 +1367,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
-      class: "lemma-label interactive-lemma",
+      class: `lemma-label interactive-lemma${searchHit ? " tree-search-hit-label" : ""}`,
       "data-lemma": node.lemma,
       "text-anchor": "middle",
     }, node.lemma));
@@ -1339,7 +1377,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
-      class: "phon-label",
+      class: `phon-label${searchHit ? " tree-search-hit-label" : ""}`,
       "text-anchor": "middle",
     }, node.phon));
   }
@@ -1368,7 +1406,9 @@ function assignCollapsedKanjiWidths(data, tree) {
   });
 }
 
-function renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding) {
+function renderTreeKanji(
+  data, tree, svg, columnWidth, maxRow, topPadding, options
+) {
   const units = visibleLeafUnits(tree);
   const baseY = yPosition(maxRow, topPadding) + 86;
   const groups = new Map();
@@ -1388,8 +1428,11 @@ function renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding) {
       last._x + (last._slotWidth || columnSpacing()) / 2 - 10
     );
     const key = `${left}:${right}`;
-    if (!groups.has(key)) groups.set(key, {left, right, kanji: []});
+    if (!groups.has(key)) {
+      groups.set(key, {left, right, kanji: [], sentenceNumbers: []});
+    }
     groups.get(key).kanji.push(sentence.kanji);
+    groups.get(key).sentenceNumbers.push(sentence.number);
   });
   groups.forEach(group => {
     const {left, right} = group;
@@ -1405,7 +1448,9 @@ function renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding) {
     svg.appendChild(svgElement("text", {
       x: center,
       y: baseY,
-      class: "tree-kanji-label",
+      class: `tree-kanji-label${group.sentenceNumbers.some(
+        number => options.highlightedSentenceNumbers.has(number)
+      ) ? " tree-search-hit-label" : ""}`,
       "text-anchor": "middle",
     }, text));
   });
@@ -1468,7 +1513,9 @@ function renderSvgTree(data) {
 
   renderNode(tree, svg, columnWidth, maxRow, topPadding, options);
   if (options.treeKanji) {
-    renderTreeKanji(data, tree, svg, columnWidth, maxRow, topPadding);
+    renderTreeKanji(
+      data, tree, svg, columnWidth, maxRow, topPadding, options
+    );
   }
   container.appendChild(svg);
 }
@@ -1606,7 +1653,9 @@ $("reset-tree-draft").addEventListener("click", async () => {
   localStorage.removeItem(draftStorageKey());
   $("reset-tree-draft").classList.add("hidden");
   closeNodeEditor();
-  if (activePassage) await selectPassage(activePassage);
+  if (activePassage) {
+    await selectPassage(activePassage, activeTreeSearchContext);
+  }
 });
 
 $("tree-container").addEventListener("click", event => {

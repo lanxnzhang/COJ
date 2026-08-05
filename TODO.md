@@ -360,11 +360,15 @@ The same way for displaying sentence numbers also applies to kanji text when use
 There are issues with the highlighting of current search results. The search results appear to be highlighted based on text matching rather than highlighting the actual corresponding search results. For example, when users search L051650, it will also highlight L000520 which sometimes has the same word form with L051650, but it is wrong - only L051650's word form should be highlighted.
 Please remove the current search result highlighting feature and create a new one. It should only highlight the transcriptions corresponding to the search results. Specially, when the user searches for kanji characters, the system should highlight the corresponding characters if they are displayed in the search results; if the characters themselves are not displayed, it should highlight the entire sentence-level text transcription containing them. When a TGrep2 search result points to a phrase or sentence, the entire phrase or sentence should be highlighted; for such results spanning multiple words, the highlighting should appear as a continuous block rather than being broken up between words.
 
+### After commit 40fd932
+Now we have a good highlighting function in search results. Please add a function that highlights the corresponding part of the syntax tree when navigating to it from the search results. When a user opens a syntax tree from the search results, the corresponding search result should be highlighted (or otherwise marked) within the syntax tree. If a user searches for components not selected for display in the syntax tree — such as lemma IDs or script tags — these components should be displayed in this situtation, and the corresponding results should be highlighted or marked. When a user opens a syntax tree from another location — such as the "Documents" entry point — these highlight markers and display states are reset, reverting them to the settings the user had selected during standard browsing. This means that this type of hightlighting is a specific state tailored for displaying search results.
+
+### 
+
 
 ### TBD
-1&7(高亮和搜索)、5(复合词无法正确显示)
+1&7(高亮和搜索)、
 Rename和search排版 是否match空格
-BUG:1.高亮机制 3.无法搜索lemma id
 1. 词典
 词典侧边栏的设计
 词典图标修改

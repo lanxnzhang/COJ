@@ -153,6 +153,18 @@ def test_search_highlights_exact_lemma_leaf_and_kanji_sentence_fallback(client):
     )
     first_range = first_result["highlights"]["transcription"]
     assert first_range == [{"segment": 3, "start": 10, "end": 12}]
+    assert first_result["tree_context"]["show_lemma"] is True
+    assert len(first_result["tree_context"]["node_ids"]) == 1
+    tree = client.get(
+        "/api/utterances/trees/KH/KH.9/tree"
+    ).get_json()
+    node = tree["roots"][0]
+    for index in map(
+        int, first_result["tree_context"]["node_ids"][0].split(".")[1:]
+    ):
+        node = node["children"][index]
+    assert node["lemma"] == "L051650"
+    assert node["form"] == "no"
 
     second_lemma = client.get(
         "/api/search",
@@ -168,6 +180,10 @@ def test_search_highlights_exact_lemma_leaf_and_kanji_sentence_fallback(client):
     )
     second_range = second_result["highlights"]["transcription"]
     assert second_range == [{"segment": 3, "start": 17, "end": 19}]
+    assert (
+        second_result["tree_context"]["node_ids"]
+        != first_result["tree_context"]["node_ids"]
+    )
 
     kanji_text = first_result["text_segments"][3]["kanji"]
     kanji_search = client.get(
@@ -186,6 +202,9 @@ def test_search_highlights_exact_lemma_leaf_and_kanji_sentence_fallback(client):
     assert kanji_result["highlights"]["transcription_when_kanji_hidden"] == [
         {"segment": 3, "start": 0, "end": 19}
     ]
+    assert kanji_result["tree_context"]["show_kanji"] is True
+    assert kanji_result["tree_context"]["sentence_numbers"] == ["4"]
+    assert len(kanji_result["tree_context"]["node_ids"]) == 5
 
 
 def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
@@ -266,6 +285,9 @@ def test_tgrep_search_supports_bracketed_same_node_predicates(client):
     nested = client.get(f"/api/tgrep?{nested_query}")
     assert nested.status_code == 200
     assert nested.get_json()["total"] > 0
+    nested_context = nested.get_json()["results"][0]["tree_context"]
+    assert nested_context["show_phon"] is True
+    assert len(nested_context["node_ids"]) >= 2
 
     description, clauses = tree_editor._parse_tgrep_query(
         "[form=no & phon=PHON]"
@@ -577,6 +599,11 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "updateSearchResultDisplay" in javascript
     assert "appendSearchResultText" in javascript
     assert "search-segment-number" in javascript
+    assert "activeTreeSearchContext" in javascript
+    assert "result.tree_context || null" in javascript
+    assert "highlightedNodeIds" in javascript
+    assert ".tree-search-highlight" in css
+    assert ".tree-search-hit-label" in css
     assert "openDictionaryPopupEntry" in javascript
     assert '"lemma,.KANA,.FORM"' in javascript
     assert "openLemmaFrequency" in javascript

@@ -39,6 +39,12 @@ characters when kanji is shown, or the corresponding full transcription
 segment when it is hidden. TGrep2 phrase matches use one continuous highlight
 range across all words in each matched segment.
 
+Opening a result carries those exact matches into the syntax tree as a
+temporary search context. Matching tree nodes are marked, and lemma IDs,
+script tags, kanji, or null nodes required by the query are revealed without
+changing the user's normal tree-display controls. Opening a passage from
+Documents clears this search context and restores those controls unchanged.
+
 The Search sidebar also has a TGrep2 mode for structural syntax-tree searches.
 It supports exact or `/regular-expression/` node labels; immediate and
 transitive dominance (`<`, `<<`, `>`, `>>`); precedence (`.`, `..`, `,`,
