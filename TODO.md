@@ -349,10 +349,19 @@ Extend the tgrep2 search functionality to allow searching for combining two attr
 ### After commit 0787851
 The current occurrences in the dictionary is wrong. First, it should be named as frequency in dictionary. Second, it should be the search result in TGrep2 of that lemma id across the whole corpus. For example, when user uses TGrep2 to search lemma=L051650, it has 266 results. However, in dictionary, it shows 0 occurrences, so obviously it is wrong. Please fix this.
 
+### After commit 06fd3c2
+1. In dictionary entry search results, the color of the kana is a bit too faint and hard to see clearly. Use a darker color, but avoid making it too black so as not to distract the user too much.
+2. Currently, the search results only display the transcriptions. Refine this: User can choose whether to display kanji text and sentence number in search results. 
+#### Further revision
+You misunderstand my meaning for 'User can choose whether to display sentence number in search results.'. Please revise this function. Display sentence number in search results means: for example, currently, the text in search result is displayed as: kamukazeno isenoumi no opwisi ni papimotoporopu sitadami no ipapimotopori utite si yamamu; after choosing to display sentence number, it becomes: [1] kamukazeno [2] isenoumi no [3] opwisi ni [4] papimotoporopu [5] sitadami no [6] ipapimotopori [7] utite si yamamu
+The same way for displaying sentence numbers also applies to kanji text when user chooses to display sentence numbers: [1] 加牟加是能 [2] 伊勢能宇美能 [3] 意斐志爾...
+
 
 
 ### TBD
-BUG:1.高亮机制 2.search里选择是否显示汉字 3.无法搜索lemma id 4.occurence错误
+1&7(高亮和搜索)、5(复合词无法正确显示)
+Rename和search排版 是否match空格
+BUG:1.高亮机制 3.无法搜索lemma id
 1. 词典
 词典侧边栏的设计
 词典图标修改

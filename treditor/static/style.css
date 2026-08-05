@@ -1760,6 +1760,7 @@ button {
 }
 
 .dictionary-result-kana {
+  color: #4d596f;
   font: 12px "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
 }
 
@@ -1968,6 +1969,33 @@ button {
   font: 700 24px/1.2 Georgia, "Times New Roman", serif;
 }
 
+.search-results-summary {
+  display: grid;
+  justify-items: end;
+  gap: 7px;
+}
+
+.search-display-options {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 12px;
+  border: 0;
+  color: #4f5d74;
+  font-size: 10px;
+}
+
+.search-display-options label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.search-display-options input {
+  margin: 0;
+}
+
 .search-result-count {
   color: var(--muted);
   font-size: 11px;
@@ -2022,6 +2050,24 @@ button {
   font-size: 10px;
 }
 
+.corpus-search-kanji {
+  overflow-wrap: anywhere;
+  color: #4f5d74;
+  font: 12px/1.5 "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+  letter-spacing: .08em;
+}
+
+.search-results:not(.show-kanji) .corpus-search-kanji,
+.search-results:not(.show-sentence-numbers) .search-text-with-numbers,
+.search-results.show-sentence-numbers .search-text-without-numbers {
+  display: none;
+}
+
+.search-segment-number {
+  color: var(--blue-deep);
+  font: 700 10px var(--font-mono);
+}
+
 .corpus-search-preview {
   overflow-wrap: anywhere;
   color: var(--ink);
@@ -2029,6 +2075,7 @@ button {
 }
 
 .corpus-search-preview mark,
+.corpus-search-kanji mark,
 .corpus-search-result-heading mark {
   padding: 0 2px;
   border-radius: 2px;

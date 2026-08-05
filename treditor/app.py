@@ -173,13 +173,24 @@ def _searchable_passages() -> list[dict]:
                     "word_forms": [],
                     "lemma_ids": [],
                 }
+                text_segments = []
                 raw_text = block.find("raw-text")
                 if raw_text is not None:
                     for sentence in raw_text.findall("sentence"):
+                        number = (
+                            sentence.get("n")
+                            or sentence.get("number")
+                            or str(len(text_segments) + 1)
+                        ).strip()
                         kanji = (sentence.findtext("kanji", "") or "").strip()
                         transcription = (
                             sentence.findtext("transcription", "") or ""
                         ).strip()
+                        text_segments.append({
+                            "number": number,
+                            "transcription": transcription,
+                            "kanji": kanji,
+                        })
                         if kanji:
                             field_values["kanji"].append(kanji)
                         if transcription:
@@ -211,6 +222,7 @@ def _searchable_passages() -> list[dict]:
                     "sentence_id": sentence_id,
                     "header": header,
                     "_fields": field_values,
+                    "_text_segments": text_segments,
                     "_lemma_forms": lemma_forms,
                     "_roots": [
                         _elem_to_node(child)
@@ -877,10 +889,21 @@ def search_corpus():
         hit = {
             key: value
             for key, value in passage.items()
-            if key not in {"_fields", "_lemma_forms", "_roots"}
+            if key not in {
+                "_fields", "_text_segments", "_lemma_forms", "_roots"
+            }
         }
         preview_query = lemma_forms[0] if lemma_forms else query
         hit["preview"] = _search_preview(preview, preview_query)
+        hit["transcription"] = _search_preview(
+            " ".join(passage["_fields"]["transcription"]),
+            preview_query,
+        )
+        hit["kanji"] = _search_preview(
+            "　".join(passage["_fields"]["kanji"]),
+            query,
+        )
+        hit["text_segments"] = passage["_text_segments"]
         hit["matching_fields"] = matching_fields
         hit["highlight_terms"] = list(dict.fromkeys(lemma_forms)) or [query]
         hits.append(hit)
@@ -961,12 +984,23 @@ def search_syntax_trees():
         hit = {
             key: value
             for key, value in passage.items()
-            if key not in {"_fields", "_lemma_forms", "_roots"}
+            if key not in {
+                "_fields", "_text_segments", "_lemma_forms", "_roots"
+            }
         }
         hit.update({
             "preview": _search_preview(
                 preview, highlight_terms[0] if highlight_terms else query
             ),
+            "transcription": _search_preview(
+                transcription,
+                highlight_terms[0] if highlight_terms else query,
+            ),
+            "kanji": _search_preview(
+                "　".join(passage["_fields"]["kanji"]),
+                query,
+            ),
+            "text_segments": passage["_text_segments"],
             "matching_fields": ["syntax_tree"],
             "highlight_terms": highlight_terms,
             "match_count": len(matching_nodes),

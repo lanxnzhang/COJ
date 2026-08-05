@@ -322,7 +322,14 @@
             <p class="eyebrow">CORPUS SEARCH</p>
             <h2 id="search-results-title">Search results</h2>
           </div>
-          <span id="search-result-count" class="search-result-count"></span>
+          <div class="search-results-summary">
+            <span id="search-result-count" class="search-result-count"></span>
+            <fieldset class="search-display-options">
+              <legend class="sr-only">Search result display</legend>
+              <label><input type="checkbox" id="search-show-kanji"> Kanji</label>
+              <label><input type="checkbox" id="search-show-sentence-numbers"> Sentence numbers</label>
+            </fieldset>
+          </div>
         </header>
         <p id="search-results-message" class="search-results-message">Enter a search in the sidebar.</p>
         <div id="search-results" class="search-results"></div>

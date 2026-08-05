@@ -79,6 +79,12 @@ def test_corpus_search_finds_text_across_all_documents(client):
     assert first["document_id"] == "EN_01"
     assert first["sentence_id"] == "EN.1.1"
     assert "ugonapar" in first["preview"]
+    assert "ugonapar" in first["transcription"]
+    assert first["kanji"]
+    assert [segment["number"] for segment in first["text_segments"]] == [
+        "1", "2", "3"
+    ]
+    assert first["text_segments"][0]["transcription"] == "ugonapar eru"
     assert "transcription" in first["matching_fields"]
     assert "_fields" not in first
 
@@ -132,6 +138,9 @@ def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
     assert payload["total"] > 0
     assert payload["results"][0]["matching_fields"] == ["syntax_tree"]
     assert payload["results"][0]["match_count"] >= 1
+    assert payload["results"][0]["transcription"]
+    assert "kanji" in payload["results"][0]
+    assert payload["results"][0]["text_segments"]
     assert "_roots" not in payload["results"][0]
 
     multiple_links = client.get(
@@ -408,6 +417,8 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert "NP &lt;&lt; [form=no &amp; phon=PHON]" in html
     assert "lemma=L000530" in html
     assert 'id="search-pagination"' in html
+    assert 'id="search-show-kanji"' in html
+    assert 'id="search-show-sentence-numbers"' in html
     assert 'id="editor-tab-tree"' in html
     assert 'id="editor-tab-search"' in html
     assert 'id="editor-tab-dictionary"' in html
@@ -476,6 +487,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "appendHighlightedText" in javascript
     assert "corpusSearchParameters" in javascript
     assert "search-page-previous" in javascript
+    assert "updateSearchResultDisplay" in javascript
+    assert "appendSearchResultText" in javascript
+    assert "search-segment-number" in javascript
     assert "openDictionaryPopupEntry" in javascript
     assert '"lemma,.KANA,.FORM"' in javascript
     assert "openLemmaFrequency" in javascript
@@ -488,3 +502,6 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert ".dictionary-result-pos" in css
     assert ".dictionary-result-gloss" in css
     assert ".dictionary-frequency" in css
+    assert ".dictionary-result-kana" in css
+    assert "color: #4d596f" in css
+    assert ".corpus-search-kanji" in css

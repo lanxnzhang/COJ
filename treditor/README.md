@@ -26,8 +26,10 @@ hierarchical Documents sidebar and corpus-wide Search, and clicking an active
 activity icon collapses the sidebar. Corpus search covers transcriptions,
 kanji, headers, word forms, and lemma IDs across both current data sources. Advanced
 controls restrict the source and searched categories and support contains,
-whole-word, exact-field, and case-sensitive matching. Larger result sets expose
-a page-size selector and page navigation. Search results and syntax trees open
+whole-word, exact-field, and case-sensitive matching. Result display controls
+can add kanji text and prefix each transcription or kanji segment with its
+raw-text sentence number. Larger result sets expose a
+page-size selector and page navigation. Search results and syntax trees open
 as separate, switchable, closable editor tabs.
 
 The Search sidebar also has a TGrep2 mode for structural syntax-tree searches.

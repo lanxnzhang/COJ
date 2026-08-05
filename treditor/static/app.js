@@ -477,6 +477,46 @@ function corpusFieldLabel(field) {
   })[field] || field.replaceAll("_", " ");
 }
 
+function updateSearchResultDisplay() {
+  const container = $("search-results");
+  container.classList.toggle(
+    "show-kanji",
+    $("search-show-kanji").checked,
+  );
+  container.classList.toggle(
+    "show-sentence-numbers",
+    $("search-show-sentence-numbers").checked,
+  );
+}
+
+["search-show-kanji", "search-show-sentence-numbers"].forEach(id => {
+  $(id).addEventListener("change", updateSearchResultDisplay);
+});
+updateSearchResultDisplay();
+
+function appendSearchResultText(container, segments, field, fallback, terms) {
+  const plain = document.createElement("span");
+  plain.className = "search-text-without-numbers";
+  appendHighlightedText(plain, fallback, terms);
+
+  const numbered = document.createElement("span");
+  numbered.className = "search-text-with-numbers";
+  const available = (segments || []).filter(segment => segment[field]);
+  if (!available.length) {
+    appendHighlightedText(numbered, fallback, terms);
+  } else {
+    available.forEach((segment, index) => {
+      if (index) numbered.append(" ");
+      const number = document.createElement("span");
+      number.className = "search-segment-number";
+      number.textContent = `[${segment.number}] `;
+      numbered.appendChild(number);
+      appendHighlightedText(numbered, segment[field], terms);
+    });
+  }
+  container.append(plain, numbered);
+}
+
 function renderCorpusSearchResults(payload) {
   const {results, query, total, page, pages, per_page: perPage} = payload;
   const container = $("search-results");
@@ -507,11 +547,22 @@ function renderCorpusSearchResults(payload) {
     location.textContent =
       `${result.label} · ${result.source === "text" ? "Texts under editing" : "Uploaded trees"}`;
     heading.append(sentence, location);
-    const preview = document.createElement("span");
-    preview.className = "corpus-search-preview";
-    appendHighlightedText(
-      preview,
-      result.preview || result.header || "No text preview",
+    const transcription = document.createElement("span");
+    transcription.className = "corpus-search-preview corpus-search-transcription";
+    appendSearchResultText(
+      transcription,
+      result.text_segments,
+      "transcription",
+      result.transcription || result.preview || result.header || "No transcription",
+      highlightTerms,
+    );
+    const kanji = document.createElement("span");
+    kanji.className = "corpus-search-kanji";
+    appendSearchResultText(
+      kanji,
+      result.text_segments,
+      "kanji",
+      result.kanji || "No kanji text",
       highlightTerms,
     );
     const fields = document.createElement("span");
@@ -522,7 +573,7 @@ function renderCorpusSearchResults(payload) {
         ? [`${result.match_count} matching node${result.match_count === 1 ? "" : "s"}`]
         : [])
       .join(" · ");
-    button.append(heading, preview, fields);
+    button.append(heading, transcription, kanji, fields);
     button.addEventListener("click", async () => {
       const documentData = findDocument(result.source, result.document_id);
       if (!documentData) {
