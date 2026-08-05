@@ -516,10 +516,9 @@ def _ordinary_search_highlights(
     }
     node_paths.update(_tree_paths_for_text_ranges(
         passage,
-        [*highlights["transcription"], *kanji_fallback],
+        highlights["transcription"],
         context,
     ))
-    matched_kanji_segments = {item["segment"] for item in kanji}
     tree_context = {
         "node_ids": [
             context["paths"][id(node)]
@@ -535,10 +534,14 @@ def _ordinary_search_highlights(
             and not str(node.get("phon", ""))
             for node in matching_nodes
         ),
-        "sentence_numbers": [
-            segment["number"]
-            for index, segment in enumerate(passage["_text_segments"])
-            if index in matched_kanji_segments
+        "kanji_ranges": [
+            {
+                "sentence_number": passage["_text_segments"]
+                [item["segment"]]["number"],
+                "start": item["start"],
+                "end": item["end"],
+            }
+            for item in kanji
         ],
     }
     return highlights, tree_context
@@ -1346,7 +1349,7 @@ def search_syntax_trees():
                     and not str(node.get("phon", ""))
                     for node in evidence_nodes
                 ),
-                "sentence_numbers": [],
+                "kanji_ranges": [],
             },
             "matching_fields": ["syntax_tree"],
             "highlight_terms": highlight_terms,

@@ -460,8 +460,8 @@ function updateSearchResultDisplay() {
 });
 updateSearchResultDisplay();
 
-function appendRangedText(container, text, ranges) {
-  const normalized = (ranges || [])
+function normalizedTextRanges(text, ranges) {
+  return (ranges || [])
     .map(range => ({
       start: Math.max(0, Math.min(text.length, Number(range.start))),
       end: Math.max(0, Math.min(text.length, Number(range.end))),
@@ -477,6 +477,10 @@ function appendRangedText(container, text, ranges) {
       }
       return merged;
     }, []);
+}
+
+function appendRangedText(container, text, ranges) {
+  const normalized = normalizedTextRanges(text, ranges);
   let cursor = 0;
   normalized.forEach(range => {
     container.append(document.createTextNode(text.slice(cursor, range.start)));
@@ -486,6 +490,21 @@ function appendRangedText(container, text, ranges) {
     cursor = range.end;
   });
   container.append(document.createTextNode(text.slice(cursor)));
+}
+
+function appendSvgHighlightedText(container, text, ranges) {
+  const normalized = normalizedTextRanges(text, ranges);
+  let cursor = 0;
+  normalized.forEach(range => {
+    container.appendChild(
+      document.createTextNode(text.slice(cursor, range.start))
+    );
+    container.appendChild(svgElement("tspan", {
+      class: "tree-search-hit-label",
+    }, text.slice(range.start, range.end)));
+    cursor = range.end;
+  });
+  container.appendChild(document.createTextNode(text.slice(cursor)));
 }
 
 function appendSearchResultText(container, segments, field, fallback, ranges) {
@@ -1049,7 +1068,7 @@ function treeOptions() {
     bottomUp: $("tog-bottomup").checked,
     lemmaPosition: $("lemma-position").value,
     highlightedNodeIds: new Set(searchContext.node_ids || []),
-    highlightedSentenceNumbers: new Set(searchContext.sentence_numbers || []),
+    kanjiHighlightRanges: searchContext.kanji_ranges || [],
   };
 }
 
@@ -1428,15 +1447,14 @@ function renderTreeKanji(
       last._x + (last._slotWidth || columnSpacing()) / 2 - 10
     );
     const key = `${left}:${right}`;
-    if (!groups.has(key)) {
-      groups.set(key, {left, right, kanji: [], sentenceNumbers: []});
-    }
-    groups.get(key).kanji.push(sentence.kanji);
-    groups.get(key).sentenceNumbers.push(sentence.number);
+    if (!groups.has(key)) groups.set(key, {left, right, sentences: []});
+    groups.get(key).sentences.push({
+      number: sentence.number,
+      text: sentence.kanji,
+    });
   });
   groups.forEach(group => {
     const {left, right} = group;
-    const text = group.kanji.join("　");
     const center = (left + right) / 2;
     svg.appendChild(svgElement("line", {
       x1: left,
@@ -1445,14 +1463,23 @@ function renderTreeKanji(
       y2: baseY - 19,
       class: "kanji-span-line",
     }));
-    svg.appendChild(svgElement("text", {
+    const label = svgElement("text", {
       x: center,
       y: baseY,
-      class: `tree-kanji-label${group.sentenceNumbers.some(
-        number => options.highlightedSentenceNumbers.has(number)
-      ) ? " tree-search-hit-label" : ""}`,
+      class: "tree-kanji-label",
       "text-anchor": "middle",
-    }, text));
+    });
+    group.sentences.forEach((sentence, index) => {
+      if (index) label.appendChild(document.createTextNode("　"));
+      appendSvgHighlightedText(
+        label,
+        sentence.text,
+        options.kanjiHighlightRanges.filter(
+          range => range.sentence_number === sentence.number
+        ),
+      );
+    });
+    svg.appendChild(label);
   });
 }
 

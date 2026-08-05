@@ -363,20 +363,16 @@ Please remove the current search result highlighting feature and create a new on
 ### After commit 40fd932
 Now we have a good highlighting function in search results. Please add a function that highlights the corresponding part of the syntax tree when navigating to it from the search results. When a user opens a syntax tree from the search results, the corresponding search result should be highlighted (or otherwise marked) within the syntax tree. If a user searches for components not selected for display in the syntax tree — such as lemma IDs or script tags — these components should be displayed in this situtation, and the corresponding results should be highlighted or marked. When a user opens a syntax tree from another location — such as the "Documents" entry point — these highlight markers and display states are reset, reverting them to the settings the user had selected during standard browsing. This means that this type of hightlighting is a specific state tailored for displaying search results.
 
-### 
-
+### After commit e3524a5
+Great. There is a small point I need you to fix. 
+Currently, when I search for kanji characters and navigate to the syntax tree, the entire kanji sentence containing that kanji character is highlighted. Please modify this so that only the specific character corresponding to the search result is highlighted within the syntax tree — do not highlight the entire sentence or the corresponding transliterated word.
+The logic behind this is: Because this corpus currently does not map each kanji character to a specific transliteration, that's why I previously suggested mapping the characters to the transcription of the entire sentence when kanji is not displayed in search results but only highlight the corresponding characters if they are displayed in the search results. However, in the design of the highlighted syntax tree, parts that are normally hidden are also displayed; therefore, when displaying kanji characters, we only need to highlight the search results corresponding to those specific characters. Please feel free to ask if anything I’ve said is unclear.
 
 ### TBD
-1&7(高亮和搜索)、
 Rename和search排版 是否match空格
+
 1. 词典
-词典侧边栏的设计
-词典图标修改
-词典高级搜索
-词典悬浮窗quick search的机制修改
 词典搜索结果页面显示
-2. 搜索
-逻辑和功能
 
 3. 图标设计
 

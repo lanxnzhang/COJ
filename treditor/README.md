@@ -44,6 +44,9 @@ temporary search context. Matching tree nodes are marked, and lemma IDs,
 script tags, kanji, or null nodes required by the query are revealed without
 changing the user's normal tree-display controls. Opening a passage from
 Documents clears this search context and restores those controls unchanged.
+Kanji-only tree contexts mark just the matching characters in the revealed
+kanji line; they do not mark the whole sentence or inferred transliteration
+leaves.
 
 The Search sidebar also has a TGrep2 mode for structural syntax-tree searches.
 It supports exact or `/regular-expression/` node labels; immediate and

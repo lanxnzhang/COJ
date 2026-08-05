@@ -186,25 +186,32 @@ def test_search_highlights_exact_lemma_leaf_and_kanji_sentence_fallback(client):
     )
 
     kanji_text = first_result["text_segments"][3]["kanji"]
+    kanji_query = kanji_text[1:3]
     kanji_search = client.get(
         "/api/search",
         query_string={
-            "q": kanji_text,
+            "q": kanji_query,
             "fields": "kanji",
-            "match": "exact",
+            "match": "contains",
             "sources": "trees",
+            "per_page": 100,
         },
     ).get_json()
-    kanji_result = kanji_search["results"][0]
+    kanji_result = next(
+        result for result in kanji_search["results"]
+        if result["sentence_id"] == "KH.9"
+    )
     assert kanji_result["highlights"]["kanji"] == [
-        {"segment": 3, "start": 0, "end": len(kanji_text)}
+        {"segment": 3, "start": 1, "end": 3}
     ]
     assert kanji_result["highlights"]["transcription_when_kanji_hidden"] == [
         {"segment": 3, "start": 0, "end": 19}
     ]
     assert kanji_result["tree_context"]["show_kanji"] is True
-    assert kanji_result["tree_context"]["sentence_numbers"] == ["4"]
-    assert len(kanji_result["tree_context"]["node_ids"]) == 5
+    assert kanji_result["tree_context"]["kanji_ranges"] == [{
+        "sentence_number": "4", "start": 1, "end": 3
+    }]
+    assert kanji_result["tree_context"]["node_ids"] == []
 
 
 def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
