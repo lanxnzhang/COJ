@@ -442,6 +442,17 @@ function corpusFieldLabel(field) {
   })[field] || field.replaceAll("_", " ");
 }
 
+function searchCountSummary(payload) {
+  if (Number.isInteger(payload.occurrence_total)) {
+    const resultTotal = payload.occurrence_total;
+    const textTotal = Number.isInteger(payload.text_total)
+      ? payload.text_total
+      : payload.total;
+    return `${resultTotal.toLocaleString()} search result${resultTotal === 1 ? "" : "s"} · ${textTotal.toLocaleString()} text${textTotal === 1 ? "" : "s"}`;
+  }
+  return `${payload.total.toLocaleString()} result${payload.total === 1 ? "" : "s"}`;
+}
+
 function updateSearchResultDisplay() {
   const container = $("search-results");
   container.classList.toggle(
@@ -551,9 +562,7 @@ function renderCorpusSearchResults(payload) {
     : payload.search_type === "tgrep2"
       ? `TGrep2: ${query}`
       : `Search: ${query}`;
-  $("search-result-count").textContent = payload.lemma_id
-    ? `${payload.occurrence_total.toLocaleString()} occurrence${payload.occurrence_total === 1 ? "" : "s"} in ${total.toLocaleString()} passage${total === 1 ? "" : "s"}`
-    : `${total.toLocaleString()} result${total === 1 ? "" : "s"}`;
+  $("search-result-count").textContent = searchCountSummary(payload);
   $("search-results-message").textContent = total
     ? "Select a result to open its syntax tree."
     : payload.search_type === "tgrep2"
@@ -685,8 +694,7 @@ async function performTgrepSearch(query, page = 1) {
   $("search-results-message").textContent = "Evaluating the TGrep2 pattern…";
   try {
     const payload = await apiFetch(`/api/tgrep?${tgrepSearchParameters(page)}`);
-    $("global-search-message").textContent =
-      `${payload.total.toLocaleString()} matching passage${payload.total === 1 ? "" : "s"}.`;
+    $("global-search-message").textContent = `${searchCountSummary(payload)}.`;
     renderCorpusSearchResults(payload);
   } catch (error) {
     showError(error);

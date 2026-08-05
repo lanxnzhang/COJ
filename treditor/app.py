@@ -201,21 +201,24 @@ def _searchable_passages() -> list[dict]:
                     if (form := (elem.get("form") or "").strip())
                 ]
                 lemma_forms: dict[str, list[str]] = {}
+                lemma_node_counts: dict[str, int] = {}
                 for elem in block.iter():
                     lemma = (elem.get("lemma") or "").strip()
                     form = (elem.get("form") or "").strip()
                     if not lemma:
                         continue
+                    lemma_node_counts[lemma] = (
+                        lemma_node_counts.get(lemma, 0) + 1
+                    )
                     lemma_forms.setdefault(lemma, [])
                     if form:
                         lemma_forms[lemma].append(form)
                 field_values["lemma_ids"] = list(lemma_forms)
-                # TGrep2 reports one result per matching passage, even when a
-                # lemma occurs on more than one node in that passage.  Build
-                # dictionary frequencies with the same whole-corpus rule.
-                for lemma in lemma_forms:
+                # Dictionary frequency counts matching nodes, including
+                # repeated occurrences within the same passage.
+                for lemma, node_count in lemma_node_counts.items():
                     lemma_frequencies[lemma] = (
-                        lemma_frequencies.get(lemma, 0) + 1
+                        lemma_frequencies.get(lemma, 0) + node_count
                     )
                 passages.append({
                     **document,
@@ -224,6 +227,7 @@ def _searchable_passages() -> list[dict]:
                     "_fields": field_values,
                     "_text_segments": text_segments,
                     "_lemma_forms": lemma_forms,
+                    "_lemma_counts": lemma_node_counts,
                     "_roots": [
                         _elem_to_node(child)
                         for child in block
@@ -240,7 +244,7 @@ def _searchable_passages() -> list[dict]:
 
 
 def _lemma_frequency(lemma_id: str) -> int:
-    """Return the whole-corpus TGrep2 result count for ``lemma=lemma_id``."""
+    """Return the whole-corpus node count for ``lemma=lemma_id``."""
     _searchable_passages()
     return _lemma_frequency_cache.get(lemma_id, 0)
 
@@ -1225,7 +1229,8 @@ def search_corpus():
             key: value
             for key, value in passage.items()
             if key not in {
-                "_fields", "_text_segments", "_lemma_forms", "_roots"
+                "_fields", "_text_segments", "_lemma_forms",
+                "_lemma_counts", "_roots"
             }
         }
         preview_query = lemma_forms[0] if lemma_forms else query
@@ -1266,7 +1271,7 @@ def search_corpus():
         "ignore_spaces": ignore_spaces,
         "occurrence_total": (
             sum(
-                len(passage["_lemma_forms"].get(lemma_id, []))
+                passage["_lemma_counts"].get(lemma_id, 0)
                 for passage in _searchable_passages()
                 if passage["source"] == "text"
             )
@@ -1288,6 +1293,8 @@ def search_syntax_trees():
             "page": 1,
             "per_page": 25,
             "pages": 0,
+            "text_total": 0,
+            "occurrence_total": 0,
             "results": [],
         })
     try:
@@ -1342,7 +1349,8 @@ def search_syntax_trees():
             key: value
             for key, value in passage.items()
             if key not in {
-                "_fields", "_text_segments", "_lemma_forms", "_roots"
+                "_fields", "_text_segments", "_lemma_forms",
+                "_lemma_counts", "_roots"
             }
         }
         hit.update({
@@ -1397,6 +1405,7 @@ def search_syntax_trees():
         hits.append(hit)
 
     total = len(hits)
+    occurrence_total = sum(hit["match_count"] for hit in hits)
     pages = (total + per_page - 1) // per_page
     page = min(page, pages) if pages else 1
     start = (page - 1) * per_page
@@ -1404,6 +1413,8 @@ def search_syntax_trees():
         "query": query,
         "search_type": "tgrep2",
         "total": total,
+        "text_total": total,
+        "occurrence_total": occurrence_total,
         "page": page,
         "per_page": per_page,
         "pages": pages,

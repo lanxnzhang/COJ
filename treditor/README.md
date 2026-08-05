@@ -95,8 +95,9 @@ Full dictionary search can target any current tag—including Kana, Note,
 Correspondence, POS, and other optional fields—and explains its contains,
 whole-word, and exact-field modes on hover. Results emphasize word form, POS,
 and gloss and also display kana and a live corpus frequency. Frequency is the
-number of whole-corpus TGrep2 passage results for `lemma=ID`; selecting it runs
-that exact TGrep2 search. The collapsible
+number of whole-corpus tree nodes matching `lemma=ID`, including repeated
+matches within one text; selecting it runs that exact TGrep2 search. The search
+summary reports matching-node results and matching texts separately. The collapsible
 right-side quick-reference popup intentionally searches only lemma IDs, kana,
 and word forms; its relevance-ranked results emphasize POS and gloss without
 the extra kana/frequency row.

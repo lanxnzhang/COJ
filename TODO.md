@@ -374,11 +374,21 @@ The logic behind this is: Because this corpus currently does not map each kanji 
 4. Rename the button in Search from 'Text & lemma' to 'Text search'.
 5. Re-layout the "Advanced search" section in the dictionary tab. Do not place "Match" and "Search in" on the same line; this is visually uncomfortable, as it forces users to shift their gaze all the way to the far right of the screen to view the "Match" settings.
 
+### After commit 9eea0d5
+As you may know, linguists typically prefer a text-based mode — such as that used in the Penn Treebank — when editing large volumes of syntactic trees; editing and viewing tree diagrams serves as a supplementary aid. However, directly editing the raw XML documents is tedious and inconvenient for linguists, so I want to convert them into a text format that is easier to edit and more comfortable to read, ensuring that any edits made can be mapped back to the XML without loss of equivalence.
+I am considering adding a text-based editing mode to the current editor. However, I am not sure what form it should take or where it should be placed to ensure compatibility with the current editor's features while remaining convenient to use. Beyond direct editing, user scenarios may also include searching, replacing, and dictionary lookups. Support may also be required for automatic format detection, correction suggestions, and the insertion of existing data (such as branches, tags or lemma IDs). A feature is also needed that allows users to generate a simple tree diagram from any text they have written, in order to check for issues in the syntactic tree. This simple tree diagram must also be editable. This process of directly editing the text may alter dictionaries, the number and names of passages, existing tags, and so on. I am unsure whether these editing features can be properly implemented and integrated into the current editor, or if it would be better to make the current editor as a browser and seperate it with editor - retaining only minimal editing capabilities in the browser to allow users to make quick corrections.
+In addition, I plan to merge another editor that uses scripts to assist with editing (the "script editor" folder) with the current editor and the future text editor. I am unsure how to go about this merger or how to ensure feature compatibility while maintaining ease of use.
+
+### After commit 9eea0d5 (2)
+The current frequency calculation in the dictionary is wrong; it should reflect the total number of matching nodes rather than the total number of texts found. For instance, a single long text might contain three matching results, but currently it will only be calculated as one. Please revise the calculation logic so that the frequency represents the count of matching nodes. Additionally, the search results interface should display both the number of search results and the number of texts separately.
 
 ### TBD
 
 1. 词典
-词典搜索结果页面显示
+词典搜索结果页面显示优化
+新增的词条检测lemma id
+
+2. 增加首页
 
 3. 图标设计
 

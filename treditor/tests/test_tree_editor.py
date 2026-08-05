@@ -245,6 +245,10 @@ def test_tgrep_search_supports_core_links_regex_negation_and_coj_fields(client):
     payload = dominated.get_json()
     assert payload["search_type"] == "tgrep2"
     assert payload["total"] > 0
+    assert payload["text_total"] == payload["total"]
+    assert payload["occurrence_total"] >= sum(
+        result["match_count"] for result in payload["results"]
+    )
     assert payload["results"][0]["matching_fields"] == ["syntax_tree"]
     assert payload["results"][0]["match_count"] >= 1
     assert payload["results"][0]["transcription"]
@@ -465,7 +469,8 @@ def test_dictionary_search_exposes_all_tags_ranking_and_tgrep_frequency(client):
     tgrep_results = client.get(
         f"/api/tgrep?q=lemma%3D{ranked[0]['id']}"
     ).get_json()
-    assert ranked[0]["frequency"] == tgrep_results["total"]
+    assert ranked[0]["frequency"] == tgrep_results["occurrence_total"]
+    assert tgrep_results["occurrence_total"] >= tgrep_results["text_total"]
 
     example = client.get(
         "/api/dictionary?q=L051650&fields=lemma&match=exact"
@@ -474,9 +479,10 @@ def test_dictionary_search_exposes_all_tags_ranking_and_tgrep_frequency(client):
     example_tgrep = client.get(
         "/api/tgrep?q=lemma%3DL051650"
     ).get_json()
-    assert example[0]["frequency"] == example_tgrep["total"] == 266
+    assert example[0]["frequency"] == example_tgrep["occurrence_total"] == 280
+    assert example_tgrep["text_total"] == example_tgrep["total"] == 266
     entry = client.get("/api/dictionary/L051650").get_json()
-    assert entry["frequency"] == 266
+    assert entry["frequency"] == 280
 
 
 def test_dictionary_entries_can_be_added_and_edited_safely(
@@ -634,6 +640,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "appendHighlightedText" not in javascript
     assert "appendRangedText" in javascript
     assert "corpusSearchParameters" in javascript
+    assert "searchCountSummary" in javascript
+    assert "search result${resultTotal" in javascript
+    assert "text${textTotal" in javascript
     assert "corpus-search-ignore-spaces" in javascript
     assert '$("global-search").addEventListener("input"' not in javascript
     assert "globalSearchTimer" not in javascript
