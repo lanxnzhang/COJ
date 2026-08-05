@@ -198,11 +198,14 @@ def _searchable_passages() -> list[dict]:
                     lemma_forms.setdefault(lemma, [])
                     if form:
                         lemma_forms[lemma].append(form)
-                    if source == "text" and form:
-                        lemma_frequencies[lemma] = (
-                            lemma_frequencies.get(lemma, 0) + 1
-                        )
                 field_values["lemma_ids"] = list(lemma_forms)
+                # TGrep2 reports one result per matching passage, even when a
+                # lemma occurs on more than one node in that passage.  Build
+                # dictionary frequencies with the same whole-corpus rule.
+                for lemma in lemma_forms:
+                    lemma_frequencies[lemma] = (
+                        lemma_frequencies.get(lemma, 0) + 1
+                    )
                 passages.append({
                     **document,
                     "sentence_id": sentence_id,
@@ -225,6 +228,7 @@ def _searchable_passages() -> list[dict]:
 
 
 def _lemma_frequency(lemma_id: str) -> int:
+    """Return the whole-corpus TGrep2 result count for ``lemma=lemma_id``."""
     _searchable_passages()
     return _lemma_frequency_cache.get(lemma_id, 0)
 
@@ -892,7 +896,15 @@ def search_corpus():
         "per_page": per_page,
         "pages": pages,
         "lemma_id": lemma_id,
-        "occurrence_total": _lemma_frequency(lemma_id) if lemma_id else None,
+        "occurrence_total": (
+            sum(
+                len(passage["_lemma_forms"].get(lemma_id, []))
+                for passage in _searchable_passages()
+                if passage["source"] == "text"
+            )
+            if lemma_id
+            else None
+        ),
         "results": hits[start:start + per_page],
     })
 

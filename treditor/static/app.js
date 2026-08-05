@@ -1646,10 +1646,10 @@ function renderDictionaryResults(results, container, target) {
       const frequency = document.createElement("button");
       frequency.type = "button";
       frequency.className = "dictionary-frequency";
-      frequency.textContent = `${entry.frequency.toLocaleString()} occurrence${entry.frequency === 1 ? "" : "s"}`;
-      frequency.title = `Find corpus occurrences of ${entry.id}`;
+      frequency.textContent = `Frequency: ${entry.frequency.toLocaleString()}`;
+      frequency.title = `Run whole-corpus TGrep2 search lemma=${entry.id}`;
       frequency.addEventListener("click", () => {
-        openLemmaOccurrences(entry);
+        openLemmaFrequency(entry);
       });
       supplemental.append(kana, frequency);
       card.appendChild(supplemental);
@@ -1664,15 +1664,15 @@ function setSelectedDictionaryEntry(entryId) {
   $("edit-dictionary-entry").disabled = !entryId;
 }
 
-function openLemmaOccurrences(entry) {
-  const query = entry.forms[0] || entry.id;
-  setSearchMode("text", false);
-  corpusSearchState.lemmaId = entry.id;
+function openLemmaFrequency(entry) {
+  const query = `lemma=${entry.id}`;
+  setSearchMode("tgrep", false);
+  corpusSearchState.lemmaId = "";
   corpusSearchState.query = query;
-  $("global-search").value = query;
-  $("corpus-search-scope").value = "text";
+  $("tgrep-search").value = query;
+  $("tgrep-search-scope").value = "text,trees";
   showSidebarView("search");
-  performCorpusSearch(query, 1, true);
+  performTgrepSearch(query, 1);
 }
 
 function renderDictionaryEntry(entry, article) {

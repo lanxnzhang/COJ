@@ -291,7 +291,7 @@ def test_dictionary_uses_current_multi_value_shape(client):
     assert [entry["id"] for entry in advanced] == [results[0]["id"]]
 
 
-def test_dictionary_search_exposes_all_tags_ranking_and_live_frequency(client):
+def test_dictionary_search_exposes_all_tags_ranking_and_tgrep_frequency(client):
     tags = client.get("/api/dictionary/tags").get_json()
     tag_ids = {tag["id"] for tag in tags}
     assert {"lemma", ".FORM", ".KANA", ".NOTE", ".CORRESP"} <= tag_ids
@@ -316,16 +316,21 @@ def test_dictionary_search_exposes_all_tags_ranking_and_live_frequency(client):
     assert isinstance(ranked[0]["kana"], list)
     assert isinstance(ranked[0]["frequency"], int)
 
-    occurrences = client.get(
-        f"/api/search?q=kamu&sources=text&lemma_id={ranked[0]['id']}"
+    tgrep_results = client.get(
+        f"/api/tgrep?q=lemma%3D{ranked[0]['id']}"
     ).get_json()
-    assert occurrences["occurrence_total"] == ranked[0]["frequency"]
-    assert all(
-        result["source"] == "text" for result in occurrences["results"]
-    )
-    assert all(
-        result["highlight_terms"] for result in occurrences["results"]
-    )
+    assert ranked[0]["frequency"] == tgrep_results["total"]
+
+    example = client.get(
+        "/api/dictionary?q=L051650&fields=lemma&match=exact"
+    ).get_json()
+    assert len(example) == 1
+    example_tgrep = client.get(
+        "/api/tgrep?q=lemma%3DL051650"
+    ).get_json()
+    assert example[0]["frequency"] == example_tgrep["total"] == 266
+    entry = client.get("/api/dictionary/L051650").get_json()
+    assert entry["frequency"] == 266
 
 
 def test_dictionary_entries_can_be_added_and_edited_safely(
@@ -473,7 +478,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "search-page-previous" in javascript
     assert "openDictionaryPopupEntry" in javascript
     assert '"lemma,.KANA,.FORM"' in javascript
-    assert "openLemmaOccurrences" in javascript
+    assert "openLemmaFrequency" in javascript
+    assert "Frequency: ${entry.frequency.toLocaleString()}" in javascript
+    assert '$("tgrep-search-scope").value = "text,trees"' in javascript
     assert "loadDictionaryTags" in javascript
     assert "dictionary-entry-form" in javascript
     assert ".dictionary-popup.collapsed" in css

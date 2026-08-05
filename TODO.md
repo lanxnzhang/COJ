@@ -346,6 +346,10 @@ The last update introduced a critical bug and failed to implement the features I
 ### After commit 8c999ef
 Extend the tgrep2 search functionality to allow searching for combining two attributes on the same node without conflicting with existing search features. For example, it should allow user to search a word form 'no' is written in PHON, and moreover, a NP includes a word form 'no' written in PHON.
 
+### After commit 0787851
+The current occurrences in the dictionary is wrong. First, it should be named as frequency in dictionary. Second, it should be the search result in TGrep2 of that lemma id across the whole corpus. For example, when user uses TGrep2 to search lemma=L051650, it has 266 results. However, in dictionary, it shows 0 occurrences, so obviously it is wrong. Please fix this.
+
+
 
 ### TBD
 BUG:1.高亮机制 2.search里选择是否显示汉字 3.无法搜索lemma id 4.occurence错误
