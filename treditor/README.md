@@ -26,7 +26,10 @@ hierarchical Documents sidebar and corpus-wide Search, and clicking an active
 activity icon collapses the sidebar. Corpus search covers transcriptions,
 kanji, word forms, and lemma IDs across both current data sources. Advanced
 controls restrict the source and searched categories and support contains,
-whole-word, exact-field, and case-sensitive matching. Result display controls
+whole-word, exact-field, case-sensitive, and optional space-insensitive
+matching. Text searches run only when Enter is pressed or the Search button is
+clicked, so incomplete input does not launch expensive corpus-wide requests.
+Result display controls
 can add kanji text and prefix each transcription or kanji segment with its
 raw-text sentence number. Larger result sets expose a
 page-size selector and page navigation. Search results and syntax trees open
@@ -75,7 +78,9 @@ sentence's transcription. By default kanji and null nodes are shown, while
 lemma IDs, script tags, and aligned leaves are off. The tree can be scaled,
 displayed full-screen, and given much narrower or wider word spacing.
 Variable-width leaf slots keep long words, collapsed forms, and kanji from
-overlapping without making every column equally wide. Hover a non-leaf tag to
+overlapping without making every column equally wide. The text panel opens in
+the Split layout by default, with Stacked available from its layout switch.
+Hover a non-leaf tag to
 reveal its collapse control; collapsed nodes retain a visible `+`. Clicking
 either a lemma ID or a word form opens a right-side dictionary quick-reference
 drawer.

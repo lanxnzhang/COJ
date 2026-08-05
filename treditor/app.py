@@ -267,7 +267,13 @@ def _search_values_match(
     query: str,
     match_mode: str,
     case_sensitive: bool,
+    ignore_spaces: bool = False,
 ) -> bool:
+    if ignore_spaces:
+        values = ["".join(value.split()) for value in values]
+        query = "".join(query.split())
+        if not query:
+            return False
     if not case_sensitive:
         values = [value.casefold() for value in values]
         query = query.casefold()
@@ -284,10 +290,21 @@ def _matching_text_ranges(
     query: str,
     match_mode: str,
     case_sensitive: bool,
+    ignore_spaces: bool = False,
 ) -> list[tuple[int, int]]:
     """Return the exact character ranges responsible for a text match."""
     if not text or not query:
         return []
+    positions = None
+    if ignore_spaces:
+        positions = [
+            index for index, character in enumerate(text)
+            if not character.isspace()
+        ]
+        text = "".join(text[index] for index in positions)
+        query = "".join(query.split())
+        if not text or not query:
+            return []
     flags = 0 if case_sensitive else re.IGNORECASE
     if match_mode == "exact":
         start = len(text) - len(text.lstrip())
@@ -297,13 +314,20 @@ def _matching_text_ranges(
             matches = candidate == query
         else:
             matches = candidate.casefold() == query.casefold()
-        return [(start, end)] if matches and start < end else []
-    pattern = re.escape(query)
-    if match_mode == "whole":
-        pattern = rf"(?<!\w){pattern}(?!\w)"
+        matches = [(start, end)] if matches and start < end else []
+    else:
+        pattern = re.escape(query)
+        if match_mode == "whole":
+            pattern = rf"(?<!\w){pattern}(?!\w)"
+        matches = [
+            (match.start(), match.end())
+            for match in re.finditer(pattern, text, flags)
+        ]
+    if positions is None:
+        return matches
     return [
-        (match.start(), match.end())
-        for match in re.finditer(pattern, text, flags)
+        (positions[start], positions[end - 1] + 1)
+        for start, end in matches
     ]
 
 
@@ -330,12 +354,13 @@ def _segment_highlights(
     query: str,
     match_mode: str,
     case_sensitive: bool,
+    ignore_spaces: bool = False,
 ) -> list[dict]:
     return [
         {"segment": index, "start": start, "end": end}
         for index, segment in enumerate(passage["_text_segments"])
         for start, end in _matching_text_ranges(
-            segment[field], query, match_mode, case_sensitive
+            segment[field], query, match_mode, case_sensitive, ignore_spaces
         )
     ]
 
@@ -455,6 +480,7 @@ def _ordinary_search_highlights(
     match_mode: str,
     case_sensitive: bool,
     lemma_id: str,
+    ignore_spaces: bool = False,
 ) -> tuple[dict[str, list[dict]], dict]:
     transcription = []
     kanji = []
@@ -462,11 +488,13 @@ def _ordinary_search_highlights(
 
     if "transcription" in matching_fields:
         transcription.extend(_segment_highlights(
-            passage, "transcription", query, match_mode, case_sensitive
+            passage, "transcription", query, match_mode, case_sensitive,
+            ignore_spaces,
         ))
     if "kanji" in matching_fields:
         kanji.extend(_segment_highlights(
-            passage, "kanji", query, match_mode, case_sensitive
+            passage, "kanji", query, match_mode, case_sensitive,
+            ignore_spaces,
         ))
         matched_segments = {item["segment"] for item in kanji}
         kanji_fallback.extend(
@@ -487,6 +515,7 @@ def _ordinary_search_highlights(
                 query,
                 match_mode,
                 case_sensitive,
+                ignore_spaces,
             )
         )
     if "word_forms" in matching_fields:
@@ -497,6 +526,7 @@ def _ordinary_search_highlights(
                 query,
                 match_mode,
                 case_sensitive,
+                ignore_spaces,
             )
         )
     word_spans = [
@@ -1127,6 +1157,7 @@ def search_corpus():
     if match_mode not in {"contains", "whole", "exact"}:
         match_mode = "contains"
     case_sensitive = request.args.get("case_sensitive") == "true"
+    ignore_spaces = request.args.get("ignore_spaces") == "true"
     page = max(request.args.get("page", 1, type=int) or 1, 1)
     requested_page_size = request.args.get("per_page", 25, type=int) or 25
     per_page = (
@@ -1153,6 +1184,7 @@ def search_corpus():
                     query,
                     match_mode,
                     case_sensitive,
+                    ignore_spaces,
                 )
             ]
             lemma_forms = [
@@ -1160,7 +1192,8 @@ def search_corpus():
                 for candidate in passage["_fields"]["lemma_ids"]
                 if "lemma_ids" in matching_fields
                 and _search_values_match(
-                    [candidate], query, match_mode, case_sensitive
+                    [candidate], query, match_mode, case_sensitive,
+                    ignore_spaces,
                 )
                 for form in passage["_lemma_forms"].get(candidate, [])
             ]
@@ -1182,7 +1215,8 @@ def search_corpus():
                     value
                     for value in preview_values
                     if _search_values_match(
-                        [value], query, match_mode, case_sensitive
+                        [value], query, match_mode, case_sensitive,
+                        ignore_spaces,
                     )
                 ),
                 preview_values[0] if preview_values else passage["header"],
@@ -1212,6 +1246,7 @@ def search_corpus():
             match_mode,
             case_sensitive,
             lemma_id,
+            ignore_spaces,
         )
         hit["matching_fields"] = matching_fields
         hit["highlight_terms"] = list(dict.fromkeys(lemma_forms)) or [query]
@@ -1228,6 +1263,7 @@ def search_corpus():
         "per_page": per_page,
         "pages": pages,
         "lemma_id": lemma_id,
+        "ignore_spaces": ignore_spaces,
         "occurrence_total": (
             sum(
                 len(passage["_lemma_forms"].get(lemma_id, []))

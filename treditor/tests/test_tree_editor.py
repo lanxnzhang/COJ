@@ -123,6 +123,29 @@ def test_corpus_search_supports_scope_advanced_fields_and_pagination(client):
     assert len(paged["results"]) <= 10
 
 
+def test_corpus_search_can_ignore_spaces_and_preserve_highlight_offsets(client):
+    ordinary = client.get(
+        "/api/search?q=kwomoyo&sources=trees&fields=transcription"
+    ).get_json()
+    assert ordinary["total"] == 0
+
+    for match_mode in ("contains", "whole", "exact"):
+        space_insensitive = client.get(
+            "/api/search?q=kwomoyo&sources=trees&fields=transcription"
+            f"&match={match_mode}&ignore_spaces=true"
+        ).get_json()
+        result = next(
+            item for item in space_insensitive["results"]
+            if item["sentence_id"] == "MYS.1.1"
+        )
+        assert space_insensitive["ignore_spaces"] is True
+        assert result["highlights"]["transcription"] == [{
+            "segment": 0,
+            "start": 0,
+            "end": 9,
+        }]
+
+
 def test_corpus_search_indexes_lemma_ids_and_highlights_their_forms(client):
     response = client.get(
         "/api/search?q=l000530&fields=lemma_ids&match=exact"
@@ -521,9 +544,12 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="global-search-form"' in html
     assert 'id="corpus-search-scope"' in html
     assert 'id="corpus-search-match"' in html
+    assert 'id="corpus-search-ignore-spaces"' in html
     assert 'value="header"' not in html
     assert 'value="lemma_ids" checked' in html
     assert 'id="search-mode-text"' in html
+    assert '>Text search</button>' in html
+    assert "Text &amp; lemma" not in html
     assert 'id="search-mode-tgrep"' in html
     assert 'id="tgrep-search-form"' in html
     assert 'id="tgrep-search-scope"' in html
@@ -542,7 +568,11 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert "Tree diagram" not in html
     assert "Syntax tree" in html
     assert 'id="toggle-edit-mode"' in html
-    assert 'data-text-layout="two-column"' in html
+    assert (
+        'class="active" data-text-layout="two-column">Split</button>' in html
+    )
+    assert 'class="raw-text-lines two-column"' in html
+    assert "Two columns" not in html
     assert 'placeholder="Filter or open MYS.1.1…"' in html
     assert 'id="tog-lemma">' in html
     assert 'id="tog-phon">' in html
@@ -558,6 +588,8 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="tab-dict"' not in html
     assert 'id="editor-page-dictionary"' in html
     assert 'id="dictionary-advanced"' in html
+    assert 'class="advanced-search-fields dictionary-advanced-fields"' in html
+    assert 'class="dictionary-match-options"' in html
     assert 'id="dictionary-popup"' in html
     assert 'id="sidebar-dictionary"' in html
     assert 'id="new-dictionary-entry"' in html
@@ -602,6 +634,9 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "appendHighlightedText" not in javascript
     assert "appendRangedText" in javascript
     assert "corpusSearchParameters" in javascript
+    assert "corpus-search-ignore-spaces" in javascript
+    assert '$("global-search").addEventListener("input"' not in javascript
+    assert "globalSearchTimer" not in javascript
     assert "search-page-previous" in javascript
     assert "updateSearchResultDisplay" in javascript
     assert "appendSearchResultText" in javascript

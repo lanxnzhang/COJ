@@ -9,7 +9,6 @@ let currentTreeData = null;
 let selectedNodeId = null;
 let dictionaryTimer = null;
 let documentSearchTimer = null;
-let globalSearchTimer = null;
 let popupDictionaryTimer = null;
 let currentSearchPayload = null;
 let activeTreeSearchContext = null;
@@ -399,6 +398,7 @@ function corpusSearchParameters(page = 1) {
     fields: fields.join(","),
     match: $("corpus-search-match").value,
     case_sensitive: String($("corpus-search-case").checked),
+    ignore_spaces: String($("corpus-search-ignore-spaces").checked),
     page: String(page),
     per_page: String(corpusSearchState.perPage),
   });
@@ -707,16 +707,7 @@ $("search-mode-tgrep").addEventListener("click", () => setSearchMode("tgrep"));
 
 $("global-search-form").addEventListener("submit", event => {
   event.preventDefault();
-  clearTimeout(globalSearchTimer);
   performCorpusSearch($("global-search").value);
-});
-
-$("global-search").addEventListener("input", event => {
-  clearTimeout(globalSearchTimer);
-  globalSearchTimer = setTimeout(
-    () => performCorpusSearch(event.target.value),
-    300,
-  );
 });
 
 $("tgrep-search-form").addEventListener("submit", event => {
@@ -748,26 +739,6 @@ $("search-page-next").addEventListener("click", () => {
 $("search-page-size").addEventListener("change", event => {
   corpusSearchState.perPage = Number(event.target.value);
   performActiveSearch(1);
-});
-
-[
-  "corpus-search-scope",
-  "corpus-search-match",
-  "corpus-search-case",
-].forEach(id => {
-  $(id).addEventListener("change", () => {
-    if (corpusSearchState.mode === "text" && corpusSearchState.query) {
-      performCorpusSearch(corpusSearchState.query, 1);
-    }
-  });
-});
-
-document.querySelectorAll('input[name="corpus-field"]').forEach(input => {
-  input.addEventListener("change", () => {
-    if (corpusSearchState.mode === "text" && corpusSearchState.query) {
-      performCorpusSearch(corpusSearchState.query, 1);
-    }
-  });
 });
 
 async function loadPassages(documentData) {

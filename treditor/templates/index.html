@@ -62,7 +62,7 @@
           <h1>Search</h1>
         </div>
         <div class="search-mode-switch" role="tablist" aria-label="Search type">
-          <button type="button" id="search-mode-text" class="active" role="tab" aria-selected="true">Text &amp; lemma</button>
+          <button type="button" id="search-mode-text" class="active" role="tab" aria-selected="true">Text search</button>
           <button type="button" id="search-mode-tgrep" role="tab" aria-selected="false">TGrep2</button>
         </div>
         <div id="text-search-controls">
@@ -90,14 +90,18 @@
                 <label><input type="checkbox" name="corpus-field" value="word_forms" checked> Word forms</label>
                 <label><input type="checkbox" name="corpus-field" value="lemma_ids" checked> Lemma IDs</label>
               </fieldset>
-              <label>Match
-                <select id="corpus-search-match">
-                  <option value="contains">Contains</option>
-                  <option value="whole">Whole word</option>
-                  <option value="exact">Exact field</option>
-                </select>
-              </label>
-              <label class="advanced-checkbox"><input type="checkbox" id="corpus-search-case"> Match case</label>
+              <fieldset class="corpus-match-options">
+                <legend>Match</legend>
+                <label><span class="sr-only">Match mode</span>
+                  <select id="corpus-search-match">
+                    <option value="contains">Contains</option>
+                    <option value="whole">Whole word</option>
+                    <option value="exact">Exact field</option>
+                  </select>
+                </label>
+                <label><input type="checkbox" id="corpus-search-ignore-spaces"> Ignore spaces</label>
+                <label><input type="checkbox" id="corpus-search-case"> Match case</label>
+              </fieldset>
             </div>
           </details>
         </div>
@@ -216,12 +220,12 @@
                 <span>Text</span>
               </button>
               <div class="text-layout-switch" aria-label="Text layout">
-                <button type="button" class="active" data-text-layout="stacked">Stacked</button>
-                <button type="button" data-text-layout="two-column">Two columns</button>
+                <button type="button" data-text-layout="stacked">Stacked</button>
+                <button type="button" class="active" data-text-layout="two-column">Split</button>
               </div>
             </header>
             <div id="text-panel-body" class="text-panel-body">
-              <div id="raw-text-lines" class="raw-text-lines"></div>
+              <div id="raw-text-lines" class="raw-text-lines two-column"></div>
             </div>
           </section>
 
@@ -364,21 +368,23 @@
         </form>
         <details id="dictionary-advanced" class="advanced-search dictionary-advanced">
           <summary>Advanced search</summary>
-          <div class="advanced-search-fields horizontal">
+          <div class="advanced-search-fields dictionary-advanced-fields">
             <fieldset>
               <legend>Search in</legend>
               <div id="dictionary-field-options" class="dictionary-field-options">
                 <span>Loading dictionary tags…</span>
               </div>
             </fieldset>
-            <label><span class="match-option-label" title="Contains: query appears anywhere. Whole word: query must be a complete word. Exact field: the entire selected field must equal the query.">Match <span aria-hidden="true">ⓘ</span></span>
-              <select id="dictionary-search-match">
-                <option value="contains">Contains</option>
-                <option value="whole">Whole word</option>
-                <option value="exact">Exact field</option>
-              </select>
-            </label>
-            <label class="advanced-checkbox"><input type="checkbox" id="dictionary-search-case"> Match case</label>
+            <div class="dictionary-match-options">
+              <label><span class="match-option-label" title="Contains: query appears anywhere. Whole word: query must be a complete word. Exact field: the entire selected field must equal the query.">Match <span aria-hidden="true">ⓘ</span></span>
+                <select id="dictionary-search-match">
+                  <option value="contains">Contains</option>
+                  <option value="whole">Whole word</option>
+                  <option value="exact">Exact field</option>
+                </select>
+              </label>
+              <label class="advanced-checkbox"><input type="checkbox" id="dictionary-search-case"> Match case</label>
+            </div>
           </div>
         </details>
         <p id="dict-message" class="dictionary-message">Enter a search term to read the current dictionary.</p>
