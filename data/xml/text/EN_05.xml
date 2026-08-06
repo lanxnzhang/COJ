@@ -817,8 +817,12 @@
           </NP>
           <VB>
             <VB-STM phon="LOG" form="masa" />
-            <VAX-CTV-STM lemma="L000010" phon="LOG" form="si" />
-            <VAX-CTV-STM lemma="L000010" phon="PHON" form="me" />
+            <VAX-CTV-STM lemma="L000010" phon="" form="sime">
+              <form-parts>
+                <part phon="LOG" form="si" />
+                <part phon="PHON" form="me" />
+              </form-parts>
+            </VAX-CTV-STM>
             <VB-IMO phon="LOG" form="tamape" />
           </VB>
           <P-COMP lemma="L000530" phon="PHON" form="to" />

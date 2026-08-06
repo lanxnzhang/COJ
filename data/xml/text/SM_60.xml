@@ -239,8 +239,12 @@
                 </NP>
                 <VB>
                   <VB-STM lemma="L031119a" phon="LOG" form="tukape" />
-                  <VB-IMP lemma="L031644a" phon="LOG" form="matu" />
-                  <VB-IMP lemma="L031644a" phon="PHON" form="re" />
+                  <VB-IMP lemma="L031644a" phon="" form="mature">
+                    <form-parts>
+                      <part phon="LOG" form="matu" />
+                      <part phon="PHON" form="re" />
+                    </form-parts>
+                  </VB-IMP>
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>

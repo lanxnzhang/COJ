@@ -137,8 +137,12 @@
           </IP-ADV>
           <VB>
             <VB-STM lemma="L030402a" phon="LOG" form="omoposi" />
-            <VB-GER lemma="L031751a" phon="LOG" form="mye" />
-            <VB-GER lemma="L031751a" phon="PHON" form="site" />
+            <VB-GER lemma="L031751a" phon="" form="myesite">
+              <form-parts>
+                <part phon="LOG" form="mye" />
+                <part phon="PHON" form="site" />
+              </form-parts>
+            </VB-GER>
           </VB>
         </IP-ADV>
         <NP-OB1>
@@ -148,8 +152,12 @@
             <N index="3" phon="LOG" form="mono" />
           </N>
         </NP-OB1>
-        <VB-NML lemma="L031077a" phon="LOG" form="tamapa" />
-        <VB-NML lemma="L031077a" phon="PHON" form="ku" />
+        <VB-NML lemma="L031077a" phon="" form="tamapaku">
+          <form-parts>
+            <part phon="LOG" form="tamapa" />
+            <part phon="PHON" form="ku" />
+          </form-parts>
+        </VB-NML>
         <P-COMP lemma="L000530" phon="PHON" form="to" />
       </IP-ADV>
       <VB-ADC lemma="L032093a" phon="LOG" form="noritamapu" />

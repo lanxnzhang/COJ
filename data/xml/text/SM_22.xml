@@ -55,8 +55,12 @@
                     </IP-ADV>
                     <VB>
                       <VB-STM lemma="L031119a" phon="LOG" form="tukape" index="1" inferred_index="1" />
-                      <VB-STM index="2" lemma="L031649a" phon="LOG" form="matu" />
-                      <VB-STM index="2" lemma="L031649a" phon="PHON" form="r" />
+                      <VB-STM index="2" lemma="L031649a" phon="" form="matur">
+                        <form-parts>
+                          <part phon="LOG" form="matu" />
+                          <part phon="PHON" form="r" />
+                        </form-parts>
+                      </VB-STM>
                       <VAX-STV-ADN lemma="L000024" phon="PHON" form="eru" />
                     </VB>
                   </IP-REL>
@@ -131,8 +135,12 @@
         </IP-ADV>
         <VB>
           <VB-STM lemma="L031943a" phon="LOG" form="wosame" />
-          <VB-NML lemma="L031077a" phon="LOG" form="tamapa" />
-          <VB-NML lemma="L031077a" phon="PHON" form="ku" />
+          <VB-NML lemma="L031077a" phon="" form="tamapaku">
+            <form-parts>
+              <part phon="LOG" form="tamapa" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VB-NML>
         </VB>
         <P-COMP lemma="L000530" phon="PHON" form="to" />
       </IP-ADV>

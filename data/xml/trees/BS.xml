@@ -2005,11 +2005,15 @@
     <multi-sentence>
       <IP-MAT>
         <FRAG>
-          <WORD lemma="L099997" phon="ILL" form="x" />
-          <WORD lemma="L099997" phon="PHON" form="tu" />
-          <WORD lemma="L099997" phon="ILL" form="xxx" />
-          <WORD lemma="L099997" phon="ILL" form="xxxx" />
-          <WORD lemma="L099997" phon="PHON" form="pitaru" />
+          <WORD lemma="L099997" phon="" form="xtuxxxxxxxpitaru">
+            <form-parts>
+              <part phon="ILL" form="x" />
+              <part phon="PHON" form="tu" />
+              <part phon="ILL" form="xxx" />
+              <part phon="ILL" form="xxxx" />
+              <part phon="PHON" form="pitaru" />
+            </form-parts>
+          </WORD>
           <NP-ADV>
             <PP>
               <NP>

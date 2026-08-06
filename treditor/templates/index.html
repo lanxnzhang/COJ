@@ -299,8 +299,14 @@
                   <label>Tag <input id="node-tag" required autocomplete="off"></label>
                   <label>Lemma ID <input id="node-lemma" autocomplete="off"></label>
                   <div id="leaf-fields" class="editor-fields">
-                    <label>Word form <input id="node-form" autocomplete="off"></label>
-                    <label>Script tag <input id="node-phon" autocomplete="off"></label>
+                    <div id="node-simple-fields" class="editor-fields">
+                      <label>Word form <input id="node-form" autocomplete="off"></label>
+                      <label>Script tag <input id="node-phon" autocomplete="off"></label>
+                    </div>
+                    <label id="node-parts-field" class="hidden">Word components
+                      <textarea id="node-parts" rows="4" spellcheck="false" aria-describedby="node-parts-help"></textarea>
+                      <span id="node-parts-help" class="field-help">One component per line: SCRIPT, then a tab, then FORM.</span>
+                    </label>
                   </div>
                   <p id="node-kind-note" class="node-kind-note"></p>
                   <button type="submit" class="primary-button">Apply node content</button>

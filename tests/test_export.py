@@ -161,6 +161,7 @@ class TestCorpusXmlUnit:
         assert leaf.get("phon_index") == "2"
         assert corpus_from_xml(xml).to_text() == source
 
+
     def test_well_formed_xml(self):
         # ET.fromstring would have raised if not well-formed; double-check round-trip
         assert ET.tostring(self.root, encoding="unicode").startswith("<document")
@@ -190,6 +191,42 @@ ID,1_EN_01
 # ══════════════════════════════════════════════════════════════════════════════
 #  TestCorpusXmlRealFile
 # ══════════════════════════════════════════════════════════════════════════════
+
+class TestMultipartWordXml:
+    source = """\
+=N(" ipa ku ")
+multi-sentence,IP-MAT,VB-NML,L030199a,LOG,ipa
+multi-sentence,IP-MAT,VB-NML,L030199a,PHON,ku
+multi-sentence,IP-MAT,N;@2,L000001a,LOG,mo
+ID,619_MYS_04
+"""
+
+    def test_consecutive_same_path_and_lemma_become_one_syntax_leaf(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        leaf = root.find("./block/multi-sentence/IP-MAT/VB-NML")
+        assert leaf is not None
+        assert leaf.attrib == {
+            "lemma": "L030199a",
+            "phon": "",
+            "form": "ipaku",
+        }
+        assert [part.attrib for part in leaf.findall("./form-parts/part")] == [
+            {"phon": "LOG", "form": "ipa"},
+            {"phon": "PHON", "form": "ku"},
+        ]
+
+    def test_semicolon_index_remains_a_separate_sibling(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        parent = root.find("./block/multi-sentence/IP-MAT")
+        assert parent is not None
+        assert [child.tag for child in parent if child.tag != "comment"] == [
+            "VB-NML", "N"
+        ]
+
+    def test_txt_xml_txt_round_trip_is_exact(self):
+        document = CorpusDocument.from_text(self.source)
+        assert corpus_from_xml(corpus_to_xml(document)).to_text() == self.source
+
 
 class TestCorpusXmlRealFile:
     @pytest.fixture(autouse=True)

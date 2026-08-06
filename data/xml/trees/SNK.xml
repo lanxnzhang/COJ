@@ -351,8 +351,12 @@
           <NP>
             <N lemma="L052517" phon="LOG" form="umi" />
           </NP>
-          <VB-CND lemma="L031840a" phon="LOG" form="yuka" />
-          <VB-CND lemma="L031840a" phon="PHON" form="ba" />
+          <VB-CND lemma="L031840a" phon="" form="yukaba">
+            <form-parts>
+              <part phon="LOG" form="yuka" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </VB-CND>
         </IP-ADV>
         <NP-PRD>
           <IP-REL>
@@ -369,8 +373,12 @@
           <NP>
             <N lemma="L050034" phon="LOG" form="yama" />
           </NP>
-          <VB-CND lemma="L031840a" phon="LOG" form="yuka" />
-          <VB-CND lemma="L031840a" phon="PHON" form="ba" />
+          <VB-CND lemma="L031840a" phon="" form="yukaba">
+            <form-parts>
+              <part phon="LOG" form="yuka" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </VB-CND>
         </IP-ADV>
         <NP-PRD>
           <IP-REL>
@@ -780,8 +788,12 @@
           </NP-ADV>
           <VB-CND>
             <VB-STM lemma="L030919a" phon="LOG" form="si" />
-            <VAX-PRF-CND lemma="L000023" phon="LOG" form="te" />
-            <VAX-PRF-CND lemma="L000023" phon="PHON" form="ba" />
+            <VAX-PRF-CND lemma="L000023" phon="" form="teba">
+              <form-parts>
+                <part phon="LOG" form="te" />
+                <part phon="PHON" form="ba" />
+              </form-parts>
+            </VAX-PRF-CND>
           </VB-CND>
         </IP-ADV>
         <PP-SBJ>
@@ -790,8 +802,12 @@
           </NP>
           <P-FOC lemma="L000527" phon="PHON" form="so" />
         </PP-SBJ>
-        <VB-ADN lemma="L030768a" phon="LOG" form="saka" />
-        <VB-ADN lemma="L030768a" phon="PHON" form="yuru" />
+        <VB-ADN lemma="L030768a" phon="" form="sakayuru">
+          <form-parts>
+            <part phon="LOG" form="saka" />
+            <part phon="PHON" form="yuru" />
+          </form-parts>
+        </VB-ADN>
         <P-FOC lemma="L000537" phon="PHON" form="ya" />
       </IP-MAT>
       <IP-MAT index="8">
@@ -804,8 +820,12 @@
           </NP>
           <P-FOC lemma="L000527" phon="PHON" form="so" />
         </PP-SBJ>
-        <VB-ADN lemma="L030768a" phon="LOG" form="saka" />
-        <VB-ADN lemma="L030768a" phon="PHON" form="yuru" />
+        <VB-ADN lemma="L030768a" phon="" form="sakayuru">
+          <form-parts>
+            <part phon="LOG" form="saka" />
+            <part phon="PHON" form="yuru" />
+          </form-parts>
+        </VB-ADN>
         <P-FOC lemma="L000537" phon="PHON" form="ya" />
       </IP-MAT>
       <IP-MAT index="1" inferred_index="1">

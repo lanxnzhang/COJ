@@ -868,6 +868,12 @@ function editableNodeCopy(node) {
   } else {
     copy.form = String(node.form || "");
     copy.phon = String(node.phon || "");
+    if (node.parts?.length) {
+      copy.parts = node.parts.map(part => ({
+        form: String(part.form || ""),
+        phon: String(part.phon || ""),
+      }));
+    }
   }
   return copy;
 }
@@ -1021,7 +1027,8 @@ function prepareTreeData(data) {
         assignIds(child, `${path}.${index}`);
       });
     } else if (node.form) {
-      leaves.push(node);
+      const unitCount = Math.max(1, node.parts?.length || 0);
+      for (let index = 0; index < unitCount; index += 1) leaves.push(node);
     }
   };
   data.roots.forEach((root, index) => assignIds(root, String(index)));
@@ -1047,6 +1054,10 @@ function treeOptions() {
     bottomUp: $("tog-bottomup").checked,
     lemmaPosition: $("lemma-position").value,
     highlightedNodeIds: new Set(searchContext.node_ids || []),
+    highlightedPartIndexes: new Map(
+      Object.entries(searchContext.part_indexes || {})
+        .map(([nodeId, indexes]) => [nodeId, new Set(indexes)])
+    ),
     kanjiHighlightRanges: searchContext.kanji_ranges || [],
   };
 }
@@ -1128,11 +1139,18 @@ function buildDisplayNode(node, options) {
   if (collapsedNodeIds.has(node._nodeId)) {
     const collapsedTokens = leaves
       .filter(leaf => leaf.form)
-      .map(leaf => ({
-        text: leaf.form,
-        phon: leaf.phon || "",
-        lemma: leaf.lemma || "",
-      }));
+      .flatMap(leaf => leaf.parts?.length
+        ? leaf.parts.map(part => ({
+          text: part.form,
+          phon: part.phon || "",
+          lemma: leaf.lemma || "",
+        }))
+        : [{
+          text: leaf.form,
+          phon: leaf.phon || "",
+          lemma: leaf.lemma || "",
+        }]
+      );
     return {
       ...node,
       children: undefined,
@@ -1168,8 +1186,11 @@ function labelWidth(node, options) {
     if (node.form) {
       width = Math.max(width, node.form.length * CHARACTER_WIDTH);
     }
-    if (options.phon && node.phon) {
-      width = Math.max(width, node.phon.length * CHARACTER_WIDTH);
+    const phonLabel = node.parts?.length
+      ? node.parts.map(part => part.phon).filter(Boolean).join(" + ")
+      : node.phon;
+    if (options.phon && phonLabel) {
+      width = Math.max(width, phonLabel.length * CHARACTER_WIDTH);
     }
     if (options.lemma && node.lemma) {
       width = Math.max(width, node.lemma.length * CHARACTER_WIDTH);
@@ -1239,6 +1260,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
   const lemmaUnderTag = hasLemma && !lemmaUnderForm;
   const edgeOffset = lemmaUnderTag ? 22 : 9;
   const searchHit = options.highlightedNodeIds.has(node._nodeId);
+  const highlightedParts = options.highlightedPartIndexes.get(node._nodeId);
   const controls = svgElement("g", {
     class: `tree-node-controls${searchHit ? " search-result-node" : ""}`,
   });
@@ -1349,16 +1371,27 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     });
     svg.appendChild(combined);
   } else if (node.form) {
-    svg.appendChild(svgElement("text", {
+    const formLabel = svgElement("text", {
       x: centerX,
       y: offset,
-      class: `form-label ${scriptStyleClass(node.phon, true)} interactive-form${searchHit ? " tree-search-hit-label" : ""}`,
+      class: `form-label interactive-form${searchHit && !highlightedParts ? " tree-search-hit-label" : ""}`,
       "data-dictionary-query": node.lemma || node.form,
       ...(node.lemma ? {"data-lemma": node.lemma} : {}),
       role: "link",
       tabindex: "0",
       "text-anchor": "middle",
-    }, node.form));
+    });
+    if (node.parts?.length) {
+      node.parts.forEach((part, partIndex) => {
+        formLabel.appendChild(svgElement("tspan", {
+          class: `${scriptStyleClass(part.phon, true)}${highlightedParts?.has(partIndex) ? " tree-search-hit-label" : ""}`,
+        }, part.form));
+      });
+    } else {
+      formLabel.classList.add(scriptStyleClass(node.phon, true));
+      formLabel.textContent = node.form;
+    }
+    svg.appendChild(formLabel);
   }
   offset += 17;
   if (lemmaUnderForm) {
@@ -1371,13 +1404,16 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     }, node.lemma));
     offset += 17;
   }
-  if (options.phon && node.phon) {
+  const phonLabel = node.parts?.length
+    ? node.parts.map(part => part.phon).filter(Boolean).join(" + ")
+    : node.phon;
+  if (options.phon && phonLabel) {
     svg.appendChild(svgElement("text", {
       x: centerX,
       y: offset,
       class: `phon-label${searchHit ? " tree-search-hit-label" : ""}`,
       "text-anchor": "middle",
-    }, node.phon));
+    }, phonLabel));
   }
 }
 
@@ -1575,10 +1611,18 @@ function openNodeEditor(nodeId) {
   $("node-tag").value = node.tag || "";
   $("node-form").value = isLeaf ? node.form || "" : "";
   $("node-phon").value = isLeaf ? node.phon || "" : "";
+  const hasParts = isLeaf && Boolean(node.parts?.length);
+  $("node-parts").value = hasParts
+    ? node.parts.map(part => `${part.phon || ""}\t${part.form || ""}`).join("\n")
+    : "";
+  $("node-simple-fields").classList.toggle("hidden", hasParts);
+  $("node-parts-field").classList.toggle("hidden", !hasParts);
   $("node-lemma").value = node.lemma || "";
   $("leaf-fields").classList.toggle("hidden", !isLeaf);
   $("node-kind-note").textContent = isLeaf
-    ? "This is a leaf node; its word, script tag, and lemma can be edited."
+    ? (hasParts
+      ? "This is one word with ordered components in different scripts."
+      : "This is a leaf node; its word, script tag, and lemma can be edited.")
     : `This branch has ${node.children.length} child node${node.children.length === 1 ? "" : "s"}.`;
   $("node-editor").classList.remove("hidden");
   $("node-tag").focus();
@@ -1606,8 +1650,24 @@ $("node-editor-form").addEventListener("submit", event => {
   if (lemma) node.lemma = lemma;
   else delete node.lemma;
   if (!node.children?.length) {
-    node.form = $("node-form").value;
-    node.phon = $("node-phon").value.trim();
+    if (node.parts?.length) {
+      node.parts = $("node-parts").value.split(/\r?\n/)
+        .filter(line => line.trim())
+        .map(line => {
+          const separator = line.indexOf("\t");
+          return separator < 0
+            ? {phon: "", form: line}
+            : {
+              phon: line.slice(0, separator).trim(),
+              form: line.slice(separator + 1),
+            };
+        });
+      node.form = node.parts.map(part => part.form).join("");
+      node.phon = "";
+    } else {
+      node.form = $("node-form").value;
+      node.phon = $("node-phon").value.trim();
+    }
   }
   refreshEditedTree();
   openNodeEditor(node._nodeId);
@@ -1625,10 +1685,14 @@ $("add-child").addEventListener("click", () => {
       form: node.form || "",
       phon: node.phon || "",
     };
+    if (node.parts?.length) {
+      child.parts = node.parts.map(part => ({...part}));
+    }
     if (node.lemma) child.lemma = node.lemma;
     node.children = [child];
     delete node.form;
     delete node.phon;
+    delete node.parts;
     delete node.lemma;
   }
   refreshEditedTree();

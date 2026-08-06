@@ -52,10 +52,24 @@ _KANJI_MARKER_RE = re.compile(r'(?:^|,)(\d+)@(.*),\*$')
 # Direct children of <block> which describe the source or its readable text,
 # rather than nodes in the syntactic tree.
 _BLOCK_METADATA_TAGS = frozenset({"comment", "roundtrip-data", "raw-text"})
+_FORM_PARTS_TAG = "form-parts"
 
 
 def _is_block_metadata(elem: ET.Element) -> bool:
     return elem.tag in _BLOCK_METADATA_TAGS
+
+
+def _syntax_children(elem: ET.Element) -> list[ET.Element]:
+    """Return real syntax children, excluding XML-only annotation metadata."""
+    return [
+        child for child in elem
+        if child.tag != "comment" and child.tag != _FORM_PARTS_TAG
+    ]
+
+
+def _form_part_elements(elem: ET.Element) -> list[ET.Element]:
+    container = elem.find(_FORM_PARTS_TAG)
+    return list(container.findall("part")) if container is not None else []
 
 
 def _canonical_sentence_id(source_id: str) -> str:
@@ -138,15 +152,21 @@ class CorpusLine:
     def __init__(self, fields: list[str]) -> None:
         self._fields_storage: list[str] | None = list(fields)
         self._leaf_elem: ET.Element | None = None
+        self._form_part_elem: ET.Element | None = None
         self._ancestors: list[ET.Element] = []
 
     @classmethod
-    def _from_elem(cls, leaf_elem: ET.Element,
-                   ancestors: list[ET.Element]) -> CorpusLine:
+    def _from_elem(
+        cls,
+        leaf_elem: ET.Element,
+        ancestors: list[ET.Element],
+        form_part_elem: ET.Element | None = None,
+    ) -> CorpusLine:
         """Create an XML-backed CorpusLine wrapping *leaf_elem*."""
         obj: CorpusLine = cls.__new__(cls)
         obj._fields_storage = None
         obj._leaf_elem = leaf_elem
+        obj._form_part_elem = form_part_elem
         obj._ancestors = list(ancestors)
         return obj
 
@@ -183,13 +203,17 @@ class CorpusLine:
         leaf_lemma = self._leaf_elem.get("lemma")
         if leaf_lemma:
             parts.append(leaf_lemma)
-        phon = self._leaf_elem.get("phon") or ""
+        annotation = (
+            self._form_part_elem
+            if self._form_part_elem is not None else self._leaf_elem
+        )
+        phon = annotation.get("phon") or ""
         if phon:
-            phon_idx = self._leaf_elem.get("phon_index")
+            phon_idx = annotation.get("phon_index")
             if phon_idx:
                 phon = f"{phon};@{phon_idx}"
             parts.append(phon)
-        form = self._leaf_elem.get("form") or ""
+        form = annotation.get("form") or ""
         if form:
             parts.append(form)
         return ",".join(parts)
@@ -220,7 +244,11 @@ class CorpusLine:
     def word_form(self) -> str | None:
         """Last field if it is a pure-alphabetic word form, else None."""
         if self._leaf_elem is not None:
-            form = self._leaf_elem.get("form") or ""
+            annotation = (
+                self._form_part_elem
+                if self._form_part_elem is not None else self._leaf_elem
+            )
+            form = annotation.get("form") or ""
             return form if form else None
         last = self._fields_storage[-1] if self._fields_storage else ""
         return last if _WORDFORM_RE.match(last) else None
@@ -233,8 +261,12 @@ class CorpusLine:
         if you need the bare name.
         """
         if self._leaf_elem is not None:
-            phon = self._leaf_elem.get("phon") or ""
-            phon_idx = self._leaf_elem.get("phon_index")
+            annotation = (
+                self._form_part_elem
+                if self._form_part_elem is not None else self._leaf_elem
+            )
+            phon = annotation.get("phon") or ""
+            phon_idx = annotation.get("phon_index")
             if phon and phon_idx:
                 phon = f"{phon};@{phon_idx}"
             return phon if phon else None
@@ -660,6 +692,50 @@ def _make_leaf_elem(cl: CorpusLine) -> ET.Element:
     return elem
 
 
+def _make_multipart_leaf_elem(lines: list[CorpusLine]) -> ET.Element:
+    """Build one syntax leaf with ordered script/form component metadata."""
+    elem = _make_leaf_elem(lines[0])
+    elem.set("form", "".join(line.word_form or "" for line in lines))
+    elem.set("phon", "")
+    elem.attrib.pop("phon_index", None)
+    parts = ET.SubElement(elem, _FORM_PARTS_TAG)
+    for line in lines:
+        part = ET.SubElement(parts, "part")
+        phon = line.phon_tag or ""
+        clean_phon, phon_idx = _split_disambig_xml(phon) if phon else ("", None)
+        part.set("phon", clean_phon)
+        if phon_idx:
+            part.set("phon_index", phon_idx)
+        part.set("form", line.word_form or "")
+    return elem
+
+
+def _multipart_leaf_run(
+    lines: list[CorpusLine], start: int, depth: int
+) -> list[CorpusLine]:
+    """Return a confirmed historical multipart run beginning at *start*."""
+    first = lines[start]
+    lemma = str(first.lemma_id) if first.lemma_id else ""
+    if not lemma:
+        return []
+    path = tuple(first.synt_path)
+    run: list[CorpusLine] = []
+    position = start
+    while position < len(lines):
+        candidate = lines[position]
+        candidate_lemma = str(candidate.lemma_id) if candidate.lemma_id else ""
+        if tuple(candidate.synt_path) != path or candidate_lemma != lemma:
+            break
+        raw_tag, embedded_lemma = _node_key(candidate, depth)
+        child_depth = depth + (2 if embedded_lemma is not None else 1)
+        if child_depth <= _effective_path_len(candidate) - 1:
+            break
+        run.append(candidate)
+        position += 1
+    phon_tags = {line.phon_tag for line in run if line.phon_tag}
+    return run if len(run) > 1 and len(phon_tags) > 1 else []
+
+
 def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
     """
     Recursively group a flat list of corpus lines into nested XML elements.
@@ -697,14 +773,18 @@ def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
         is_leaf = (child_depth > _effective_path_len(cl) - 1)
 
         if is_leaf:
-            leaf = _make_leaf_elem(cl)
+            multipart_run = _multipart_leaf_run(lines, i, depth)
+            leaf = (
+                _make_multipart_leaf_elem(multipart_run)
+                if multipart_run else _make_leaf_elem(cl)
+            )
             if leaf.get("index") is None:
                 clean_tag, _ = _split_disambig_xml(raw_tag)
                 if clean_tag in suffixed_bases:
                     leaf.set("index", "1")
                     leaf.set("inferred_index", "1")
             results.append(leaf)
-            i += 1
+            i += len(multipart_run) if multipart_run else 1
         else:
             run: list[CorpusLine] = []
             while i < len(lines):
@@ -833,10 +913,17 @@ def _collect_corpus_lines(
     the path from the first syntactic element below ``<block>`` down to the
     leaf's direct parent.
     """
-    children = [c for c in elem if c.tag != "comment"]
+    children = _syntax_children(elem)
     if not children:
         if elem.get("form") is not None:
-            result.append(CorpusLine._from_elem(elem, ancestors))
+            parts = _form_part_elements(elem)
+            if parts:
+                result.extend(
+                    CorpusLine._from_elem(elem, ancestors, part)
+                    for part in parts
+                )
+            else:
+                result.append(CorpusLine._from_elem(elem, ancestors))
         return
     for child in children:
         _collect_corpus_lines(child, ancestors + [elem], result)
@@ -863,21 +950,23 @@ def _reconstruct_lines(
     node_path = path + [raw_tag]
     emb_lemma = elem.get("lemma")
 
-    children = [c for c in elem if c.tag != "comment"]
+    children = _syntax_children(elem)
     if not children:
-        phon = elem.get("phon") or ""
-        phon_idx = elem.get("phon_index")
-        if phon and phon_idx:
-            phon = f"{phon};@{phon_idx}"
-        form = elem.get("form") or ""
-        fields: list[str] = list(node_path)
-        if emb_lemma:
-            fields.append(emb_lemma)
-        if phon:
-            fields.append(phon)
-        if form:
-            fields.append(form)
-        out.append(CorpusLine(fields))
+        annotations = _form_part_elements(elem) or [elem]
+        for annotation in annotations:
+            phon = annotation.get("phon") or ""
+            phon_idx = annotation.get("phon_index")
+            if phon and phon_idx:
+                phon = f"{phon};@{phon_idx}"
+            form = annotation.get("form") or ""
+            fields: list[str] = list(node_path)
+            if emb_lemma:
+                fields.append(emb_lemma)
+            if phon:
+                fields.append(phon)
+            if form:
+                fields.append(form)
+            out.append(CorpusLine(fields))
     else:
         child_prefix = node_path + ([emb_lemma] if emb_lemma else [])
         for child in children:

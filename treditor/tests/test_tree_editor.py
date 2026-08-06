@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from urllib.parse import urlencode
 
 import pytest
@@ -344,6 +345,86 @@ def test_tgrep_search_supports_bracketed_same_node_predicates(client):
     assert existing.get_json()["total"] > 0
 
 
+def test_multipart_word_is_one_node_and_component_search_stays_correlated(client):
+    tree = client.get(
+        "/api/utterances/trees/MYS_04/MYS.4.619/tree"
+    ).get_json()
+    ipaku = next(
+        node for node in walk(tree["roots"])
+        if node.get("form") == "ipaku" and node.get("lemma") == "L030199a"
+    )
+    assert ipaku["tag"] == "VB-NML"
+    assert ipaku["parts"] == [
+        {"form": "ipa", "phon": "LOG"},
+        {"form": "ku", "phon": "PHON"},
+    ]
+    assert "children" not in ipaku
+
+    ordinary = client.get(
+        "/api/search",
+        query_string={
+            "q": "ipa",
+            "sources": "trees",
+            "fields": "word_forms",
+            "match": "exact",
+            "per_page": 100,
+        },
+    ).get_json()
+    ordinary_result = next(
+        result for result in ordinary["results"]
+        if result["sentence_id"] == "MYS.4.619"
+    )
+    assert ordinary_result["highlights"]["transcription"] == [
+        {"segment": 35, "start": 0, "end": 3}
+    ]
+    assert list(ordinary_result["tree_context"]["part_indexes"].values()) == [
+        [0]
+    ]
+
+    correlated = client.get(
+        "/api/tgrep",
+        query_string={
+            "q": "[form=ipa & phon=LOG]",
+            "sources": "trees",
+            "per_page": 100,
+        },
+    ).get_json()
+    result = next(
+        item for item in correlated["results"]
+        if item["sentence_id"] == "MYS.4.619"
+    )
+    assert result["highlights"]["transcription"] == [
+        {"segment": 35, "start": 0, "end": 3}
+    ]
+
+    wrong_script = client.get(
+        "/api/tgrep",
+        query_string={
+            "q": "[form=ipa & phon=PHON]",
+            "sources": "trees",
+            "per_page": 100,
+        },
+    ).get_json()
+    assert all(
+        item["sentence_id"] != "MYS.4.619"
+        for item in wrong_script["results"]
+    )
+
+    complete = client.get(
+        "/api/tgrep",
+        query_string={
+            "q": "form=ipaku", "sources": "trees", "per_page": 100,
+        },
+    ).get_json()
+    complete_result = next(
+        item for item in complete["results"]
+        if item["sentence_id"] == "MYS.4.619"
+    )
+    assert complete_result["highlights"]["transcription"] == [
+        {"segment": 35, "start": 0, "end": 6}
+    ]
+
+
 def test_tgrep_bracketed_predicates_return_clear_syntax_errors(client):
     missing_bracket = client.get(
         "/api/tgrep?" + urlencode({"q": "[form=no & phon=PHON"})
@@ -670,3 +751,15 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert ".dictionary-result-kana" in css
     assert "color: #4d596f" in css
     assert ".corpus-search-kanji" in css
+
+
+def test_javascript_literal_dom_references_exist_and_multipart_editor_is_wired(client):
+    html = client.get("/").get_data(as_text=True)
+    javascript = client.get("/static/app.js").get_data(as_text=True)
+    html_ids = set(re.findall(r'id="([^"]+)"', html))
+    literal_references = set(re.findall(r'\$\("([^"]+)"\)', javascript))
+
+    assert literal_references <= html_ids
+    assert {"node-simple-fields", "node-parts-field", "node-parts"} <= html_ids
+    assert "node.parts.map" in javascript
+    assert "highlightedPartIndexes" in javascript

@@ -220,8 +220,12 @@
           </IP-ADV>
           <VB-INF lemma="L030536a" phon="LOG" form="kaywopi" />
           <P-TOP lemma="L000522" phon="LOG" form="pa" />
-          <VB-CSS lemma="L031840a" phon="LOG" form="yuke" />
-          <VB-CSS lemma="L031840a" phon="PHON" form="do" />
+          <VB-CSS lemma="L031840a" phon="" form="yukedo">
+            <form-parts>
+              <part phon="LOG" form="yuke" />
+              <part phon="PHON" form="do" />
+            </form-parts>
+          </VB-CSS>
           <NP-PRD>
             <IP-REL>
               <PP-SBJ>
@@ -230,8 +234,12 @@
                 </NP>
                 <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
               </PP-SBJ>
-              <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-              <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+              <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+                <form-parts>
+                  <part phon="LOG" form="kwopu" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VB-ADN>
             </IP-REL>
             <N lemma="L004266" phon="LOG" form="kimi" />
           </NP-PRD>
@@ -273,8 +281,12 @@
                 </NP>
                 <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
               </PP-SBJ>
-              <VB-ADN lemma="L030022a" phon="LOG" form="aku" />
-              <VB-ADN lemma="L030022a" phon="PHON" form="ru" />
+              <VB-ADN lemma="L030022a" phon="" form="akuru">
+                <form-parts>
+                  <part phon="LOG" form="aku" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VB-ADN>
             </IP-REL>
             <DVN lemma="L030589b" phon="PHON" form="kipami" />
           </NP-ADV>
@@ -394,8 +406,12 @@
         <P-RES lemma="L000526a" phon="PHON" form="si" />
         <VB-PRV>
           <VB-STM lemma="L030125a" phon="LOG" form="ara" />
-          <VAX-NEG-PRV lemma="L000006a" phon="LOG" form="ne" />
-          <VAX-NEG-PRV lemma="L000006a" phon="PHON" form="ba" />
+          <VAX-NEG-PRV lemma="L000006a" phon="" form="neba">
+            <form-parts>
+              <part phon="LOG" form="ne" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </VAX-NEG-PRV>
         </VB-PRV>
       </IP-ADV>
     </CP-FINAL>
@@ -525,8 +541,12 @@
           <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
         </PP-SBJ>
         <VB-INF lemma="L030731a" phon="LOG" form="kwopwi" />
-        <VB-PGS-PRV lemma="L031957a" phon="LOG" form="wore" />
-        <VB-PGS-PRV lemma="L031957a" phon="PHON" form="ba" />
+        <VB-PGS-PRV lemma="L031957a" phon="" form="woreba">
+          <form-parts>
+            <part phon="LOG" form="wore" />
+            <part phon="PHON" form="ba" />
+          </form-parts>
+        </VB-PGS-PRV>
         <NP-OB1>
           <PP index="1" inferred_index="1">
             <NP>
@@ -542,8 +562,12 @@
           </PP>
           <N lemma="L050031" phon="LOG" form="sudare" />
         </NP-OB1>
-        <VB-INF lemma="L030247a" phon="LOG" form="ugwoka" />
-        <VB-INF lemma="L030247a" phon="PHON" form="si" />
+        <VB-INF lemma="L030247a" phon="" form="ugwokasi">
+          <form-parts>
+            <part phon="LOG" form="ugwoka" />
+            <part phon="PHON" form="si" />
+          </form-parts>
+        </VB-INF>
       </IP-ADV>
       <NP-SBJ>
         <PP>
@@ -599,14 +623,22 @@
               <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
               <P-RES lemma="L000502" phon="PHON" form="dani" />
             </PP-OB1>
-            <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-            <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+            <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+              <form-parts>
+                <part phon="LOG" form="kwopu" />
+                <part phon="PHON" form="ru" />
+              </form-parts>
+            </VB-ADN>
           </IP-NMZ>
           <P-TOP lemma="L000522" phon="PHON" form="pa" />
         </PP-ARG>
         <ADJ-CLS>
-          <ADJ-STM lemma="L007025" phon="LOG" form="tomo" />
-          <ADJ-STM lemma="L007025" phon="PHON" form="si" />
+          <ADJ-STM lemma="L007025" phon="" form="tomosi">
+            <form-parts>
+              <part phon="LOG" form="tomo" />
+              <part phon="PHON" form="si" />
+            </form-parts>
+          </ADJ-STM>
         </ADJ-CLS>
       </IP-MAT>
       <IP-MAT index="2">
@@ -626,8 +658,12 @@
             <P-COMP lemma="L000530" phon="PHON" form="to" />
             <P-RES lemma="L000526a" phon="PHON" form="si" />
           </IP-ARG>
-          <VB-CND lemma="L031644a" phon="LOG" form="mata" />
-          <VB-CND lemma="L031644a" phon="PHON" form="ba" />
+          <VB-CND lemma="L031644a" phon="" form="mataba">
+            <form-parts>
+              <part phon="LOG" form="mata" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </VB-CND>
         </IP-ADV>
         <PP-OB1>
           <NP>
@@ -768,8 +804,12 @@
               <NP>
                 <PP>
                   <NP>
-                    <N lemma="L051146" phon="PHON" form="itu" />
-                    <N lemma="L051146" phon="LOG" form="mo" />
+                    <N lemma="L051146" phon="" form="itumo">
+                      <form-parts>
+                        <part phon="PHON" form="itu" />
+                        <part phon="LOG" form="mo" />
+                      </form-parts>
+                    </N>
                   </NP>
                   <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
                 </PP>
@@ -811,8 +851,12 @@
       </CP-FINAL>
       <IP-MAT>
         <ADJ-EXC>
-          <ADJ-STM lemma="L007193" phon="LOG" form="toki" />
-          <ADJ-STM lemma="L007193" phon="PHON" form="zi" />
+          <ADJ-STM lemma="L007193" phon="" form="tokizi">
+            <form-parts>
+              <part phon="LOG" form="toki" />
+              <part phon="PHON" form="zi" />
+            </form-parts>
+          </ADJ-STM>
           <ACP-STM lemma="L000033" phon="PHON" form="kye" />
           <VAX-CJR-EXC lemma="L000002" phon="PHON" form="me" />
         </ADJ-EXC>
@@ -1144,8 +1188,12 @@
         </NP>
         <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
       </PP-OB2>
-      <VB-GER lemma="L030327a" phon="LOG" form="oki" />
-      <VB-GER lemma="L030327a" phon="PHON" form="te" />
+      <VB-GER lemma="L030327a" phon="" form="okite">
+        <form-parts>
+          <part phon="LOG" form="oki" />
+          <part phon="PHON" form="te" />
+        </form-parts>
+      </VB-GER>
     </IP-MAT>
   </block>
   <block id="MYS.4.496" header="mikumanwo no ura no pamayupu momopye nasu kokoro pa mopedo tadani apanu kamo">
@@ -1921,8 +1969,12 @@
     <multi-sentence>
       <IP-MAT index="1" inferred_index="1">
         <NP-ADV>
-          <ADV lemma="L004026" phon="LOG" form="imasara" />
-          <ADV lemma="L004026" phon="NLOG" form="ni" />
+          <ADV lemma="L004026" phon="" form="imasarani">
+            <form-parts>
+              <part phon="LOG" form="imasara" />
+              <part phon="NLOG" form="ni" />
+            </form-parts>
+          </ADV>
         </NP-ADV>
         <PP-OB1>
           <NP>
@@ -1960,8 +2012,12 @@
           <VAX-PRF-STM lemma="L000018" phon="PHON" form="ni" />
           <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-MAT>
     </multi-sentence>
   </block>
@@ -2534,9 +2590,13 @@
                 </NP>
                 <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
               </PP>
-              <VB-ADC lemma="L080379a" phon="PHON" form="sa" />
-              <VB-ADC lemma="L080379a" phon="LOG" form="ni" />
-              <VB-ADC lemma="L080379a" phon="PHON" form="turapu" />
+              <VB-ADC lemma="L080379a" phon="" form="saniturapu">
+                <form-parts>
+                  <part phon="PHON" form="sa" />
+                  <part phon="LOG" form="ni" />
+                  <part phon="PHON" form="turapu" />
+                </form-parts>
+              </VB-ADC>
             </IP-REL>
             <N lemma="L051763" phon="LOG" form="pimo" />
           </NP-OB1>
@@ -2609,8 +2669,12 @@
                       </NP>
                       <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
                     </PP-SBJ>
-                    <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-                    <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+                    <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+                      <form-parts>
+                        <part phon="LOG" form="kwopu" />
+                        <part phon="PHON" form="ru" />
+                      </form-parts>
+                    </VB-ADN>
                   </IP-NMZ-ARG>
                   <PP>
                     <NP>
@@ -2682,8 +2746,12 @@
             </PP>
             <VB-ADN>
               <VB-STM lemma="L031055a" phon="PHON" form="tanabik" />
-              <VAX-STV-ADN lemma="L000024" phon="LOG" form="ye" />
-              <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+              <VAX-STV-ADN lemma="L000024" phon="" form="yeru">
+                <form-parts>
+                  <part phon="LOG" form="ye" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VAX-STV-ADN>
             </VB-ADN>
           </IP-REL>
           <N lemma="L050343">
@@ -2741,8 +2809,12 @@
             </NP>
             <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
           </PP>
-          <VB-CTT lemma="L031712a" phon="LOG" form="mi" />
-          <VB-CTT lemma="L031712a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L031712a" phon="" form="mitutu">
+            <form-parts>
+              <part phon="LOG" form="mi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
           <PP-ADV>
             <NP>
               <N lemma="L080052">
@@ -2817,8 +2889,12 @@
           </VB-INF>
           <PP-OB1-PTH>
             <NP>
-              <PLN lemma="L051094" phon="PHON-KUN" form="inabi" />
-              <PLN lemma="L051094" phon="PHON-ON" form="tuma" />
+              <PLN lemma="L051094" phon="" form="inabituma">
+                <form-parts>
+                  <part phon="PHON-KUN" form="inabi" />
+                  <part phon="PHON-ON" form="tuma" />
+                </form-parts>
+              </PLN>
               <N lemma="L090037">
                 <N lemma="L050108" phon="LOG" form="ura" />
                 <DVN lemma="L031713b" phon="PHON" form="mwi" />
@@ -3298,8 +3374,12 @@
                     <P-CASE-GEN lemma="L000503" phon="LOG" form="ga" />
                   </PP-SBJ>
                   <VB-ADN>
-                    <VB-STM lemma="L030678a" phon="LOG" form="kye" />
-                    <VB-STM lemma="L030678a" phon="PHON" form="s" />
+                    <VB-STM lemma="L030678a" phon="" form="kyes">
+                      <form-parts>
+                        <part phon="LOG" form="kye" />
+                        <part phon="PHON" form="s" />
+                      </form-parts>
+                    </VB-STM>
                     <VAX-STV-ADN lemma="L000024" phon="PHON" form="eru" />
                   </VB-ADN>
                 </IP-REL>
@@ -3493,8 +3573,12 @@
                 </IP-ARG>
                 <VB-ADN>
                   <VB-STM lemma="L031888a" phon="LOG" form="yor" />
-                  <VAX-STV-ADN lemma="L000024" phon="NLOG" form="e" />
-                  <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+                  <VAX-STV-ADN lemma="L000024" phon="" form="eru">
+                    <form-parts>
+                      <part phon="NLOG" form="e" />
+                      <part phon="PHON" form="ru" />
+                    </form-parts>
+                  </VAX-STV-ADN>
                 </VB-ADN>
               </IP-REL>
               <N lemma="L090044" phon="LOG" form="ito" />
@@ -4124,8 +4208,12 @@
     </raw-text>
     <IP-MAT>
       <NP>
-        <N lemma="L050521" phon="PHON-KUN" form="musi" />
-        <N lemma="L050521" phon="LOG" form="busuma" />
+        <N lemma="L050521" phon="" form="musibusuma">
+          <form-parts>
+            <part phon="PHON-KUN" form="musi" />
+            <part phon="LOG" form="busuma" />
+          </form-parts>
+        </N>
       </NP>
       <IP-ADV>
         <IP-ADV>
@@ -4429,8 +4517,12 @@
           <P-COMP lemma="L000530" phon="NLOG" form="to" />
         </IP-ARG>
         <VB-ADC lemma="L030199a" phon="LOG" form="ipu" />
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-ADV>
     </CP-FINAL>
   </block>
@@ -4473,8 +4565,12 @@
                 <NP>
                   <IP-REL>
                     <NP-SBJ>
-                      <N lemma="L050674" phon="PHON-KUN" form="ti" />
-                      <N lemma="L050674" phon="LOG" form="dori" />
+                      <N lemma="L050674" phon="" form="tidori">
+                        <form-parts>
+                          <part phon="PHON-KUN" form="ti" />
+                          <part phon="LOG" form="dori" />
+                        </form-parts>
+                      </N>
                     </NP-SBJ>
                     <VB-ADC lemma="L031267a" phon="LOG" form="naku" />
                   </IP-REL>
@@ -4504,8 +4600,12 @@
             <N lemma="L051727" phon="LOG" form="pasi" />
           </N>
         </NP-OB1>
-        <VB-ADC lemma="L031908a" phon="LOG" form="wata" />
-        <VB-ADC lemma="L031908a" phon="PHON" form="su" />
+        <VB-ADC lemma="L031908a" phon="" form="watasu">
+          <form-parts>
+            <part phon="LOG" form="wata" />
+            <part phon="PHON" form="su" />
+          </form-parts>
+        </VB-ADC>
       </IP-SUB>
       <IP-ADV>
         <IP-ARG>
@@ -4923,8 +5023,12 @@
               <IP-NMZ>
                 <VB-ADC lemma="L030020a" phon="LOG" form="aku" />
               </IP-NMZ>
-              <P-RES lemma="L000512b" phon="LOG" form="made" />
-              <P-RES lemma="L000512b" phon="PHON" form="ni" />
+              <P-RES lemma="L000512b" phon="" form="madeni">
+                <form-parts>
+                  <part phon="LOG" form="made" />
+                  <part phon="PHON" form="ni" />
+                </form-parts>
+              </P-RES>
             </PP-ADV>
             <PP-SBJ>
               <NP>
@@ -5108,8 +5212,12 @@
             <ADJ-NML>
               <ADJ-STM lemma="L007002" phon="LOG" form="yasu" />
               <ACP-STM lemma="L000033" phon="LOG" form="kye" />
-              <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-              <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+              <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+                <form-parts>
+                  <part phon="LOG" form="na" />
+                  <part phon="PHON" form="ku" />
+                </form-parts>
+              </VAX-NEG-NML>
             </ADJ-NML>
           </IP-NMZ-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -5124,8 +5232,12 @@
           <ADJ-STM lemma="L007096" phon="LOG" form="kurusi" />
           <ACP-ADN lemma="L000033" phon="NLOG" form="ki" />
         </ADJ-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-MAT>
       <IP-MAT index="2">
         <NP-PRD>
@@ -5141,8 +5253,12 @@
           <N lemma="L050115" phon="LOG" form="kumo" />
         </NP-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
-        <P-FNL-DES lemma="L000515" phon="PHON" form="mo" />
-        <P-FNL-DES lemma="L000515" phon="LOG" form="ga" />
+        <P-FNL-DES lemma="L000515" phon="" form="moga">
+          <form-parts>
+            <part phon="PHON" form="mo" />
+            <part phon="LOG" form="ga" />
+          </form-parts>
+        </P-FNL-DES>
         <P-TOP lemma="L000514" phon="LOG" form="mo" />
       </IP-MAT>
       <IP-MAT index="1" inferred_index="1">
@@ -5156,8 +5272,12 @@
           <N lemma="L050970" phon="LOG" form="tori" />
         </NP-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
-        <P-FNL-DES lemma="L000515" phon="PHON" form="mo" />
-        <P-FNL-DES lemma="L000515" phon="LOG" form="ga" />
+        <P-FNL-DES lemma="L000515" phon="" form="moga">
+          <form-parts>
+            <part phon="PHON" form="mo" />
+            <part phon="LOG" form="ga" />
+          </form-parts>
+        </P-FNL-DES>
         <P-TOP lemma="L000514" phon="LOG" form="mo" />
       </IP-MAT>
       <IP-MAT index="4">
@@ -5479,8 +5599,12 @@
           </PP-SBJ>
           <ADJ-CND>
             <ADJ-STM lemma="L007028" phon="PHON" form="na" />
-            <ACP-CND lemma="L000033" phon="PHON" form="ku" />
-            <ACP-CND lemma="L000033" phon="LOG" form="pa" />
+            <ACP-CND lemma="L000033" phon="" form="kupa">
+              <form-parts>
+                <part phon="PHON" form="ku" />
+                <part phon="LOG" form="pa" />
+              </form-parts>
+            </ACP-CND>
           </ADJ-CND>
         </IP-ADV>
         <VB-CLS>
@@ -5715,8 +5839,12 @@
           <P-FOC lemma="L000506" phon="PHON" form="ka" />
           <P-COMP lemma="L000530" phon="PHON" form="to" />
         </IP-ARG>
-        <VB-PRV lemma="L030399a" phon="LOG" form="omope" />
-        <VB-PRV lemma="L030399a" phon="PHON" form="ba" />
+        <VB-PRV lemma="L030399a" phon="" form="omopeba">
+          <form-parts>
+            <part phon="LOG" form="omope" />
+            <part phon="PHON" form="ba" />
+          </form-parts>
+        </VB-PRV>
         <P-FOC lemma="L000506" phon="PHON" form="ka" />
       </IP-ADV>
       <NP-SBJ>
@@ -5831,8 +5959,12 @@
             <N lemma="L004025" phon="LOG" form="ima" />
           </NP-PRD>
           <COP-IFC>
-            <COP-STM lemma="L031966" phon="NLOG" form="n" />
-            <COP-STM lemma="L031966" phon="LOG" form="ara" />
+            <COP-STM lemma="L031966" phon="" form="nara">
+              <form-parts>
+                <part phon="NLOG" form="n" />
+                <part phon="LOG" form="ara" />
+              </form-parts>
+            </COP-STM>
             <VAX-NEG-IFC lemma="L000006a" phon="LOG" form="zu" />
           </COP-IFC>
           <P-CONN lemma="L000531" phon="PHON" form="tomo" />
@@ -5913,8 +6045,12 @@
           <P-COMP lemma="L000530" phon="PHON" form="to" />
         </IP-ARG>
         <VB-CLS>
-          <VB-STM lemma="L031091a" phon="PHON" form="tayu" />
-          <VB-STM lemma="L031091a" phon="PHON" phon_index="2" form="tapi" />
+          <VB-STM lemma="L031091a" phon="" form="tayutapi">
+            <form-parts>
+              <part phon="PHON" form="tayu" />
+              <part phon="PHON" phon_index="2" form="tapi" />
+            </form-parts>
+          </VB-STM>
           <VAX-PRF-CLS lemma="L000018" phon="PHON" form="nu" />
         </VB-CLS>
         <XTN-CLS lemma="L000806" phon="PHON" form="rasi" />
@@ -6193,8 +6329,12 @@
           <IP-EPT>
             <MK lemma="L091055">
               <N lemma="L052078" phon="LOG" form="tama" index="1" inferred_index="1" />
-              <N index="2" lemma="L050583" phon="LOG" form="ta" />
-              <N index="2" lemma="L050583" phon="PHON-KUN" form="suki" />
+              <N index="2" lemma="L050583" phon="" form="tasuki">
+                <form-parts>
+                  <part phon="LOG" form="ta" />
+                  <part phon="PHON-KUN" form="suki" />
+                </form-parts>
+              </N>
             </MK>
           </IP-EPT>
           <PP-OB1>
@@ -6203,8 +6343,12 @@
             </NP>
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP-OB1>
-          <VB-CTT lemma="L031712a" phon="LOG" form="mi" />
-          <VB-CTT lemma="L031712a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L031712a" phon="" form="mitutu">
+            <form-parts>
+              <part phon="LOG" form="mi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
           <PP-OB1-GOL>
             <NP>
               <IP-EPT>
@@ -6506,8 +6650,12 @@
         <VB-STM lemma="L030125a" phon="LOG" form="ara" />
         <VAX-SJV-ADC lemma="L000004" phon="PHON" form="masi" />
       </VB-ADC>
-      <P-CONN lemma="L000516" phon="LOG" form="mono" />
-      <P-CONN lemma="L000516" phon="PHON" form="wo" />
+      <P-CONN lemma="L000516" phon="" form="monowo">
+        <form-parts>
+          <part phon="LOG" form="mono" />
+          <part phon="PHON" form="wo" />
+        </form-parts>
+      </P-CONN>
     </IP-MAT>
   </block>
   <block id="MYS.4.545" header="wa ga sekwo ga atwo pumimotome opiyukaba kwi no sekimori i todometemu kamo">
@@ -6751,8 +6899,12 @@
                             </NP>
                             <P-RES lemma="L000521" phon="LOG" form="nomwi" />
                           </PP>
-                          <VB-CTT lemma="L031712a" phon="LOG" form="mi" />
-                          <VB-CTT lemma="L031712a" phon="PHON" form="tutu" />
+                          <VB-CTT lemma="L031712a" phon="" form="mitutu">
+                            <form-parts>
+                              <part phon="LOG" form="mi" />
+                              <part phon="PHON" form="tutu" />
+                            </form-parts>
+                          </VB-CTT>
                         </IP-ADV>
                         <VB-ADC>
                           <VB-STM lemma="L030718a">
@@ -6952,8 +7104,12 @@
         <VAX-PRF-STM lemma="L000018" phon="PHON" form="ni" />
         <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
       </VB-ADN>
-      <P-CONN lemma="L000516" phon="LOG" form="mono" />
-      <P-CONN lemma="L000516" phon="PHON" form="wo" />
+      <P-CONN lemma="L000516" phon="" form="monowo">
+        <form-parts>
+          <part phon="LOG" form="mono" />
+          <part phon="PHON" form="wo" />
+        </form-parts>
+      </P-CONN>
     </IP-MAT>
   </block>
   <block id="MYS.4.548" header="koyopi no payaku akenaba subye wo nami aki no momoywo wo negapituru kamo">
@@ -7204,8 +7360,12 @@
           </IP-ADV>
           <VB-ADC lemma="L030071a" phon="LOG" form="apu" />
         </IP-NMZ>
-        <P-RES lemma="L000512b" phon="LOG" form="made" />
-        <P-RES lemma="L000512b" phon="PHON" form="ni" />
+        <P-RES lemma="L000512b" phon="" form="madeni">
+          <form-parts>
+            <part phon="LOG" form="made" />
+            <part phon="PHON" form="ni" />
+          </form-parts>
+        </P-RES>
       </PP-ADV>
     </CP-FINAL>
   </block>
@@ -7453,8 +7613,12 @@
           <NP-OB1>
             <_T_ raw_tag="*T*" phon="" form="" />
           </NP-OB1>
-          <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-          <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+          <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+            <form-parts>
+              <part phon="LOG" form="kwopu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VB-ADN>
         </IP-REL>
         <N lemma="L050042" phon="LOG" form="mono" />
       </NP-PRD>
@@ -7862,8 +8026,12 @@
         </PP-OB1>
         <VB-NML>
           <VB-STM lemma="L030071a" phon="LOG" form="apa" />
-          <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-          <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+          <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+            <form-parts>
+              <part phon="LOG" form="na" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VAX-NEG-NML>
         </VB-NML>
       </IP-NMZ-PRD>
       <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -7918,8 +8086,12 @@
           <VB-STM index="2" lemma="L030612a" phon="LOG" form="ko" />
           <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-ADV>
       <PP-ADV>
         <NP>
@@ -7948,8 +8120,12 @@
       </PP-SBJ>
       <VB-ADN>
         <VB-STM lemma="L030071a" phon="LOG" form="ap" />
-        <VAX-STV-ADN lemma="L000024" phon="LOG" form="ye" />
-        <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+        <VAX-STV-ADN lemma="L000024" phon="" form="yeru">
+          <form-parts>
+            <part phon="LOG" form="ye" />
+            <part phon="PHON" form="ru" />
+          </form-parts>
+        </VAX-STV-ADN>
       </VB-ADN>
       <P-FNL-MPH lemma="L000507" phon="PHON" form="kamo" />
     </IP-MAT>
@@ -8600,8 +8776,12 @@
             <ACP-INF lemma="L000033" phon="NLOG" form="ku" />
           </ADJ-INF>
         </IP-ADV>
-        <VB-IMP lemma="L030919a" phon="LOG" form="se" />
-        <VB-IMP lemma="L030919a" phon="PHON" form="yo" />
+        <VB-IMP lemma="L030919a" phon="" form="seyo">
+          <form-parts>
+            <part phon="LOG" form="se" />
+            <part phon="PHON" form="yo" />
+          </form-parts>
+        </VB-IMP>
       </IP-MAT>
       <CP-FINAL>
         <IP-SUB>
@@ -8704,8 +8884,12 @@
           </PP-SBJ>
           <VB-ADN>
             <VB-STM lemma="L030399a" phon="LOG" form="mop" />
-            <VAX-STV-ADN lemma="L000024" phon="LOG" form="ye" />
-            <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+            <VAX-STV-ADN lemma="L000024" phon="" form="yeru">
+              <form-parts>
+                <part phon="LOG" form="ye" />
+                <part phon="PHON" form="ru" />
+              </form-parts>
+            </VAX-STV-ADN>
           </VB-ADN>
         </IP-REL>
         <N lemma="L004266" phon="PHON" form="kimi" />
@@ -9025,8 +9209,12 @@
         </NP>
         <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
       </PP>
-      <VB-CTT lemma="L030826a" phon="PHON" form="sabwi" />
-      <VB-CTT lemma="L030826a" phon="LOG" form="tutu" />
+      <VB-CTT lemma="L030826a" phon="" form="sabwitutu">
+        <form-parts>
+          <part phon="PHON" form="sabwi" />
+          <part phon="LOG" form="tutu" />
+        </form-parts>
+      </VB-CTT>
       <VB-ADC>
         <VB-PGS-STM lemma="L031957a" phon="LOG" form="wora" />
         <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
@@ -9080,8 +9268,12 @@
         <IP-ADV>
           <VB-INF lemma="L030508a" phon="LOG" form="kapari" />
         </IP-ADV>
-        <VB-GER lemma="L030907a" phon="LOG" form="sira" />
-        <VB-GER lemma="L030907a" phon="PHON" form="kete" />
+        <VB-GER lemma="L030907a" phon="" form="sirakete">
+          <form-parts>
+            <part phon="LOG" form="sira" />
+            <part phon="PHON" form="kete" />
+          </form-parts>
+        </VB-GER>
         <P-TOP lemma="L000514" phon="PHON" form="mo" />
       </IP-ADV>
       <NP-SBJ>
@@ -9345,8 +9537,12 @@
           <VB-STM lemma="L030399a" phon="LOG" form="omopi" />
           <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-MAT>
     </multi-sentence>
   </block>
@@ -9491,8 +9687,12 @@
                 </ADJ-INF>
               </IP-ADV>
               <VB-ADC>
-                <VB-STM lemma="L030949a" phon="LOG" form="suma" />
-                <VB-STM lemma="L030949a" phon="PHON" form="pa" />
+                <VB-STM lemma="L030949a" phon="" form="sumapa">
+                  <form-parts>
+                    <part phon="LOG" form="suma" />
+                    <part phon="PHON" form="pa" />
+                  </form-parts>
+                </VB-STM>
                 <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
               </VB-ADC>
               <P-COMP lemma="L000530" phon="PHON" form="to" />
@@ -9868,8 +10068,12 @@
       <IP-ADV>
         <IP-EPT>
           <MK lemma="L090388">
-            <N lemma="L090383" phon="PHON" form="tukwi" />
-            <N lemma="L090383" phon="LOG" form="kusa" />
+            <N lemma="L090383" phon="" form="tukwikusa">
+              <form-parts>
+                <part phon="PHON" form="tukwi" />
+                <part phon="LOG" form="kusa" />
+              </form-parts>
+            </N>
             <COP-ADI lemma="L031965" phon="LOG" form="no" />
           </MK>
         </IP-EPT>
@@ -10135,8 +10339,12 @@
           </NP>
           <P-RES lemma="L000521" phon="LOG" form="nomwi" />
         </PP-ADV>
-        <VB-CND lemma="L030731a" phon="LOG" form="kwopwi" />
-        <VB-CND lemma="L030731a" phon="PHON" form="ba" />
+        <VB-CND lemma="L030731a" phon="" form="kwopwiba">
+          <form-parts>
+            <part phon="LOG" form="kwopwi" />
+            <part phon="PHON" form="ba" />
+          </form-parts>
+        </VB-CND>
       </IP-ADV>
       <IP-ARG>
         <ADJ-INF>
@@ -10192,12 +10400,20 @@
             </PP>
             <N lemma="L090071" phon="LOG" form="katami" />
           </NP-OB1>
-          <VB-CTT lemma="L031712a" phon="LOG" form="mi" />
-          <VB-CTT lemma="L031712a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L031712a" phon="" form="mitutu">
+            <form-parts>
+              <part phon="LOG" form="mi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
         </IP-ADV>
         <VB-IMP>
-          <VB-STM lemma="L030886a" phon="LOG" form="sinwo" />
-          <VB-STM lemma="L030886a" phon="PHON" form="pa" />
+          <VB-STM lemma="L030886a" phon="" form="sinwopa">
+            <form-parts>
+              <part phon="LOG" form="sinwo" />
+              <part phon="PHON" form="pa" />
+            </form-parts>
+          </VB-STM>
           <VAX-RSP-IMP lemma="L000009" phon="PHON" form="se" />
         </VB-IMP>
       </IP-MAT>
@@ -10397,8 +10613,12 @@
         <P-TOP lemma="L000522" phon="LOG" form="pa" />
       </PP-SBJ>
       <IP-ADV>
-        <VB-CSS lemma="L031644a" phon="LOG" form="mate" />
-        <VB-CSS lemma="L031644a" phon="PHON" form="do" />
+        <VB-CSS lemma="L031644a" phon="" form="matedo">
+          <form-parts>
+            <part phon="LOG" form="mate" />
+            <part phon="PHON" form="do" />
+          </form-parts>
+        </VB-CSS>
       </IP-ADV>
       <VB-ADN>
         <VB-STM lemma="L030612a" phon="LOG" form="ko" />
@@ -10456,8 +10676,12 @@
         </PP-SBJ>
         <VB-PRV>
           <VB-STM lemma="L031512a" phon="LOG" form="pe" />
-          <VAX-PRF-PRV lemma="L000018" phon="PHON-KUN" form="nure" />
-          <VAX-PRF-PRV lemma="L000018" phon="LOG" form="ba" />
+          <VAX-PRF-PRV lemma="L000018" phon="" form="nureba">
+            <form-parts>
+              <part phon="PHON-KUN" form="nure" />
+              <part phon="LOG" form="ba" />
+            </form-parts>
+          </VAX-PRF-PRV>
         </VB-PRV>
         <PP>
           <NP>
@@ -11216,8 +11440,12 @@
           </IP-REL>
           <N lemma="L050046" phon="LOG" form="pito" />
         </NP-PRD>
-        <P-CONN lemma="L000539" phon="LOG" form="yuwe" />
-        <P-CONN lemma="L000539" phon="NLOG" form="ni" />
+        <P-CONN lemma="L000539" phon="" form="yuweni">
+          <form-parts>
+            <part phon="LOG" form="yuwe" />
+            <part phon="NLOG" form="ni" />
+          </form-parts>
+        </P-CONN>
         <NP-SBJ>
           <N lemma="L051102" phon="LOG" form="inoti" />
         </NP-SBJ>
@@ -11292,8 +11520,12 @@
               <COP-INF lemma="L031965" phon="PHON" form="ni" />
             </ADJ-INF>
           </IP-ADV>
-          <VB-ADN lemma="L031872a" phon="LOG" form="yosu" />
-          <VB-ADN lemma="L031872a" phon="PHON" form="ru" />
+          <VB-ADN lemma="L031872a" phon="" form="yosuru">
+            <form-parts>
+              <part phon="LOG" form="yosu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VB-ADN>
         </IP-REL>
         <N lemma="L050017" phon="LOG" form="nami" />
       </NP-ADV>
@@ -11381,8 +11613,12 @@
             </PP-SBJ>
             <VB-NML>
               <VB-STM lemma="L031571a" phon="LOG" form="pyedatara" />
-              <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-              <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+              <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+                <form-parts>
+                  <part phon="LOG" form="na" />
+                  <part phon="PHON" form="ku" />
+                </form-parts>
+              </VAX-NEG-NML>
             </VB-NML>
           </IP-NMZ-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -11467,8 +11703,12 @@
         <NP-PRD>
           <N lemma="L050196" phon="LOG" form="omokage" />
         </NP-PRD>
-        <COP-GER lemma="L031965" phon="PHON" form="ni" />
-        <COP-GER lemma="L031965" phon="LOG" form="site" />
+        <COP-GER lemma="L031965" phon="" form="nisite">
+          <form-parts>
+            <part phon="PHON" form="ni" />
+            <part phon="LOG" form="site" />
+          </form-parts>
+        </COP-GER>
       </IP-ADV>
     </CP-FINAL>
   </block>
@@ -11855,8 +12095,12 @@
                   </NP>
                   <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
                 </PP-SBJ>
-                <VB-IMP lemma="L031342a" phon="LOG" form="ne" />
-                <VB-IMP lemma="L031342a" phon="PHON" form="yo" />
+                <VB-IMP lemma="L031342a" phon="" form="neyo">
+                  <form-parts>
+                    <part phon="LOG" form="ne" />
+                    <part phon="PHON" form="yo" />
+                  </form-parts>
+                </VB-IMP>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-NMZ-PRD>
               <COP-ADI lemma="L031965" phon="PHON" form="no" />
@@ -12126,8 +12370,12 @@
           </NP>
           <P-CASE-GEN lemma="L000503" phon="LOG" form="ga" />
         </PP-SBJ>
-        <VB-CND lemma="L030206a" phon="PHON" form="i" />
-        <VB-CND lemma="L030206a" phon="LOG" form="masaba" />
+        <VB-CND lemma="L030206a" phon="" form="imasaba">
+          <form-parts>
+            <part phon="PHON" form="i" />
+            <part phon="LOG" form="masaba" />
+          </form-parts>
+        </VB-CND>
       </IP-ADV>
       <VB-CLS>
         <PFX-STV lemma="L000026" phon="LOG" form="ari" />
@@ -12172,8 +12420,12 @@
       <IP-ADV>
         <IP-ARG>
           <NP-ADV>
-            <ADV lemma="L004026" phon="LOG" form="imasara" />
-            <ADV lemma="L004026" phon="NLOG" form="ni" />
+            <ADV lemma="L004026" phon="" form="imasarani">
+              <form-parts>
+                <part phon="LOG" form="imasara" />
+                <part phon="NLOG" form="ni" />
+              </form-parts>
+            </ADV>
           </NP-ADV>
           <PP-OB1>
             <NP>
@@ -12341,8 +12593,12 @@
         </IP-ADV>
         <NP-ADV>
           <ADV>
-            <ADJ-STM lemma="L004039" phon="PHON" form="nama" />
-            <ADJ-STM lemma="L004039" phon="LOG" form="zipwi" />
+            <ADJ-STM lemma="L004039" phon="" form="namazipwi">
+              <form-parts>
+                <part phon="PHON" form="nama" />
+                <part phon="LOG" form="zipwi" />
+              </form-parts>
+            </ADJ-STM>
             <COP-INF lemma="L031965" phon="PHON" form="ni" />
           </ADV>
         </NP-ADV>
@@ -12431,8 +12687,12 @@
           </NP>
           <VB-ADC lemma="L031488a" phon="LOG" form="pitu" />
         </IP-NMZ>
-        <P-RES lemma="L000512b" phon="LOG" form="made" />
-        <P-RES lemma="L000512b" phon="PHON" form="ni" />
+        <P-RES lemma="L000512b" phon="" form="madeni">
+          <form-parts>
+            <part phon="LOG" form="made" />
+            <part phon="PHON" form="ni" />
+          </form-parts>
+        </P-RES>
       </PP-ADV>
       <PP-OB1>
         <NP>
@@ -12580,8 +12840,12 @@
             </PP-SBJ>
             <ADJ-NML>
               <ADJ-STM lemma="L007229" phon="LOG" form="wosi" />
-              <ACP-NML lemma="L000033" phon="LOG" form="kye" />
-              <ACP-NML lemma="L000033" phon="PHON" form="ku" />
+              <ACP-NML lemma="L000033" phon="" form="kyeku">
+                <form-parts>
+                  <part phon="LOG" form="kye" />
+                  <part phon="PHON" form="ku" />
+                </form-parts>
+              </ACP-NML>
             </ADJ-NML>
           </IP-NMZ>
           <P-TOP lemma="L000514" phon="PHON" form="mo" />
@@ -12616,9 +12880,13 @@
         </PP-SBJ>
         <VB-PRV>
           <VB-STM lemma="L031512a" phon="LOG" form="pe" />
-          <VAX-PRF-PRV lemma="L000018" phon="PHON-KUN" form="nu" />
-          <VAX-PRF-PRV lemma="L000018" phon="PHON-ON" form="re" />
-          <VAX-PRF-PRV lemma="L000018" phon="LOG" form="ba" />
+          <VAX-PRF-PRV lemma="L000018" phon="" form="nureba">
+            <form-parts>
+              <part phon="PHON-KUN" form="nu" />
+              <part phon="PHON-ON" form="re" />
+              <part phon="LOG" form="ba" />
+            </form-parts>
+          </VAX-PRF-PRV>
         </VB-PRV>
       </IP-ADV>
     </CP-FINAL>
@@ -12752,8 +13020,12 @@
             </NP-OB1>
             <VB-ADC lemma="L031880a" phon="LOG" form="ywobu" />
           </IP-REL>
-          <N lemma="L050674" phon="PHON-KUN" form="ti" />
-          <N lemma="L050674" phon="LOG" form="dori" />
+          <N lemma="L050674" phon="" form="tidori">
+            <form-parts>
+              <part phon="PHON-KUN" form="ti" />
+              <part phon="LOG" form="dori" />
+            </form-parts>
+          </N>
         </NP-SBJ>
         <PP>
           <NP>
@@ -13024,8 +13296,12 @@
             </NP>
             <P-CASE-GEN lemma="L000503" phon="LOG" form="ga" />
           </PP-SBJ>
-          <VB-GER lemma="L030568a" phon="LOG" form="kiko" />
-          <VB-GER lemma="L030568a" phon="PHON" form="site" />
+          <VB-GER lemma="L030568a" phon="" form="kikosite">
+            <form-parts>
+              <part phon="LOG" form="kiko" />
+              <part phon="PHON" form="site" />
+            </form-parts>
+          </VB-GER>
           <IP-ARG>
             <NP-SBJ>
               <N lemma="L050124a" phon="LOG" form="tosi" />
@@ -13272,9 +13548,13 @@
               <PP-SBJ>
                 <NP>
                   <IP-REL>
-                    <VB-ADC lemma="L030008a" phon="LOG" form="aka" />
-                    <VB-ADC lemma="L030008a" phon="PHON" form="ra" />
-                    <VB-ADC lemma="L030008a" phon="LOG" form="piku" />
+                    <VB-ADC lemma="L030008a" phon="" form="akarapiku">
+                      <form-parts>
+                        <part phon="LOG" form="aka" />
+                        <part phon="PHON" form="ra" />
+                        <part phon="LOG" form="piku" />
+                      </form-parts>
+                    </VB-ADC>
                   </IP-REL>
                   <N lemma="L050090" phon="LOG" form="pi" />
                 </NP>
@@ -13319,8 +13599,12 @@
                 </NP>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ARG>
-              <VB-NML lemma="L030199a" phon="LOG" form="ipa" />
-              <VB-NML lemma="L030199a" phon="PHON" form="ku" />
+              <VB-NML lemma="L030199a" phon="" form="ipaku">
+                <form-parts>
+                  <part phon="LOG" form="ipa" />
+                  <part phon="PHON" form="ku" />
+                </form-parts>
+              </VB-NML>
             </IP-NMZ>
             <P-TOP lemma="L000514" phon="PHON" form="mo" />
           </PP-ARG>
@@ -13344,8 +13628,12 @@
               </NP>
               <P-RES lemma="L000521" phon="LOG" form="nomwi" />
             </PP-OB1>
-            <VB-CTT lemma="L031267a" phon="LOG" form="naki" />
-            <VB-CTT lemma="L031267a" phon="PHON" form="tutu" />
+            <VB-CTT lemma="L031267a" phon="" form="nakitutu">
+              <form-parts>
+                <part phon="LOG" form="naki" />
+                <part phon="PHON" form="tutu" />
+              </form-parts>
+            </VB-CTT>
           </IP-ADV>
           <VB-INF lemma="L031089a">
             <PFX lemma="L000042" phon="LOG" form="ta" />
@@ -13419,8 +13707,12 @@
               <ACP-INF lemma="L000033" phon="NLOG" form="ku" />
             </ADJ-INF>
           </IP-ADV>
-          <VB-CTT lemma="L030199a" phon="LOG" form="ipi" />
-          <VB-CTT lemma="L030199a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L030199a" phon="" form="ipitutu">
+            <form-parts>
+              <part phon="LOG" form="ipi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
         </IP-ADV>
         <VB-CND>
           <VB-STM lemma="L031058a" phon="LOG" form="tanome" />
@@ -13440,8 +13732,12 @@
         <VB-STM lemma="L030071a" phon="LOG" form="apa" />
         <VAX-SJV-ADC lemma="L000004" phon="PHON" form="masi" />
       </VB-ADC>
-      <P-CONN lemma="L000516" phon="LOG" form="mono" />
-      <P-CONN lemma="L000516" phon="PHON" form="ka" />
+      <P-CONN lemma="L000516" phon="" form="monoka">
+        <form-parts>
+          <part phon="LOG" form="mono" />
+          <part phon="PHON" form="ka" />
+        </form-parts>
+      </P-CONN>
     </IP-MAT>
   </block>
   <block id="MYS.4.621" header="apida naku kwopure ni ka aramu kusamakura tabi n aru kimi ga ime ni si miyuru">
@@ -13661,8 +13957,12 @@
           <P-TOP lemma="L000522" phon="LOG" form="pa" />
         </PP-SBJ>
         <VB-CLS>
-          <VB-STM lemma="L031844a" phon="PHON" form="yu" />
-          <VB-STM lemma="L031844a" phon="LOG" form="turi" />
+          <VB-STM lemma="L031844a" phon="" form="yuturi">
+            <form-parts>
+              <part phon="PHON" form="yu" />
+              <part phon="LOG" form="turi" />
+            </form-parts>
+          </VB-STM>
           <VAX-PRF-CLS lemma="L000018" phon="PHON" form="nu" />
         </VB-CLS>
       </IP-MAT>
@@ -14162,8 +14462,12 @@
                   <N lemma="L052534" phon="LOG" form="ka" />
                 </N>
               </NP-SBJ>
-              <VB-ADN lemma="L030374a" phon="LOG" form="opu" />
-              <VB-ADN lemma="L030374a" phon="PHON" form="ru" />
+              <VB-ADN lemma="L030374a" phon="" form="opuru">
+                <form-parts>
+                  <part phon="LOG" form="opu" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VB-ADN>
             </IP-REL>
             <N lemma="L050041" phon="LOG" form="koto" />
           </NP>
@@ -14244,8 +14548,12 @@
       <IP-SUB>
         <IP-ADV>
           <NP-OB1>
-            <WH-N lemma="L042003" phon="PHON" form="na" />
-            <WH-N lemma="L042003" phon="LOG" form="ni" />
+            <WH-N lemma="L042003" phon="" form="nani">
+              <form-parts>
+                <part phon="PHON" form="na" />
+                <part phon="LOG" form="ni" />
+              </form-parts>
+            </WH-N>
           </NP-OB1>
           <VB-CLS lemma="L030919a" phon="LOG" form="su" />
           <P-CONN lemma="L000541" phon="NLOG" form="to" />
@@ -14259,8 +14567,12 @@
         </PP-SBJ>
         <VB-ADN>
           <VB-STM lemma="L030612a" phon="LOG" form="ki" />
-          <VAX-PRF-ADN lemma="L000023" phon="LOG" form="tu" />
-          <VAX-PRF-ADN lemma="L000023" phon="PHON" form="ru" />
+          <VAX-PRF-ADN lemma="L000023" phon="" form="turu">
+            <form-parts>
+              <part phon="LOG" form="tu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VAX-PRF-ADN>
         </VB-ADN>
       </IP-SUB>
       <IP-ADV>
@@ -14294,8 +14606,12 @@
           <VB-STM index="2" lemma="L030495a" phon="LOG" form="gate" />
           <VAX-NEG-INF lemma="L000006a" phon="NLOG" form="ni" />
         </VB-INF>
-        <VB-EXC lemma="L030919a" phon="LOG" form="su" />
-        <VB-EXC lemma="L030919a" phon="PHON" form="re" />
+        <VB-EXC lemma="L030919a" phon="" form="sure">
+          <form-parts>
+            <part phon="LOG" form="su" />
+            <part phon="PHON" form="re" />
+          </form-parts>
+        </VB-EXC>
       </IP-ADV>
     </CP-FINAL>
   </block>
@@ -14350,8 +14666,12 @@
                     <XTN-STM lemma="L000801" phon="LOG" form="be" />
                     <ACP-ADN lemma="L000033" phon="NLOG" form="ki" />
                   </XTN-ADN>
-                  <P-CONN lemma="L000516" phon="LOG" form="mono" />
-                  <P-CONN lemma="L000516" phon="PHON" form="wo" />
+                  <P-CONN lemma="L000516" phon="" form="monowo">
+                    <form-parts>
+                      <part phon="LOG" form="mono" />
+                      <part phon="PHON" form="wo" />
+                    </form-parts>
+                  </P-CONN>
                 </IP-ADV>
                 <PP-SBJ>
                   <NP>
@@ -14791,8 +15111,12 @@
           <N lemma="L052078" phon="LOG" form="tama" />
         </NP>
         <P-CASE-ACC lemma="L000534" phon="NLOG" form="wo" />
-        <P-FOC lemma="L000510" phon="LOG" form="ko" />
-        <P-FOC lemma="L000510" phon="PHON" form="so" />
+        <P-FOC lemma="L000510" phon="" form="koso">
+          <form-parts>
+            <part phon="LOG" form="ko" />
+            <part phon="PHON" form="so" />
+          </form-parts>
+        </P-FOC>
       </PP-OB1>
       <VB-EXC lemma="L030399a" phon="LOG" form="omope" />
     </IP-MAT>
@@ -15092,8 +15416,12 @@
         <NP-ADV>
           <PRO-ADV lemma="L042020" phon="LOG" form="kaku" />
         </NP-ADV>
-        <VB-EXC lemma="L030731a" phon="LOG" form="kwopu" />
-        <VB-EXC lemma="L030731a" phon="PHON" form="re" />
+        <VB-EXC lemma="L030731a" phon="" form="kwopure">
+          <form-parts>
+            <part phon="LOG" form="kwopu" />
+            <part phon="PHON" form="re" />
+          </form-parts>
+        </VB-EXC>
         <P-FOC lemma="L000510" phon="PHON" form="koso" />
         <PP>
           <NP>
@@ -15109,8 +15437,12 @@
         </PP>
         <VB-CTT lemma="L080531a">
           <VB-STM lemma="L031712a" phon="LOG" form="mi" />
-          <VAX-PASS-CTT lemma="L000011" phon="LOG" form="ye" />
-          <VAX-PASS-CTT lemma="L000011" phon="PHON" form="tutu" />
+          <VAX-PASS-CTT lemma="L000011" phon="" form="yetutu">
+            <form-parts>
+              <part phon="LOG" form="ye" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VAX-PASS-CTT>
         </VB-CTT>
       </IP-ADV>
       <VB-EXC>
@@ -15183,8 +15515,12 @@
               <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
               <P-FOC lemma="L000537" phon="PHON" form="ya" />
             </PP-ADV>
-            <VB-CTT lemma="L030731a" phon="LOG" form="kwopwi" />
-            <VB-CTT lemma="L030731a" phon="PHON" form="tutu" />
+            <VB-CTT lemma="L030731a" phon="" form="kwopwitutu">
+              <form-parts>
+                <part phon="LOG" form="kwopwi" />
+                <part phon="PHON" form="tutu" />
+              </form-parts>
+            </VB-CTT>
             <VB-ADC>
               <VB-PGS-STM lemma="L031957a" phon="LOG" form="wora" />
               <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
@@ -15197,8 +15533,12 @@
       <IP-NMZ-PRD>
         <VB-NML>
           <VB-STM lemma="L031512a" phon="LOG" form="pe" />
-          <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-          <VAX-NEG-NML lemma="L000006a" phon="PHON-KUN" form="ku" />
+          <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+            <form-parts>
+              <part phon="LOG" form="na" />
+              <part phon="PHON-KUN" form="ku" />
+            </form-parts>
+          </VAX-NEG-NML>
         </VB-NML>
       </IP-NMZ-PRD>
       <COP-INF lemma="L031965" phon="PHON-KUN" form="ni" />
@@ -15524,11 +15864,19 @@
             </NP>
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP-OB1>
-          <VB-NML lemma="L031857a" phon="LOG" form="yuru" />
-          <VB-NML lemma="L031857a" phon="PHON" form="saku" />
+          <VB-NML lemma="L031857a" phon="" form="yurusaku">
+            <form-parts>
+              <part phon="LOG" form="yuru" />
+              <part phon="PHON" form="saku" />
+            </form-parts>
+          </VB-NML>
         </IP-NMZ-OB1>
-        <VB-PRV lemma="L030399a" phon="LOG" form="mope" />
-        <VB-PRV lemma="L030399a" phon="PHON" form="ba" />
+        <VB-PRV lemma="L030399a" phon="" form="mopeba">
+          <form-parts>
+            <part phon="LOG" form="mope" />
+            <part phon="PHON" form="ba" />
+          </form-parts>
+        </VB-PRV>
       </IP-ADV>
     </CP-FINAL>
   </block>
@@ -15598,8 +15946,12 @@
           </NP>
           <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
         </PP>
-        <VB-INF lemma="L031735a" phon="LOG" form="muse" />
-        <VB-INF lemma="L031735a" phon="PHON" form="pi" />
+        <VB-INF lemma="L031735a" phon="" form="musepi">
+          <form-parts>
+            <part phon="LOG" form="muse" />
+            <part phon="PHON" form="pi" />
+          </form-parts>
+        </VB-INF>
       </IP-ADV>
       <PP-SBJ>
         <NP>
@@ -15674,8 +16026,12 @@
                     <ACP-INF lemma="L000033" phon="NLOG" form="ku" />
                   </ADJ-INF>
                 </IP-ADV>
-                <VB-ADC lemma="L031276a" phon="LOG" form="nage" />
-                <VB-ADC lemma="L031276a" phon="PHON" form="ku" />
+                <VB-ADC lemma="L031276a" phon="" form="nageku">
+                  <form-parts>
+                    <part phon="LOG" form="nage" />
+                    <part phon="PHON" form="ku" />
+                  </form-parts>
+                </VB-ADC>
               </IP-REL>
               <DVN lemma="L031276b" phon="LOG" form="nageki" />
             </NP>
@@ -16227,8 +16583,12 @@
           <VB-STM lemma="L031907a" phon="LOG" form="wasure" />
           <VAX-NEG-ADN lemma="L000006a" phon="LOG" form="nu" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
         <IP-ADV>
           <ADJ-INF>
             <ADJ-STM lemma="L004041" phon="LOG" form="tamasaka" />
@@ -16460,8 +16820,12 @@
           <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
           <P-TOP lemma="L000522" phon="LOG" form="pa" />
         </PP-OB1>
-        <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-        <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+        <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+          <form-parts>
+            <part phon="LOG" form="kwopu" />
+            <part phon="PHON" form="ru" />
+          </form-parts>
+        </VB-ADN>
       </IP-MAT>
       <IP-MAT index="2">
         <PP-SBJ>
@@ -16545,8 +16909,12 @@
               <VAX-PRF-STM lemma="L000023" phon="PHON" form="te" />
               <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
             </VB-ADN>
-            <P-CONN lemma="L000516" phon="LOG" form="mono" />
-            <P-CONN lemma="L000516" phon="PHON" form="wo" />
+            <P-CONN lemma="L000516" phon="" form="monowo">
+              <form-parts>
+                <part phon="LOG" form="mono" />
+                <part phon="PHON" form="wo" />
+              </form-parts>
+            </P-CONN>
           </IP-ADV>
           <IP-EPT>
             <MK lemma="L090668">
@@ -16624,13 +16992,21 @@
           <P-COMP lemma="L000530" phon="PHON" form="to" />
         </IP-ARG>
         <VB-ADN lemma="L031967a" phon="LOG" form="siru" />
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-ADV>
       <PP>
         <NP>
-          <WH-N lemma="L042003" phon="PHON" form="na" />
-          <WH-N lemma="L042003" phon="LOG" form="ni" />
+          <WH-N lemma="L042003" phon="" form="nani">
+            <form-parts>
+              <part phon="PHON" form="na" />
+              <part phon="LOG" form="ni" />
+            </form-parts>
+          </WH-N>
         </NP>
         <P-RES lemma="L000526a" phon="NLOG" form="si" />
         <P-FOC lemma="L000506" phon="NLOG" form="ka" />
@@ -16887,8 +17263,12 @@
           <N lemma="L050148" phon="PHON" form="koto" />
         </NP-OB1>
         <VB-IMP>
-          <VB-STM lemma="L031141a" phon="LOG" form="tuku" />
-          <VB-STM lemma="L031141a" phon="PHON" form="si" />
+          <VB-STM lemma="L031141a" phon="" form="tukusi">
+            <form-parts>
+              <part phon="LOG" form="tuku" />
+              <part phon="PHON" form="si" />
+            </form-parts>
+          </VB-STM>
           <VAX-PRF-IMP lemma="L000023" phon="PHON" form="teyo" />
         </VB-IMP>
       </IP-SUB>
@@ -17148,8 +17528,12 @@
           <VAX-PRF-STM lemma="L000023" phon="PHON" form="te" />
           <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-ADV>
     </CP-FINAL>
   </block>
@@ -17285,8 +17669,12 @@
           <P-TOP lemma="L000514" phon="PHON" form="mo" />
           <VB-NML>
             <VB-STM lemma="L030125a" phon="LOG" form="ara" />
-            <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-            <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+            <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+              <form-parts>
+                <part phon="LOG" form="na" />
+                <part phon="PHON" form="ku" />
+              </form-parts>
+            </VAX-NEG-NML>
           </VB-NML>
         </IP-NMZ-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -17349,8 +17737,12 @@
             <VB-STM lemma="L030071a" phon="LOG" form="api" />
             <VAX-STV-ADN lemma="L000022" phon="LOG" form="taru" />
           </VB-ADN>
-          <P-CONN lemma="L000516" phon="LOG" form="mono" />
-          <P-CONN lemma="L000516" phon="PHON" form="wo" />
+          <P-CONN lemma="L000516" phon="" form="monowo">
+            <form-parts>
+              <part phon="LOG" form="mono" />
+              <part phon="PHON" form="wo" />
+            </form-parts>
+          </P-CONN>
           <PP-SBJ>
             <NP>
               <N lemma="L050004a" phon="LOG" form="tukwi" />
@@ -17467,8 +17859,12 @@
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
         <VB-NML>
           <VB-STM lemma="L030125a" phon="LOG" form="ara" />
-          <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-          <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+          <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+            <form-parts>
+              <part phon="LOG" form="na" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VAX-NEG-NML>
         </VB-NML>
       </IP-NMZ-PRD>
       <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -17525,8 +17921,12 @@
           </NP-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
         </IP-ADV>
-        <VB-IMP lemma="L030172a" phon="LOG" form="ide" />
-        <VB-IMP lemma="L030172a" phon="PHON" form="yo" />
+        <VB-IMP lemma="L030172a" phon="" form="ideyo">
+          <form-parts>
+            <part phon="LOG" form="ide" />
+            <part phon="PHON" form="yo" />
+          </form-parts>
+        </VB-IMP>
       </IP-MAT>
       <IP-MAT index="2">
         <IP-ADV>
@@ -17587,8 +17987,12 @@
           <NP>
             <PP>
               <NP>
-                <N lemma="L052194" phon="LOG" form="tuku" />
-                <N lemma="L052194" phon="PHON" form="yomi" />
+                <N lemma="L052194" phon="" form="tukuyomi">
+                  <form-parts>
+                    <part phon="LOG" form="tuku" />
+                    <part phon="PHON" form="yomi" />
+                  </form-parts>
+                </N>
               </NP>
               <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
             </PP>
@@ -17621,8 +18025,12 @@
           <ADJ-NML>
             <ADJ-STM lemma="L007008" phon="LOG" form="topo" />
             <ACP-STM lemma="L000032" phon="LOG" form="kara" />
-            <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-            <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+            <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+              <form-parts>
+                <part phon="LOG" form="na" />
+                <part phon="PHON" form="ku" />
+              </form-parts>
+            </VAX-NEG-NML>
           </ADJ-NML>
         </IP-NMZ-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -17665,8 +18073,12 @@
           <NP>
             <PP>
               <NP>
-                <N lemma="L052194" phon="LOG" form="tuku" />
-                <N lemma="L052194" phon="PHON" form="yomi" />
+                <N lemma="L052194" phon="" form="tukuyomi">
+                  <form-parts>
+                    <part phon="LOG" form="tuku" />
+                    <part phon="PHON" form="yomi" />
+                  </form-parts>
+                </N>
               </NP>
               <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
             </PP>
@@ -17909,8 +18321,12 @@
               <PRO-N index="2" lemma="L042035" phon="LOG" form="koti" />
             </PRO-N>
           </NP-OB1>
-          <VB-GER lemma="L030504a" phon="LOG" form="kane" />
-          <VB-GER lemma="L030504a" phon="PHON" form="te" />
+          <VB-GER lemma="L030504a" phon="" form="kanete">
+            <form-parts>
+              <part phon="LOG" form="kane" />
+              <part phon="PHON" form="te" />
+            </form-parts>
+          </VB-GER>
         </IP-ADV>
         <PP-OB1>
           <NP>
@@ -17987,11 +18403,19 @@
             </NP>
             <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
           </PP-ADV>
-          <VB-ADN lemma="L030374a" phon="LOG" form="opu" />
-          <VB-ADN lemma="L030374a" phon="PHON" form="ru" />
+          <VB-ADN lemma="L030374a" phon="" form="opuru">
+            <form-parts>
+              <part phon="LOG" form="opu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VB-ADN>
         </IP-REL>
-        <N lemma="L051713" phon="LOG" form="pana" />
-        <N lemma="L051713" phon="PHON" form="katumi" />
+        <N lemma="L051713" phon="" form="panakatumi">
+          <form-parts>
+            <part phon="LOG" form="pana" />
+            <part phon="PHON" form="katumi" />
+          </form-parts>
+        </N>
       </NP-ZYO>
       <PP-ARG>
         <NP>
@@ -18071,8 +18495,12 @@
                       </NP>
                       <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
                     </PP-OB1>
-                    <VB-GER lemma="L031514a" phon="LOG" form="puka" />
-                    <VB-GER lemma="L031514a" phon="PHON" form="mete" />
+                    <VB-GER lemma="L031514a" phon="" form="pukamete">
+                      <form-parts>
+                        <part phon="LOG" form="puka" />
+                        <part phon="PHON" form="mete" />
+                      </form-parts>
+                    </VB-GER>
                   </IP-ADV>
                   <PP-SBJ>
                     <NP>
@@ -18330,8 +18758,12 @@
             <VB-STM lemma="L030399a" phon="LOG" form="omopi" />
             <VB-GER lemma="L031692a" phon="LOG" form="midarete" />
           </VB-GER>
-          <VB-CTT lemma="L030731a" phon="LOG" form="kwopwi" />
-          <VB-CTT lemma="L030731a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L030731a" phon="" form="kwopwitutu">
+            <form-parts>
+              <part phon="LOG" form="kwopwi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
           <P-TOP lemma="L000514" phon="PHON" form="mo" />
         </IP-ADV>
         <VB-ADC>
@@ -18529,8 +18961,12 @@
               <COP-INF lemma="L031965" phon="PHON" form="ni" />
               <VB-NML>
                 <VB-STM lemma="L030125a" phon="LOG" form="ara" />
-                <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-                <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+                <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+                  <form-parts>
+                    <part phon="LOG" form="na" />
+                    <part phon="PHON" form="ku" />
+                  </form-parts>
+                </VAX-NEG-NML>
               </VB-NML>
             </IP-NMZ-PRD>
             <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -18545,8 +18981,12 @@
               <VB-GER lemma="L031141a" phon="LOG" form="tukusite" />
             </VB-GER>
           </IP-ADV>
-          <VB-ADN lemma="L030731a" phon="LOG" form="kwopu" />
-          <VB-ADN lemma="L030731a" phon="PHON" form="ru" />
+          <VB-ADN lemma="L030731a" phon="" form="kwopuru">
+            <form-parts>
+              <part phon="LOG" form="kwopu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VB-ADN>
         </IP-REL>
         <PRO-N lemma="L042059" phon="LOG" form="ware" />
       </NP-PRD>
@@ -18723,8 +19163,12 @@
           </IP-ARG>
           <VB-NML>
             <VB-STM lemma="L030199a" phon="LOG" form="ipa" />
-            <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-            <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+            <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+              <form-parts>
+                <part phon="LOG" form="na" />
+                <part phon="PHON" form="ku" />
+              </form-parts>
+            </VAX-NEG-NML>
           </VB-NML>
         </IP-NMZ-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -18802,8 +19246,12 @@
         </PP-OB1-SRC>
         <VB-GER lemma="L031573a" phon="LOG" form="pyedatete" />
       </IP-ADV>
-      <VB-CTT lemma="L030731a" phon="LOG" form="kwopwi" />
-      <VB-CTT lemma="L030731a" phon="PHON" form="tutu" />
+      <VB-CTT lemma="L030731a" phon="" form="kwopwitutu">
+        <form-parts>
+          <part phon="LOG" form="kwopwi" />
+          <part phon="PHON" form="tutu" />
+        </form-parts>
+      </VB-CTT>
       <VB-ADC>
         <VB-PGS-STM lemma="L031957a" phon="LOG" form="wora" />
         <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
@@ -19106,8 +19554,12 @@
           </PP-SBJ>
           <VB-NML>
             <VB-STM lemma="L031571a" phon="LOG" form="pyedatara" />
-            <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-            <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+            <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+              <form-parts>
+                <part phon="LOG" form="na" />
+                <part phon="PHON" form="ku" />
+              </form-parts>
+            </VAX-NEG-NML>
           </VB-NML>
         </IP-NMZ-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -19515,8 +19967,12 @@
           </NP-ADV>
           <VB-GER lemma="L031179a" phon="LOG" form="tumite" />
         </IP-ADV>
-        <VB-NML lemma="L030731a" phon="LOG" form="kwopu" />
-        <VB-NML lemma="L030731a" phon="PHON" form="raku" />
+        <VB-NML lemma="L030731a" phon="" form="kwopuraku">
+          <form-parts>
+            <part phon="LOG" form="kwopu" />
+            <part phon="PHON" form="raku" />
+          </form-parts>
+        </VB-NML>
       </IP-NMZ-SBJ>
       <NP-PRD>
         <PP>
@@ -19602,8 +20058,12 @@
         </NP>
         <P-FOC lemma="L000527" phon="PHON" form="so" />
       </PP-SBJ>
-      <VB-INF lemma="L031122a" phon="LOG" form="tuka" />
-      <VB-INF lemma="L031122a" phon="PHON" form="mi" />
+      <VB-INF lemma="L031122a" phon="" form="tukami">
+        <form-parts>
+          <part phon="LOG" form="tuka" />
+          <part phon="PHON" form="mi" />
+        </form-parts>
+      </VB-INF>
       <VB-ADN>
         <VB-STM index="2" lemma="L030428a" phon="LOG" form="kakar" />
         <VAX-STV-ADN lemma="L000024" phon="LOG" form="eru" />
@@ -19686,8 +20146,12 @@
         </PP-SBJ>
         <VB-PRV>
           <VB-STM lemma="L031512a" phon="LOG" form="pe" />
-          <VAX-PRF-PRV lemma="L000018" phon="PHON-KUN" form="nure" />
-          <VAX-PRF-PRV lemma="L000018" phon="LOG" form="ba" />
+          <VAX-PRF-PRV lemma="L000018" phon="" form="nureba">
+            <form-parts>
+              <part phon="PHON-KUN" form="nure" />
+              <part phon="LOG" form="ba" />
+            </form-parts>
+          </VAX-PRF-PRV>
         </VB-PRV>
       </IP-ADV>
     </CP-FINAL>
@@ -19854,8 +20318,12 @@
           <ADV lemma="L080293">
             <N lemma="L050090" phon="LOG" form="pi" />
             <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
-            <ADV lemma="L004070" phon="LOG" form="kye" />
-            <ADV lemma="L004070" phon="PHON" form="ni" />
+            <ADV lemma="L004070" phon="" form="kyeni">
+              <form-parts>
+                <part phon="LOG" form="kye" />
+                <part phon="PHON" form="ni" />
+              </form-parts>
+            </ADV>
           </ADV>
         </NP>
       </NP-ADV>
@@ -19912,8 +20380,12 @@
                   <N lemma="L050050" phon="LOG" form="tabi" />
                 </N>
               </NP-ADV>
-              <VB-INF lemma="L032067a" phon="LOG" form="sapa" />
-              <VB-INF lemma="L032067a" phon="PHON" form="rapi" />
+              <VB-INF lemma="L032067a" phon="" form="saparapi">
+                <form-parts>
+                  <part phon="LOG" form="sapa" />
+                  <part phon="PHON" form="rapi" />
+                </form-parts>
+              </VB-INF>
               <VB-ADC lemma="L031840a" phon="LOG" form="yuku" />
             </IP-REL>
             <N lemma="L050128" phon="LOG" form="midu" />
@@ -19935,8 +20407,12 @@
           <N lemma="L004025" phon="LOG" form="ima" />
         </NP-PRD>
         <COP-IFC>
-          <COP-STM lemma="L031966" phon="PHON" form="n" />
-          <COP-STM lemma="L031966" phon="LOG" form="ara" />
+          <COP-STM lemma="L031966" phon="" form="nara">
+            <form-parts>
+              <part phon="PHON" form="n" />
+              <part phon="LOG" form="ara" />
+            </form-parts>
+          </COP-STM>
           <VAX-NEG-IFC lemma="L000006a" phon="LOG" form="zu" />
         </COP-IFC>
         <P-CONN lemma="L000531" phon="PHON" form="tomo" />
@@ -20073,8 +20549,12 @@
             <ADJ-ADC>
               <WH-ADJ-STM lemma="L042002" phon="LOG" form="ika" />
               <COP-ADC>
-                <COP-STM lemma="L031966" phon="NLOG" form="n" />
-                <COP-STM lemma="L031966" phon="LOG" form="ara" />
+                <COP-STM lemma="L031966" phon="" form="nara">
+                  <form-parts>
+                    <part phon="NLOG" form="n" />
+                    <part phon="LOG" form="ara" />
+                  </form-parts>
+                </COP-STM>
                 <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
               </COP-ADC>
             </ADJ-ADC>
@@ -20405,8 +20885,12 @@
           <NP>
             <IP-REL>
               <NP-OB1>
-                <N lemma="L090551" phon="PHON" form="pane" />
-                <N lemma="L090551" phon="LOG" form="kadura" />
+                <N lemma="L090551" phon="" form="panekadura">
+                  <form-parts>
+                    <part phon="PHON" form="pane" />
+                    <part phon="LOG" form="kadura" />
+                  </form-parts>
+                </N>
               </NP-OB1>
               <NP-ADV>
                 <N lemma="L004025" phon="LOG" form="ima" />
@@ -20480,8 +20964,12 @@
           <NP>
             <IP-REL>
               <NP>
-                <N lemma="L090551" phon="PHON" form="pane" />
-                <N lemma="L090551" phon="LOG" form="kadura" />
+                <N lemma="L090551" phon="" form="panekadura">
+                  <form-parts>
+                    <part phon="PHON" form="pane" />
+                    <part phon="LOG" form="kadura" />
+                  </form-parts>
+                </N>
               </NP>
               <NP-ADV>
                 <N lemma="L004025" phon="LOG" form="ima" />
@@ -20684,8 +21172,12 @@
           <VB-INF lemma="L030193a" phon="LOG" form="ipapi" />
         </IP-ADV>
         <VB-ADC>
-          <VB-STM lemma="L031215a" phon="LOG" form="todo" />
-          <VB-STM lemma="L031215a" phon="PHON" form="me" />
+          <VB-STM lemma="L031215a" phon="" form="todome">
+            <form-parts>
+              <part phon="LOG" form="todo" />
+              <part phon="PHON" form="me" />
+            </form-parts>
+          </VB-STM>
           <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
         </VB-ADC>
       </IP-MAT>
@@ -20954,8 +21446,12 @@
         </PP-SBJ>
         <VB-NML>
           <VB-STM lemma="L030399a" phon="LOG" form="omopa" />
-          <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-          <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+          <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+            <form-parts>
+              <part phon="LOG" form="na" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VAX-NEG-NML>
         </VB-NML>
       </IP-NMZ-PRD>
       <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -21088,8 +21584,12 @@
           <IP-ADV>
             <IP-ADV>
               <NP-PRD>
-                <N lemma="L090706" phon="LOG" form="kaki" />
-                <N lemma="L090706" phon="LOG" phon_index="2" form="po" />
+                <N lemma="L090706" phon="" form="kakipo">
+                  <form-parts>
+                    <part phon="LOG" form="kaki" />
+                    <part phon="LOG" phon_index="2" form="po" />
+                  </form-parts>
+                </N>
               </NP-PRD>
               <COP-SEM lemma="L031965" phon="LOG" form="nasu" />
             </IP-ADV>
@@ -21173,8 +21673,12 @@
         </PP-ADV>
         <VB-CSS>
           <VB-STM lemma="L030399a" phon="LOG" form="omopi" />
-          <VB-CSS lemma="L031910a" phon="LOG" form="watare" />
-          <VB-CSS lemma="L031910a" phon="PHON" form="do" />
+          <VB-CSS lemma="L031910a" phon="" form="wataredo">
+            <form-parts>
+              <part phon="LOG" form="watare" />
+              <part phon="PHON" form="do" />
+            </form-parts>
+          </VB-CSS>
         </VB-CSS>
         <PP-SBJ>
           <NP>
@@ -21243,8 +21747,12 @@
               <NP>
                 <IP-REL>
                   <NP-SBJ>
-                    <N lemma="L050674" phon="PHON-KUN" form="ti" />
-                    <N lemma="L050674" phon="LOG" form="dori" />
+                    <N lemma="L050674" phon="" form="tidori">
+                      <form-parts>
+                        <part phon="PHON-KUN" form="ti" />
+                        <part phon="LOG" form="dori" />
+                      </form-parts>
+                    </N>
                   </NP-SBJ>
                   <VB-ADC lemma="L031267a" phon="LOG" form="naku" />
                 </IP-REL>
@@ -21524,8 +22032,12 @@
         </NP>
         <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
       </PP>
-      <VB-CTT lemma="L031784a" phon="LOG" form="moye" />
-      <VB-CTT lemma="L031784a" phon="PHON" form="tutu" />
+      <VB-CTT lemma="L031784a" phon="" form="moyetutu">
+        <form-parts>
+          <part phon="LOG" form="moye" />
+          <part phon="PHON" form="tutu" />
+        </form-parts>
+      </VB-CTT>
       <P-FOC lemma="L000527" phon="PHON" form="so" />
       <VB-PGS-ADC lemma="L031957a" phon="PHON" form="woru" />
     </IP-MAT>
@@ -21576,8 +22088,12 @@
               </IP-ARG>
               <VB-ADN>
                 <VB-STM lemma="L030399a" phon="LOG" form="omop" />
-                <VAX-STV-ADN lemma="L000024" phon="LOG" form="ye" />
-                <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+                <VAX-STV-ADN lemma="L000024" phon="" form="yeru">
+                  <form-parts>
+                    <part phon="LOG" form="ye" />
+                    <part phon="PHON" form="ru" />
+                  </form-parts>
+                </VAX-STV-ADN>
               </VB-ADN>
             </IP-REL>
             <PRO-N lemma="L042059" phon="LOG" form="ware" />
@@ -21673,8 +22189,12 @@
             </NP>
             <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
           </PP-SBJ>
-          <VB-NML lemma="L030731a" phon="LOG" form="kwopu" />
-          <VB-NML lemma="L030731a" phon="PHON" form="raku" />
+          <VB-NML lemma="L030731a" phon="" form="kwopuraku">
+            <form-parts>
+              <part phon="LOG" form="kwopu" />
+              <part phon="PHON" form="raku" />
+            </form-parts>
+          </VB-NML>
         </IP-NMZ>
         <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
       </PP-OB1>
@@ -21752,16 +22272,24 @@
               </NP>
               <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
             </PP-SBJ>
-            <VB-ADN lemma="L030919a" phon="LOG" form="su" />
-            <VB-ADN lemma="L030919a" phon="PHON" form="ru" />
+            <VB-ADN lemma="L030919a" phon="" form="suru">
+              <form-parts>
+                <part phon="LOG" form="su" />
+                <part phon="PHON" form="ru" />
+              </form-parts>
+            </VB-ADN>
           </IP-REL>
           <N lemma="L052329" phon="PHON" form="waza" />
         </NP>
         <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
       </PP-OB1>
       <VB-CLS>
-        <VB-STM lemma="L031194a" phon="LOG" form="toga" />
-        <VB-STM lemma="L031194a" phon="PHON" form="me" />
+        <VB-STM lemma="L031194a" phon="" form="togame">
+          <form-parts>
+            <part phon="LOG" form="toga" />
+            <part phon="PHON" form="me" />
+          </form-parts>
+        </VB-STM>
         <VB-CLS lemma="L031079a" phon="LOG" form="tamapu" />
       </VB-CLS>
       <P-FNL-PHB lemma="L000517" phon="PHON" form="na" />
@@ -21806,8 +22334,12 @@
             </NP>
             <P-RES lemma="L000501" phon="LOG" form="bakari" />
           </PP-ADV>
-          <VB-CTT lemma="L030731a" phon="LOG" form="kwopwi" />
-          <VB-CTT lemma="L030731a" phon="PHON" form="tutu" />
+          <VB-CTT lemma="L030731a" phon="" form="kwopwitutu">
+            <form-parts>
+              <part phon="LOG" form="kwopwi" />
+              <part phon="PHON" form="tutu" />
+            </form-parts>
+          </VB-CTT>
           <VB-CND>
             <VB-STV-STM lemma="L030125a" phon="LOG" form="ara" />
             <VAX-NEG-CND lemma="L000006a" phon="LOG" form="zupa" />
@@ -21827,8 +22359,12 @@
           <VB-STM lemma="L031317a" phon="PHON" form="nara" />
           <VAX-SJV-ADC lemma="L000004" phon="PHON" form="masi" />
         </VB-ADC>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-SUB>
       <IP-ADV>
         <VB-GER>
@@ -21836,8 +22372,12 @@
             <N lemma="L050042" phon="LOG" form="mono" />
             <VB-STM lemma="L030399a" phon="LOG" form="mopa" />
           </VB-STM>
-          <VAX-NEG-GER lemma="L000006a" phon="LOG" form="zu" />
-          <VAX-NEG-GER lemma="L000006a" phon="PHON" form="site" />
+          <VAX-NEG-GER lemma="L000006a" phon="" form="zusite">
+            <form-parts>
+              <part phon="LOG" form="zu" />
+              <part phon="PHON" form="site" />
+            </form-parts>
+          </VAX-NEG-GER>
         </VB-GER>
       </IP-ADV>
     </CP-FINAL>
@@ -21956,8 +22496,12 @@
             </PP-SBJ>
             <VB-NML>
               <VB-STM lemma="L031840a" phon="LOG" form="yuka" />
-              <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-              <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+              <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+                <form-parts>
+                  <part phon="LOG" form="na" />
+                  <part phon="PHON" form="ku" />
+                </form-parts>
+              </VAX-NEG-NML>
             </VB-NML>
           </IP-NMZ-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -21983,8 +22527,12 @@
                     <ADJ-INF>
                       <ADJ-STM>
                         <N lemma="L050042" phon="LOG" form="mono" />
-                        <ADJ-STM lemma="L080153" phon="LOG" form="kanasi" />
-                        <ADJ-STM lemma="L080153" phon="PHON" form="ra" />
+                        <ADJ-STM lemma="L080153" phon="" form="kanasira">
+                          <form-parts>
+                            <part phon="LOG" form="kanasi" />
+                            <part phon="PHON" form="ra" />
+                          </form-parts>
+                        </ADJ-STM>
                       </ADJ-STM>
                       <COP-INF lemma="L031965" phon="PHON" form="ni" />
                     </ADJ-INF>
@@ -22231,8 +22779,12 @@
           </NP-ADV>
           <PP-SBJ>
             <NP>
-              <N lemma="L050676" phon="PHON" form="nipo" />
-              <N lemma="L050676" phon="LOG" form="dori" />
+              <N lemma="L050676" phon="" form="nipodori">
+                <form-parts>
+                  <part phon="PHON" form="nipo" />
+                  <part phon="LOG" form="dori" />
+                </form-parts>
+              </N>
             </NP>
             <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
           </PP-SBJ>
@@ -22267,8 +22819,12 @@
         </IP-REL>
         <N lemma="L050037" phon="LOG" form="kokoro" />
       </NP-OB1>
-      <VB-OPT lemma="L030906a" phon="LOG" form="simye" />
-      <VB-OPT lemma="L030906a" phon="PHON" form="sane" />
+      <VB-OPT lemma="L030906a" phon="" form="simyesane">
+        <form-parts>
+          <part phon="LOG" form="simye" />
+          <part phon="PHON" form="sane" />
+        </form-parts>
+      </VB-OPT>
     </IP-MAT>
   </block>
   <block id="MYS.4.726" header="yoso ni wite kwopwitutu arazupa kimi ga ipye no ike ni sumu to ipu kamo ni aramasi wo">
@@ -22312,8 +22868,12 @@
           </PP-OB1>
           <VB-GER lemma="L031926a" phon="LOG" form="wite" />
         </IP-ADV>
-        <VB-CTT lemma="L030731a" phon="LOG" form="kwopwi" />
-        <VB-CTT lemma="L030731a" phon="PHON" form="tutu" />
+        <VB-CTT lemma="L030731a" phon="" form="kwopwitutu">
+          <form-parts>
+            <part phon="LOG" form="kwopwi" />
+            <part phon="PHON" form="tutu" />
+          </form-parts>
+        </VB-CTT>
         <VB-CND>
           <VB-STM lemma="L030125a" phon="LOG" form="ara" />
           <VAX-NEG-CND lemma="L000006a" phon="LOG" form="zupa" />
@@ -23076,8 +23636,12 @@
           <IP-REL>
             <IP-ADV>
               <ADJ-INF>
-                <ADJ-STM lemma="L007088b" phon="LOG" form="kokoro" />
-                <ADJ-STM lemma="L007088b" phon="PHON" form="gu" />
+                <ADJ-STM lemma="L007088b" phon="" form="kokorogu">
+                  <form-parts>
+                    <part phon="LOG" form="kokoro" />
+                    <part phon="PHON" form="gu" />
+                  </form-parts>
+                </ADJ-STM>
                 <ACP-INF lemma="L000033" phon="PHON" form="ku" />
               </ADJ-INF>
             </IP-ADV>
@@ -23420,8 +23984,12 @@
           <XTN-STM lemma="L000801" phon="LOG" form="be" />
           <ACP-ADN lemma="L000033" phon="NLOG" form="ki" />
         </XTN-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
       </IP-ADV>
       <PP-ADV>
         <NP>
@@ -23563,8 +24131,12 @@
           <VB-GER lemma="L030361a" phon="LOG" form="odorokite" />
           <VB-CSS>
             <VB-STM lemma="L030440a" phon="LOG" form="kaki" />
-            <VB-CSS lemma="L030790a" phon="LOG" form="sagure" />
-            <VB-CSS lemma="L030790a" phon="PHON" form="domo" />
+            <VB-CSS lemma="L030790a" phon="" form="saguredomo">
+              <form-parts>
+                <part phon="LOG" form="sagure" />
+                <part phon="PHON" form="domo" />
+              </form-parts>
+            </VB-CSS>
           </VB-CSS>
         </IP-ADV>
         <PP-OB1>
@@ -23929,8 +24501,12 @@
         <ADV lemma="L004021" phon="LOG" form="napo" />
       </NP-ADV>
       <ADJ-ADC>
-        <ADJ-STM lemma="L007102" phon="LOG" form="kwopo" />
-        <ADJ-STM lemma="L007102" phon="PHON" form="si" />
+        <ADJ-STM lemma="L007102" phon="" form="kwoposi">
+          <form-parts>
+            <part phon="LOG" form="kwopo" />
+            <part phon="PHON" form="si" />
+          </form-parts>
+        </ADJ-STM>
         <ACP-STM lemma="L000033" phon="PHON" form="kye" />
         <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
       </ADJ-ADC>
@@ -24014,8 +24590,12 @@
             </IP-ADV>
             <VB-ADN>
               <VB-STM lemma="L031350a" phon="LOG" form="nup" />
-              <VAX-STV-ADN lemma="L000024" phon="LOG" form="ye" />
-              <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+              <VAX-STV-ADN lemma="L000024" phon="" form="yeru">
+                <form-parts>
+                  <part phon="LOG" form="ye" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VAX-STV-ADN>
             </VB-ADN>
           </IP-REL>
           <N lemma="L051825" phon="LOG" form="pukurwo" />
@@ -24335,8 +24915,12 @@
           <VAX-PRF-STM lemma="L000018" phon="PHON" form="ni" />
           <VAX-SPST-ADN lemma="L000015" phon="PHON" form="si" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
         <IP-ADV>
           <ADJ-INF>
             <ADJ-STM lemma="L004015" phon="LOG" form="nakanaka" />
@@ -24345,8 +24929,12 @@
         </IP-ADV>
         <PP-SBJ>
           <NP>
-            <WH-N lemma="L042003" phon="PHON" form="na" />
-            <WH-N lemma="L042003" phon="LOG" form="ni" />
+            <WH-N lemma="L042003" phon="" form="nani">
+              <form-parts>
+                <part phon="PHON" form="na" />
+                <part phon="LOG" form="ni" />
+              </form-parts>
+            </WH-N>
           </NP>
           <P-FOC lemma="L000506" phon="NLOG" form="ka" />
         </PP-SBJ>
@@ -24709,8 +25297,12 @@
               <N lemma="L051800" phon="PHON" form="podoro" />
             </NP-ADV>
             <IP-ADV>
-              <VB-CTT lemma="L030172a" phon="LOG" form="ide" />
-              <VB-CTT lemma="L030172a" phon="PHON" form="tutu" />
+              <VB-CTT lemma="L030172a" phon="" form="idetutu">
+                <form-parts>
+                  <part phon="LOG" form="ide" />
+                  <part phon="PHON" form="tutu" />
+                </form-parts>
+              </VB-CTT>
             </IP-ADV>
             <VB-NML lemma="L030612a" phon="PHON" form="kuraku" />
           </IP-NMZ-SBJ>
@@ -24822,8 +25414,12 @@
             <DVN lemma="L031397b" phon="LOG" form="pakari" />
           </N>
         </NP-OB1>
-        <VB-IMP lemma="L030919a" phon="LOG" form="se" />
-        <VB-IMP lemma="L030919a" phon="PHON" form="yo" />
+        <VB-IMP lemma="L030919a" phon="" form="seyo">
+          <form-parts>
+            <part phon="LOG" form="se" />
+            <part phon="PHON" form="yo" />
+          </form-parts>
+        </VB-IMP>
       </IP-MAT>
     </multi-sentence>
   </block>
@@ -24865,8 +25461,12 @@
             <ACP-INF lemma="L000033" phon="NLOG" form="ku" />
           </ADJ-INF>
           <VB-CND lemma="L030125a" phon="LOG" form="araba" />
-          <VB-GER lemma="L031915a" phon="PHON" form="wabwi" />
-          <VB-GER lemma="L031915a" phon="LOG" form="te" />
+          <VB-GER lemma="L031915a" phon="" form="wabwite">
+            <form-parts>
+              <part phon="PHON" form="wabwi" />
+              <part phon="LOG" form="te" />
+            </form-parts>
+          </VB-GER>
           <P-TOP lemma="L000514" phon="PHON" form="mo" />
         </IP-ADV>
         <VB-ADC>
@@ -24889,8 +25489,12 @@
               <VB-INF lemma="L030125a" phon="LOG" form="ari" />
               <P-COMP lemma="L000530" phon="PHON" form="to" />
             </IP-ARG>
-            <VB-CTT lemma="L030565a" phon="LOG" form="kiki" />
-            <VB-CTT lemma="L030565a" phon="PHON" form="tutu" />
+            <VB-CTT lemma="L030565a" phon="" form="kikitutu">
+              <form-parts>
+                <part phon="LOG" form="kiki" />
+                <part phon="PHON" form="tutu" />
+              </form-parts>
+            </VB-CTT>
           </IP-ADV>
           <VB-ADN>
             <VB-STM lemma="L031712a" phon="LOG" form="mi" />
@@ -25145,8 +25749,12 @@
             </NP>
             <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
           </PP-SBJ>
-          <VB-NML lemma="L030731a" phon="LOG" form="kwopu" />
-          <VB-NML lemma="L030731a" phon="PHON" form="raku" />
+          <VB-NML lemma="L030731a" phon="" form="kwopuraku">
+            <form-parts>
+              <part phon="LOG" form="kwopu" />
+              <part phon="PHON" form="raku" />
+            </form-parts>
+          </VB-NML>
         </IP-NMZ>
         <P-TOP lemma="L000522" phon="PHON" form="pa" />
       </PP>
@@ -25280,8 +25888,12 @@
       <IP-ADV index="1" inferred_index="1">
         <IP-NMZ-PRD>
           <IP-ADV>
-            <VB-CLS lemma="L030529a" phon="LOG" form="kamu" />
-            <VB-CLS lemma="L030529a" phon="PHON" form="sabu" />
+            <VB-CLS lemma="L030529a" phon="" form="kamusabu">
+              <form-parts>
+                <part phon="LOG" form="kamu" />
+                <part phon="PHON" form="sabu" />
+              </form-parts>
+            </VB-CLS>
             <P-COMP lemma="L000530" phon="PHON" form="to" />
           </IP-ADV>
           <VB-CLS lemma="L030183a" phon="LOG" form="inabu" />
@@ -25295,8 +25907,12 @@
       </IP-ADV>
       <PP-ADV>
         <NP>
-          <ADV lemma="L004024" phon="PHON" form="pa" />
-          <ADV lemma="L004024" phon="NLOG" form="ta" />
+          <ADV lemma="L004024" phon="" form="pata">
+            <form-parts>
+              <part phon="PHON" form="pa" />
+              <part phon="NLOG" form="ta" />
+            </form-parts>
+          </ADV>
         </NP>
         <P-FOC lemma="L000537" phon="PHON" form="ya" />
       </PP-ADV>
@@ -25383,8 +25999,12 @@
           <VB-STM lemma="L031733a" phon="LOG" form="musub" />
           <VAX-STV-CND lemma="L000024" phon="LOG" form="yeraba" />
         </VB-CND>
-        <VB-GER lemma="L030125a" phon="LOG" form="ari" />
-        <VB-GER lemma="L030125a" phon="PHON" form="te" />
+        <VB-GER lemma="L030125a" phon="" form="arite">
+          <form-parts>
+            <part phon="LOG" form="ari" />
+            <part phon="PHON" form="te" />
+          </form-parts>
+        </VB-GER>
       </IP-ADV>
       <IP-ADV index="5">
         <NP-PRD>
@@ -25519,8 +26139,12 @@
           <VB-STM lemma="L031577a" phon="PHON" form="pyenar" />
           <VAX-STV-ADN lemma="L000024" phon="LOG" form="eru" />
         </VB-ADN>
-        <P-CONN lemma="L000516" phon="LOG" form="mono" />
-        <P-CONN lemma="L000516" phon="PHON" form="wo" />
+        <P-CONN lemma="L000516" phon="" form="monowo">
+          <form-parts>
+            <part phon="LOG" form="mono" />
+            <part phon="PHON" form="wo" />
+          </form-parts>
+        </P-CONN>
         <NP-SBJ>
           <N lemma="L080435">
             <N lemma="L050004b" phon="LOG" form="tuku" index="1" inferred_index="1" />
@@ -25603,8 +26227,12 @@
             <VB-STM lemma="L031967a" phon="LOG" form="sir" />
             <VAX-STV-ADN lemma="L000024" phon="LOG" form="eru" />
           </VB-ADN>
-          <P-CONN lemma="L000516" phon="LOG" form="mono" />
-          <P-CONN lemma="L000516" phon="PHON" form="karani" />
+          <P-CONN lemma="L000516" phon="" form="monokarani">
+            <form-parts>
+              <part phon="LOG" form="mono" />
+              <part phon="PHON" form="karani" />
+            </form-parts>
+          </P-CONN>
         </IP-ADV>
         <PP-ADV>
           <NP>
@@ -25699,8 +26327,12 @@
       </PP-ADV>
       <IP-ADV>
         <IP-ADV>
-          <VB-GER lemma="L030246a" phon="PHON" form="ukepi" />
-          <VB-GER lemma="L030246a" phon="LOG" form="te" />
+          <VB-GER lemma="L030246a" phon="" form="ukepite">
+            <form-parts>
+              <part phon="PHON" form="ukepi" />
+              <part phon="LOG" form="te" />
+            </form-parts>
+          </VB-GER>
         </IP-ADV>
         <VB-CSS lemma="L031342a" phon="LOG" form="nuredo" />
       </IP-ADV>
@@ -25803,8 +26435,12 @@
         <NP-ADV>
           <ADJ-STM lemma="L004028" phon="LOG" form="paya" />
         </NP-ADV>
-        <VB-OPT lemma="L031712a" phon="LOG" form="mi" />
-        <VB-OPT lemma="L031712a" phon="PHON" form="na" />
+        <VB-OPT lemma="L031712a" phon="" form="mina">
+          <form-parts>
+            <part phon="LOG" form="mi" />
+            <part phon="PHON" form="na" />
+          </form-parts>
+        </VB-OPT>
       </IP-MAT>
     </multi-sentence>
   </block>
@@ -25968,8 +26604,12 @@
           </PP-SBJ>
           <VB-NML>
             <VB-STM lemma="L030399a" phon="LOG" form="mopa" />
-            <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-            <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+            <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+              <form-parts>
+                <part phon="LOG" form="na" />
+                <part phon="PHON" form="ku" />
+              </form-parts>
+            </VAX-NEG-NML>
           </VB-NML>
         </IP-NMZ-PRD>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -26013,8 +26653,12 @@
         <IP-ADV>
           <VB-GER lemma="L031329a">
             <VB-STM lemma="L031340a" phon="LOG" form="ni" />
-            <VB-GER lemma="L031130a" phon="PHON" form="tuki" />
-            <VB-GER lemma="L031130a" phon="LOG" form="te" />
+            <VB-GER lemma="L031130a" phon="" form="tukite">
+              <form-parts>
+                <part phon="PHON" form="tuki" />
+                <part phon="LOG" form="te" />
+              </form-parts>
+            </VB-GER>
           </VB-GER>
           <P-FOC lemma="L000527" phon="PHON" form="so" />
         </IP-ADV>
@@ -26273,8 +26917,12 @@
             </NP-PRD>
             <COP-ADI lemma="L031965" phon="PHON" form="no" />
           </IP-REL>
-          <N lemma="L051311" phon="LOG" form="koto" />
-          <N lemma="L051311" phon="PHON" form="ba" />
+          <N lemma="L051311" phon="" form="kotoba">
+            <form-parts>
+              <part phon="LOG" form="koto" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </N>
         </NP>
         <P-TOP lemma="L000522" phon="LOG" form="pa" />
       </PP-OB1>
@@ -26338,8 +26986,12 @@
           </NP>
           <P-CASE-ABL lemma="L000540d" phon="LOG" form="yu" />
         </PP>
-        <VB-CSS lemma="L030399a" phon="LOG" form="omope" />
-        <VB-CSS lemma="L030399a" phon="PHON" form="domo" />
+        <VB-CSS lemma="L030399a" phon="" form="omopedomo">
+          <form-parts>
+            <part phon="LOG" form="omope" />
+            <part phon="PHON" form="domo" />
+          </form-parts>
+        </VB-CSS>
       </IP-ADV>
       <PP>
         <NP>
@@ -26422,8 +27074,12 @@
           </PP>
           <N lemma="L050041" phon="LOG" form="koto" />
         </NP-PRD>
-        <COP-ADN lemma="L031966" phon="PHON" form="n" />
-        <COP-ADN lemma="L031966" phon="LOG" form="aru" />
+        <COP-ADN lemma="L031966" phon="" form="naru">
+          <form-parts>
+            <part phon="PHON" form="n" />
+            <part phon="LOG" form="aru" />
+          </form-parts>
+        </COP-ADN>
         <P-FOC lemma="L000506" phon="PHON" form="ka" />
       </IP-SUB>
       <IP-ADV>
@@ -26923,8 +27579,12 @@
               </NP>
               <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
             </PP>
-            <N lemma="L050743" phon="LOG" form="naga" />
-            <N lemma="L050743" phon="PHON" form="te" />
+            <N lemma="L050743" phon="" form="nagate">
+              <form-parts>
+                <part phon="LOG" form="naga" />
+                <part phon="PHON" form="te" />
+              </form-parts>
+            </N>
           </NP>
           <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
         </PP-ADV>
@@ -27004,8 +27664,12 @@
             </IP-ADV>
             <VB-ADN>
               <VB-STM lemma="L030545a" phon="LOG" form="kar" />
-              <VAX-STV-ADN lemma="L000024" phon="LOG" form="e" />
-              <VAX-STV-ADN lemma="L000024" phon="PHON" form="ru" />
+              <VAX-STV-ADN lemma="L000024" phon="" form="eru">
+                <form-parts>
+                  <part phon="LOG" form="e" />
+                  <part phon="PHON" form="ru" />
+                </form-parts>
+              </VAX-STV-ADN>
             </VB-ADN>
           </IP-REL>
           <N lemma="L052082">
@@ -27075,8 +27739,12 @@
           </NP>
           <P-CASE-ALL lemma="L000512a" phon="LOG" form="made" />
         </PP-ADV>
-        <VB-CSS lemma="L030731a" phon="LOG" form="kwopure" />
-        <VB-CSS lemma="L030731a" phon="PHON" form="do" />
+        <VB-CSS lemma="L030731a" phon="" form="kwopuredo">
+          <form-parts>
+            <part phon="LOG" form="kwopure" />
+            <part phon="PHON" form="do" />
+          </form-parts>
+        </VB-CSS>
       </IP-ADV>
       <PP-ADV>
         <NP>
@@ -27342,8 +28010,12 @@
         </NP-ADV>
         <VB-NML>
           <VB-STM lemma="L030778a" phon="LOG" form="saka" />
-          <VAX-NEG-NML lemma="L000006a" phon="LOG" form="na" />
-          <VAX-NEG-NML lemma="L000006a" phon="PHON" form="ku" />
+          <VAX-NEG-NML lemma="L000006a" phon="" form="naku">
+            <form-parts>
+              <part phon="LOG" form="na" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VAX-NEG-NML>
         </VB-NML>
       </IP-NMZ-SBJ>
       <NP-ADV>
@@ -27510,8 +28182,12 @@
         </NP>
         <P-CASE-GEN lemma="L000503" phon="NLOG" form="ga" />
       </PP-SBJ>
-      <VB-ADN lemma="L030919a" phon="LOG" form="su" />
-      <VB-ADN lemma="L030919a" phon="PHON" form="ru" />
+      <VB-ADN lemma="L030919a" phon="" form="suru">
+        <form-parts>
+          <part phon="LOG" form="su" />
+          <part phon="PHON" form="ru" />
+        </form-parts>
+      </VB-ADN>
     </IP-MAT>
   </block>
   <block id="MYS.4.789" header="kokoroguku omopoyuru kamo parukasumi tanabiku toki ni koto no kaywopeba">
@@ -27548,8 +28224,12 @@
       <IP-SUB>
         <IP-ARG>
           <ADJ-INF>
-            <ADJ-STM lemma="L007088b" phon="LOG" form="kokoro" />
-            <ADJ-STM lemma="L007088b" phon="PHON" form="gu" />
+            <ADJ-STM lemma="L007088b" phon="" form="kokorogu">
+              <form-parts>
+                <part phon="LOG" form="kokoro" />
+                <part phon="PHON" form="gu" />
+              </form-parts>
+            </ADJ-STM>
             <ACP-INF lemma="L000033" phon="PHON" form="ku" />
           </ADJ-INF>
         </IP-ARG>
@@ -27630,8 +28310,12 @@
         </IP-ADV>
         <VB-CND>
           <VB-STM lemma="L030172a" phon="LOG" form="ide" />
-          <VAX-PRF-CND lemma="L000018" phon="PHON-ON" form="na" />
-          <VAX-PRF-CND lemma="L000018" phon="LOG" form="ba" />
+          <VAX-PRF-CND lemma="L000018" phon="" form="naba">
+            <form-parts>
+              <part phon="PHON-ON" form="na" />
+              <part phon="LOG" form="ba" />
+            </form-parts>
+          </VAX-PRF-CND>
         </VB-CND>
         <VB-GER>
           <PFX-STV lemma="L000026" phon="LOG" form="ari" />
@@ -27709,8 +28393,12 @@
             </NP>
             <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
           </PP>
-          <VB-ADN lemma="L030374a" phon="LOG" form="opu" />
-          <VB-ADN lemma="L030374a" phon="PHON" form="ru" />
+          <VB-ADN lemma="L030374a" phon="" form="opuru">
+            <form-parts>
+              <part phon="LOG" form="opu" />
+              <part phon="PHON" form="ru" />
+            </form-parts>
+          </VB-ADN>
         </IP-REL>
         <MK lemma="L090542">
           <N lemma="L090541">
@@ -27786,8 +28474,12 @@
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
         <P-RES lemma="L000526a" phon="PHON" form="si" />
         <VB-ADN lemma="L030125a" phon="LOG" form="a" />
-        <XTN-CLS lemma="L000806" phon="LOG" form="ra" />
-        <XTN-CLS lemma="L000806" phon="PHON" form="si" />
+        <XTN-CLS lemma="L000806" phon="" form="rasi">
+          <form-parts>
+            <part phon="LOG" form="ra" />
+            <part phon="PHON" form="si" />
+          </form-parts>
+        </XTN-CLS>
       </IP-MAT>
       <IP-MAT index="2">
         <PP-ARG>

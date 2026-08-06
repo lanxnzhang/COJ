@@ -58,8 +58,12 @@
                     <VB>
                       <VB-STM phon="LOG" form="sira" />
                       <VAX-RSP-INF lemma="L000009" phon="LOG" form="si" />
-                      <VB-ADC lemma="L031751a" phon="LOG" form="mye" />
-                      <VB-ADC lemma="L031751a" phon="PHON" form="su" />
+                      <VB-ADC lemma="L031751a" phon="" form="myesu">
+                        <form-parts>
+                          <part phon="LOG" form="mye" />
+                          <part phon="PHON" form="su" />
+                        </form-parts>
+                      </VB-ADC>
                     </VB>
                   </IP-REL>
                   <PLN lemma="L052386" phon="LOG" form="yamato" />
@@ -201,8 +205,12 @@
         <VB-GER lemma="L030919a" phon="PHON" form="site" />
         <PP-OB1>
           <NP>
-            <N lemma="L050438" phon="LOG" form="yama" index="1" inferred_index="1" />
-            <N lemma="L050438" phon="BPHON" form="pye" index="1" inferred_index="1" />
+            <N lemma="L050438" phon="" form="yamapye" index="1" inferred_index="1">
+              <form-parts>
+                <part phon="LOG" form="yama" />
+                <part phon="BPHON" form="pye" />
+              </form-parts>
+            </N>
             <N index="2" phon="LOG" form="no" />
             <N index="1" inferred_index="1">
               <MORPHEME phon="LOG" form="mi" />
@@ -281,8 +289,12 @@
                 </NP>
                 <VB>
                   <VB-STM lemma="L031119a" phon="LOG" form="tukape" />
-                  <VB-IMP lemma="L031644a" phon="LOG" form="matu" />
-                  <VB-IMP lemma="L031644a" phon="PHON" form="re" />
+                  <VB-IMP lemma="L031644a" phon="" form="mature">
+                    <form-parts>
+                      <part phon="LOG" form="matu" />
+                      <part phon="PHON" form="re" />
+                    </form-parts>
+                  </VB-IMP>
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>

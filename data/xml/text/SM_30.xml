@@ -85,8 +85,12 @@
           <NP-OB1>
             <N phon="LOG" form="pumi" />
           </NP-OB1>
-          <VB-GER lemma="L031144a" phon="LOG" form="tukuri" />
-          <VB-GER lemma="L031144a" phon="PHON" form="te" />
+          <VB-GER lemma="L031144a" phon="" form="tukurite">
+            <form-parts>
+              <part phon="LOG" form="tukuri" />
+              <part phon="PHON" form="te" />
+            </form-parts>
+          </VB-GER>
           <NP-OB1>
             <PP-GEN>
               <NP>
@@ -96,8 +100,12 @@
             </PP-GEN>
             <N phon="LOG" form="toga" />
           </NP-OB1>
-          <VB-GER lemma="L030469a" phon="LOG" form="kazwope" />
-          <VB-GER lemma="L030469a" phon="PHON" form="te" />
+          <VB-GER lemma="L030469a" phon="" form="kazwopete">
+            <form-parts>
+              <part phon="LOG" form="kazwope" />
+              <part phon="PHON" form="te" />
+            </form-parts>
+          </VB-GER>
         </IP-ADV>
         <VB>
           <VB-STM lemma="L031049a" phon="LOG" form="tatematura" />
@@ -159,8 +167,12 @@
           </PP-GEN>
           <N phon="LOG" form="mono" />
         </NP-OB1>
-        <VB-ADN lemma="L030469a" phon="LOG" form="kazwo" />
-        <VB-ADN lemma="L030469a" phon="PHON" form="puru" />
+        <VB-ADN lemma="L030469a" phon="" form="kazwopuru">
+          <form-parts>
+            <part phon="LOG" form="kazwo" />
+            <part phon="PHON" form="puru" />
+          </form-parts>
+        </VB-ADN>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
       </IP-SUB>
       <PP-DAT>
@@ -258,8 +270,12 @@
           <P-TOP lemma="L000522" phon="PHON" form="pa" />
         </PP-TOP>
         <IP-ADV>
-          <VB-GER lemma="L030631a" phon="LOG" form="kudasi" />
-          <VB-GER lemma="L030631a" phon="PHON" form="te" />
+          <VB-GER lemma="L030631a" phon="" form="kudasite">
+            <form-parts>
+              <part phon="LOG" form="kudasi" />
+              <part phon="PHON" form="te" />
+            </form-parts>
+          </VB-GER>
           <NP>
             <N lemma="L050267">
               <PFX-HON lemma="L000038" phon="LOG" form="opo" />
@@ -335,8 +351,12 @@
                 <ACP-INF lemma="L000033" phon="LOG" form="ku" />
               </ADJ>
             </IP-ADV>
-            <VB-GER lemma="L031160a" phon="LOG" form="tudwope" />
-            <VB-GER lemma="L031160a" phon="PHON" form="te" />
+            <VB-GER lemma="L031160a" phon="" form="tudwopete">
+              <form-parts>
+                <part phon="LOG" form="tudwope" />
+                <part phon="PHON" form="te" />
+              </form-parts>
+            </VB-GER>
           </IP-ADV>
           <NP>
             <N phon="LOG" form="koto" />
@@ -457,8 +477,12 @@
                   <IP-ADV>
                     <VB>
                       <VB-STM lemma="L030631a" phon="LOG" form="kudasi" />
-                      <VB-GER lemma="L031077a" phon="LOG" form="tamapi" />
-                      <VB-GER lemma="L031077a" phon="PHON" form="te" />
+                      <VB-GER lemma="L031077a" phon="" form="tamapite">
+                        <form-parts>
+                          <part phon="LOG" form="tamapi" />
+                          <part phon="PHON" form="te" />
+                        </form-parts>
+                      </VB-GER>
                     </VB>
                   </IP-ADV>
                   <NP>
@@ -480,8 +504,12 @@
                 </PP-DAT>
                 <VB>
                   <VB-STM lemma="L031263a" phon="LOG" form="nagasi" />
-                  <VB-ADC lemma="L031077a" phon="LOG" form="tama" />
-                  <VB-ADC lemma="L031077a" phon="PHON" form="pu" />
+                  <VB-ADC lemma="L031077a" phon="" form="tamapu">
+                    <form-parts>
+                      <part phon="LOG" form="tama" />
+                      <part phon="PHON" form="pu" />
+                    </form-parts>
+                  </VB-ADC>
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>

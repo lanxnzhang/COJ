@@ -382,6 +382,20 @@ In addition, I plan to merge another editor that uses scripts to assist with edi
 ### After commit 9eea0d5 (2)
 The current frequency calculation in the dictionary is wrong; it should reflect the total number of matching nodes rather than the total number of texts found. For instance, a single long text might contain three matching results, but currently it will only be calculated as one. Please revise the calculation logic so that the frequency represents the count of matching nodes. Additionally, the search results interface should display both the number of search results and the number of texts separately.
 
+### After commit c55b51c
+A very serious bug has been found. In the data in .txt format, a certain category of words is not being correctly recognized and processed:
+multi-sentence,IP-MAT;@4,IP-ADV,PP-ARG,IP-NMZ,VB-NML,L030199a,LOG,ipa
+multi-sentence,IP-MAT;@4,IP-ADV,PP-ARG,IP-NMZ,VB-NML,L030199a,PHON,ku
+Here is one word ipaku with a lemma id L030199a. The 'ipa' part is written in LOG and the 'ku' part is written in PHON.
+In xml it is encoded as:
+              </IP-ARG>
+              <VB-NML lemma="L030199a" phon="LOG" form="ipa" />
+              <VB-NML lemma="L030199a" phon="PHON" form="ku" />
+            </IP-NMZ>
+When generating the syntax tree, 'ipa' and 'ku' were generated as two separate nodes, but this is wrong. 
+          
+
+
 ### TBD
 
 1. 词典

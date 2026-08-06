@@ -67,8 +67,12 @@
         </NP>
         <VB>
           <VB-STM lemma="L031391a" phon="LOG" form="nori" />
-          <VB-NML lemma="L031077a" phon="LOG" form="tamapa" />
-          <VB-NML lemma="L031077a" phon="PHON" form="ku" />
+          <VB-NML lemma="L031077a" phon="" form="tamapaku">
+            <form-parts>
+              <part phon="LOG" form="tamapa" />
+              <part phon="PHON" form="ku" />
+            </form-parts>
+          </VB-NML>
         </VB>
       </IP-SUB>
       <IP-ADV>
@@ -119,8 +123,12 @@
                     <N phon="LOG" form="sakasima" />
                   </NP>
                   <COP-INF lemma="L031965" phon="PHON" form="ni" />
-                  <VB-ADN lemma="L030125a" phon="LOG" form="a" />
-                  <VB-ADN lemma="L030125a" phon="PHON" form="ru" />
+                  <VB-ADN lemma="L030125a" phon="" form="aru">
+                    <form-parts>
+                      <part phon="LOG" form="a" />
+                      <part phon="PHON" form="ru" />
+                    </form-parts>
+                  </VB-ADN>
                 </IP-REL>
                 <N>
                   <N phon="LOG" form="pito" />
@@ -164,8 +172,12 @@
               </NP>
               <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
             </PP>
-            <VB-ADC lemma="L030971a" phon="LOG" form="sona" />
-            <VB-ADC lemma="L030971a" phon="PHON" form="pu" />
+            <VB-ADC lemma="L030971a" phon="" form="sonapu">
+              <form-parts>
+                <part phon="LOG" form="sona" />
+                <part phon="PHON" form="pu" />
+              </form-parts>
+            </VB-ADC>
             <P-COMP lemma="L000530" phon="PHON" form="to" />
           </IP-ADV>
           <VB>
@@ -186,8 +198,12 @@
               </N>
             </NP>
             <VB>
-              <VB-CSS lemma="L030402a" phon="LOG" form="omopose" />
-              <VB-CSS lemma="L030402a" phon="PHON" form="domo" />
+              <VB-CSS lemma="L030402a" phon="" form="omoposedomo">
+                <form-parts>
+                  <part phon="LOG" form="omopose" />
+                  <part phon="PHON" form="domo" />
+                </form-parts>
+              </VB-CSS>
             </VB>
             <IP-ADV>
               <PP>
@@ -244,8 +260,12 @@
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>
             </IP-ADV>
-            <VB-PRV lemma="L030402a" phon="LOG" form="omopose" />
-            <VB-PRV lemma="L030402a" phon="PHON" form="ba" />
+            <VB-PRV lemma="L030402a" phon="" form="omoposeba">
+              <form-parts>
+                <part phon="LOG" form="omopose" />
+                <part phon="PHON" form="ba" />
+              </form-parts>
+            </VB-PRV>
           </IP-ADV>
           <NP>
             <PP-GEN>
@@ -371,8 +391,12 @@
             </IP-ADV>
             <VB>
               <VB-STM lemma="L031678a" phon="LOG" form="mawosi" />
-              <VB-PRV lemma="L031077a" phon="LOG" form="tama" />
-              <VB-PRV lemma="L031077a" phon="PHON" form="peba" />
+              <VB-PRV lemma="L031077a" phon="" form="tamapeba">
+                <form-parts>
+                  <part phon="LOG" form="tama" />
+                  <part phon="PHON" form="peba" />
+                </form-parts>
+              </VB-PRV>
             </VB>
           </IP-ADV>
           <NP>
@@ -397,8 +421,12 @@
           </VB>
           <P-COMP lemma="L000530" phon="PHON" form="to" />
         </IP-ADV>
-        <VB-CSS lemma="L030402a" phon="LOG" form="omopose" />
-        <VB-CSS lemma="L030402a" phon="PHON" form="domo" />
+        <VB-CSS lemma="L030402a" phon="" form="omoposedomo">
+          <form-parts>
+            <part phon="LOG" form="omopose" />
+            <part phon="PHON" form="domo" />
+          </form-parts>
+        </VB-CSS>
         <IP-ADV>
           <PP-TOP>
             <NP>
@@ -415,8 +443,12 @@
             <PP-DAT>
               <NP>
                 <IP-REL>
-                  <VB-ADC lemma="L030327a" phon="LOG" form="okona" />
-                  <VB-ADC lemma="L030327a" phon="PHON" form="pu" />
+                  <VB-ADC lemma="L030327a" phon="" form="okonapu">
+                    <form-parts>
+                      <part phon="LOG" form="okona" />
+                      <part phon="PHON" form="pu" />
+                    </form-parts>
+                  </VB-ADC>
                 </IP-REL>
               </NP>
               <P-CASE lemma="L000519" phon="PHON" form="ni" />
@@ -425,8 +457,12 @@
               <ADJ phon="LOG" form="yasu" />
               <ACP-INF lemma="L000033" phon="LOG" form="ku" />
             </ADJ>
-            <VB-GER lemma="L030919a" phon="LOG" form="si" />
-            <VB-GER lemma="L030919a" phon="PHON" form="te" />
+            <VB-GER lemma="L030919a" phon="" form="site">
+              <form-parts>
+                <part phon="LOG" form="si" />
+                <part phon="PHON" form="te" />
+              </form-parts>
+            </VB-GER>
           </IP-ADV>
         </IP-ADV>
         <PP-TOP>
@@ -494,8 +530,12 @@
               <IP-ADV>
                 <VB>
                   <VB-STM lemma="L030269a" phon="LOG" form="utukusibwi" index="1" inferred_index="1" />
-                  <VB-STM index="2" lemma="L030815a" phon="LOG" form="sato" />
-                  <VB-STM index="2" lemma="L030815a" phon="PHON" form="si" />
+                  <VB-STM index="2" lemma="L030815a" phon="" form="satosi">
+                    <form-parts>
+                      <part phon="LOG" form="sato" />
+                      <part phon="PHON" form="si" />
+                    </form-parts>
+                  </VB-STM>
                 </VB>
               </IP-ADV>
               <VB>
@@ -515,16 +555,24 @@
         </IP-ADV>
         <VB>
           <VB-STM lemma="L030402a" phon="LOG" form="omoposi" />
-          <VB-PRV lemma="L031751a" phon="LOG" form="myese" />
-          <VB-PRV lemma="L031751a" phon="PHON" form="ba" />
+          <VB-PRV lemma="L031751a" phon="" form="myeseba">
+            <form-parts>
+              <part phon="LOG" form="myese" />
+              <part phon="PHON" form="ba" />
+            </form-parts>
+          </VB-PRV>
         </VB>
         <P-FOC lemma="L000518" phon="PHON" form="namo" />
       </IP-ADV>
       <NP>
         <N phon="LOG" form="kaku" />
       </NP>
-      <VB-ADC lemma="L032093a" phon="LOG" form="noritama" />
-      <VB-ADC lemma="L032093a" phon="PHON" form="pu" />
+      <VB-ADC lemma="L032093a" phon="" form="noritamapu">
+        <form-parts>
+          <part phon="LOG" form="noritama" />
+          <part phon="PHON" form="pu" />
+        </form-parts>
+      </VB-ADC>
     </IP-MAT>
   </block>
   <block id="SM.16.3" header="kaku no sama satorite pito no mi togamu be ki koto waza na se so">
@@ -775,8 +823,12 @@
                 <VB>
                   <VB-STM lemma="L031161a" phon="LOG" form="tutwome" index="1" inferred_index="1" />
                   <VB-STM index="2" lemma="L031119a" phon="LOG" form="tukape" />
-                  <VB-IMP lemma="L031644a" phon="LOG" form="matu" />
-                  <VB-IMP lemma="L031644a" phon="PHON" form="re" />
+                  <VB-IMP lemma="L031644a" phon="" form="mature">
+                    <form-parts>
+                      <part phon="LOG" form="matu" />
+                      <part phon="PHON" form="re" />
+                    </form-parts>
+                  </VB-IMP>
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>

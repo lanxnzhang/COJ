@@ -5967,9 +5967,13 @@
             </PP-SBJ>
             <IP-REL>
               <ADJ-CLS>
-                <ADJ-STM lemma="L090433" phon="PHON" form="mi" />
-                <ADJ-STM lemma="L090433" phon="PHON" phon_index="2" form="ga" />
-                <ADJ-STM lemma="L090433" phon="PHON" form="posi" />
+                <ADJ-STM lemma="L090433" phon="" form="migaposi">
+                  <form-parts>
+                    <part phon="PHON" form="mi" />
+                    <part phon="PHON" phon_index="2" form="ga" />
+                    <part phon="PHON" form="posi" />
+                  </form-parts>
+                </ADJ-STM>
               </ADJ-CLS>
             </IP-REL>
             <N lemma="L051337" phon="PHON" form="kuni" />
