@@ -191,6 +191,8 @@
                   <VB-INF phon="LOG" form="ma" />
                   <VB-INF phon="PHON" form="se" />
                 </VB>
+              </IP-ADV>
+              <IP-ADV>
                 <NP>
                   <N phon="LOG" form="amata" />
                   <COP-ADN lemma="L031965" phon="PHON" form="no" />
@@ -655,6 +657,8 @@
             <P-COMP lemma="L000530" phon="PHON" form="to" />
           </IP-ADV>
           <VB-GER lemma="L030402a" phon="LOG" form="omoposite" />
+        </IP-ADV>
+        <IP-ADV>
           <IP-ARG>
             <IP-ADV>
               <NP>

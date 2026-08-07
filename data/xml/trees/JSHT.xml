@@ -40,6 +40,8 @@
                   <PLN lemma="L051076" phon="PHON-ON" form="ikaruga" />
                 </NP>
                 <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+              </PP>
+              <PP>
                 <NP>
                   <PLN lemma="L080124" phon="PHON-ON" form="tomi" />
                 </NP>
@@ -123,6 +125,8 @@
                 <PLN lemma="L051076" phon="PHON-ON" form="ikaruga" />
               </NP>
               <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+            </PP>
+            <PP>
               <NP>
                 <PLN lemma="L080124" phon="PHON-ON" form="tomi" />
               </NP>
@@ -299,6 +303,8 @@
                         <PLN lemma="L051076" phon="PHON-ON" form="ikaruga" />
                       </NP>
                       <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+                    </PP>
+                    <PP>
                       <NP>
                         <PRO-N lemma="L042029" phon="PHON" form="ko" />
                       </NP>

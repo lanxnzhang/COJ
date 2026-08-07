@@ -241,6 +241,8 @@
                     <part phon="PHON" form="reba" />
                   </form-parts>
                 </VB-PRV>
+              </IP-ADV>
+              <IP-ADV>
                 <IP-ADV>
                   <PP-DAT>
                     <NP>
@@ -266,6 +268,8 @@
                       <part phon="PHON" form="te" />
                     </form-parts>
                   </VB-GER>
+                </IP-ADV>
+                <IP-ADV>
                   <PP-DAT>
                     <NP>
                       <PP-GEN>
@@ -284,6 +288,8 @@
                       <part phon="PHON" form="te" />
                     </form-parts>
                   </VB-GER>
+                </IP-ADV>
+                <IP-ADV>
                   <NP-SBJ>
                     <N phon="LOG" form="ayamati" />
                   </NP-SBJ>
@@ -543,6 +549,8 @@
                     </form-parts>
                   </VB-NML>
                 </VB>
+              </IP-ADV>
+              <IP-ADV>
                 <IP-ADV>
                   <IP-ADV>
                     <IP-ADV>
@@ -599,6 +607,8 @@
                     </form-parts>
                   </VB-GER>
                   <P-FOC lemma="L000518" phon="PHON" form="namo" />
+                </IP-ADV>
+                <IP-ADV>
                   <VB>
                     <VB-STM lemma="L031678a" phon="LOG" form="mawosa" />
                     <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />

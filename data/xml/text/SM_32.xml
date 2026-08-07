@@ -446,6 +446,8 @@
                     <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />
                   </VB>
                   <VB-GER lemma="L030919a" phon="PHON" form="site" />
+                </IP-ADV>
+                <IP-ADV>
                   <IP-ADV index="1" inferred_index="1">
                     <ADJ>
                       <ADJ phon="LOG" form="tadasi" />
@@ -602,6 +604,8 @@
                     <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                   </PP-OB1>
                   <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+                </IP-ADV>
+                <IP-ADV>
                   <IP-ADV>
                     <PP-TOP>
                       <NP>

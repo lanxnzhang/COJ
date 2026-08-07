@@ -372,6 +372,8 @@
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP-OB1>
           <VB-PRV lemma="L031686a" phon="LOG" form="misonapaseba" />
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N phon="LOG" form="tada" />
             <COP-INF lemma="L031965" phon="LOG" form="ni" />
@@ -394,6 +396,8 @@
             <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />
           </VB>
           <VB-GER lemma="L030919a" phon="PHON" form="site" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-DAT>
             <NP>
               <PP-GEN index="1" inferred_index="1">

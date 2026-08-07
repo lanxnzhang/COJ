@@ -435,6 +435,8 @@
             <part phon="PHON" form="ba" />
           </form-parts>
         </VB-PRV>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <PP-DAT>
             <NP>
@@ -726,6 +728,8 @@
                     <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
                   </VB>
                   <COP-INF lemma="L031965" phon="PHON" form="ni" />
+                </IP-ADV>
+                <IP-ADV>
                   <PP-TOP>
                     <NP>
                       <IP-REL>
@@ -923,6 +927,8 @@
                   <part phon="PHON" form="te" />
                 </form-parts>
               </VB-GER>
+            </IP-ADV>
+            <IP-ADV>
               <PP-OB1>
                 <NP>
                   <PP-GEN>
@@ -936,6 +942,8 @@
                 <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
               </PP-OB1>
               <VB-INF lemma="L031397a" phon="LOG" form="pakari" />
+            </IP-ADV>
+            <IP-ADV>
               <IP-ADV>
                 <NP>
                   <N phon="LOG" form="pisoka" />
@@ -1036,6 +1044,8 @@
           </NP>
           <P-FOC lemma="L000527" phon="PHON" form="so" />
         </PP>
+      </IP-ADV>
+      <IP-ADV>
         <PP-TOP>
           <NP>
             <IP-REL>
@@ -1154,6 +1164,8 @@
                       <part phon="PHON" form="te" />
                     </form-parts>
                   </VB-GER>
+                </IP-ADV>
+                <IP-ADV>
                   <NP-SBJ>
                     <IP-REL>
                       <IP-ADV>

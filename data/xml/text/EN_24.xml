@@ -177,6 +177,8 @@
           </PP-DAT>
           <VB-GER phon="LOG" form="yori" />
           <VB-GER phon="PHON" form="te" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-DAT>
             <NP>
               <N>
@@ -199,7 +201,7 @@
               <N phon="LOG" form="miya" />
             </N>
           </NP-OB1>
-          <IP-ADV index="1" inferred_index="1">
+          <IP-ADV>
             <ADJ-STM phon="LOG" form="arata" />
             <COP-INF lemma="L031965" phon="LOG" form="ni" />
           </IP-ADV>
@@ -208,6 +210,8 @@
             <VB-GER phon="LOG" form="maturi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP-OB1>
             <NP>
               <IP-REL>
@@ -285,6 +289,8 @@
             <VB-GER phon="LOG" form="yuma" />
             <VB-GER phon="PHON" form="parite" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP-OB1>
             <NP>
               <IP-REL>

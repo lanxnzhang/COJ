@@ -622,6 +622,8 @@
                   <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                 </PP>
                 <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+              </IP-ADV>
+              <IP-ADV index="1" inferred_index="1">
                 <IP-ADV>
                   <IP-ADV>
                     <NP>
@@ -743,6 +745,8 @@
             <N phon="LOG" form="toki" />
           </NP>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
+        </IP-ADV>
+        <IP-ADV>
           <IP-ADV>
             <ADJ>
               <ADJ phon="LOG" form="kata" />

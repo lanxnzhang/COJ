@@ -393,6 +393,44 @@ In xml it is encoded as:
               <VB-NML lemma="L030199a" phon="PHON" form="ku" />
             </IP-NMZ>
 When generating the syntax tree, 'ipa' and 'ku' were generated as two separate nodes, but this is wrong. 
+
+### After commit a36a1af
+A very serious bug has been found. In the data in .txt format, a certain category of annotations is not being correctly recognized and processed. The removal of the kanji text from the syntax tree structure has resulted in removing some dividers between constituents. For example, in BS.1:
+CP-FINAL,4@知知波波賀多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N,L050641,PHON,titi
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N;@2,L051720,PHON,papa
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000503,PHON,ga
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+CP-FINAL,5@毛呂比止乃多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050486,ADJ-STM,L007011,PHON,moro
+CP-FINAL,NP-ADV,PP,NP,N,L050486,N,L050046,PHON,pito
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000520,PHON,no
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+This part actually contains two NP-ADVs, though they are separated by the kanji characters.This type of structure is characterized by the fact that the parent node preceding the kanji text does not include NP-ADV: 'CP-FINAL,5@毛呂比止乃多米爾,*'.
+However, in xml data they are encoded and presented as one NP-ADV, but this is wrong:
+      <NP-ADV>
+        <PP>
+          <NP>
+            <N lemma="L050402">
+              <N lemma="L050641" phon="PHON" form="titi" index="1" inferred_index="1" />
+              <N index="2" lemma="L051720" phon="PHON" form="papa" />
+            </N>
+          </NP>
+          <P-CASE-GEN lemma="L000503" phon="PHON" form="ga" />
+        </PP>
+        <N lemma="L050063d" phon="PHON" form="tameni" />
+        <PP>
+          <NP>
+            <N lemma="L050486">
+              <ADJ-STM lemma="L007011" phon="PHON" form="moro" />
+              <N lemma="L050046" phon="PHON" form="pito" />
+            </N>
+          </NP>
+          <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+        </PP>
+        <N lemma="L050063d" phon="PHON" form="tameni" />
+      </NP-ADV>
+Please check and correct this type of encoding bug, while ensuring it can be correctly converted back to the original .txt file. After the modifications, generate a report that includes at least the following: 1. the number of modified lines; 2. IDs of the text containing them and the original content in .txt format. Similar to things you have done for 'ipaku', put the report in 'reports' folder and create a repeatable migration utility.
           
 
 

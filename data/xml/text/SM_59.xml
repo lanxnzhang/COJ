@@ -280,6 +280,8 @@
           <VB-STM lemma="L030125a" phon="LOG" form="ara" />
           <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />
         </VB>
+      </IP-ADV>
+      <IP-ADV>
         <PP>
           <NP>
             <N phon="LOG" form="moto" />
@@ -491,6 +493,8 @@
           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
         </PP>
         <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-DAT>
           <NP>
             <IP-REL>
@@ -611,6 +615,8 @@
           <N phon="LOG" form="koto" />
         </NP>
         <VB-IFC lemma="L030125a" phon="LOG" form="ari" />
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <IP-ADV>
             <PP-TOP>
@@ -752,6 +758,8 @@
                     <part phon="PHON" form="te" />
                   </form-parts>
                 </VB-GER>
+              </IP-ADV>
+              <IP-ADV>
                 <PP-DAT>
                   <NP>
                     <N phon="LOG" form="ima" />
@@ -760,6 +768,8 @@
                 </PP-DAT>
                 <VB-ADC lemma="L030170a" phon="LOG" form="itaru" />
                 <P-RES lemma="L000512" phon="PHON" form="made" />
+              </IP-ADV>
+              <IP-ADV>
                 <NP>
                   <IP-REL>
                     <VB-ADC lemma="L030327a" phon="LOG" form="okotaru" />
@@ -785,6 +795,8 @@
             <part phon="PHON" form="ba" />
           </form-parts>
         </VB-PRV>
+      </IP-ADV>
+      <IP-ADV>
         <NP>
           <IP-REL>
             <NP>
@@ -994,6 +1006,8 @@
           </NP>
           <VB-GER phon="LOG" form="satori" />
           <VB-GER phon="PHON" form="te" />
+        </IP-ADV>
+        <IP-ADV>
           <PP>
             <NP>
               <IP-REL index="1" inferred_index="1">
@@ -1013,6 +1027,8 @@
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP>
           <VB-INF lemma="L031761a" phon="PHON" form="moti" />
+        </IP-ADV>
+        <IP-ADV>
           <PP>
             <NP>
               <PP-GEN>
@@ -1128,6 +1144,8 @@
             </form-parts>
           </VB-NML>
         </VB>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <NP>
             <N phon="LOG" form="kaku" index="1" inferred_index="1" />
@@ -1141,6 +1159,8 @@
               <part phon="PHON" form="tutu" />
             </form-parts>
           </VB-CTT>
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N>
               <N phon="LOG" form="pito" index="1" inferred_index="1" />
@@ -1185,6 +1205,8 @@
               <P-TOP lemma="L000514" phon="PHON" form="mo" />
             </PP-TOP>
             <VB-INF lemma="L031691a" phon="LOG" form="midari" />
+          </IP-REL>
+          <IP-REL>
             <PP-TOP>
               <NP>
                 <PP-GEN>
@@ -1297,7 +1319,7 @@
                 <VB-INF lemma="L030401a" phon="LOG" form="omobuke" />
               </VB>
             </IP-ADV>
-            <VB index="1" inferred_index="1">
+            <VB>
               <VB-STM lemma="L031944a" phon="LOG" form="wosipe" />
               <VB-GER lemma="L031301a" phon="" form="naposite">
                 <form-parts>
@@ -1306,8 +1328,10 @@
                 </form-parts>
               </VB-GER>
             </VB>
+          </IP-ADV>
+          <IP-ADV>
             <IP-ADV>
-              <NP index="1" inferred_index="1">
+              <NP>
                 <PP-TOP index="1" inferred_index="1">
                   <NP>
                     <N phon="LOG" form="ono" />
@@ -1338,6 +1362,8 @@
                 <VB-STM lemma="L031602a" phon="LOG" form="porobosa" />
                 <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />
               </VB>
+            </IP-ADV>
+            <IP-ADV>
               <NP index="1" inferred_index="1">
                 <N phon="LOG" form="iya" />
               </NP>
@@ -1365,6 +1391,8 @@
               </form-parts>
             </VB-GER>
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP>
             <NP>
               <IP-REL index="1" inferred_index="1">

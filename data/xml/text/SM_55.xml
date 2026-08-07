@@ -203,6 +203,8 @@
         </NP>
         <P-COMP lemma="L000530" phon="PHON" form="to" />
         <VB-GER lemma="L030919a" phon="PHON" form="site" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-OB1>
           <NP>
             <N lemma="L050438" phon="" form="yamapye" index="1" inferred_index="1">
@@ -220,6 +222,8 @@
           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
         </PP-OB1>
         <VB-GER lemma="L031044a" phon="LOG" form="tatete" />
+      </IP-ADV>
+      <IP-ADV>
         <NP>
           <N index="1" inferred_index="1">
             <N phon="LOG" form="pi" index="1" inferred_index="1" />

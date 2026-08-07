@@ -228,6 +228,53 @@ ID,619_MYS_04
         assert corpus_from_xml(corpus_to_xml(document)).to_text() == self.source
 
 
+class TestKanjiMarkerSyntaxBoundaries:
+    source = """\
+=N(" titi papa ga tameni moro pito no tameni ")
+CP-FINAL,4@知知波波賀多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N,L050641,PHON,titi
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N;@2,L051720,PHON,papa
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000503,PHON,ga
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+CP-FINAL,5@毛呂比止乃多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050486,ADJ-STM,L007011,PHON,moro
+CP-FINAL,NP-ADV,PP,NP,N,L050486,N,L050046,PHON,pito
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000520,PHON,no
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+ID,BS.1
+"""
+
+    def test_marker_parent_path_separates_repeated_child_constituents(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        final = root.find("./block/CP-FINAL")
+        assert final is not None
+        constituents = final.findall("NP-ADV")
+        assert len(constituents) == 2
+        assert [leaf.get("form") for leaf in constituents[0].iter()
+                if leaf.get("form")] == ["titi", "papa", "ga", "tameni"]
+        assert [leaf.get("form") for leaf in constituents[1].iter()
+                if leaf.get("form")] == ["moro", "pito", "no", "tameni"]
+
+    def test_marker_does_not_split_a_parent_named_in_its_path(self):
+        source = """\
+=N(" titi papa ")
+CP-FINAL,NP-ADV,1@知知,*
+CP-FINAL,NP-ADV,NP,N,L050641,PHON,titi
+CP-FINAL,NP-ADV,2@波波,*
+CP-FINAL,NP-ADV,NP,N,L051720,PHON,papa
+ID,TEST.1
+"""
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(source)))
+        final = root.find("./block/CP-FINAL")
+        assert final is not None
+        assert len(final.findall("NP-ADV")) == 1
+        assert len(final.findall("./NP-ADV/NP")) == 2
+
+    def test_txt_xml_txt_round_trip_is_exact(self):
+        document = CorpusDocument.from_text(self.source)
+        assert corpus_from_xml(corpus_to_xml(document)).to_text() == self.source
+
+
 class TestCorpusXmlRealFile:
     @pytest.fixture(autouse=True)
     def setup(self, sample_corpus_file):

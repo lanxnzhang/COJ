@@ -222,6 +222,8 @@
                                 </NP>
                                 <P-COMP lemma="L000530" phon="PHON" form="to" />
                                 <VB-GER lemma="L030919a" phon="LOG" form="site" />
+                              </IP-REL>
+                              <IP-REL>
                                 <IP-ADV>
                                   <PP-OB1-TOP>
                                     <NP>
@@ -622,6 +624,8 @@
                   </NP-OB1>
                   <COP-GER phon="BPHON" form="to" />
                   <COP-GER phon="LOG" form="site" />
+                </IP-ADV>
+                <IP-ADV>
                   <NP>
                     <IP-REL>
                       <NP>
@@ -649,6 +653,8 @@
                           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                         </PP-OB1>
                         <VB-GER lemma="L031416a" phon="LOG" form="pazimete" />
+                      </IP-ADV>
+                      <IP-ADV index="1" inferred_index="1">
                         <NP>
                           <N lemma="L050699">
                             <N phon="LOG" form="tugi" index="1" inferred_index="1" />

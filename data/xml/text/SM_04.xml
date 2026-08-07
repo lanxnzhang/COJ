@@ -223,6 +223,8 @@
                               <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
                             </PP>
                             <VB-GER lemma="L031416a" phon="LOG" form="pazimete" />
+                          </IP-ADV>
+                          <IP-ADV index="1" inferred_index="1">
                             <PP-DAT>
                               <NP>
                                 <N>
@@ -307,6 +309,8 @@
                         </NP>
                         <P-FOC lemma="L000518" phon="PHON" form="namo" />
                       </PP>
+                    </IP-ADV>
+                    <IP-ADV>
                       <N>
                         <N lemma="L050005b" phon="LOG" form="kamu" />
                         <SFX lemma="L001001" phon="LOG" form="nagara" />
@@ -500,6 +504,8 @@
           </IP-REL>
         </NP>
         <COP-INF lemma="L031965" phon="LOG" form="ni" />
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <PP-DAT>
             <NP>
@@ -697,6 +703,8 @@
         <XTN-CLS lemma="L000806" phon="PHON" form="rasi" />
         <P-COMP lemma="L000530" phon="PHON" form="to" />
         <P-FOC lemma="L000518" phon="PHON" form="namo" />
+      </IP-ADV>
+      <IP-ADV>
         <N>
           <N lemma="L050005b" phon="LOG" form="kamu" />
           <SFX lemma="L001001" phon="LOG" form="nagara" />
@@ -747,6 +755,8 @@
           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
         </PP>
         <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+      </IP-ADV>
+      <IP-ADV>
         <PP>
           <NP>
             <IP-REL>

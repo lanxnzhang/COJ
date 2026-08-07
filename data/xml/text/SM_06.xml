@@ -264,6 +264,8 @@
                                 <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                               </PP>
                               <VB-GER lemma="L031416a" phon="LOG" form="pazimete" />
+                            </IP-ADV>
+                            <IP-ADV>
                               <PP-DAT>
                                 <NP>
                                   <PP-GEN>
@@ -325,6 +327,8 @@
                               </NP>
                               <P-COMP lemma="L000530" phon="PHON" form="to" />
                               <VB-GER lemma="L030208a" phon="LOG" form="imasite" />
+                            </IP-ADV>
+                            <IP-ADV>
                               <NP>
                                 <IP-REL>
                                   <ADJ>
@@ -338,6 +342,8 @@
                                 <VB-STM lemma="L031119a" phon="LOG" form="tukape" />
                                 <VB-INF lemma="L031649a" phon="LOG" form="maturi" />
                               </VB>
+                            </IP-ADV>
+                            <IP-ADV>
                               <NP>
                                 <PP-GEN>
                                   <NP>
@@ -398,6 +404,8 @@
                         </NP>
                         <P-FOC lemma="L000518" phon="PHON" form="namo" />
                       </PP>
+                    </IP-ADV>
+                    <IP-ADV>
                       <N>
                         <N lemma="L050005b" phon="LOG" form="kamu" />
                         <SFX lemma="L001001" phon="LOG" form="nagara" />
@@ -627,6 +635,8 @@
                                                   </PP-DAT>
                                                   <VB-GER lemma="L030047a" phon="LOG" form="atarite" />
                                                   <P-TOP lemma="L000522" phon="LOG" form="pa" />
+                                                </IP-ADV>
+                                                <IP-ADV index="1" inferred_index="1">
                                                   <IP-ADV>
                                                     <PP-TOP>
                                                       <NP>
@@ -889,6 +899,8 @@
                                                 <VB-STM index="2" lemma="L031077a" phon="LOG" form="tamapa" />
                                                 <VAX-CJR-ADC lemma="L000002" phon="LOG" form="mu" />
                                               </VB>
+                                            </IP-ADV>
+                                            <IP-ADV>
                                               <NP>
                                                 <N phon="PHON" form="kaku" index="1" inferred_index="1" />
                                                 <N index="2" phon="PHON" form="ya" />
@@ -900,6 +912,8 @@
                                               </VB>
                                             </IP-ADV>
                                             <P-COMP lemma="L000530" phon="PHON" form="to" />
+                                          </IP-ADV>
+                                          <IP-ADV>
                                             <IP-ADV>
                                               <NP>
                                                 <IP-REL>
@@ -1247,6 +1261,8 @@
                         <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                       </PP>
                       <VB-GER lemma="L030423a" phon="LOG" form="kagapurite" />
+                    </IP-ADV>
+                    <IP-ADV>
                       <NP>
                         <IP-REL index="1" inferred_index="1">
                           <ADJ>
@@ -1566,6 +1582,8 @@
           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
         </PP>
         <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+      </IP-ADV>
+      <IP-ADV>
         <PP>
           <NP>
             <IP-REL>
@@ -1607,6 +1625,8 @@
                             </NP>
                             <P-COMP lemma="L000530" phon="LOG" form="to" />
                             <VB-GER lemma="L030919a" phon="LOG" form="site" />
+                          </IP-ADV>
+                          <IP-ADV>
                             <NP>
                               <PP-GEN>
                                 <NP>

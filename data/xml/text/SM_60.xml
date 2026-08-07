@@ -169,6 +169,8 @@
       </PP>
       <IP-ADV>
         <VB-GER lemma="L031044a" phon="LOG" form="tatete" />
+      </IP-ADV>
+      <IP-ADV>
         <NP>
           <N index="1" inferred_index="1">
             <N phon="LOG" form="pi" index="1" inferred_index="1" />

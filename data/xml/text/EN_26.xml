@@ -145,6 +145,8 @@
         <P-COMP lemma="L000530" phon="PHON" form="to" />
         <VB-ADN phon="LOG" form="suru" />
         <P-CONN lemma="L000551" phon="PHON" form="ni" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-DAT>
           <IP-NMZ>
             <NP-SBJ>
@@ -321,6 +323,8 @@
             <ADJ-STM phon="PHON" form="si" />
             <ACP-INF lemma="L000033" phon="PHON" form="mi" />
           </ADJ>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-OB1>
             <NP>
               <IP-REL>

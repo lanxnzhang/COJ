@@ -49,6 +49,8 @@
             <N lemma="L031416b" phon="LOG" form="pazime" />
           </NP>
           <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+        </PP>
+        <PP>
           <NP>
             <PRO-ADV lemma="L042020" phon="PHON" form="kaku" />
           </NP>
@@ -121,6 +123,8 @@
             </PLN>
           </NP>
           <P-TOP lemma="L000522" phon="PHON" form="pa" />
+        </PP>
+        <PP>
           <NP>
             <N lemma="L050005a" phon="PHON" form="kamwi" />
           </NP>
@@ -192,6 +196,8 @@
                 </PP>
                 <N lemma="L050005a" phon="PHON" form="kamwi" />
               </PEN>
+            </IP-REL>
+            <IP-REL>
               <NP-PRD>
                 <PEN lemma="L051454" phon="PHON" form="mima" />
               </NP-PRD>
@@ -287,6 +293,10 @@
           <ADJ-INF>
             <ADJ-STM lemma="L007184" phon="PHON" form="tapirake" />
             <ACP-INF lemma="L000033" phon="PHON" form="ku" />
+          </ADJ-INF>
+        </IP-ADV>
+        <IP-ADV>
+          <ADJ-INF>
             <ADJ-STM lemma="L007007" phon="PHON" form="naga" />
             <ACP-INF lemma="L000033" phon="PHON" form="ku" />
           </ADJ-INF>
@@ -691,6 +701,8 @@
                 <PLN lemma="L051166" phon="PLOG" form="kadurakwi" />
               </NP>
               <P-CASE-GEN lemma="L000520" phon="NLOG" form="no" />
+            </PP>
+            <PP>
               <NP>
                 <N lemma="L052126" phon="LOG" form="tera" />
               </NP>

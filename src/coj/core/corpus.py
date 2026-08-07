@@ -81,6 +81,17 @@ def _canonical_sentence_id(source_id: str) -> str:
     return f"{collection.upper()}.{int(volume)}.{int(item)}"
 
 
+def _kanji_marker_parent_path(raw: str) -> tuple[str, ...] | None:
+    """Return the syntax-parent path encoded before a TXT kanji marker."""
+    fields = raw.split(",")
+    if len(fields) < 2 or fields[-1] != "*":
+        return None
+    marker_number, separator, _ = fields[-2].partition("@")
+    if not separator or not marker_number.isdigit():
+        return None
+    return tuple(fields[:-2])
+
+
 def _roundtrip_element(block: ET.Element) -> ET.Element | None:
     return block.find("roundtrip-data")
 
@@ -154,6 +165,7 @@ class CorpusLine:
         self._leaf_elem: ET.Element | None = None
         self._form_part_elem: ET.Element | None = None
         self._ancestors: list[ET.Element] = []
+        self._syntax_boundaries_before: list[tuple[str, ...]] = []
 
     @classmethod
     def _from_elem(
@@ -168,6 +180,7 @@ class CorpusLine:
         obj._leaf_elem = leaf_elem
         obj._form_part_elem = form_part_elem
         obj._ancestors = list(ancestors)
+        obj._syntax_boundaries_before = []
         return obj
 
     # ── parsing ───────────────────────────────────────────────────────────────
@@ -723,6 +736,8 @@ def _multipart_leaf_run(
     position = start
     while position < len(lines):
         candidate = lines[position]
+        if position > start and _starts_new_syntax_child(candidate, depth):
+            break
         candidate_lemma = str(candidate.lemma_id) if candidate.lemma_id else ""
         if tuple(candidate.synt_path) != path or candidate_lemma != lemma:
             break
@@ -734,6 +749,15 @@ def _multipart_leaf_run(
         position += 1
     phon_tags = {line.phon_tag for line in run if line.phon_tag}
     return run if len(run) > 1 and len(phon_tags) > 1 else []
+
+
+def _starts_new_syntax_child(line: CorpusLine, parent_depth: int) -> bool:
+    """Whether a source marker starts a new child below *parent_depth*."""
+    path = tuple(line.synt_path)
+    return any(
+        len(boundary) == parent_depth and path[:parent_depth] == boundary
+        for boundary in line._syntax_boundaries_before
+    )
 
 
 def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
@@ -789,6 +813,8 @@ def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
             run: list[CorpusLine] = []
             while i < len(lines):
                 next_cl = lines[i]
+                if run and _starts_new_syntax_child(next_cl, depth):
+                    break
                 if depth >= len(next_cl.synt_path):
                     break
                 if _node_key(next_cl, depth) != (raw_tag, emb_lemma):
@@ -855,20 +881,29 @@ def _utterance_to_elem(utt: Utterance) -> ET.Element:
         elem.set("header", _strip_header_wrapper(hdr.raw))
 
     # Keep source-format details in an explicitly round-trip-only container.
-    # Positions count corpus lines, allowing comments to be restored exactly
-    # without letting their otherwise meaningless tag prefixes affect syntax.
+    # Positions count corpus lines, allowing comments to be restored exactly.
+    # A kanji marker's prefix also marks where the next child constituent
+    # begins; it is kept transiently on that first CorpusLine for tree building.
     roundtrip = ET.SubElement(elem, "roundtrip-data")
     roundtrip.set("format", "coj-txt")
     if source_sid:
         roundtrip.set("source-id", source_sid)
     corpus_position = 0
+    pending_boundaries: list[tuple[str, ...]] = []
+    corpus_lines: list[CorpusLine] = []
     for line in source_lines:
         if isinstance(line, CorpusLine):
+            line._syntax_boundaries_before = list(pending_boundaries)
+            pending_boundaries.clear()
+            corpus_lines.append(line)
             corpus_position += 1
         elif isinstance(line, CommentLine) and line.is_inline_comment:
             comment = ET.SubElement(roundtrip, "comment")
             comment.set("position", str(corpus_position))
             comment.set("raw", line.raw)
+            boundary = _kanji_marker_parent_path(line.raw)
+            if boundary is not None:
+                pending_boundaries.append(boundary)
 
     # Processing data: each marker begins one readable sentence. TXT marker
     # numbers are deliberately not copied; semantic numbering starts at 1.
@@ -890,7 +925,7 @@ def _utterance_to_elem(utt: Utterance) -> ET.Element:
         ET.SubElement(sentence, "kanji").text = kanji
         ET.SubElement(sentence, "transcription").text = " ".join(forms)
 
-    for child in _build_children(utt.corpus_lines(), 0):
+    for child in _build_children(corpus_lines, 0):
         elem.append(child)
 
     return elem

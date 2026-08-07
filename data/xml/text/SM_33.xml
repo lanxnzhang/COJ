@@ -107,6 +107,8 @@
               <part phon="PHON" form="te" />
             </form-parts>
           </VB-GER>
+        </IP-REL>
+        <IP-REL>
           <PP-OB1>
             <NP>
               <N phon="LOG" form="isawo" />
@@ -394,6 +396,8 @@
                       <part phon="PHON" form="te" />
                     </form-parts>
                   </VB-GER>
+                </IP-ADV>
+                <IP-ADV>
                   <PP-TOP>
                     <NP>
                       <N phon="LOG" form="pito" index="1" inferred_index="1" />
@@ -604,6 +608,8 @@
                     <part phon="PHON" form="te" />
                   </form-parts>
                 </VB-GER>
+              </IP-ADV>
+              <IP-ADV>
                 <IP-ADV>
                   <PP-OB1>
                     <NP>
@@ -779,6 +785,8 @@
           <P-COMP lemma="L000530" phon="PHON" form="to" />
         </IP-ADV>
         <VB-CND lemma="L031314a" phon="PHON" form="naraba" />
+      </IP-ADV>
+      <IP-ADV>
         <NP-SBJ>
           <N>
             <N lemma="L050037" phon="LOG" form="kokoro" index="1" inferred_index="1" />
@@ -789,6 +797,8 @@
           <N phon="LOG" form="oroka" />
         </NP>
         <COP-INF lemma="L031965" phon="PHON" form="ni" />
+      </IP-ADV>
+      <IP-ADV>
         <NP-SBJ>
           <N lemma="L050037" phon="LOG" form="kokoro" />
         </NP-SBJ>

@@ -295,6 +295,8 @@
               <IP-ADV>
                 <IP-ADV>
                   <VB-CSS lemma="L030848a" phon="LOG" form="sikaredomo" />
+                </IP-ADV>
+                <IP-ADV>
                   <IP-ADV>
                     <PP-OB1>
                       <NP>
@@ -313,6 +315,8 @@
                   <VB-GER phon="LOG" form="pe" />
                   <VB-GER phon="PHON" form="te" />
                   <P-TOP lemma="L000514" phon="PHON" form="mo" />
+                </IP-ADV>
+                <IP-ADV>
                   <PP-OB1>
                     <NP>
                       <IP-REL>
@@ -349,6 +353,8 @@
                       </form-parts>
                     </VB-INF>
                   </VB>
+                </IP-ADV>
+                <IP-ADV>
                   <NP-OB1>
                     <N>
                       <DVN lemma="L030423b" phon="LOG" form="kagapuri" />
@@ -584,6 +590,8 @@
               <IP-ADV>
                 <IP-ADV>
                   <VB-CSS lemma="L030848a" phon="LOG" form="sikaredomo" />
+                </IP-ADV>
+                <IP-ADV>
                   <PP-DAT>
                     <NP>
                       <IP-REL>
@@ -608,6 +616,8 @@
                     <P-CASE lemma="L000519" phon="PHON" form="ni" />
                   </PP-DAT>
                   <VB-GER phon="LOG" form="yorite" />
+                </IP-ADV>
+                <IP-ADV>
                   <IP-ADV>
                     <VB>
                       <VB-STM lemma="L031857a" phon="LOG" form="yurusi" />

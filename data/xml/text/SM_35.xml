@@ -179,6 +179,8 @@
                   </ADJ>
                   <VB-GER lemma="L030919a" phon="PHON" form="site" />
                 </IP-ADV>
+              </IP-ADV>
+              <IP-ADV>
                 <PP-OB1-TOP>
                   <NP>
                     <IP-REL>
@@ -361,6 +363,8 @@
             <N phon="LOG" form="sude" />
           </NP>
           <COP-INF lemma="L031965" phon="LOG" form="ni" />
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N phon="LOG" form="akiraka" />
           </NP>
@@ -517,6 +521,8 @@
                       <part phon="PHON" form="te" />
                     </form-parts>
                   </VB-GER>
+                </IP-ADV>
+                <IP-ADV>
                   <IP-ADV>
                     <PP-OB1>
                       <NP>
@@ -548,6 +554,8 @@
                         </form-parts>
                       </VB-GER>
                     </VB>
+                  </IP-ADV>
+                  <IP-ADV>
                     <PP-OB1>
                       <NP>
                         <IP-REL>
@@ -572,6 +580,8 @@
                         <part phon="PHON" form="te" />
                       </form-parts>
                     </VB-GER>
+                  </IP-ADV>
+                  <IP-ADV>
                     <NP>
                       <PP-GEN>
                         <NP>
@@ -778,6 +788,8 @@
                     </form-parts>
                   </VB-NML>
                 </VB>
+              </IP-ADV>
+              <IP-ADV>
                 <PP-DAT>
                   <NP>
                     <IP-REL>

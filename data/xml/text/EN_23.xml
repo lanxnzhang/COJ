@@ -135,6 +135,8 @@
             <VB-STM phon="LOG" form="mawosi" />
             <VB-GER phon="LOG" form="wopete" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <NP-PRD>
             <N phon="LOG" form="tugi" />
           </NP-PRD>
@@ -203,6 +205,8 @@
                 </PP-DAT>
                 <VB-GER phon="LOG" form="yori" />
                 <VB-GER phon="PHON" form="te" />
+              </IP-ADV>
+              <IP-ADV>
                 <NUMCLP>
                   <NUM phon="LOG" form="mi" />
                   <N phon="LOG" form="tose" />
@@ -213,6 +217,8 @@
                   <VB-GER phon="LOG" form="kiywo" />
                   <VB-GER phon="PHON" form="maparite" />
                 </VB>
+              </IP-ADV>
+              <IP-ADV>
                 <IP-ADV>
                   <NP-PRD>
                     <N>
@@ -278,6 +284,8 @@
                     <N phon="LOG" form="tomo" />
                   </NP-PRD>
                   <COP-INF lemma="L031965" phon="PHON" form="ni" />
+                </IP-ADV>
+                <IP-ADV index="1" inferred_index="1">
                   <NP-PRD>
                     <N>
                       <N phon="LOG" form="tok" index="1" inferred_index="1" />
@@ -285,6 +293,8 @@
                     </N>
                   </NP-PRD>
                   <COP-INF lemma="L031965" phon="PHON" form="ni" />
+                </IP-ADV>
+                <IP-ADV index="1" inferred_index="1">
                   <NP-PRD>
                     <N lemma="L050379">
                       <N phon="LOG" form="kak" index="1" inferred_index="1" />
@@ -313,6 +323,8 @@
                   <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
+              </IP-ADV>
+              <IP-ADV>
                 <NP-PRD>
                   <N>
                     <PFX-HON lemma="L000035" phon="LOG" form="mi" />
@@ -365,6 +377,8 @@
             <VB-GER phon="LOG" form="moti" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <ADJ index="1" inferred_index="1">
             <ADJ-STM lemma="L007078" phon="LOG" form="kasikwo" />
             <ACP-INF lemma="L000033" phon="PHON" form="mi" />

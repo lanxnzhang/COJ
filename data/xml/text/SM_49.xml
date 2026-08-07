@@ -222,7 +222,7 @@
         <N phon="LOG" form="ware" />
       </NP>
       <IP-ADV>
-        <IP-ADV index="1" inferred_index="1">
+        <IP-ADV>
           <IP-ADV>
             <IP-ADV>
               <IP-ADV>
@@ -275,6 +275,8 @@
                   <part phon="PHON" form="ri" />
                 </form-parts>
               </VB-INF>
+            </IP-ADV>
+            <IP-ADV>
               <PP-TOP>
                 <NP>
                   <IP-REL>
@@ -290,6 +292,8 @@
                 <VB-STM phon="LOG" form="sira" />
                 <VAX-NEG-INF lemma="L000006" phon="PHON" form="ni" />
               </VB>
+            </IP-ADV>
+            <IP-ADV>
               <PP-TOP>
                 <NP>
                   <IP-REL>
@@ -356,6 +360,8 @@
           </form-parts>
         </VB-GER>
         <P-FOC lemma="L000518" phon="PHON" form="namo" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-GEN>
           <NP>
             <N phon="LOG" form="nori" />
@@ -366,6 +372,8 @@
           <N lemma="L004001" phon="PHON" form="manima" />
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
         </N>
+      </IP-ADV>
+      <IP-ADV>
         <PP>
           <NP>
             <IP-REL>

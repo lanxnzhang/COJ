@@ -178,6 +178,8 @@
                   <part phon="PHON" form="te" />
                 </form-parts>
               </VB-GER>
+            </IP-ADV>
+            <IP-ADV>
               <PP-OB1>
                 <NP>
                   <N lemma="L050749" phon="LOG" form="mikadwo" />
@@ -477,6 +479,8 @@
             <part phon="PHON" form="ku" />
           </form-parts>
         </VB-NML>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <PP-OB1>
             <NP>
@@ -513,6 +517,8 @@
             <VB-STM index="2" lemma="L031077a" phon="LOG" form="tamapi" />
             <VAX-PRF-CND lemma="L000023" phon="PHON" form="teba" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP-SBJ-GEN>
             <NP>
               <IP-REL>
@@ -558,6 +564,8 @@
           </VB-GER>
           <VB-ADN lemma="L030125a" phon="LOG" form="aru" />
           <P-CASE-ACC lemma="L000536" phon="PHON" form="woba" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-DAT>
             <NP>
               <N phon="LOG" form="miyakwo" />
@@ -573,6 +581,8 @@
               </form-parts>
             </VB-GER>
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N phon="LOG" form="omi" />
           </NP>

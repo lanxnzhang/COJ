@@ -30,6 +30,14 @@ path suffix still creates a genuinely separate sibling. Run
 `migrate_multipart_words.py` without arguments to regenerate the audit report,
 or with `--apply` to validate TXT equivalence and migrate affected XML files.
 
+Kanji marker lines also carry structural information. Their path names the
+parent whose next child begins a new constituent. For example,
+`CP-FINAL,5@...,*` closes the preceding child below `CP-FINAL`; two adjacent
+`NP-ADV` runs on either side therefore remain two sibling nodes even though the
+marker itself is stored as round-trip metadata rather than syntax. Run
+`migrate_kanji_boundaries.py` without arguments to regenerate its audit report,
+or with `--apply` to validate TXT equivalence and migrate affected XML files.
+
 Legacy text IDs such as `1_EN_01` are exposed as canonical XML IDs such as
 `EN.1.1`. IDs which are already canonical, such as `MYS.3.235a`, are retained.
 `xml2txt.py` uses `source-id` when reconstructing TXT.

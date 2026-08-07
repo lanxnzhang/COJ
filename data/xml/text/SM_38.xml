@@ -239,6 +239,8 @@
           </PP-DAT>
           <VB-GER phon="LOG" form="yori" />
           <VB-GER phon="PHON" form="te" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-TOP>
             <NP>
               <PP-GEN>
@@ -266,6 +268,8 @@
               <VB-INF lemma="L031649a" phon="LOG" form="maturi" />
             </VB>
           </IP-ADV>
+        </IP-ADV>
+        <IP-ADV>
           <PP-TOP>
             <NP>
               <N phon="LOG" form="tugi" index="1" inferred_index="1" />
@@ -487,6 +491,8 @@
                   <ADJ phon="LOG" form="yasurake" />
                   <ACP-INF lemma="L000033" phon="PHON" form="ku" />
                 </ADJ>
+              </IP-ADV>
+              <IP-ADV>
                 <NP>
                   <N phon="PHON" form="odapi" />
                 </NP>
@@ -768,6 +774,8 @@
                 <VB-STM lemma="L031712a" phon="LOG" form="mi" />
                 <VB-PRV lemma="L031649a" phon="PHON" form="matureba" />
               </VB>
+            </IP-ADV>
+            <IP-ADV>
               <PP-OB1>
                 <NP>
                   <PP-GEN>
@@ -894,6 +902,8 @@
                     <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                   </PP-OB1>
                   <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+                </IP-ADV>
+                <IP-ADV>
                   <PP-TOP index="1" inferred_index="1">
                     <NP>
                       <IP-REL>
@@ -960,6 +970,8 @@
                   </form-parts>
                 </VB-GER>
                 <P-FOC lemma="L000518" phon="PHON" form="namo" />
+              </IP-ADV>
+              <IP-ADV index="1" inferred_index="1">
                 <IP-EMB>
                   <N phon="LOG" form="moto" />
                   <VB>

@@ -89,6 +89,8 @@
           <P-CASE-GEN lemma="L000503" phon="PHON" form="ga" />
         </PP>
         <N lemma="L050063d" phon="PHON" form="tameni" />
+      </NP-ADV>
+      <NP-ADV>
         <PP>
           <NP>
             <N lemma="L050486">
@@ -395,6 +397,8 @@
             <VB-STM lemma="L031425a" phon="PHON" form="panati" />
             <VB-INF lemma="L030164a" phon="PHON" form="idasi" />
           </VB-INF>
+        </IP-ADV>
+        <IP-ADV>
           <NP-OB1>
             <N lemma="L051514">
               <ADJ lemma="L007011" phon="PHON" form="moro" index="1" inferred_index="1" />
@@ -470,6 +474,8 @@
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
           <VB-EXC lemma="L030206a" phon="PHON" form="imase" />
           <P-FOC lemma="L000506" phon="PHON" form="ka" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-OB1>
             <NP>
               <PP>
@@ -597,6 +603,8 @@
           <VB-ADC lemma="L030071a" phon="PHON" form="apu" />
         </IP-NMZ>
         <P-RES lemma="L000512b" phon="PHON" form="madeni" />
+      </PP-ADV>
+      <PP-ADV>
         <IP-NMZ>
           <NP-ADV>
             <ADV lemma="L004073" phon="PHON" form="masani" />
@@ -969,6 +977,8 @@
             <VB-ADC lemma="L030841a" phon="PHON" form="saru" />
           </VB-ADC>
           <P-CONN lemma="L000531" phon="PHON" form="tomo" />
+        </IP-ADV>
+        <IP-ADV>
           <ADJ-INF>
             <ADJ-STM lemma="L004131" phon="PHON" form="tokotoba" />
             <COP-INF lemma="L031965" phon="PHON" form="ni" />
@@ -999,6 +1009,8 @@
           <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
         </PP>
         <N lemma="L050063b" phon="PHON" form="tame" />
+      </NP-ADV>
+      <NP-ADV>
         <PP>
           <NP>
             <IP-REL>
@@ -1511,6 +1523,8 @@
               </N>
             </NP>
             <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+          </PP>
+          <PP>
             <NP>
               <N lemma="L052078" phon="PHON" form="tama" />
             </NP>
@@ -2005,11 +2019,15 @@
     <multi-sentence>
       <IP-MAT>
         <FRAG>
-          <WORD lemma="L099997" phon="" form="xtuxxxxxxxpitaru">
+          <WORD lemma="L099997" phon="" form="xtuxxx">
             <form-parts>
               <part phon="ILL" form="x" />
               <part phon="PHON" form="tu" />
               <part phon="ILL" form="xxx" />
+            </form-parts>
+          </WORD>
+          <WORD lemma="L099997" phon="" form="xxxxpitaru">
+            <form-parts>
               <part phon="ILL" form="xxxx" />
               <part phon="PHON" form="pitaru" />
             </form-parts>

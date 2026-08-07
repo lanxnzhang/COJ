@@ -81,6 +81,8 @@
           <VB-STM lemma="L031397a" phon="LOG" form="pakari" />
           <VAX-MPST-NML lemma="L000016" phon="PHON" form="kyeraku" />
         </VB>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <NP-OB1>
             <N phon="LOG" form="pumi" />
@@ -91,6 +93,8 @@
               <part phon="PHON" form="te" />
             </form-parts>
           </VB-GER>
+        </IP-ADV>
+        <IP-ADV>
           <NP-OB1>
             <PP-GEN>
               <NP>
@@ -254,6 +258,8 @@
           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
         </PP-OB1>
         <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-TOP>
           <NP>
             <PP-GEN>
@@ -276,6 +282,10 @@
               <part phon="PHON" form="te" />
             </form-parts>
           </VB-GER>
+        </IP-ADV>
+      </IP-ADV>
+      <IP-ADV>
+        <IP-ADV>
           <NP>
             <N lemma="L050267">
               <PFX-HON lemma="L000038" phon="LOG" form="opo" />
@@ -459,6 +469,8 @@
                     <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                   </PP-OB1>
                   <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+                </IP-ADV>
+                <IP-ADV>
                   <PP-OB1-TOP>
                     <NP>
                       <PP-GEN>
@@ -485,6 +497,8 @@
                       </VB-GER>
                     </VB>
                   </IP-ADV>
+                </IP-ADV>
+                <IP-ADV>
                   <NP>
                     <N lemma="L050267">
                       <PFX-HON lemma="L000038" phon="LOG" form="opo" />

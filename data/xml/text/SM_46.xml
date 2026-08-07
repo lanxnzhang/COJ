@@ -170,6 +170,8 @@
                           </NP>
                           <VB-GER phon="LOG" form="puri" />
                           <VB-GER phon="PHON" form="te" />
+                        </IP-ADV>
+                        <IP-ADV>
                           <PP-TOP>
                             <NP>
                               <N phon="LOG" form="tuti" />

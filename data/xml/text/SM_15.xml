@@ -62,7 +62,7 @@
     </raw-text>
     <IP-MAT>
       <IP-ADV>
-        <IP-ADV index="1" inferred_index="1">
+        <IP-ADV>
           <IP-ADV>
             <NP>
               <PP-GEN>
@@ -91,7 +91,9 @@
             <part phon="PHON" form="ku" />
           </form-parts>
         </VB-NML>
-        <IP-ADV index="1" inferred_index="1">
+      </IP-ADV>
+      <IP-ADV>
+        <IP-ADV>
           <NP>
             <IP-REL>
               <VB>
@@ -151,6 +153,8 @@
               </form-parts>
             </VB-GER>
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <IP-ADV>
             <NP>
               <N phon="LOG" form="sunapati" />
@@ -194,7 +198,7 @@
           </NP>
           <P-CASE lemma="L000519" phon="PHON" form="ni" />
         </PP-DAT>
-        <IP-ADV index="1" inferred_index="1">
+        <IP-ADV>
           <PP-DAT>
             <NP>
               <IP-REL>
@@ -270,6 +274,8 @@
             </form-parts>
           </VB-NML>
         </VB>
+      </IP-ADV>
+      <IP-ADV>
         <NP index="1" inferred_index="1">
           <N lemma="L050005a" phon="LOG" form="kamwi" />
         </NP>
@@ -371,6 +377,8 @@
           <VB-STM lemma="L030125a" phon="LOG" form="ara" />
           <VAX-NEG-IFC lemma="L000006" phon="LOG" form="zu" />
         </VB>
+      </IP-ADV>
+      <IP-ADV index="1" inferred_index="1">
         <IP-ARG>
           <IP-ADV>
             <IP-ADV>
@@ -391,6 +399,8 @@
               <P-COMP lemma="L000530" phon="PHON" form="to" />
             </IP-ADV>
             <VB-INF phon="LOG" form="nasi" />
+          </IP-ADV>
+          <IP-ADV>
             <PP>
               <NP>
                 <PP-GEN>
@@ -417,6 +427,8 @@
                 <part phon="PHON" form="te" />
               </form-parts>
             </VB-GER>
+          </IP-ADV>
+          <IP-ADV>
             <NP>
               <IP-REL>
                 <VB-ADC lemma="L030823a" phon="LOG" form="saparu" />
@@ -451,6 +463,8 @@
           <WORD-STM phon="LOG" form="yorokobosi" />
           <ACP phon="PHON" form="mi" />
         </WORD>
+      </IP-ADV>
+      <IP-ADV index="1" inferred_index="1">
         <ADJ>
           <ADJ phon="LOG" form="taputwo" />
           <ACP phon="PHON" form="mi" />
@@ -502,6 +516,8 @@
       <IP-ARG>
         <IP-ADV index="1" inferred_index="1">
           <VB-CSS lemma="L030848a" phon="LOG" form="sikaredomo" />
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <NP index="1" inferred_index="1">
             <N phon="LOG" form="napo" />
           </NP>

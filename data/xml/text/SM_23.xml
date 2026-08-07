@@ -347,6 +347,8 @@
                     </NP>
                     <P-FOC lemma="L000518" phon="PHON" form="namo" />
                   </PP>
+                </IP-ADV>
+                <IP-ADV>
                   <N>
                     <N lemma="L050005b" phon="LOG" form="kamu" />
                     <SFX lemma="L001001" phon="LOG" form="nagara" />
@@ -532,6 +534,8 @@
               <VB-GER phon="LOG" form="yori" />
               <VB-GER phon="PHON" form="te" />
               <P-RES lemma="L000526a" phon="PHON" form="si" />
+            </IP-REL>
+            <IP-REL>
               <PP-TOP>
                 <NP>
                   <PP-GEN>
@@ -597,6 +601,8 @@
             <P-FOC lemma="L000518" phon="PHON" form="namo" />
           </PP>
         </IP-ADV>
+      </IP-ADV>
+      <IP-ADV>
         <N>
           <N lemma="L050005b" phon="LOG" form="kamu" />
           <SFX lemma="L001001" phon="LOG" form="nagara" />
@@ -758,6 +764,8 @@
             <ADJ phon="LOG" form="naga" />
             <ACP-INF lemma="L000033" phon="PHON" form="ku" />
           </ADJ>
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N phon="LOG" form="pi" />
           </NP>
@@ -784,6 +792,8 @@
             <part phon="PHON" form="ba" />
           </form-parts>
         </VB-PRV>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <NP>
             <COP-INF lemma="L031965" phon="LOG" form="ni" />
@@ -792,6 +802,8 @@
             <ADJ phon="LOG" form="omo" />
             <ACP-INF lemma="L000033" phon="LOG" form="ku" />
           </ADJ>
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N phon="LOG" form="tikara" />
           </NP>
@@ -1009,6 +1021,8 @@
                           <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
                         </PP-OB1>
                         <VB-GER lemma="L031761a" phon="LOG" form="motite" />
+                      </IP-ADV>
+                      <IP-ADV>
                         <NP>
                           <PP-GEN>
                             <NP>

@@ -246,6 +246,8 @@
                   </IP-ADV>
                   <VB-GER phon="LOG" form="si" />
                   <VB-GER phon="PHON" form="te" />
+                </IP-ADV>
+                <IP-ADV index="1" inferred_index="1">
                   <PP-DAT>
                     <NP>
                       <PP-GEN>
@@ -270,6 +272,10 @@
                   <VB>
                     <VB-STM phon="LOG" form="tori" />
                     <VB-GER phon="LOG" form="kakete" />
+                  </VB>
+                </IP-ADV>
+                <IP-ADV index="1" inferred_index="1">
+                  <VB>
                     <PFX phon="LOG" form="moti" />
                     <VB-INF phon="LOG" form="yuma" />
                     <VB-INF phon="PHON" form="pari" />

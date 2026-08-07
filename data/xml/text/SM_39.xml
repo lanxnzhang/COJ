@@ -97,6 +97,8 @@
       <IP-ADV>
         <VB-ADN lemma="L030848a" phon="LOG" form="sikaru" />
         <P-CONN lemma="L000551" phon="NLOG" form="ni" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-SBJ-TOP>
           <NP>
             <PP>
@@ -139,6 +141,8 @@
               <N phon="LOG" form="yuwe" />
             </NP>
             <COP-INF lemma="L031965" phon="PHON" form="ni" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-OB1>
               <PP-GEN>
                 <NP>

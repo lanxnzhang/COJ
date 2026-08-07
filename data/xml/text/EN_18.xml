@@ -121,6 +121,8 @@
                       <VB-INF phon="LOG" form="ta" />
                       <VB-INF phon="PHON" form="te" />
                     </VB>
+                  </IP-ADV>
+                  <IP-ADV>
                     <PP-DAT>
                       <NP>
                         <PP-GEN>
@@ -147,6 +149,8 @@
                       <VB-GER phon="LOG" form="siri" />
                       <VB-GER phon="PHON" form="te" />
                     </VB>
+                  </IP-ADV>
+                  <IP-ADV>
                     <NP>
                       <N phon="LOG" form="tatapegoto" />
                     </NP>
@@ -221,6 +225,8 @@
                       <VB-ADC phon="LOG" form="matu" />
                       <VB-ADC phon="PHON" form="ru" />
                     </VB>
+                  </IP-REL>
+                  <IP-REL>
                     <NP-PRD>
                       <C-NP index="1" inferred_index="1">
                         <N>

@@ -91,6 +91,8 @@
             </form-parts>
           </VB-NML>
         </VB>
+      </IP-ADV>
+      <IP-ADV>
         <IP-ADV>
           <IP-ADV>
             <PP-SBJ-TOP>
@@ -128,6 +130,8 @@
                     <part phon="PHON" form="te" />
                   </form-parts>
                 </VB-GER>
+              </IP-ADV>
+              <IP-ADV>
                 <NP>
                   <PP-GEN>
                     <NP>
@@ -156,6 +160,8 @@
                 </VB-PRV>
               </VB>
               <P-FOC lemma="L000510" phon="PHON" form="koso" />
+            </IP-ADV>
+            <IP-ADV>
               <PP-TOP>
                 <NP>
                   <N lemma="L051337" phon="LOG" form="kuni" />
@@ -176,6 +182,8 @@
                   </form-parts>
                 </VB-CSS>
               </IP-ADV>
+            </IP-ADV>
+            <IP-ADV>
               <PP index="1" inferred_index="1">
                 <NP>
                   <N phon="BPHON" form="minu" />
@@ -215,6 +223,8 @@
                   <part phon="PHON" form="te" />
                 </form-parts>
               </VB-GER>
+            </IP-ADV>
+            <IP-ADV>
               <PP-OB1>
                 <NP>
                   <PP-GEN>

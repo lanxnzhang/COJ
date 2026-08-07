@@ -595,6 +595,8 @@
                                   <ADJ phon="LOG" form="naga" />
                                   <ACP-INF lemma="L000033" phon="PHON" form="ku" />
                                 </ADJ>
+                              </IP-ADV>
+                              <IP-ADV index="1" inferred_index="1">
                                 <ADJ-INF lemma="L007227b" phon="LOG" form="mata" />
                                 <ADJ-INF>
                                   <ACP-INF lemma="L000033" phon="PHON" form="ku" />

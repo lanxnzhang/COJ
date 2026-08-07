@@ -283,6 +283,8 @@
           <ADJ-STM lemma="L007204" phon="PHON" form="ureta" />
           <ACP-INF lemma="L000034" phon="PHON" form="mi" />
         </ADJ-INF>
+      </IP-ADV>
+      <IP-ADV>
         <VB-GER lemma="L030443a" phon="PHON" form="kakete" />
       </IP-ADV>
       <VB-CLS>
@@ -891,6 +893,8 @@
             </VB-NML>
           </IP-NMZ-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
+        </IP-ADV>
+        <IP-ADV>
           <NP-PRD>
             <WH-N lemma="L042003" phon="PHON" form="nani" />
           </NP-PRD>
@@ -1210,6 +1214,8 @@
           <P-CASE-DAT lemma="L000520" phon="PHON" form="no" />
         </PP-SBJ>
         <ADJ lemma="L007004a" phon="PHON" form="goto" />
+      </IP-ADV>
+      <IP-ADV>
         <NP-PRD>
           <IP-REL>
             <IP-ADV>
@@ -1286,6 +1292,8 @@
           <P-CASE-DAT lemma="L000520" phon="PHON" form="no" />
         </PP-SBJ>
         <ADJ lemma="L007004a" phon="PHON" form="goto" />
+      </IP-ADV>
+      <IP-ADV>
         <PP-SBJ>
           <NP>
             <IP-REL>
@@ -2020,6 +2028,8 @@
             <N lemma="L052059" phon="PHON" form="tadu" />
           </NP-PRD>
           <COP-CND lemma="L031966" phon="PHON" form="naraba" />
+        </IP-ADV>
+        <IP-ADV>
           <NP-ADV>
             <N lemma="L050139" phon="PHON" form="asa" />
           </NP-ADV>
@@ -2418,6 +2428,8 @@
               <ACP-INF lemma="L000033" phon="PHON" form="ku" />
             </ADJ-INF>
             <P-CONN lemma="L000531" phon="PHON" form="tomo" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-ADV>
               <ADV lemma="L080529">
                 <ADV lemma="L004168" phon="PHON" form="yosi" />
@@ -2437,6 +2449,8 @@
               <ACP-INF lemma="L000033" phon="PHON" form="ku" />
             </ADJ-INF>
             <P-CONN lemma="L000531" phon="PHON" form="tomo" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-SBJ>
               <PP>
                 <NP>
@@ -2626,6 +2640,8 @@
               <ACP-INF lemma="L000033" phon="PHON" form="ku" />
             </ADJ-INF>
             <P-CONN lemma="L000531" phon="PHON" form="tomo" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-ADV>
               <ADV lemma="L080529">
                 <ADV lemma="L004168" phon="PHON" form="yosi" />
@@ -2645,6 +2661,8 @@
               <ACP-INF lemma="L000033" phon="PHON" form="ku" />
             </ADJ-INF>
             <P-CONN lemma="L000531" phon="PHON" form="tomo" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-SBJ>
               <PP>
                 <NP>

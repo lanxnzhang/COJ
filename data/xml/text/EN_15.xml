@@ -286,6 +286,8 @@
             <VB-GER phon="LOG" form="maturi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-DAT>
             <NP>
               <PP-GEN>
@@ -312,6 +314,8 @@
             <VB-STM phon="LOG" form="siki" />
             <VB-INF phon="LOG" form="tate" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-DAT>
             <NP>
               <PP-GEN>
@@ -338,6 +342,8 @@
             <VB-GER phon="LOG" form="siri" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <IP-ADV>
             <NP-PRD>
               <N>
@@ -368,6 +374,8 @@
               </N>
             </NP-PRD>
             <COP-INF lemma="L031968" phon="PHON" form="to" />
+          </IP-ADV>
+          <IP-ADV>
             <NP>
               <N phon="LOG" form="tatapegoto" />
             </NP>
@@ -459,6 +467,8 @@
               </C-N>
             </N>
           </NP-PRD>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-TOP>
             <NP>
               <N>
@@ -497,6 +507,8 @@
             <VB-GER phon="LOG" form="narabe" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <NP-PRD>
             <PP-TOP>
               <NP>
@@ -528,6 +540,8 @@
               </C-N>
             </N>
           </NP-PRD>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-TOP>
             <NP>
               <PP-GEN>
@@ -661,6 +675,8 @@
                   <VB-ADC phon="LOG" form="matu" />
                   <VB-ADC phon="PHON" form="ru" />
                 </VB>
+              </IP-REL>
+              <IP-REL>
                 <ADJ-STM phon="PHON" form="udu" />
                 <COP-ADI lemma="L031965" phon="PHON" form="no" />
               </IP-REL>
@@ -697,6 +713,8 @@
             <VB-GER phon="LOG" form="myesi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-OB1>
             <NP>
               <PP-GEN>
@@ -710,7 +728,7 @@
             </NP>
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP-OB1>
-          <IP-ADV index="1" inferred_index="1">
+          <IP-ADV>
             <NP-PRD>
               <N>
                 <N phon="LOG" form="tok" index="1" inferred_index="1" />
@@ -718,6 +736,8 @@
               </N>
             </NP-PRD>
             <COP-INF lemma="L031965" phon="PHON" form="ni" />
+          </IP-ADV>
+          <IP-ADV>
             <NP-PRD>
               <N lemma="L050379">
                 <N phon="LOG" form="kak" index="1" inferred_index="1" />
@@ -730,6 +750,8 @@
             <VB-STM phon="LOG" form="ipapi" />
             <VB-INF phon="LOG" form="maturi" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <IP-ADV index="1" inferred_index="1">
             <NP-PRD>
               <IP-REL>
@@ -753,6 +775,8 @@
             <VB-GER phon="LOG" form="tamapi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <PP-ABL>
             <NP>
               <PP-GEN>
@@ -766,6 +790,8 @@
             <P-ABL phon="LOG" form="ywori" />
           </PP-ABL>
           <VB-GER phon="LOG" form="padimete" />
+        </IP-ADV>
+        <IP-ADV index="1" inferred_index="1">
           <IP-ADV index="1" inferred_index="1">
             <PP-RES>
               <IP-NMZ>

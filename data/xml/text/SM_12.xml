@@ -219,6 +219,8 @@
                   </VB-CSS>
                 </IP-ADV>
               </IP-ADV>
+            </IP-ADV>
+            <IP-ADV>
               <PP-TOP>
                 <NP>
                   <PP-GEN>
@@ -521,6 +523,8 @@
                   <VB-STM index="2" lemma="L030165a" phon="LOG" form="itadaki" />
                   <VB-INF lemma="L031761a" phon="LOG" form="moti" />
                 </VB>
+              </IP-ADV>
+              <IP-ADV index="1" inferred_index="1">
                 <PP-OB1>
                   <NP>
                     <PP-GEN>
