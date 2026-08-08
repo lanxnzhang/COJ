@@ -39,6 +39,11 @@ _documents: dict[tuple[str, str], CorpusDocument] = {}
 _search_index: list[dict] | None = None
 _search_index_signature: tuple | None = None
 _lemma_frequency_cache: dict[str, int] = {}
+_passage_location_index: dict[str, dict] | None = None
+_passage_alias_index: dict[str, dict] | None = None
+_passage_search_records: list[dict] = []
+_passage_location_signature: tuple | None = None
+_passage_indexed_documents: set[tuple[str, str]] = set()
 _dictionary_write_lock = threading.Lock()
 
 CORPUS_SEARCH_FIELDS = (
@@ -109,28 +114,133 @@ def _document_summary(
     }
 
 
-def find_poem_location(sentence_id: str) -> dict | None:
-    """Find an exact poem ID using the repository's document naming scheme."""
-    match = re.match(r"^([A-Za-z]+)\.(\d+)(?:\.|$)", sentence_id)
+def _ensure_passage_location_indexes() -> tuple[dict[str, dict], dict[str, dict]]:
+    global _passage_location_index, _passage_alias_index
+    if _passage_location_index is None or _passage_alias_index is None:
+        _passage_location_index = {}
+        _passage_alias_index = {}
+        _passage_search_records.clear()
+        _passage_indexed_documents.clear()
+    return _passage_location_index, _passage_alias_index
+
+
+def _passage_metadata_values(block: ET.Element) -> list[str]:
+    """Return searchable passage-level metadata without indexing tree content."""
+    values = [
+        value.strip()
+        for key, value in block.attrib.items()
+        if key not in {"id", "header"} and value.strip()
+    ]
+    metadata_tags = {
+        "category", "classification", "genre", "label", "metadata",
+        "qualifier",
+    }
+    for child in block:
+        if child.tag.casefold() not in metadata_tags:
+            continue
+        if child.text and child.text.strip():
+            values.append(child.text.strip())
+        values.extend(
+            value.strip() for value in child.attrib.values() if value.strip()
+        )
+    return list(dict.fromkeys(values))
+
+
+def _index_passage_document(source: str, path: Path) -> None:
+    location_index, alias_index = _ensure_passage_location_indexes()
+    key = (source, path.stem)
+    if key in _passage_indexed_documents:
+        return
+    root = ET.parse(path).getroot()
+    document = _document_summary(source, path, root)
+    for block in root.findall("block"):
+        canonical_id = (block.get("id") or "").strip()
+        if not canonical_id:
+            continue
+        base_id, separator, qualifier = canonical_id.partition(";")
+        metadata = _passage_metadata_values(block)
+        aliases = [base_id] if separator else []
+        record = {
+            **document,
+            "sentence_id": canonical_id,
+            "header": (block.get("header") or "").strip(),
+            "aliases": aliases,
+            "metadata": metadata,
+            "_search_values": list(dict.fromkeys([
+                canonical_id,
+                base_id,
+                qualifier,
+                qualifier.replace("_", " "),
+                *metadata,
+            ])),
+        }
+        location_index.setdefault(canonical_id.casefold(), record)
+        for alias in aliases:
+            alias_index.setdefault(alias.casefold(), record)
+        _passage_search_records.append(record)
+    _passage_indexed_documents.add(key)
+
+
+def _index_likely_passage_documents(query: str) -> bool:
+    """Index document files implied by an ID-like query, if any exist."""
+    match = re.match(r"^([A-Za-z]+)\.(\d+)(?:\.|$)", query.strip())
     if match is None:
-        return None
+        return False
     prefix = match.group(1).upper()
     number = int(match.group(2))
-    document_ids = (f"{prefix}_{number:02d}", prefix)
+    found = False
     for source, config in DOCUMENT_SOURCES.items():
-        for document_id in document_ids:
+        for document_id in (f"{prefix}_{number:02d}", prefix):
             path = config["directory"] / f"{document_id}.xml"
-            if not path.is_file():
-                continue
-            root = ET.parse(path).getroot()
-            for block in root.findall("block"):
-                canonical_id = (block.get("id") or "").strip()
-                if canonical_id.casefold() == match.string.casefold():
-                    return {
-                        **_document_summary(source, path, root),
-                        "sentence_id": canonical_id,
-                    }
-    return None
+            if path.is_file():
+                _index_passage_document(source, path)
+                found = True
+    return found
+
+
+def _index_all_passage_documents() -> None:
+    for source, config in DOCUMENT_SOURCES.items():
+        for path in sorted(
+            config["directory"].glob("*.xml"),
+            key=lambda item: _sort_key(item.stem),
+        ):
+            _index_passage_document(source, path)
+
+
+def find_poem_location(sentence_id: str) -> dict | None:
+    """Find a canonical passage ID or its unqualified exact alias."""
+    location_index, alias_index = _ensure_passage_location_indexes()
+
+    target = sentence_id.strip().casefold()
+    if target in location_index:
+        return location_index[target]
+    if target in alias_index:
+        return alias_index[target]
+
+    # Most IDs identify their document as PREFIX_NN (MYS.14.3352) or PREFIX
+    # (BS.1, KH.9). Index only those likely files for a fast normal lookup.
+    if _index_likely_passage_documents(sentence_id):
+        if target in location_index:
+            return location_index[target]
+        if target in alias_index:
+            return alias_index[target]
+
+    # Unusual future IDs remain directly openable without relying on filenames.
+    _index_all_passage_documents()
+    return location_index.get(target) or alias_index.get(target)
+
+
+def _refresh_passage_location_cache() -> None:
+    """Invalidate direct-open locations when corpus XML files change."""
+    global _passage_location_index, _passage_alias_index
+    global _passage_location_signature
+    signature = _corpus_signature()
+    if signature != _passage_location_signature:
+        _passage_location_index = None
+        _passage_alias_index = None
+        _passage_search_records.clear()
+        _passage_indexed_documents.clear()
+        _passage_location_signature = signature
 
 
 def _corpus_signature() -> tuple:
@@ -1273,10 +1383,87 @@ def find_poem():
     sentence_id = request.args.get("q", "").strip()
     if not sentence_id:
         abort(400, description="Enter a poem ID, for example MYS.1.1")
+    _refresh_passage_location_cache()
     poem = find_poem_location(sentence_id)
     if poem is None:
         abort(404, description=f"Poem '{sentence_id}' was not found")
-    return jsonify(poem)
+    return jsonify(_public_passage_record(poem))
+
+
+def _passage_search_key(value: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", value.casefold())
+
+
+def _passage_match_rank(record: dict, query: str) -> tuple | None:
+    folded = query.casefold()
+    normalized = _passage_search_key(query)
+    canonical = record["sentence_id"].casefold()
+    aliases = [alias.casefold() for alias in record["aliases"]]
+    identifiers = [canonical, *aliases]
+    if folded == canonical:
+        return (0, canonical)
+    if folded in aliases:
+        return (1, canonical)
+    if any(value.startswith(folded) for value in identifiers):
+        return (2, canonical)
+    if normalized and any(
+        _passage_search_key(value).startswith(normalized)
+        for value in identifiers
+    ):
+        return (3, canonical)
+    for value in record["_search_values"]:
+        value_folded = value.casefold()
+        if folded in value_folded:
+            return (4, canonical)
+        if normalized and normalized in _passage_search_key(value):
+            return (5, canonical)
+    return None
+
+
+def _public_passage_record(record: dict) -> dict:
+    return {
+        key: value for key, value in record.items()
+        if not key.startswith("_")
+    }
+
+
+@app.get("/api/passages")
+def search_passages():
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify({"query": "", "total": 0, "results": []})
+    _refresh_passage_location_cache()
+    likely_only = _index_likely_passage_documents(query)
+    if not likely_only:
+        _index_all_passage_documents()
+    ranked = [
+        (rank, record)
+        for record in _passage_search_records
+        if (rank := _passage_match_rank(record, query)) is not None
+    ]
+    # An ID-like prefix should normally be confined to its likely document.
+    # If naming conventions change and that produces no hits, retain the
+    # repository-wide fallback used by direct opening.
+    if likely_only and not ranked:
+        _index_all_passage_documents()
+        ranked = [
+            (rank, record)
+            for record in _passage_search_records
+            if (rank := _passage_match_rank(record, query)) is not None
+        ]
+    ranked.sort(key=lambda item: item[0])
+    exact = next((
+        record for rank, record in ranked if rank[0] <= 1
+    ), None)
+    return jsonify({
+        "query": query,
+        "total": len(ranked),
+        "returned": min(len(ranked), 500),
+        "exact": _public_passage_record(exact) if exact else None,
+        "results": [
+            _public_passage_record(record) for _, record in ranked[:500]
+        ],
+    })
 
 
 @app.get("/api/search")

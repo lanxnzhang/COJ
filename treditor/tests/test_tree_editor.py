@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import xml.etree.ElementTree as ET
 from urllib.parse import urlencode
 
 import pytest
@@ -16,6 +17,11 @@ def client():
     tree_editor._search_index = None
     tree_editor._search_index_signature = None
     tree_editor._lemma_frequency_cache = {}
+    tree_editor._passage_location_index = None
+    tree_editor._passage_alias_index = None
+    tree_editor._passage_search_records.clear()
+    tree_editor._passage_location_signature = None
+    tree_editor._passage_indexed_documents.clear()
     return tree_editor.app.test_client()
 
 
@@ -54,17 +60,108 @@ def test_document_index_uses_canonical_passage_ids(client):
     assert passages[0]["raw_sentence_count"] == 3
 
 
-def test_exact_poem_id_lookup_opens_its_document(client):
-    response = client.get("/api/poems?q=mys.1.1")
+@pytest.mark.parametrize(
+    ("query", "sentence_id", "document_id"),
+    [
+        ("bs.1", "BS.1", "BS"),
+        ("mys.1.1", "MYS.1.1", "MYS_01"),
+        ("mys.11.2803a", "MYS.11.2803a", "MYS_11"),
+        (
+            "mys.14.3352;azuma_uta",
+            "MYS.14.3352;azuma_uta",
+            "MYS_14",
+        ),
+        (
+            "mys.14.3352",
+            "MYS.14.3352;azuma_uta",
+            "MYS_14",
+        ),
+    ],
+)
+def test_exact_passage_id_lookup_opens_every_supported_id_shape(
+    client, query, sentence_id, document_id
+):
+    response = client.get("/api/poems", query_string={"q": query})
 
     assert response.status_code == 200
     poem = response.get_json()
-    assert poem["sentence_id"] == "MYS.1.1"
+    assert poem["sentence_id"] == sentence_id
     assert poem["source"] == "trees"
-    assert poem["document_id"] == "MYS_01"
+    assert poem["document_id"] == document_id
 
     missing = client.get("/api/poems?q=NOT.A.POEM")
     assert missing.status_code == 404
+
+
+def test_passage_search_supports_partial_ids_and_qualifiers(client):
+    partial = client.get(
+        "/api/passages", query_string={"q": "MYS.14.33"}
+    )
+    assert partial.status_code == 200
+    partial_payload = partial.get_json()
+    assert partial_payload["exact"] is None
+    assert any(
+        result["sentence_id"] == "MYS.14.3352;azuma_uta"
+        for result in partial_payload["results"]
+    )
+
+    qualifier = client.get(
+        "/api/passages", query_string={"q": "azuma"}
+    )
+    assert qualifier.status_code == 200
+    qualifier_payload = qualifier.get_json()
+    assert qualifier_payload["total"] > 0
+    assert any(
+        "azuma" in result["sentence_id"].casefold()
+        for result in qualifier_payload["results"]
+    )
+
+
+def test_passage_search_supports_future_separate_metadata(
+    client, tmp_path, monkeypatch
+):
+    text_directory = tmp_path / "text"
+    tree_directory = tmp_path / "trees"
+    text_directory.mkdir()
+    tree_directory.mkdir()
+    (tree_directory / "MYS_14.xml").write_text(
+        '<corpus filename="MYS_14.txt">'
+        '<block id="MYS.14.3352" category="azuma_uta" '
+        'header="future metadata"><IP-MAT /></block>'
+        '</corpus>',
+        encoding="utf-8",
+    )
+    monkeypatch.setitem(
+        tree_editor.DOCUMENT_SOURCES["text"], "directory", text_directory
+    )
+    monkeypatch.setitem(
+        tree_editor.DOCUMENT_SOURCES["trees"], "directory", tree_directory
+    )
+
+    response = client.get("/api/passages", query_string={"q": "azuma"})
+    payload = response.get_json()
+    assert response.status_code == 200
+    assert payload["total"] == 1
+    assert payload["results"][0]["sentence_id"] == "MYS.14.3352"
+    assert payload["results"][0]["metadata"] == ["azuma_uta"]
+
+    direct = client.get(
+        "/api/poems", query_string={"q": "MYS.14.3352"}
+    )
+    assert direct.status_code == 200
+    assert direct.get_json()["sentence_id"] == "MYS.14.3352"
+
+
+def test_every_repository_passage_id_is_directly_resolvable(client):
+    for source, config in tree_editor.DOCUMENT_SOURCES.items():
+        for path in config["directory"].glob("*.xml"):
+            for block in ET.parse(path).getroot().findall("block"):
+                sentence_id = (block.get("id") or "").strip()
+                location = tree_editor.find_poem_location(sentence_id)
+                assert location is not None, sentence_id
+                assert location["sentence_id"] == sentence_id
+                assert location["source"] == source
+                assert location["document_id"] == path.stem
 
 
 def test_corpus_search_finds_text_across_all_documents(client):
@@ -660,7 +757,7 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     )
     assert 'class="raw-text-lines two-column"' in html
     assert "Two columns" not in html
-    assert 'placeholder="Filter or open MYS.1.1…"' in html
+    assert 'placeholder="Find documents or open passages"' in html
     assert 'id="tog-lemma">' in html
     assert 'id="tog-phon">' in html
     assert 'id="tog-tree-kanji" checked' in html
@@ -697,6 +794,10 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert 'normalized === "NLOG"' in javascript
     assert "collapsedNodeIds" in javascript
     assert "/api/poems?q=" in javascript
+    assert "/api/passages?q=" in javascript
+    assert "renderPassageMatches" in javascript
+    assert "hasImmediateDocumentMatches" in javascript
+    assert "renderDocuments(documentData.id, true)" in javascript
     assert "/api/tgrep?" in javascript
     assert 'setSearchMode("tgrep"' in javascript
     assert 'lemma_ids: "lemma IDs"' in javascript

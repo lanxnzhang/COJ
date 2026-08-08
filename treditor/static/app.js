@@ -9,6 +9,10 @@ let currentTreeData = null;
 let selectedNodeId = null;
 let dictionaryTimer = null;
 let documentSearchTimer = null;
+let documentSearchSequence = 0;
+let documentPassageQuery = "";
+let documentPassageMatches = [];
+let documentPassageTotal = 0;
 let popupDictionaryTimer = null;
 let currentSearchPayload = null;
 let activeTreeSearchContext = null;
@@ -198,17 +202,19 @@ function normalizedSearch(value) {
   return String(value || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function isExactPassageId(value) {
-  return /^[A-Za-z]+\.\d+(?:\.\d+)+$/.test(value.trim());
-}
-
 function matchingDocuments(query, pinnedDocumentId = null) {
   const normalized = normalizedSearch(query);
+  const passageDocumentIds = new Set(
+    documentPassageQuery === query
+      ? documentPassageMatches.map(match => match.id)
+      : []
+  );
   return documentGroups.map(group => ({
     ...group,
     documents: group.documents.filter(documentData => {
       if (documentData.id === pinnedDocumentId) return true;
       if (!normalized) return true;
+      if (passageDocumentIds.has(documentData.id)) return true;
       return [
         documentData.label,
         documentData.document_id,
@@ -225,7 +231,7 @@ function documentDetailsElement(documentId) {
   );
 }
 
-function renderDocuments(pinnedDocumentId = null) {
+function renderDocuments(pinnedDocumentId = null, preserveMessage = false) {
   const query = $("document-search").value.trim();
   const container = $("document-groups");
   container.innerHTML = "";
@@ -270,25 +276,39 @@ function renderDocuments(pinnedDocumentId = null) {
       documents.className = "document-node-list";
 
       items.forEach(documentData => {
+        const passageMatches = documentPassageQuery === query
+          ? documentPassageMatches.filter(match => match.id === documentData.id)
+          : [];
         const documentNode = document.createElement("details");
         documentNode.className = "document-node";
         documentNode.dataset.documentId = documentData.id;
         documentNode.classList.toggle(
           "active", activeDocument?.id === documentData.id
         );
-        documentNode.open = activeDocument?.id === documentData.id;
+        documentNode.open = activeDocument?.id === documentData.id
+          || passageMatches.length > 0;
 
         const documentSummary = document.createElement("summary");
         documentSummary.innerHTML =
           `<strong>${documentData.label}</strong><small>${documentData.utterance_count.toLocaleString()} passages</small>`;
         const passageContainer = document.createElement("div");
         passageContainer.className = "inline-passage-list";
-        passageContainer.innerHTML =
-          '<div class="sidebar-loading">Expand to load passages…</div>';
+        if (passageMatches.length) {
+          renderPassageMatches(documentData, passageMatches, passageContainer);
+        } else {
+          passageContainer.innerHTML =
+            '<div class="sidebar-loading">Expand to load passages…</div>';
+        }
         documentNode.append(documentSummary, passageContainer);
         documentNode.addEventListener("toggle", () => {
           if (documentNode.open) {
-            selectDocument(documentData, null, passageContainer);
+            if (passageMatches.length && documentPassageQuery === query) {
+              renderPassageMatches(
+                documentData, passageMatches, passageContainer
+              );
+            } else {
+              selectDocument(documentData, null, passageContainer);
+            }
           }
         });
         documents.appendChild(documentNode);
@@ -303,17 +323,25 @@ function renderDocuments(pinnedDocumentId = null) {
   if (!container.children.length) {
     container.innerHTML = '<div class="empty-state small">No documents match this filter.</div>';
   }
-  if (!query) {
-    $("search-message").textContent =
-      "Enter a passage ID to open it directly.";
-  } else if (isExactPassageId(query)) {
-    $("search-message").textContent = "Opening exact passage…";
-  } else {
-    $("search-message").textContent =
-      `${resultCount} matching document${resultCount === 1 ? "" : "s"}. Expand a document to choose a passage.`;
+  if (!preserveMessage) {
+    if (!query) {
+      $("search-message").textContent =
+        "Enter a passage ID to open it directly.";
+    } else if (
+      documentPassageQuery === query && documentPassageMatches.length
+    ) {
+      const limited = documentPassageMatches.length < documentPassageTotal;
+      $("search-message").textContent = limited
+        ? `${documentPassageTotal.toLocaleString()} matching passages. Showing the first ${documentPassageMatches.length.toLocaleString()}.`
+        : `${documentPassageTotal.toLocaleString()} matching passage${documentPassageTotal === 1 ? "" : "s"}. Select one to open it.`;
+    } else if (documentPassageQuery === query) {
+      $("search-message").textContent = resultCount
+        ? `${resultCount} matching document${resultCount === 1 ? "" : "s"}. Expand a document to choose a passage.`
+        : "No documents or passages match this search.";
+    }
   }
 
-  if (query && resultCount === 1 && !isExactPassageId(query)) {
+  if (query && resultCount === 1 && !documentPassageMatches.length) {
     const onlyDocument = groups[0].documents[0];
     const node = documentDetailsElement(onlyDocument.id);
     if (node) node.open = true;
@@ -345,8 +373,11 @@ async function openExactPassage(query) {
   const match = await apiFetch(`/api/poems?q=${encodeURIComponent(query)}`);
   const documentData = findDocument(match.source, match.document_id);
   if (!documentData) throw new Error("The passage's document is unavailable.");
+  documentPassageQuery = "";
+  documentPassageMatches = [];
+  documentPassageTotal = 0;
   $("document-search").value = match.sentence_id;
-  renderDocuments(documentData.id);
+  renderDocuments(documentData.id, true);
   const documentNode = documentDetailsElement(documentData.id);
   if (!documentNode) throw new Error("The passage's document is unavailable.");
   documentNode.closest(".document-source").open = true;
@@ -361,28 +392,55 @@ async function openExactPassage(query) {
   $("search-message").textContent = `Opened ${match.sentence_id}.`;
 }
 
+async function searchDocumentPassages(query, sequence, openExact = true) {
+  try {
+    const payload = await apiFetch(
+      `/api/passages?q=${encodeURIComponent(query)}`
+    );
+    if (
+      sequence !== documentSearchSequence
+      || $("document-search").value.trim() !== query
+    ) return;
+    if (openExact && payload.exact) {
+      await openExactPassage(payload.exact.sentence_id);
+      return;
+    }
+    documentPassageQuery = query;
+    documentPassageMatches = payload.results;
+    documentPassageTotal = payload.total;
+    renderDocuments();
+  } catch (error) {
+    if (sequence !== documentSearchSequence) return;
+    $("search-message").textContent = error.message;
+  }
+}
+
 $("document-search").addEventListener("input", event => {
   clearTimeout(documentSearchTimer);
   const query = event.target.value.trim();
-  renderDocuments();
-  if (isExactPassageId(query)) {
+  const sequence = ++documentSearchSequence;
+  documentPassageQuery = "";
+  documentPassageMatches = [];
+  documentPassageTotal = 0;
+  if (!query) {
+    renderDocuments();
+  } else {
+    const hasImmediateDocumentMatches = matchingDocuments(query).length > 0;
+    if (hasImmediateDocumentMatches) renderDocuments(null, true);
     documentSearchTimer = setTimeout(() => {
-      openExactPassage(query).catch(error => {
-        $("search-message").textContent = error.message;
-      });
-    }, 120);
+      searchDocumentPassages(query, sequence);
+    }, 180);
   }
 });
 
 $("document-search").addEventListener("keydown", event => {
   if (event.key !== "Enter") return;
   const query = event.currentTarget.value.trim();
-  if (!isExactPassageId(query)) return;
+  if (!query) return;
   event.preventDefault();
   clearTimeout(documentSearchTimer);
-  openExactPassage(query).catch(error => {
-    $("search-message").textContent = error.message;
-  });
+  const sequence = ++documentSearchSequence;
+  searchDocumentPassages(query, sequence);
 });
 
 function checkedValues(name) {
@@ -1060,6 +1118,35 @@ function treeOptions() {
     ),
     kanjiHighlightRanges: searchContext.kanji_ranges || [],
   };
+}
+
+function renderPassageMatches(documentData, passages, container) {
+  container.innerHTML = "";
+  passages.forEach((passage, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "passage-item";
+    const position = document.createElement("span");
+    position.className = "passage-position";
+    position.textContent = String(index + 1).padStart(2, "0");
+    const text = document.createElement("span");
+    text.className = "passage-item-text";
+    const title = document.createElement("strong");
+    title.textContent = passage.sentence_id;
+    const header = document.createElement("span");
+    header.textContent = passage.header || "No transcription header";
+    const meta = document.createElement("small");
+    const metadata = passage.metadata?.length
+      ? ` · ${passage.metadata.join(" · ")}`
+      : "";
+    meta.textContent = `${documentData.label}${metadata}`;
+    text.append(title, header, meta);
+    button.append(position, text);
+    button.addEventListener("click", () => {
+      selectDocument(documentData, passage.sentence_id, container);
+    });
+    container.appendChild(button);
+  });
 }
 
 [
