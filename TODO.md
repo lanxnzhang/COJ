@@ -1,39 +1,5 @@
 # TODO
 
-## Build comprehensive editor (PAUSED)
-IMPORTANT NOTE: The development for the comprehensive editor is currently PAUSED. Ignore this part and stop revising this folder unless this note is removed.
-
-The user need a more comprehensive editor tool to facilitate the edit of data. Different functions need to be modularized to allow for the expansion of new features in the future. Create a GUI which allows the user to create, delete, read, update. Create a new folder named compreditor to store all these data and changes. Do not change data in other part of the repository. 
-
-### Features
-  1. Data layers
-  User can open and edit the data in different layers: document, text (such as EN_01_1), sentence, and word. User can switch the focused layer among them. When read and edit the text at the sentence or word level, the user can see the context in bigger (sentence and text) level.
-  User can also open and edit the dictionary.
-  Generate the structure outline for the entire data. For example, text - EN - EN1 - EN1.1.
-  2. Functional zones of the interface
-  It should have a clean editing zone at the middle place to ensure the user's attention is focused on editing. The left and right function areas can be collapsed or popped up. 
-  3. Edit mode
-  Most users are not accustomed to editing raw XML data directly. So it is necessary to add other view and editing modes:
-    text mode: the raw xml data is displayed in the form of plain text to show hierarchy and items. When click an item the user can change its tag or annotations, or add some annotations. The user can add branches, change the hierarchy structure. 
-    table mode: all items is displayed in a table and the user can edit the table.
-    tree mode: raw xml data is displayed in the syntax tree, and the user can add/delete/copy and paste/move the item/branches/annotations.
-  4. Modularized fuctions
-    3.1 Search
-    The user can search the whole data (or choose a scope). The searched object can be a word (kamu), a lemma id (L000002), a tag (N), and so on. Or, it can also be a hierarchy structure of syntax tree. Or, it can be a relation of items.
-    In advanced search, Users can feel free to specify inclusion or exclusion searching criteria at every logic point.
-    3.2 Insert
-    The user can insert a tag, a branch, some contents, and even add a new text. 
-    Specially, when insert lemma ids, the word form can be searched in the dictionary. If it has multiple candidates, the user can choose one. Or, the user can create a new dictionary id and insert this lemma (in general create, no matter single or multiple). The user can set the beginning number of the automatical generated new lemma.
-    The function can be combined with Search
-    3.3 Delete
-    The user can delete items.
-    This function can be combined with search and/or insert to substitute.
-    3.4 Revise
-    The user can revise existing items.
-  5. Validation
-  The entire document is continuously checked. For example: A missing attribute; An element in the wrong location; A duplicate ID; An unclosed tag. These errors appear immediately in the Problems panel. Users can click on an error to navigate directly to it. After adding or deleting content, the interface needs to be updated in real time.
-
-
 ## Build script editor
 An essential purpose for this repository is to facilitate editing of data, with the help of scripts. It is inconvenient for users to revise scripts, download the results, read them in txt, and edit data in different softwares.
 Create a simple GUI which allows the user to run scripts, see the running results, and edit the data.
@@ -247,7 +213,6 @@ Consider split this filter with the functions 'Create final output' and 'Add new
 1. You misunderstand my requirement. Do not add Texts underediting EN in the title of EN 01 (and others). Delete them. What I mean is pin EN 01, EN, and Texts under editing on the top when user scrolls the passages under EN 01. Refer to the design of vs code's outline. 
 2. 'Console output' is not needed. Delete it.
 
-
 ### TBD (editing...)
 (TBD?)
 Combine editor and scripteditor as a whole
@@ -436,6 +401,9 @@ Please check and correct this type of encoding bug, while ensuring it can be cor
 
 ### TBD
 
+合并搜索框
+搜索结果下载
+
 1. 词典
 词典搜索结果页面显示优化
 新增的词条检测lemma id
@@ -452,6 +420,12 @@ Please check and correct this type of encoding bug, while ensuring it can be cor
 
 
 
+
+
+
+# Paused
+
+<details><summary> Click to expand </summary>
 
 ## Build interactive editor
 
@@ -503,6 +477,8 @@ Vertical spacing: Sometimes the lines intersect. Usually it's not a problem, but
 ## Automated reasoner
 
 Inactive (TBD).
+
+</details>
 
 # Completed
 
@@ -566,3 +542,47 @@ component lemma IDs left-to-right in layers, inserts the outermost compound ID.
 Optional NP expansion pre-pass wraps direct `N`-at children of `<NP>` in a bare `<N>`.
 
 </details>
+
+# Abandoned
+
+<details><summary> Click to expand </summary>
+
+## Build comprehensive editor
+
+**Status:** Abandoned
+
+The original plan was to build a comprehensive editor combining multiple editing functions.
+Development was stopped because the interface and workflow became too complicated.
+Relevant code remains under `compreditor/` for historical/reference purposes.
+
+The user need a more comprehensive editor tool to facilitate the edit of data. Different functions need to be modularized to allow for the expansion of new features in the future. Create a GUI which allows the user to create, delete, read, update. Create a new folder named compreditor to store all these data and changes. Do not change data in other part of the repository. 
+
+### Features
+  1. Data layers
+  User can open and edit the data in different layers: document, text (such as EN_01_1), sentence, and word. User can switch the focused layer among them. When read and edit the text at the sentence or word level, the user can see the context in bigger (sentence and text) level.
+  User can also open and edit the dictionary.
+  Generate the structure outline for the entire data. For example, text - EN - EN1 - EN1.1.
+  2. Functional zones of the interface
+  It should have a clean editing zone at the middle place to ensure the user's attention is focused on editing. The left and right function areas can be collapsed or popped up. 
+  3. Edit mode
+  Most users are not accustomed to editing raw XML data directly. So it is necessary to add other view and editing modes:
+    text mode: the raw xml data is displayed in the form of plain text to show hierarchy and items. When click an item the user can change its tag or annotations, or add some annotations. The user can add branches, change the hierarchy structure. 
+    table mode: all items is displayed in a table and the user can edit the table.
+    tree mode: raw xml data is displayed in the syntax tree, and the user can add/delete/copy and paste/move the item/branches/annotations.
+  4. Modularized fuctions
+    3.1 Search
+    The user can search the whole data (or choose a scope). The searched object can be a word (kamu), a lemma id (L000002), a tag (N), and so on. Or, it can also be a hierarchy structure of syntax tree. Or, it can be a relation of items.
+    In advanced search, Users can feel free to specify inclusion or exclusion searching criteria at every logic point.
+    3.2 Insert
+    The user can insert a tag, a branch, some contents, and even add a new text. 
+    Specially, when insert lemma ids, the word form can be searched in the dictionary. If it has multiple candidates, the user can choose one. Or, the user can create a new dictionary id and insert this lemma (in general create, no matter single or multiple). The user can set the beginning number of the automatical generated new lemma.
+    The function can be combined with Search
+    3.3 Delete
+    The user can delete items.
+    This function can be combined with search and/or insert to substitute.
+    3.4 Revise
+    The user can revise existing items.
+  5. Validation
+  The entire document is continuously checked. For example: A missing attribute; An element in the wrong location; A duplicate ID; An unclosed tag. These errors appear immediately in the Problems panel. Users can click on an error to navigate directly to it. After adding or deleting content, the interface needs to be updated in real time.
+
+  </details>
