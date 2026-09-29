@@ -1,9 +1,10 @@
 # COJ Comprehensive Editor
 
-A modular local GUI for structured corpus and dictionary editing. It reads the
-canonical files under `data/xml/`, but every edit, new file, dictionary change,
-and deletion marker is stored under `compreditor/workspace/`. Canonical COJ data
-is never written by this application.
+An abandoned experiment in a modular local GUI for structured corpus and
+dictionary editing. It reads the canonical files under `data/xml/`, but every
+edit, new file, dictionary change, and deletion marker is stored under
+`compreditor/workspace/`. Canonical COJ data is never written by this
+application.
 
 ```powershell
 python -m pip install -r compreditor/requirements.txt

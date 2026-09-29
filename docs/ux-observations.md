@@ -30,21 +30,21 @@ This file records behavior noticed during actual use. It is not a feature roadma
 
 ### UX-008 — Startup JavaScript failures are difficult to diagnose
 
-**Observation:** A previous missing-element `addEventListener` error stopped application initialization and left Documents apparently loading forever.
+**Observation:** An initialization error can leave Documents apparently loading forever without explaining the cause in the interface.
 
-**Current behavior:** That specific bug was corrected, but diagnosis required the browser's Developer Tools Console because the page had no visible initialization error.
+**Current behavior:** Early uncaught exceptions are visible mainly through the browser's Developer Tools Console.
 
 **Possible idea already raised:** Make early startup failures visible to non-developer users.
 
-**Status:** Historical observation; specific bug resolved.
+**Status:** Current diagnostic limitation.
 
 ### UX-009 — Passage search and direct opening share one control
 
-**Observation:** The Documents search box both finds passages and opens an exact passage. Earlier behavior briefly showed “No document match” before an exact asynchronous open completed.
+**Observation:** The Documents search box both finds passages and opens an exact passage.
 
-**Current behavior:** The flicker was corrected. IDs with metadata suffixes, such as `MYS.14.3352;azuma_uta`, have aliases so a base ID or metadata fragment can still find the text.
+**Current behavior:** One control combines document filtering and passage resolution. IDs with metadata suffixes, such as `MYS.14.3352;azuma_uta`, have aliases so a base ID or metadata fragment can still find the text.
 
-**Status:** Improved; the mixed purpose remains part of the current interaction.
+**Status:** Current interaction.
 
 ### UX-010 — Search highlighting can imply an alignment that does not exist
 
@@ -58,7 +58,7 @@ This file records behavior noticed during actual use. It is not a feature roadma
 
 **Observation:** A first corpus-wide search can take time while the server builds an in-memory index.
 
-**Current behavior:** Search now runs only when explicitly submitted, avoiding the former expensive search on every keystroke. Restarting the server discards the index cache.
+**Current behavior:** Search runs only when explicitly submitted. Restarting the server discards the index cache.
 
 **Status:** Current characteristic.
 
@@ -105,4 +105,3 @@ These concern persistence and review rather than small interface adjustments. Th
 **Current behavior:** `scripteditor` retains some settings and input/output files but not a complete base commit, processor identity/hash, reviewer, or saved review time. `treditor` drafts contain no base version.
 
 **Status:** Current.
-

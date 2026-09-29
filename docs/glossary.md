@@ -27,7 +27,7 @@ A file-level corpus grouping such as `BS.xml` or `MYS_01.xml`. The current Pytho
 
 The provisional project-facing term for an individually identified unit such as `BS.1` or `MYS.1.1`.
 
-The current Python class is `Utterance`. The code and interface also use *passage*, *sentence*, and historically *poem*. These implementation names do not settle the final scholarly term.
+The current Python class is `Utterance`. The code and interface also use *passage*, *sentence*, and *poem*. These implementation names do not settle the final scholarly term.
 
 ### Passage
 
@@ -125,7 +125,7 @@ These labels must not be renumbered or corrected without editorial approval.
 
 ### Multipart word
 
-One word represented historically by consecutive TXT lines with the same complete syntax path and lemma but different writing-mode tags. XML stores it as one leaf with ordered `<form-parts>`.
+One word represented in TXT by consecutive lines with the same complete syntax path and lemma but different writing-mode tags. XML stores it as one leaf with ordered `<form-parts>`.
 
 A `;@N` distinction instead indicates a separate sibling.
 

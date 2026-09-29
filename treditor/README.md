@@ -1,14 +1,12 @@
 # COJ Tree Editor
 
-`treditor` is an isolated copy of the original `editor` application, updated
-for the repository's current XML data and styled with the blue COJ editor
-theme. It reads canonical data from:
+`treditor` is a local Flask interface for browsing and searching the corpus,
+maintaining browser-local tree drafts, and editing the dictionary. It reads XML
+data from:
 
 - `data/xml/text` — texts under editing
 - `data/xml/trees` — uploaded syntax trees
 - `data/xml/dict/dictionary.xml` — the current dictionary
-
-The original `editor` folder is not imported or modified.
 
 Run the application from the repository root:
 
@@ -18,8 +16,8 @@ python treditor/app.py
 
 Then open `http://127.0.0.1:5002`.
 
-The interface groups documents by source and collection, displays current
-canonical passage IDs, and shows processing-role kanji/transcription segments.
+The interface groups documents by source and collection, displays passage IDs,
+and shows processing-role kanji/transcription segments.
 The Documents search filters sources and documents; an exact passage ID such as
 `MYS.1.1` opens its syntax tree directly. The activity bar switches between the
 hierarchical Documents sidebar and corpus-wide Search, and clicking an active
@@ -105,5 +103,5 @@ the extra kana/frequency row.
 Click **Edit** to reveal pencil controls beside the displayed nodes. A pencil
 opens the editing drawer, which can change node content and add or delete child
 and sibling nodes. These edits are browser-local drafts: they persist across
-reloads in the same browser but intentionally do not rewrite the canonical XML
+reloads in the same browser but intentionally do not rewrite the corpus XML
 files. **Reset draft** restores the repository version of the selected passage.

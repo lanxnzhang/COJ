@@ -225,7 +225,7 @@ def find_poem_location(sentence_id: str) -> dict | None:
         if target in alias_index:
             return alias_index[target]
 
-    # Unusual future IDs remain directly openable without relying on filenames.
+    # IDs outside the filename convention still require repository-wide lookup.
     _index_all_passage_documents()
     return location_index.get(target) or alias_index.get(target)
 
@@ -1441,9 +1441,7 @@ def search_passages():
         for record in _passage_search_records
         if (rank := _passage_match_rank(record, query)) is not None
     ]
-    # An ID-like prefix should normally be confined to its likely document.
-    # If naming conventions change and that produces no hits, retain the
-    # repository-wide fallback used by direct opening.
+    # Fall back to the repository-wide index when likely-document lookup is empty.
     if likely_only and not ranked:
         _index_all_passage_documents()
         ranked = [

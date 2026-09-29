@@ -1,6 +1,3 @@
-# Version: 2.0.0
-# Changes from 1.0.1: .RELATED renamed to .MKTARGETNEW; Report 2 = entries
-# normalised, Report 3 = entries added.
 """
 mk_lemma_processor.py
 =====================
@@ -9,7 +6,7 @@ creates corresponding makura-kotoba dictionary entries, and optionally
 normalises existing makura-kotoba entries that are missing .COMPOUND /
 .MKTARGETNEW lines.
 
-Package-based version — uses src/oncoj for all I/O.
+Uses src/coj for all I/O.
 """
 
 import os

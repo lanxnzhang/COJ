@@ -1,6 +1,6 @@
 # Current project architecture
 
-This document is a map of the repository and applications as they exist now. It does not propose the future revision/review architecture.
+This document is a map of the repository and applications as they exist now.
 
 For the conceptual corpus model, see [data-model.md](data-model.md). For step-by-step application behavior, see [current-workflows.md](current-workflows.md).
 
@@ -21,8 +21,8 @@ For the conceptual corpus model, see [data-model.md](data-model.md). For step-by
 | `tests/` | Shared model, conversion, and serialization tests. | Active tests |
 | `treditor/tests/`, `scripteditor/tests/` | Application-specific backend and UI-contract tests. | Active tests |
 | `reports/` | Generated historical migration evidence. | Historical/audit records |
-| `compreditor/` | Abandoned comprehensive-editor experiment. | Abandoned; do not treat as current architecture |
-| `editor/` | Earlier editor implementation. | Legacy/historical |
+| `compreditor/` | Abandoned comprehensive-editor experiment. | Abandoned |
+| `editor/` | Legacy editor. | Legacy |
 | `notebooks/` | Examples and exploratory use of the package/processors. | Supporting material |
 | `README.md`, `TODO.md` | Repository introduction and accumulated development history/tasks. | Documentation/history; `TODO.md` is not a formal specification |
 
@@ -149,13 +149,12 @@ Browser ──HTTP──> scripteditor/app.py ──subprocess──> worker + G
                               copied input / output / review final
 ```
 
-## Application status decisions
+## Application status
 
 - **Project-author decision:** `treditor` is the current main browsing/research application; its editing mechanism is provisional/legacy and should not be extended now.
 - **Project-author decision:** `scripteditor` is an experimental automated-editing and proposal-review tool with a limited pipeline.
-- **Project-author decision:** `compreditor` is abandoned because its comprehensive interface became too complicated.
+- **Project-author decision:** `compreditor` is abandoned.
 - **Project-author decision:** `editor` is legacy/historical.
-- **Project-author decision:** these applications are not being merged in the present documentation task.
 
 ## Most important files for orientation
 

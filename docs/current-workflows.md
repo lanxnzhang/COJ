@@ -1,6 +1,6 @@
 # Current workflows
 
-This document follows what the current applications actually do: what they load, where changes are held, and what is written to disk. Some workflows are provisional, but they are described here as they exist now.
+This document follows what the current applications actually do: what they load, where changes are held, and what is written to disk.
 
 For repository structure, see [architecture.md](architecture.md). For the underlying corpus concepts, see [data-model.md](data-model.md).
 
@@ -211,7 +211,7 @@ For every run, current code retains:
 
 The immutable input copy is necessary for current context display, before/after comparison, stale-line checking, and rebuilding final output from the pre-processor state. Processor output is necessary to derive proposals during the current synchronous run but is partly redundant after a complete `result.json` exists, subject to audit/provenance needs. Multiple full dictionary copies dominate small-scope runs.
 
-There is no cleanup, retention period, archive, deduplication, or UI delete function. Runs remain indefinitely until a person deletes their directories. The current repository snapshot had five ignored run directories totaling approximately 71.4 MB; this is an observation, not a stable project total.
+There is no cleanup, retention period, archive, deduplication, or UI delete function. Runs remain indefinitely until a person deletes their directories.
 
 ## Other scripts that modify or generate corpus data
 

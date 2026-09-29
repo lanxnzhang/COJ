@@ -5,7 +5,7 @@ Only questions explicitly designated by the project author appear in this ledger
 ## CEQ-001 — Project-facing term for an identified unit
 
 - **Question:** What should the project-facing term be for a unit such as `MYS.1.1`?
-- **Context:** the project author currently prefers **text**. Current code calls the unit an `Utterance`; UI/routes also use passage, sentence, and historically poem. The code class need not be renamed for compatibility.
+- **Context:** the project author currently prefers **text**. Current code calls the unit an `Utterance`; UI/routes also use passage, sentence, and poem. The code class need not be renamed for compatibility.
 - **Example:** `MYS_01.xml` is a document; `MYS.1.1` is one identified unit inside it.
 - **Current implementation:** Python `Utterance`, property `sentence_id`, routes `/api/utterances` and `/api/poems`, UI “passage.”
 - **Project-author notes:** Preferred term at present: “text.”
@@ -27,7 +27,7 @@ Only questions explicitly designated by the project author appear in this ledger
 ## CEQ-003 — Terminology for `<raw-text>/<kanji>` values
 
 - **Question:** Because `<kanji>` sometimes contains placeholders rather than kanji, should the conceptual field be called **source text** or **original text** (or another term)?
-- **Context:** this is terminology/schema interpretation only; the XML tag will not be renamed in the present work.
+- **Context:** the XML tag remains `<kanji>`; this question concerns the conceptual term.
 - **Example:** `BS.21` has a marker payload `x都xxx`, and other source payloads can be entirely placeholder-like.
 - **Current implementation:** XML uses `<raw-text role="processing"><sentence><kanji>...`; UI/search code commonly calls the field `kanji`.
 - **Project-author notes:** “source/original text” currently seems conceptually closer.

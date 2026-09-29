@@ -1,11 +1,7 @@
-# Version: 3.0.0
-# Changes from 2.0.4: Report 1 = new ID lines, Report 1.5 = existing ID
-# lines, Report 2 = normalised entries, Report 3 = new entries.
 """
 lemma_forgui.py
 ===================
-Standard lemma annotator — package-based version.
-Uses src/oncoj for all corpus and dictionary I/O.
+Standard lemma annotator using src/coj for corpus and dictionary I/O.
 """
 
 import os

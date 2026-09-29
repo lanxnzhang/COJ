@@ -1,12 +1,10 @@
-# Version: 3.0.0
-# Changes from 2.0.0: XML-native; reads/writes data/xml/ directly.
 """
 compound_lemma_processor.py
 ============================
 Detects compound nouns in corpus XML files, inserts shared lemma IDs,
 and creates/refines dictionary entries.
 
-Package-based version — uses src/oncoj for all I/O.
+Uses src/coj for all I/O.
 
 Algorithm:
 1. Walk the XML element tree looking for internal <N> elements (no lemma attr)

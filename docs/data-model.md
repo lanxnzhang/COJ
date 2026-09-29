@@ -1,6 +1,6 @@
 # Current data model
 
-This document explains what the corpus conceptually contains and how those concepts appear in the current Python, TXT, and XML representations. It describes the present model without designing its replacement.
+This document explains what the corpus conceptually contains and how those concepts appear in the current Python, TXT, and XML representations.
 
 Definitions are collected in [glossary.md](glossary.md). Exact conversion rules and limitations are in [txt-xml-roundtrip.md](txt-xml-roundtrip.md).
 
@@ -60,7 +60,7 @@ The class represents one block. Its important accessors are:
 - `corpus_lines()`: word/tree-path records;
 - `comment_lines()`: round-trip marker/comment records.
 
-The class name, property names, route names, and some UI code reflect historical terminology. They do not decide the final project-facing scholarly term; see CEQ-001.
+Implementation names do not determine the project-facing scholarly term; see [CEQ-001](chief-editor-questions.md#ceq-001-project-facing-term-for-a-unit-such-as-mys11).
 
 ## `CorpusLine`
 

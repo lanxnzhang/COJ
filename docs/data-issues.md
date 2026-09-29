@@ -1,6 +1,6 @@
 # Open data issues
 
-This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure. No data was corrected while preparing this documentation.
+This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
 ## Confirmed data errors
 

@@ -191,7 +191,7 @@ Current shape:
 </raw-text>
 ```
 
-Historical evidence shows `<raw-text>` was introduced after the initial XML-native conversion to support readable processing/display. TXT → XML starts a segment at every regex-recognized numbered marker, copies its payload to `<kanji>`, and appends every subsequently recognized word form until the next marker. It renumbers those segments from 1.
+TXT → XML starts a `<raw-text>` segment at every regex-recognized numbered marker, copies its payload to `<kanji>`, and appends every subsequently recognized word form until the next marker. It renumbers those segments from 1.
 
 **Project-author decision:** `<raw-text>` is derived, machine-generated processing data. It is not edited independently; it should be regenerated after relevant source/tree changes and must not silently compete with the source/tree data. The current child name `<kanji>` is retained for compatibility even when a value is a placeholder.
 
@@ -312,7 +312,7 @@ They do **not** provide an unconditional semantic-lossless guarantee over all cu
 
 For the current interpreted corpus schema, an audit of all 115 current corpus XML files found stable syntax/annotation signatures after XML → TXT → XML; the current dictionary XML was likewise stable under the supported model. This is strong evidence that current XML is structurally stable under its own interpretation.
 
-It is not proof that the interpretation is editorially correct. ILL and NULL show that a structurally stable round trip can preserve the wrong or incomplete model. Historical marker-boundary and multipart migrations also show that older XML structures required correction before reaching current stability.
+It is not proof that the interpretation is editorially correct. ILL and NULL show that a structurally stable round trip can preserve the wrong or incomplete model.
 
 ### C. Exact textual/formatting identity
 
@@ -332,9 +332,8 @@ Formatting identity should not be used as the sole semantic test. Conversely, se
 
 These are current limitations, not invitations to infer automatic semantics for arbitrary XML extensions.
 
-## Historical rules and cautions
+## Current cautions
 
-1. Early documentation described marker tag prefixes as not affecting syntax hierarchy. The later boundary migration established that marker paths do preserve real boundaries. The later rule supersedes the earlier simplification.
+1. Marker paths preserve real syntax-hierarchy boundaries.
 2. XML became the data read by applications/processors and the README currently calls it “canonical (primary)” and TXT “derived.” The project-author model instead treats TXT as the current human authoring representation and XML as computational. This unresolved operational wording is PAQ-001; neither file syntax should be equated with semantic authority.
-3. Multipart words were formerly represented as separate XML leaves until their historical convention was confirmed and migrated.
-4. Stable current round trips include compatibility attributes (`raw_tag`, `source-id`, `inferred_index`, cross-reference `raw`) accumulated to preserve older data conventions.
+3. Compatibility attributes (`raw_tag`, `source-id`, `inferred_index`, and cross-reference `raw`) preserve source distinctions that regenerated-looking syntax cannot always recover.

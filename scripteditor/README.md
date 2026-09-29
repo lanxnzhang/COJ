@@ -9,12 +9,10 @@ or modified by the GUI.
 python scripteditor/app.py
 ```
 
-Open `http://127.0.0.1:5001`. Every run is stored under `scripteditor/runs/`; canonical files under `data/xml/` are never passed to a processor as writable inputs. Delete old run folders when they are no longer needed.
+Open `http://127.0.0.1:5001`. Every run is stored under `scripteditor/runs/`; repository files under `data/xml/` are never passed to a processor as writable inputs. Delete old run folders when they are no longer needed.
 
 The editor exposes `compound lemma`, `lemma`, and `mk lemma`, backed by the
-`*_forgui.py` copies in `scripteditor/scripts/`. Adding arbitrary uploaded scripts later
-requires an OS-level sandbox: Python code must otherwise be considered fully
-trusted.
+`*_forgui.py` copies in `scripteditor/scripts/`.
 
 Open **Processing scope** to select an entire source group, collection, XML
 document, or individual passage. Parent checkboxes show a partial state when
@@ -65,4 +63,4 @@ dictionary and machine-generated proposals before saving. Deleting a selected
 added entry marks that selection invalid; leaving a new entry unconfirmed
 excludes every line that selects it and reports a warning.
 Final reviewed files and a review manifest are stored under
-`scripteditor/runs/<run-id>/final/`; canonical repository data is not modified.
+`scripteditor/runs/<run-id>/final/`; repository data is not modified.
