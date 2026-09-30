@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <document filename="SM_60.txt">
-  <block id="1_SM_60" header="sumyera ga opo mikoto rama to noritamapu opo mikoto wo mi kwo tati opo kimi tati omi tati tukasa dukasa no pito domo ame no sita no opo mi takara moro moro kiki tamapeyo to noritamapu">
-    <comment raw="IP-MAT,IP-ADV,PP,NP,IP-REL,0@天皇詔旨勅,*" />
-    <comment raw="IP-MAT,IP-ADV,PP,NP,1@命乎親王諸王諸臣百官人等天下公民衆聞食止宣,*" />
+  <block id="SM.60.1" header="sumyera ga opo mikoto rama to noritamapu opo mikoto wo mi kwo tati opo kimi tati omi tati tukasa dukasa no pito domo ame no sita no opo mi takara moro moro kiki tamapeyo to noritamapu">
+    <roundtrip-data format="coj-txt" source-id="1_SM_60">
+      <comment position="0" raw="IP-MAT,IP-ADV,PP,NP,IP-REL,0@天皇詔旨勅,*" />
+      <comment position="7" raw="IP-MAT,IP-ADV,PP,NP,1@命乎親王諸王諸臣百官人等天下公民衆聞食止宣,*" />
+    </roundtrip-data>
+    <raw-text role="processing">
+      <sentence n="1">
+        <kanji>天皇詔旨勅</kanji>
+        <transcription>sumyera ga opo mikoto rama to noritamapu</transcription>
+      </sentence>
+      <sentence n="2">
+        <kanji>命乎親王諸王諸臣百官人等天下公民衆聞食止宣</kanji>
+        <transcription>opo mikoto wo mi kwo tati opo kimi tati omi tati tukasa dukasa no pito domo ame no sita no opo mi takara moro moro kiki tamapeyo to noritamapu</transcription>
+      </sentence>
+    </raw-text>
     <IP-MAT>
       <IP-ADV>
         <PP>
@@ -10,7 +22,7 @@
             <IP-REL>
               <PP-GEN>
                 <NP>
-                  <N phon="LOG" form="sumyera" />
+                  <N lemma="L052019" phon="LOG" form="sumyera" />
                 </NP>
                 <P-CASE lemma="L000503" phon="LOG" form="ga" />
               </PP-GEN>
@@ -18,7 +30,7 @@
                 <NP>
                   <N>
                     <PFX-HON lemma="L000038" phon="LOG" form="opo" />
-                    <N index="1" phon="LOG" form="mikoto" />
+                    <N phon="LOG" form="mikoto" index="1" inferred_index="1" />
                     <N index="3" phon="LOG" form="rama" />
                   </N>
                 </NP>
@@ -34,8 +46,8 @@
           <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
         </PP>
         <NP>
-          <N index="1">
-            <PFX phon="LOG" form="mi" />
+          <N index="1" inferred_index="1">
+            <PFX-HON lemma="L000035" phon="LOG" form="mi" />
             <N phon="LOG" form="kwo" />
             <SFX lemma="L001004" phon="LOG" form="tati" />
           </N>
@@ -44,20 +56,20 @@
             <N phon="LOG" form="kimi" />
             <SFX lemma="L001004" phon="LOG" form="tati" />
           </N>
-          <N index="1">
+          <N index="1" inferred_index="1">
             <N phon="LOG" form="omi" />
             <SFX lemma="L001004" phon="LOG" form="tati" />
           </N>
           <N index="4">
-            <N index="1" phon="LOG" form="tukasa" />
-            <N index="2" phon="LOG" form="dukasa" />
+            <N lemma="L050144" phon="LOG" form="tukasa" index="1" inferred_index="1" />
+            <N index="2" lemma="L050144" phon="LOG" form="dukasa" />
           </N>
-          <N index="1" phon="LOG" form="no" />
+          <N phon="LOG" form="no" index="1" inferred_index="1" />
           <N index="6">
             <N phon="LOG" form="pito" />
             <SFX lemma="L001002" phon="LOG" form="domo" />
           </N>
-          <PP-GEN index="1">
+          <PP-GEN index="1" inferred_index="1">
             <NP>
               <N phon="LOG" form="ame" />
             </NP>
@@ -69,13 +81,13 @@
             </NP>
             <P-CASE lemma="L000520" phon="LOG" form="no" />
           </PP-GEN>
-          <N index="1">
+          <N index="1" inferred_index="1">
             <PFX-HON lemma="L000038" phon="LOG" form="opo" />
-            <N index="1" phon="LOG" form="mi" />
+            <N phon="LOG" form="mi" index="1" inferred_index="1" />
             <N index="3" phon="LOG" form="takara" />
           </N>
           <N index="10">
-            <N index="1" phon="LOG" form="moro" />
+            <N phon="LOG" form="moro" index="1" inferred_index="1" />
             <N index="2" phon="LOG" form="moro" />
           </N>
         </NP>
@@ -88,11 +100,31 @@
       <VB-ADC lemma="L032093a" phon="LOG" form="noritamapu" />
     </IP-MAT>
   </block>
-  <block id="2_SM_60" header="nori no manima ni aru be ki maturi goto to site sawa ra no mi kwo wo tatete pi tugi no mi kwo to sadame tama pu">
-    <comment raw="IP-MAT,IP-ADV,NP,0@随法尔可有伎,*" />
-    <comment raw="IP-MAT,IP-ADV,NP,1@政止志弖,*" />
-    <comment raw="IP-MAT,2@早良親王立而,*" />
-    <comment raw="IP-MAT,3@皇太子止定賜布,*" />
+  <block id="SM.60.2" header="nori no manima ni aru be ki maturi goto to site sawa ra no mi kwo wo tatete pi tugi no mi kwo to sadame tama pu">
+    <roundtrip-data format="coj-txt" source-id="2_SM_60">
+      <comment position="0" raw="IP-MAT,IP-ADV,NP,0@随法尔可有伎,*" />
+      <comment position="7" raw="IP-MAT,IP-ADV,NP,1@政止志弖,*" />
+      <comment position="11" raw="IP-MAT,2@早良親王立而,*" />
+      <comment position="18" raw="IP-MAT,3@皇太子止定賜布,*" />
+    </roundtrip-data>
+    <raw-text role="processing">
+      <sentence n="1">
+        <kanji>随法尔可有伎</kanji>
+        <transcription>nori no manima ni aru be ki</transcription>
+      </sentence>
+      <sentence n="2">
+        <kanji>政止志弖</kanji>
+        <transcription>maturi goto to site</transcription>
+      </sentence>
+      <sentence n="3">
+        <kanji>早良親王立而</kanji>
+        <transcription>sawa ra no mi kwo wo tatete</transcription>
+      </sentence>
+      <sentence n="4">
+        <kanji>皇太子止定賜布</kanji>
+        <transcription>pi tugi no mi kwo to sadame tama pu</transcription>
+      </sentence>
+    </raw-text>
     <IP-MAT>
       <IP-ADV>
         <NP>
@@ -116,7 +148,7 @@
             </WORD>
           </IP-REL>
           <N>
-            <N index="1" phon="LOG" form="maturi" />
+            <N phon="LOG" form="maturi" index="1" inferred_index="1" />
             <N index="2" phon="LOG" form="goto" />
           </N>
         </NP>
@@ -125,11 +157,11 @@
       </IP-ADV>
       <PP>
         <NP>
-          <N index="1" phon="LOG" form="sawa" />
-          <N index="1" phon="BPHON" form="ra" />
+          <N phon="LOG" form="sawa" index="1" inferred_index="1" />
+          <N phon="BPHON" form="ra" index="1" inferred_index="1" />
           <N index="2" phon="LOG" form="no" />
-          <N index="1">
-            <PFX phon="LOG" form="mi" />
+          <N index="1" inferred_index="1">
+            <PFX-HON lemma="L000035" phon="LOG" form="mi" />
             <N phon="LOG" form="kwo" />
           </N>
         </NP>
@@ -137,14 +169,16 @@
       </PP>
       <IP-ADV>
         <VB-GER lemma="L031044a" phon="LOG" form="tatete" />
+      </IP-ADV>
+      <IP-ADV>
         <NP>
-          <N index="1">
-            <N index="1" phon="LOG" form="pi" />
+          <N index="1" inferred_index="1">
+            <N phon="LOG" form="pi" index="1" inferred_index="1" />
             <N index="2" phon="LOG" form="tugi" />
           </N>
           <N index="2" phon="LOG" form="no" />
-          <N index="1">
-            <PFX phon="LOG" form="mi" />
+          <N index="1" inferred_index="1">
+            <PFX-HON lemma="L000035" phon="LOG" form="mi" />
             <N phon="LOG" form="kwo" />
           </N>
         </NP>
@@ -157,10 +191,26 @@
       </VB>
     </IP-MAT>
   </block>
-  <block id="3_SM_60" header="kare kaku no sama satorite tukasa dukasa no pito domo tukape matu re to noritamapu sumyera ga opo mikoto wo moro moro kiki tamapeyo to noritamapu">
-    <comment raw="IP-MAT,0@故此之状悟天,*" />
-    <comment raw="IP-MAT,IP-ADV,PP,NP,IP-REL,IP-ADV,1@百官人等仕奉礼止詔,*" />
-    <comment raw="IP-MAT,IP-ADV,PP,NP,2@天皇勅旨乎衆聞食宣,*" />
+  <block id="SM.60.3" header="kare kaku no sama satorite tukasa dukasa no pito domo tukape matu re to noritamapu sumyera ga opo mikoto wo moro moro kiki tamapeyo to noritamapu">
+    <roundtrip-data format="coj-txt" source-id="3_SM_60">
+      <comment position="0" raw="IP-MAT,0@故此之状悟天,*" />
+      <comment position="5" raw="IP-MAT,IP-ADV,PP,NP,IP-REL,IP-ADV,1@百官人等仕奉礼止詔,*" />
+      <comment position="15" raw="IP-MAT,IP-ADV,PP,NP,2@天皇勅旨乎衆聞食宣,*" />
+    </roundtrip-data>
+    <raw-text role="processing">
+      <sentence n="1">
+        <kanji>故此之状悟天</kanji>
+        <transcription>kare kaku no sama satorite</transcription>
+      </sentence>
+      <sentence n="2">
+        <kanji>百官人等仕奉礼止詔</kanji>
+        <transcription>tukasa dukasa no pito domo tukape matu re to noritamapu</transcription>
+      </sentence>
+      <sentence n="3">
+        <kanji>天皇勅旨乎衆聞食宣</kanji>
+        <transcription>sumyera ga opo mikoto wo moro moro kiki tamapeyo to noritamapu</transcription>
+      </sentence>
+    </raw-text>
     <IP-MAT>
       <NP-ADV>
         <ADV lemma="L004166" phon="LOG" form="kare" />
@@ -172,27 +222,31 @@
               <IP-ADV>
                 <IP-ADV>
                   <NP>
-                    <N index="1" phon="LOG" form="kaku" />
+                    <N phon="LOG" form="kaku" index="1" inferred_index="1" />
                     <N index="2" phon="LOG" form="no" />
-                    <N index="1" phon="LOG" form="sama" />
+                    <N phon="LOG" form="sama" index="1" inferred_index="1" />
                   </NP>
                   <VB-GER phon="LOG" form="satorite" />
                 </IP-ADV>
                 <NP>
-                  <N index="1">
-                    <N index="1" phon="LOG" form="tukasa" />
-                    <N index="2" phon="LOG" form="dukasa" />
+                  <N index="1" inferred_index="1">
+                    <N lemma="L050144" phon="LOG" form="tukasa" index="1" inferred_index="1" />
+                    <N index="2" lemma="L050144" phon="LOG" form="dukasa" />
                   </N>
                   <N index="2" phon="LOG" form="no" />
-                  <N index="1">
+                  <N index="1" inferred_index="1">
                     <N phon="LOG" form="pito" />
                     <SFX lemma="L001002" phon="LOG" form="domo" />
                   </N>
                 </NP>
                 <VB>
                   <VB-STM lemma="L031119a" phon="LOG" form="tukape" />
-                  <VB-IMP lemma="L031644a" phon="LOG" form="matu" />
-                  <VB-IMP lemma="L031644a" phon="PHON" form="re" />
+                  <VB-IMP lemma="L031644a" phon="" form="mature">
+                    <form-parts>
+                      <part phon="LOG" form="matu" />
+                      <part phon="PHON" form="re" />
+                    </form-parts>
+                  </VB-IMP>
                 </VB>
                 <P-COMP lemma="L000530" phon="PHON" form="to" />
               </IP-ADV>
@@ -200,7 +254,7 @@
             </IP-REL>
             <PP-GEN>
               <NP>
-                <N phon="LOG" form="sumyera" />
+                <N lemma="L052019" phon="LOG" form="sumyera" />
               </NP>
               <P-CASE lemma="L000503" phon="LOG" form="ga" />
             </PP-GEN>
@@ -213,7 +267,7 @@
         </PP>
         <NP>
           <N>
-            <N index="1" phon="LOG" form="moro" />
+            <N phon="LOG" form="moro" index="1" inferred_index="1" />
             <N index="2" phon="LOG" form="moro" />
           </N>
         </NP>

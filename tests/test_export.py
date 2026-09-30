@@ -94,57 +94,186 @@ class TestCorpusXmlUnit:
 
     def test_block_id(self):
         ids = {s.get("id") for s in self.root.findall("block")}
-        assert "1_EN_01" in ids
-        assert "2_EN_01" in ids
+        assert "EN.1.1" in ids
+        assert "EN.1.2" in ids
 
     def test_lemma_attribute_present(self):
         # Second block: IP-MAT > NP > N with lemma=L000006a
-        sent2 = self.root.find(".//block[@id='2_EN_01']")
+        sent2 = self.root.find(".//block[@id='EN.1.2']")
         assert sent2 is not None
         leaf = sent2.find(".//*[@lemma]")
         assert leaf is not None
         assert leaf.get("lemma") == "L000006a"
 
     def test_form_attribute_present(self):
-        sent2 = self.root.find(".//block[@id='2_EN_01']")
+        sent2 = self.root.find(".//block[@id='EN.1.2']")
         assert sent2 is not None
         leaf = sent2.find(".//*[@form='nu']")
         assert leaf is not None
 
     def test_disambiguation_index(self):
         # First block has N;@2 → index="2"
-        sent1 = self.root.find(".//block[@id='1_EN_01']")
+        sent1 = self.root.find(".//block[@id='EN.1.1']")
         assert sent1 is not None
         indexed = sent1.find(".//*[@index='2']")
         assert indexed is not None
 
     def test_index_1_inferred(self):
         # First block has N (plain) alongside N;@2 → implicit index="1" on the plain N
-        sent1 = self.root.find(".//block[@id='1_EN_01']")
+        sent1 = self.root.find(".//block[@id='EN.1.1']")
         assert sent1 is not None
         indexed_1 = sent1.find(".//*[@index='1']")
         assert indexed_1 is not None
 
     def test_comment_element_present(self):
-        sent1 = self.root.find(".//block[@id='1_EN_01']")
+        sent1 = self.root.find(".//block[@id='EN.1.1']")
         assert sent1 is not None
-        comments = sent1.findall("comment")
+        comments = sent1.findall("./roundtrip-data/comment")
         assert len(comments) == 1
         assert "神主" in (comments[0].get("raw") or "")
+        assert comments[0].get("position") == "0"
+
+    def test_legacy_id_is_roundtrip_only(self):
+        sent1 = self.root.find(".//block[@id='EN.1.1']")
+        roundtrip = sent1.find("roundtrip-data")
+        assert roundtrip is not None
+        assert roundtrip.get("format") == "coj-txt"
+        assert roundtrip.get("source-id") == "1_EN_01"
+
+    def test_raw_text_has_semantic_sentence(self):
+        sent1 = self.root.find(".//block[@id='EN.1.1']")
+        sentence = sent1.find("./raw-text/sentence[@n='1']")
+        assert sentence is not None
+        assert sentence.findtext("kanji") == "神主"
+        assert sentence.findtext("transcription") == "kamu nusi"
 
     def test_phon_attribute_set(self):
         # All leaf nodes should have a phon attribute
         for leaf in self.root.findall(".//*[@form]"):
             assert leaf.get("phon") is not None
 
+    def test_phon_disambiguation_round_trip(self):
+        source = '=N(" yo ")\nIP-MAT,PEN,LOG;@2,yo\nID,1_EN_01\n'
+        doc = CorpusDocument.from_text(source)
+        xml = corpus_to_xml(doc)
+        leaf = ET.fromstring(xml).find(".//*[@form='yo']")
+        assert leaf.get("phon") == "LOG"
+        assert leaf.get("phon_index") == "2"
+        assert corpus_from_xml(xml).to_text() == source
+
+
     def test_well_formed_xml(self):
         # ET.fromstring would have raised if not well-formed; double-check round-trip
         assert ET.tostring(self.root, encoding="unicode").startswith("<document")
+
+    def test_multiple_markers_keep_source_positions(self):
+        source = """\
+=N(" ugonapar eru kamu nusi ")
+IP-MAT,0@侍,*
+IP-MAT,VB,LOG,ugonapar
+IP-MAT,VB,LOG,eru
+IP-MAT,1@神主,*
+IP-MAT,NP,N,LOG,kamu
+IP-MAT,NP,N;@2,LOG,nusi
+ID,1_EN_01
+"""
+        xml = corpus_to_xml(CorpusDocument.from_text(source))
+        root = ET.fromstring(xml)
+        comments = root.findall("./block/roundtrip-data/comment")
+        assert [comment.get("position") for comment in comments] == ["0", "2"]
+        sentences = root.findall("./block/raw-text/sentence")
+        assert [sentence.get("n") for sentence in sentences] == ["1", "2"]
+        assert sentences[0].findtext("transcription") == "ugonapar eru"
+        assert sentences[1].findtext("transcription") == "kamu nusi"
+        assert corpus_from_xml(xml).to_text() == source
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  TestCorpusXmlRealFile
 # ══════════════════════════════════════════════════════════════════════════════
+
+class TestMultipartWordXml:
+    source = """\
+=N(" ipa ku ")
+multi-sentence,IP-MAT,VB-NML,L030199a,LOG,ipa
+multi-sentence,IP-MAT,VB-NML,L030199a,PHON,ku
+multi-sentence,IP-MAT,N;@2,L000001a,LOG,mo
+ID,619_MYS_04
+"""
+
+    def test_consecutive_same_path_and_lemma_become_one_syntax_leaf(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        leaf = root.find("./block/multi-sentence/IP-MAT/VB-NML")
+        assert leaf is not None
+        assert leaf.attrib == {
+            "lemma": "L030199a",
+            "phon": "",
+            "form": "ipaku",
+        }
+        assert [part.attrib for part in leaf.findall("./form-parts/part")] == [
+            {"phon": "LOG", "form": "ipa"},
+            {"phon": "PHON", "form": "ku"},
+        ]
+
+    def test_semicolon_index_remains_a_separate_sibling(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        parent = root.find("./block/multi-sentence/IP-MAT")
+        assert parent is not None
+        assert [child.tag for child in parent if child.tag != "comment"] == [
+            "VB-NML", "N"
+        ]
+
+    def test_txt_xml_txt_round_trip_is_exact(self):
+        document = CorpusDocument.from_text(self.source)
+        assert corpus_from_xml(corpus_to_xml(document)).to_text() == self.source
+
+
+class TestKanjiMarkerSyntaxBoundaries:
+    source = """\
+=N(" titi papa ga tameni moro pito no tameni ")
+CP-FINAL,4@知知波波賀多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N,L050641,PHON,titi
+CP-FINAL,NP-ADV,PP,NP,N,L050402,N;@2,L051720,PHON,papa
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000503,PHON,ga
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+CP-FINAL,5@毛呂比止乃多米爾,*
+CP-FINAL,NP-ADV,PP,NP,N,L050486,ADJ-STM,L007011,PHON,moro
+CP-FINAL,NP-ADV,PP,NP,N,L050486,N,L050046,PHON,pito
+CP-FINAL,NP-ADV,PP,P-CASE-GEN,L000520,PHON,no
+CP-FINAL,NP-ADV,N,L050063d,PHON,tameni
+ID,BS.1
+"""
+
+    def test_marker_parent_path_separates_repeated_child_constituents(self):
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(self.source)))
+        final = root.find("./block/CP-FINAL")
+        assert final is not None
+        constituents = final.findall("NP-ADV")
+        assert len(constituents) == 2
+        assert [leaf.get("form") for leaf in constituents[0].iter()
+                if leaf.get("form")] == ["titi", "papa", "ga", "tameni"]
+        assert [leaf.get("form") for leaf in constituents[1].iter()
+                if leaf.get("form")] == ["moro", "pito", "no", "tameni"]
+
+    def test_marker_does_not_split_a_parent_named_in_its_path(self):
+        source = """\
+=N(" titi papa ")
+CP-FINAL,NP-ADV,1@知知,*
+CP-FINAL,NP-ADV,NP,N,L050641,PHON,titi
+CP-FINAL,NP-ADV,2@波波,*
+CP-FINAL,NP-ADV,NP,N,L051720,PHON,papa
+ID,TEST.1
+"""
+        root = ET.fromstring(corpus_to_xml(CorpusDocument.from_text(source)))
+        final = root.find("./block/CP-FINAL")
+        assert final is not None
+        assert len(final.findall("NP-ADV")) == 1
+        assert len(final.findall("./NP-ADV/NP")) == 2
+
+    def test_txt_xml_txt_round_trip_is_exact(self):
+        document = CorpusDocument.from_text(self.source)
+        assert corpus_from_xml(corpus_to_xml(document)).to_text() == self.source
+
 
 class TestCorpusXmlRealFile:
     @pytest.fixture(autouse=True)
@@ -158,8 +287,8 @@ class TestCorpusXmlRealFile:
 
     def test_first_and_last_id(self):
         ids = {s.get("id") for s in self.root.findall("block")}
-        assert "1_EN_01" in ids
-        assert "15_EN_01" in ids
+        assert "EN.1.1" in ids
+        assert "EN.1.15" in ids
 
     def test_known_lemma_present(self):
         leaf = self.root.find(".//*[@lemma='L000530']")
@@ -478,7 +607,7 @@ class TestIndexInference:
     def test_leaf_index_1_inferred(self):
         # Leaf case (existing coverage, kept here for completeness as a regression guard)
         root = self._xml_root(_SIMPLE_DOC)
-        blk1 = root.find(".//block[@id='1_EN_01']")
+        blk1 = root.find(".//block[@id='EN.1.1']")
         assert blk1 is not None
         assert blk1.find(".//*[@index='1']") is not None
 
@@ -693,3 +822,23 @@ class TestDictionaryRoundTrip:
         e_o12 = orig["L000012"]
         e_r12 = rt["L000012"]
         assert e_r12.get_all(".COMPOUND") == e_o12.get_all(".COMPOUND")
+
+    def test_legacy_and_nonstandard_cross_refs_preserved(self):
+        source = """---------------------------------------------------
+=== L080501
+.FORM\tparu-puyu
+.KANA\t
+.POS\tnoun
+.COMPOUND\t(dvandva)\tref_target=L051724\tparu
+.MKTARGET\tref_target=L090004\tmikasa
+
+"""
+        orig = Dictionary.from_text(source)
+        rt = dictionary_from_xml(dictionary_to_xml(orig))
+        assert rt["L080501"].get_all(".COMPOUND") == [
+            "(dvandva)\tref_target=L051724\tparu"
+        ]
+        assert rt["L080501"].get_all(".MKTARGET") == [
+            "ref_target=L090004\tmikasa"
+        ]
+        assert not rt["L080501"].has(".GLOSS")

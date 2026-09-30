@@ -27,7 +27,7 @@ import io
 import os
 import re
 import xml.etree.ElementTree as ET
-from typing import Iterator
+from typing import Iterator, TypeAlias
 
 from coj.core.lemma_id import LemmaID
 from coj.core.tags import PHON_TAGS, strip_disambig
@@ -46,6 +46,94 @@ _HEADER_RE      = re.compile(r'^=\w+\(')
 _HEADER_INNER_RE = re.compile(r'^=\w+\(\s*"?\s*(.*?)\s*"?\s*\)\s*$')
 # Sentence ID line: ID,<text>
 _ID_LINE_RE  = re.compile(r'^ID,')
+_TEXT_ID_RE = re.compile(r'^(\d+)_([A-Za-z]+)_(\d+)$')
+_KANJI_MARKER_RE = re.compile(r'(?:^|,)(\d+)@(.*),\*$')
+
+# Direct children of <block> which describe the source or its readable text,
+# rather than nodes in the syntactic tree.
+_BLOCK_METADATA_TAGS = frozenset({"comment", "roundtrip-data", "raw-text"})
+_FORM_PARTS_TAG = "form-parts"
+
+
+def _is_block_metadata(elem: ET.Element) -> bool:
+    return elem.tag in _BLOCK_METADATA_TAGS
+
+
+def _syntax_children(elem: ET.Element) -> list[ET.Element]:
+    """Return real syntax children, excluding XML-only annotation metadata."""
+    return [
+        child for child in elem
+        if child.tag != "comment" and child.tag != _FORM_PARTS_TAG
+    ]
+
+
+def _form_part_elements(elem: ET.Element) -> list[ET.Element]:
+    container = elem.find(_FORM_PARTS_TAG)
+    return list(container.findall("part")) if container is not None else []
+
+
+def _canonical_sentence_id(source_id: str) -> str:
+    """Convert ``1_EN_01`` to ``EN.1.1``; preserve canonical IDs as-is."""
+    match = _TEXT_ID_RE.fullmatch(source_id)
+    if not match:
+        return source_id
+    item, collection, volume = match.groups()
+    return f"{collection.upper()}.{int(volume)}.{int(item)}"
+
+
+def _kanji_marker_parent_path(raw: str) -> tuple[str, ...] | None:
+    """Return the syntax-parent path encoded before a TXT kanji marker."""
+    fields = raw.split(",")
+    if len(fields) < 2 or fields[-1] != "*":
+        return None
+    marker_number, separator, _ = fields[-2].partition("@")
+    if not separator or not marker_number.isdigit():
+        return None
+    return tuple(fields[:-2])
+
+
+def _roundtrip_element(block: ET.Element) -> ET.Element | None:
+    return block.find("roundtrip-data")
+
+
+def _source_sentence_id(block: ET.Element) -> str | None:
+    roundtrip = _roundtrip_element(block)
+    if roundtrip is not None and roundtrip.get("source-id"):
+        return roundtrip.get("source-id")
+    return block.get("id")
+
+
+def _roundtrip_comments(block: ET.Element) -> list[tuple[int, int, CommentLine]]:
+    """Return source comments as ``(corpus position, order, line)`` tuples."""
+    parent = _roundtrip_element(block)
+    comments = list(parent.findall("comment")) if parent is not None else []
+    # Backward compatibility with XML generated before roundtrip-data existed.
+    comments.extend(child for child in block if child.tag == "comment")
+    result: list[tuple[int, int, CommentLine]] = []
+    for order, child in enumerate(comments):
+        try:
+            position = max(0, int(child.get("position") or "0"))
+        except ValueError:
+            position = 0
+        result.append((position, order, CommentLine(child.get("raw") or "")))
+    return result
+
+
+def _merge_source_lines(
+    block: ET.Element, corpus_lines: list[CorpusLine]
+) -> list[AnyLine]:
+    """Reinsert TXT-only comments at their recorded corpus-line positions."""
+    by_position: dict[int, list[tuple[int, CommentLine]]] = {}
+    for position, order, comment in _roundtrip_comments(block):
+        position = min(position, len(corpus_lines))
+        by_position.setdefault(position, []).append((order, comment))
+
+    merged: list[AnyLine] = []
+    for position in range(len(corpus_lines) + 1):
+        merged.extend(line for _, line in sorted(by_position.get(position, [])))
+        if position < len(corpus_lines):
+            merged.append(corpus_lines[position])
+    return merged
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -75,22 +163,30 @@ class CorpusLine:
     def __init__(self, fields: list[str]) -> None:
         self._fields_storage: list[str] | None = list(fields)
         self._leaf_elem: ET.Element | None = None
+        self._form_part_elem: ET.Element | None = None
         self._ancestors: list[ET.Element] = []
+        self._syntax_boundaries_before: list[tuple[str, ...]] = []
 
     @classmethod
-    def _from_elem(cls, leaf_elem: ET.Element,
-                   ancestors: list[ET.Element]) -> "CorpusLine":
+    def _from_elem(
+        cls,
+        leaf_elem: ET.Element,
+        ancestors: list[ET.Element],
+        form_part_elem: ET.Element | None = None,
+    ) -> CorpusLine:
         """Create an XML-backed CorpusLine wrapping *leaf_elem*."""
         obj: CorpusLine = cls.__new__(cls)
         obj._fields_storage = None
         obj._leaf_elem = leaf_elem
+        obj._form_part_elem = form_part_elem
         obj._ancestors = list(ancestors)
+        obj._syntax_boundaries_before = []
         return obj
 
     # ── parsing ───────────────────────────────────────────────────────────────
 
     @classmethod
-    def parse(cls, line: str) -> "CorpusLine":
+    def parse(cls, line: str) -> CorpusLine:
         fields = line.rstrip("\r\n").split(",")
         return cls(fields)
 
@@ -104,7 +200,7 @@ class CorpusLine:
         for anc in self._ancestors:
             raw_tag = anc.get("raw_tag") or anc.tag
             idx = anc.get("index")
-            if idx and not anc.get("inferred_index"):
+            if idx is not None and not anc.get("inferred_index"):
                 raw_tag = f"{raw_tag};@{idx}"
             parts.append(raw_tag)
             emb_lemma = anc.get("lemma")
@@ -113,17 +209,24 @@ class CorpusLine:
         # Leaf element tag
         leaf_raw_tag = self._leaf_elem.get("raw_tag") or self._leaf_elem.tag
         leaf_idx = self._leaf_elem.get("index")
-        if leaf_idx and not self._leaf_elem.get("inferred_index"):
+        if leaf_idx is not None and not self._leaf_elem.get("inferred_index"):
             leaf_raw_tag = f"{leaf_raw_tag};@{leaf_idx}"
         parts.append(leaf_raw_tag)
         # Leaf annotations
         leaf_lemma = self._leaf_elem.get("lemma")
         if leaf_lemma:
             parts.append(leaf_lemma)
-        phon = self._leaf_elem.get("phon") or ""
+        annotation = (
+            self._form_part_elem
+            if self._form_part_elem is not None else self._leaf_elem
+        )
+        phon = annotation.get("phon") or ""
         if phon:
+            phon_idx = annotation.get("phon_index")
+            if phon_idx:
+                phon = f"{phon};@{phon_idx}"
             parts.append(phon)
-        form = self._leaf_elem.get("form") or ""
+        form = annotation.get("form") or ""
         if form:
             parts.append(form)
         return ",".join(parts)
@@ -151,31 +254,45 @@ class CorpusLine:
     # ── field inspection ──────────────────────────────────────────────────────
 
     @property
-    def word_form(self) -> "str | None":
+    def word_form(self) -> str | None:
         """Last field if it is a pure-alphabetic word form, else None."""
         if self._leaf_elem is not None:
-            form = self._leaf_elem.get("form") or ""
+            annotation = (
+                self._form_part_elem
+                if self._form_part_elem is not None else self._leaf_elem
+            )
+            form = annotation.get("form") or ""
             return form if form else None
         last = self._fields_storage[-1] if self._fields_storage else ""
         return last if _WORDFORM_RE.match(last) else None
 
     @property
-    def phon_tag(self) -> "str | None":
+    def phon_tag(self) -> str | None:
         """
         The writing-mode tag (LOG, PHON, NLOG, …) if the line has a word form.
         The raw tag (with any ;@N suffix) is returned; use ``strip_disambig``
         if you need the bare name.
         """
         if self._leaf_elem is not None:
-            phon = self._leaf_elem.get("phon") or ""
+            annotation = (
+                self._form_part_elem
+                if self._form_part_elem is not None else self._leaf_elem
+            )
+            phon = annotation.get("phon") or ""
+            phon_idx = annotation.get("phon_index")
+            if phon and phon_idx:
+                phon = f"{phon};@{phon_idx}"
             return phon if phon else None
         if self.word_form is None or len(self._fields_storage) < 2:
             return None
         tag = self._fields_storage[-2]
-        return tag if strip_disambig(tag) in PHON_TAGS else None
+        # A lemma in the third-last slot proves that the following field is
+        # the writing-mode tag, even when the source contains a non-standard
+        # value such as ``inLOG`` which must survive round trips.
+        return tag if self.lemma_id is not None or strip_disambig(tag) in PHON_TAGS else None
 
     @property
-    def lemma_id(self) -> "LemmaID | None":
+    def lemma_id(self) -> LemmaID | None:
         """The lemma ID if present, else None."""
         if self._leaf_elem is not None:
             lemma_str = self._leaf_elem.get("lemma")
@@ -201,7 +318,7 @@ class CorpusLine:
             for anc in self._ancestors:
                 raw_tag = anc.get("raw_tag") or anc.tag
                 idx = anc.get("index")
-                if idx and not anc.get("inferred_index"):
+                if idx is not None and not anc.get("inferred_index"):
                     raw_tag = f"{raw_tag};@{idx}"
                 parts.append(raw_tag)
                 emb_lemma = anc.get("lemma")
@@ -209,7 +326,7 @@ class CorpusLine:
                     parts.append(emb_lemma)
             leaf_raw_tag = self._leaf_elem.get("raw_tag") or self._leaf_elem.tag
             leaf_idx = self._leaf_elem.get("index")
-            if leaf_idx and not self._leaf_elem.get("inferred_index"):
+            if leaf_idx is not None and not self._leaf_elem.get("inferred_index"):
                 leaf_raw_tag = f"{leaf_raw_tag};@{leaf_idx}"
             parts.append(leaf_raw_tag)
             return parts
@@ -231,14 +348,14 @@ class CorpusLine:
         """True if the line has a word form and is not yet annotated."""
         return self.word_form is not None and not self.is_annotated
 
-    def preceding_synt_tag(self) -> "str | None":
+    def preceding_synt_tag(self) -> str | None:
         """Return the syntactic tag immediately before the lemma-ID slot."""
         path = self.synt_path
         return path[-1] if path else None
 
     # ── mutation ──────────────────────────────────────────────────────────────
 
-    def insert_lemma(self, lemma_id: "str | LemmaID") -> None:
+    def insert_lemma(self, lemma_id: str | LemmaID) -> None:
         """
         Insert *lemma_id* into the lemma-ID slot.
         Raises ``ValueError`` if already annotated or line has no word form.
@@ -257,7 +374,7 @@ class CorpusLine:
         insert_at = len(self._fields_storage) - 2
         self._fields_storage.insert(insert_at, str(lemma_id))
 
-    def replace_lemma(self, lemma_id: "str | LemmaID") -> None:
+    def replace_lemma(self, lemma_id: str | LemmaID) -> None:
         """Replace an existing lemma ID in-place."""
         if self._leaf_elem is not None:
             if not self.is_annotated:
@@ -268,7 +385,7 @@ class CorpusLine:
             raise ValueError("Line has no lemma ID to replace")
         self._fields_storage[len(self._fields_storage) - 3] = str(lemma_id)
 
-    def remove_lemma(self) -> "LemmaID | None":
+    def remove_lemma(self) -> LemmaID | None:
         """Remove and return the lemma ID. Returns None if not annotated."""
         if self._leaf_elem is not None:
             lemma_str = self._leaf_elem.get("lemma")
@@ -285,7 +402,7 @@ class CorpusLine:
 
     # ── querying helpers ──────────────────────────────────────────────────────
 
-    def synt_tag_at(self, offset_from_end: int) -> "str | None":
+    def synt_tag_at(self, offset_from_end: int) -> str | None:
         """Return the field at *offset_from_end* from end (0 = last)."""
         flds = self.fields
         idx = len(flds) - 1 - offset_from_end
@@ -310,7 +427,7 @@ class CommentLine:
         self.raw: str = raw.rstrip("\r\n")
 
     @classmethod
-    def parse(cls, line: str) -> "CommentLine":
+    def parse(cls, line: str) -> CommentLine:
         return cls(line)
 
     def to_text(self) -> str:
@@ -336,7 +453,7 @@ class CommentLine:
         return bool(_ID_LINE_RE.match(self.raw))
 
     @property
-    def sentence_id(self) -> "str | None":
+    def sentence_id(self) -> str | None:
         """The sentence ID string (e.g. '1_EN_01') if this is an ID line."""
         if self.is_id_line:
             return self.raw.split(",", 1)[1].strip()
@@ -353,7 +470,7 @@ class CommentLine:
 # ══════════════════════════════════════════════════════════════════════════════
 
 # A line in an utterance is either a CorpusLine or a CommentLine
-AnyLine = "CorpusLine | CommentLine"
+AnyLine: TypeAlias = CorpusLine | CommentLine
 
 
 class Utterance:
@@ -370,12 +487,12 @@ class Utterance:
       they operate on the shared elements.
     """
 
-    def __init__(self, lines: "list[AnyLine] | None" = None) -> None:
+    def __init__(self, lines: list[AnyLine] | None = None) -> None:
         self._lines_storage: list[AnyLine] = list(lines) if lines else []
         self._block_elem: ET.Element | None = None
 
     @classmethod
-    def _from_elem(cls, block_elem: ET.Element) -> "Utterance":
+    def _from_elem(cls, block_elem: ET.Element) -> Utterance:
         """Create an XML-backed Utterance wrapping *block_elem*."""
         obj: Utterance = cls.__new__(cls)
         obj._lines_storage = []
@@ -385,7 +502,7 @@ class Utterance:
     # ── parsing ───────────────────────────────────────────────────────────────
 
     @classmethod
-    def from_lines(cls, raw_lines: list[str]) -> "Utterance":
+    def from_lines(cls, raw_lines: list[str]) -> Utterance:
         """Parse a block of raw text lines into an Utterance (field-list mode)."""
         parsed: list[AnyLine] = []
         for raw in raw_lines:
@@ -419,7 +536,7 @@ class Utterance:
     # ── convenient accessors ──────────────────────────────────────────────────
 
     @property
-    def header(self) -> "CommentLine | None":
+    def header(self) -> CommentLine | None:
         if self._block_elem is not None:
             header_raw = self._block_elem.get("header")
             return CommentLine(_wrap_header(header_raw)) if header_raw else None
@@ -429,7 +546,7 @@ class Utterance:
         return None
 
     @property
-    def sentence_id(self) -> "str | None":
+    def sentence_id(self) -> str | None:
         if self._block_elem is not None:
             return self._block_elem.get("id")
         for ln in self._lines_storage:
@@ -445,15 +562,12 @@ class Utterance:
             header_raw = self._block_elem.get("header")
             if header_raw:
                 out.append(CommentLine(_wrap_header(header_raw)))
+            corpus_lines: list[CorpusLine] = []
             for child in self._block_elem:
-                if child.tag == "comment":
-                    out.append(CommentLine(child.get("raw") or ""))
-            for child in self._block_elem:
-                if child.tag != "comment":
-                    tmp: list[CorpusLine] = []
-                    _collect_corpus_lines(child, [], tmp)
-                    out.extend(tmp)
-            sid = self._block_elem.get("id")
+                if not _is_block_metadata(child):
+                    _collect_corpus_lines(child, [], corpus_lines)
+            out.extend(_merge_source_lines(self._block_elem, corpus_lines))
+            sid = _source_sentence_id(self._block_elem)
             if sid:
                 out.append(CommentLine(f"ID,{sid}"))
             return out
@@ -463,18 +577,14 @@ class Utterance:
         if self._block_elem is not None:
             result: list[CorpusLine] = []
             for child in self._block_elem:
-                if child.tag != "comment":
+                if not _is_block_metadata(child):
                     _collect_corpus_lines(child, [], result)
             return result
         return [ln for ln in self._lines_storage if isinstance(ln, CorpusLine)]
 
     def comment_lines(self) -> list[CommentLine]:
         if self._block_elem is not None:
-            return [
-                CommentLine(child.get("raw") or "")
-                for child in self._block_elem
-                if child.tag == "comment"
-            ]
+            return [line for _, _, line in _roundtrip_comments(self._block_elem)]
         return [ln for ln in self._lines_storage if isinstance(ln, CommentLine)]
 
     def unannotated_lines(self) -> list[CorpusLine]:
@@ -488,7 +598,7 @@ class Utterance:
     def find_by_form(self, form: str) -> list[CorpusLine]:
         return [ln for ln in self.corpus_lines() if ln.word_form == form]
 
-    def find_by_lemma(self, lemma_id: "str | LemmaID") -> list[CorpusLine]:
+    def find_by_lemma(self, lemma_id: str | LemmaID) -> list[CorpusLine]:
         target = str(lemma_id)
         return [ln for ln in self.corpus_lines()
                 if str(ln.lemma_id) == target]
@@ -581,15 +691,73 @@ def _make_leaf_elem(cl: CorpusLine) -> ET.Element:
     xml_tag = _sanitize_xml_name(clean_tag)
 
     elem = ET.Element(xml_tag)
-    if idx:
+    if idx is not None:
         elem.set("index", idx)
     if xml_tag != clean_tag:
         elem.set("raw_tag", clean_tag)
     if cl.lemma_id is not None:
         elem.set("lemma", str(cl.lemma_id))
-    elem.set("phon", strip_disambig(phon) if phon else "")
+    clean_phon, phon_idx = _split_disambig_xml(phon) if phon else ("", None)
+    elem.set("phon", clean_phon)
+    if phon_idx:
+        elem.set("phon_index", phon_idx)
     elem.set("form", cl.word_form or "")
     return elem
+
+
+def _make_multipart_leaf_elem(lines: list[CorpusLine]) -> ET.Element:
+    """Build one syntax leaf with ordered script/form component metadata."""
+    elem = _make_leaf_elem(lines[0])
+    elem.set("form", "".join(line.word_form or "" for line in lines))
+    elem.set("phon", "")
+    elem.attrib.pop("phon_index", None)
+    parts = ET.SubElement(elem, _FORM_PARTS_TAG)
+    for line in lines:
+        part = ET.SubElement(parts, "part")
+        phon = line.phon_tag or ""
+        clean_phon, phon_idx = _split_disambig_xml(phon) if phon else ("", None)
+        part.set("phon", clean_phon)
+        if phon_idx:
+            part.set("phon_index", phon_idx)
+        part.set("form", line.word_form or "")
+    return elem
+
+
+def _multipart_leaf_run(
+    lines: list[CorpusLine], start: int, depth: int
+) -> list[CorpusLine]:
+    """Return a confirmed historical multipart run beginning at *start*."""
+    first = lines[start]
+    lemma = str(first.lemma_id) if first.lemma_id else ""
+    if not lemma:
+        return []
+    path = tuple(first.synt_path)
+    run: list[CorpusLine] = []
+    position = start
+    while position < len(lines):
+        candidate = lines[position]
+        if position > start and _starts_new_syntax_child(candidate, depth):
+            break
+        candidate_lemma = str(candidate.lemma_id) if candidate.lemma_id else ""
+        if tuple(candidate.synt_path) != path or candidate_lemma != lemma:
+            break
+        raw_tag, embedded_lemma = _node_key(candidate, depth)
+        child_depth = depth + (2 if embedded_lemma is not None else 1)
+        if child_depth <= _effective_path_len(candidate) - 1:
+            break
+        run.append(candidate)
+        position += 1
+    phon_tags = {line.phon_tag for line in run if line.phon_tag}
+    return run if len(run) > 1 and len(phon_tags) > 1 else []
+
+
+def _starts_new_syntax_child(line: CorpusLine, parent_depth: int) -> bool:
+    """Whether a source marker starts a new child below *parent_depth*."""
+    path = tuple(line.synt_path)
+    return any(
+        len(boundary) == parent_depth and path[:parent_depth] == boundary
+        for boundary in line._syntax_boundaries_before
+    )
 
 
 def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
@@ -629,18 +797,24 @@ def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
         is_leaf = (child_depth > _effective_path_len(cl) - 1)
 
         if is_leaf:
-            leaf = _make_leaf_elem(cl)
+            multipart_run = _multipart_leaf_run(lines, i, depth)
+            leaf = (
+                _make_multipart_leaf_elem(multipart_run)
+                if multipart_run else _make_leaf_elem(cl)
+            )
             if leaf.get("index") is None:
                 clean_tag, _ = _split_disambig_xml(raw_tag)
                 if clean_tag in suffixed_bases:
                     leaf.set("index", "1")
                     leaf.set("inferred_index", "1")
             results.append(leaf)
-            i += 1
+            i += len(multipart_run) if multipart_run else 1
         else:
             run: list[CorpusLine] = []
             while i < len(lines):
                 next_cl = lines[i]
+                if run and _starts_new_syntax_child(next_cl, depth):
+                    break
                 if depth >= len(next_cl.synt_path):
                     break
                 if _node_key(next_cl, depth) != (raw_tag, emb_lemma):
@@ -663,7 +837,7 @@ def _build_children(lines: list[CorpusLine], depth: int) -> list[ET.Element]:
                 inferred = True
             xml_tag = _sanitize_xml_name(clean_tag)
             elem = ET.Element(xml_tag)
-            if idx:
+            if idx is not None:
                 elem.set("index", idx)
             if inferred:
                 elem.set("inferred_index", "1")
@@ -694,19 +868,64 @@ def _wrap_header(words: str) -> str:
 def _utterance_to_elem(utt: Utterance) -> ET.Element:
     """Convert an Utterance to an XML <block> element."""
     elem = ET.Element("block")
-    sid = utt.sentence_id
-    if sid:
-        elem.set("id", sid)
+    source_lines = utt.lines
+    source_sid = next(
+        (line.sentence_id for line in source_lines
+         if isinstance(line, CommentLine) and line.is_id_line),
+        utt.sentence_id,
+    )
+    if source_sid:
+        elem.set("id", _canonical_sentence_id(source_sid))
     hdr = utt.header
     if hdr:
         elem.set("header", _strip_header_wrapper(hdr.raw))
 
-    for cl in utt.comment_lines():
-        if cl.is_inline_comment:
-            c = ET.SubElement(elem, "comment")
-            c.set("raw", cl.raw)
+    # Keep source-format details in an explicitly round-trip-only container.
+    # Positions count corpus lines, allowing comments to be restored exactly.
+    # A kanji marker's prefix also marks where the next child constituent
+    # begins; it is kept transiently on that first CorpusLine for tree building.
+    roundtrip = ET.SubElement(elem, "roundtrip-data")
+    roundtrip.set("format", "coj-txt")
+    if source_sid:
+        roundtrip.set("source-id", source_sid)
+    corpus_position = 0
+    pending_boundaries: list[tuple[str, ...]] = []
+    corpus_lines: list[CorpusLine] = []
+    for line in source_lines:
+        if isinstance(line, CorpusLine):
+            line._syntax_boundaries_before = list(pending_boundaries)
+            pending_boundaries.clear()
+            corpus_lines.append(line)
+            corpus_position += 1
+        elif isinstance(line, CommentLine) and line.is_inline_comment:
+            comment = ET.SubElement(roundtrip, "comment")
+            comment.set("position", str(corpus_position))
+            comment.set("raw", line.raw)
+            boundary = _kanji_marker_parent_path(line.raw)
+            if boundary is not None:
+                pending_boundaries.append(boundary)
 
-    for child in _build_children(utt.corpus_lines(), 0):
+    # Processing data: each marker begins one readable sentence. TXT marker
+    # numbers are deliberately not copied; semantic numbering starts at 1.
+    raw_text = ET.SubElement(elem, "raw-text")
+    raw_text.set("role", "processing")
+    segments: list[tuple[str, list[str]]] = []
+    current: tuple[str, list[str]] | None = None
+    for line in source_lines:
+        if isinstance(line, CommentLine):
+            marker = _KANJI_MARKER_RE.search(line.raw)
+            if marker:
+                current = (marker.group(2), [])
+                segments.append(current)
+        elif isinstance(line, CorpusLine) and current is not None and line.word_form:
+            current[1].append(line.word_form)
+    for number, (kanji, forms) in enumerate(segments, start=1):
+        sentence = ET.SubElement(raw_text, "sentence")
+        sentence.set("n", str(number))
+        ET.SubElement(sentence, "kanji").text = kanji
+        ET.SubElement(sentence, "transcription").text = " ".join(forms)
+
+    for child in _build_children(corpus_lines, 0):
         elem.append(child)
 
     return elem
@@ -729,10 +948,17 @@ def _collect_corpus_lines(
     the path from the first syntactic element below ``<block>`` down to the
     leaf's direct parent.
     """
-    children = [c for c in elem if c.tag != "comment"]
+    children = _syntax_children(elem)
     if not children:
         if elem.get("form") is not None:
-            result.append(CorpusLine._from_elem(elem, ancestors))
+            parts = _form_part_elements(elem)
+            if parts:
+                result.extend(
+                    CorpusLine._from_elem(elem, ancestors, part)
+                    for part in parts
+                )
+            else:
+                result.append(CorpusLine._from_elem(elem, ancestors))
         return
     for child in children:
         _collect_corpus_lines(child, ancestors + [elem], result)
@@ -753,24 +979,29 @@ def _reconstruct_lines(
     """
     raw_tag = elem.get("raw_tag") or elem.tag
     idx = elem.get("index")
-    if idx and not elem.get("inferred_index"):
+    if idx is not None and not elem.get("inferred_index"):
         raw_tag = f"{raw_tag};@{idx}"
 
     node_path = path + [raw_tag]
     emb_lemma = elem.get("lemma")
 
-    children = [c for c in elem if c.tag != "comment"]
+    children = _syntax_children(elem)
     if not children:
-        phon = elem.get("phon") or ""
-        form = elem.get("form") or ""
-        fields: list[str] = list(node_path)
-        if emb_lemma:
-            fields.append(emb_lemma)
-        if phon:
-            fields.append(phon)
-        if form:
-            fields.append(form)
-        out.append(CorpusLine(fields))
+        annotations = _form_part_elements(elem) or [elem]
+        for annotation in annotations:
+            phon = annotation.get("phon") or ""
+            phon_idx = annotation.get("phon_index")
+            if phon and phon_idx:
+                phon = f"{phon};@{phon_idx}"
+            form = annotation.get("form") or ""
+            fields: list[str] = list(node_path)
+            if emb_lemma:
+                fields.append(emb_lemma)
+            if phon:
+                fields.append(phon)
+            if form:
+                fields.append(form)
+            out.append(CorpusLine(fields))
     else:
         child_prefix = node_path + ([emb_lemma] if emb_lemma else [])
         for child in children:
@@ -785,17 +1016,13 @@ def _utterance_from_elem(elem: ET.Element) -> Utterance:
     if header_raw:
         lines.append(CommentLine(_wrap_header(header_raw)))
 
-    for child in elem:
-        if child.tag == "comment":
-            lines.append(CommentLine(child.get("raw") or ""))
-
     corpus_lines: list[CorpusLine] = []
     for child in elem:
-        if child.tag != "comment":
+        if not _is_block_metadata(child):
             _reconstruct_lines(child, [], corpus_lines)
-    lines.extend(corpus_lines)
+    lines.extend(_merge_source_lines(elem, corpus_lines))
 
-    sid = elem.get("id")
+    sid = _source_sentence_id(elem)
     if sid:
         lines.append(CommentLine(f"ID,{sid}"))
 
@@ -819,14 +1046,14 @@ class CorpusDocument:
     (``.xml`` or ``.txt``).
     """
 
-    def __init__(self, utterances: "list[Utterance] | None" = None,
+    def __init__(self, utterances: list[Utterance] | None = None,
                  filename: str = "") -> None:
         self._utterances: list[Utterance] = list(utterances) if utterances else []
         self.filename = filename
         self._doc_elem: ET.Element | None = None
 
     @classmethod
-    def _from_elem(cls, doc_elem: ET.Element) -> "CorpusDocument":
+    def _from_elem(cls, doc_elem: ET.Element) -> CorpusDocument:
         """Create an XML-backed CorpusDocument wrapping *doc_elem*."""
         obj: CorpusDocument = cls.__new__(cls)
         obj._utterances = []
@@ -846,7 +1073,7 @@ class CorpusDocument:
     # ── parsing ───────────────────────────────────────────────────────────────
 
     @classmethod
-    def from_text(cls, text: str, filename: str = "") -> "CorpusDocument":
+    def from_text(cls, text: str, filename: str = "") -> CorpusDocument:
         """
         Parse the full text of a corpus file and build an XML-backed
         CorpusDocument (so that ``to_file(xml_path)`` works without a separate
@@ -879,7 +1106,7 @@ class CorpusDocument:
         return obj
 
     @classmethod
-    def from_file(cls, path: str) -> "CorpusDocument":
+    def from_file(cls, path: str) -> CorpusDocument:
         """
         Load a corpus document from *path*.  Detects format by extension:
         ``.xml`` → parse XML directly; anything else → parse comma-path text.
@@ -962,9 +1189,13 @@ class CorpusDocument:
             result.extend(utt.corpus_lines())
         return result
 
-    def find_utterance(self, sentence_id: str) -> "Utterance | None":
+    def find_utterance(self, sentence_id: str) -> Utterance | None:
         for utt in self.utterances:
-            if utt.sentence_id == sentence_id:
+            source_id = (
+                _source_sentence_id(utt._block_elem)
+                if utt._block_elem is not None else utt.sentence_id
+            )
+            if utt.sentence_id == sentence_id or source_id == sentence_id:
                 return utt
         return None
 
@@ -975,7 +1206,7 @@ class CorpusDocument:
                 result.append((utt, ln))
         return result
 
-    def find_by_lemma(self, lemma_id: "str | LemmaID") -> list[tuple[Utterance, CorpusLine]]:
+    def find_by_lemma(self, lemma_id: str | LemmaID) -> list[tuple[Utterance, CorpusLine]]:
         result = []
         for utt in self.utterances:
             for ln in utt.find_by_lemma(lemma_id):
@@ -1021,7 +1252,11 @@ def _is_corpus_line(line: str) -> bool:
     parts = line.split(",")
     if parts[-1] == "*":
         return False
-    return bool(_SYNCTAG_RE.match(parts[0]) or _MULTIROOT_RE.match(parts[0]))
+    # Corpus files occasionally contain unconventional or mistyped root tags
+    # (for example ``IP-MAT;_que_``, ``mulit-sentence`` and ``]IP-MAT``).
+    # Non-special, comma-delimited lines are still tree paths and must not be
+    # silently dropped merely because their first tag is unusual.
+    return len(parts) > 1
 
 
 def _classify_line(line: str) -> AnyLine:

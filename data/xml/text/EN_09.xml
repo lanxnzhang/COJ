@@ -1,32 +1,140 @@
 <?xml version='1.0' encoding='utf-8'?>
 <document filename="EN_09.txt">
-  <block id="1_EN_09" header="kusi ipamatwo toyoipamatwo no mikoto to mi na wo mawosu koto pa yo mo uti two no mi kadwo ni yutu ipa mura no goto ku sayari masi te yo mo yo sumi ywori utwo bwi ara bwi ko mu amenomagatupi to ipu kamwi no ipa mu maga koto ni purugoto ni maga koto to ipu api mazikori api kuti ape tamapu koto na ku upe ywori yuka ba upe wo mamo ri sita ywori yuka ba sita wo mamo ri moti pusegi parapi yari ipi soke masi te asita pa mi kadwo wo piraki yupubye pa mikadwo wo tate te mawiri magaduru pito no na wo twopi sira si toga ayamati ara mu woba kamunapobi oponapobi ni mi naposi kiki naposi masi te tapi rake ku yasu rake ku tukape matura sime tamapu ga yuwe ni toyoipamatwo no mikoto kusiipamatwo no mikoto to mi na wo tatapegoto wope matura ku to mawosu">
-    <comment raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,IP-ADV,NP,0@櫛磐牖豐磐牖,*" />
-    <comment raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,IP-ADV,NP,1@命止,*" />
-    <comment raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,2@御名乎申,*" />
-    <comment raw="IP-MAT,IP-ARG,PP-TOP,NP,3@事波四方内外御門爾如湯津磐材久塞坐弖,*" />
-    <comment raw="IP-MAT,IP-ARG,4@四方四角與利疎備荒備來武,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,IP-REL,PP-SBJ,NP,5@天乃麻我都比止云,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,IP-REL,PP-SBJ,NP,6@神乃言武,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,7@惡事爾古語云万可許登相麻自許利,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,8@相口會賜,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,9@事无久,*" />
-    <comment raw="IP-MAT,IP-ARG,10@自上往波,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,11@上護利,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,12@自下往波,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,13@下護利待防掃却言排坐弖,*" />
-    <comment raw="IP-MAT,IP-ARG,14@朝波開門,*" />
-    <comment raw="IP-MAT,IP-ARG,15@夕波閉門弖,*" />
-    <comment raw="IP-MAT,IP-ARG,16@參入罷出,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,PP-GEN,NP,17@人名乎問所知之,*" />
-    <comment raw="IP-MAT,IP-ARG,18@咎過在乎波神直備大直備爾見直聞直坐弖,*" />
-    <comment raw="IP-MAT,IP-ARG,19@平久安久,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,IP-EMB,20@令奉仕賜,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,21@故爾,*" />
-    <comment raw="IP-MAT,IP-ARG,22@豐磐牖,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,N,C-N,23@命櫛磐牖,*" />
-    <comment raw="IP-MAT,IP-ARG,IP-ADV,NP,N,C-N;@2,24@命止,*" />
-    <comment raw="IP-MAT,IP-ARG,25@御名乎稱辭竟奉久止白,*" />
+  <block id="EN.9.1" header="kusi ipamatwo toyoipamatwo no mikoto to mi na wo mawosu koto pa yo mo uti two no mi kadwo ni yutu ipa mura no goto ku sayari masi te yo mo yo sumi ywori utwo bwi ara bwi ko mu amenomagatupi to ipu kamwi no ipa mu maga koto ni purugoto ni maga koto to ipu api mazikori api kuti ape tamapu koto na ku upe ywori yuka ba upe wo mamo ri sita ywori yuka ba sita wo mamo ri moti pusegi parapi yari ipi soke masi te asita pa mi kadwo wo piraki yupubye pa mikadwo wo tate te mawiri magaduru pito no na wo twopi sira si toga ayamati ara mu woba kamunapobi oponapobi ni mi naposi kiki naposi masi te tapi rake ku yasu rake ku tukape matura sime tamapu ga yuwe ni toyoipamatwo no mikoto kusiipamatwo no mikoto to mi na wo tatapegoto wope matura ku to mawosu">
+    <roundtrip-data format="coj-txt" source-id="1_EN_09">
+      <comment position="0" raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,IP-ADV,NP,0@櫛磐牖豐磐牖,*" />
+      <comment position="4" raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,IP-ADV,NP,1@命止,*" />
+      <comment position="6" raw="IP-MAT,IP-ARG,PP-TOP,NP,IP-REL,2@御名乎申,*" />
+      <comment position="10" raw="IP-MAT,IP-ARG,PP-TOP,NP,3@事波四方内外御門爾如湯津磐材久塞坐弖,*" />
+      <comment position="29" raw="IP-MAT,IP-ARG,4@四方四角與利疎備荒備來武,*" />
+      <comment position="40" raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,IP-REL,PP-SBJ,NP,5@天乃麻我都比止云,*" />
+      <comment position="43" raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,IP-REL,PP-SBJ,NP,6@神乃言武,*" />
+      <comment position="47" raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,IP-ADV,PP-DAT,NP,7@惡事爾古語云万可許登相麻自許利,*" />
+      <comment position="58" raw="IP-MAT,IP-ARG,IP-ADV,NP,IP-REL,8@相口會賜,*" />
+      <comment position="62" raw="IP-MAT,IP-ARG,IP-ADV,NP,9@事无久,*" />
+      <comment position="65" raw="IP-MAT,IP-ARG,10@自上往波,*" />
+      <comment position="69" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,11@上護利,*" />
+      <comment position="73" raw="IP-MAT,IP-ARG,IP-ADV,12@自下往波,*" />
+      <comment position="77" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,13@下護利待防掃却言排坐弖,*" />
+      <comment position="89" raw="IP-MAT,IP-ARG,14@朝波開門,*" />
+      <comment position="95" raw="IP-MAT,IP-ARG,15@夕波閉門弖,*" />
+      <comment position="101" raw="IP-MAT,IP-ARG,16@參入罷出,*" />
+      <comment position="103" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,PP-GEN,NP,17@人名乎問所知之,*" />
+      <comment position="110" raw="IP-MAT,IP-ARG,18@咎過在乎波神直備大直備爾見直聞直坐弖,*" />
+      <comment position="124" raw="IP-MAT,IP-ARG,19@平久安久,*" />
+      <comment position="130" raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,IP-EMB,20@令奉仕賜,*" />
+      <comment position="135" raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,21@故爾,*" />
+      <comment position="137" raw="IP-MAT,IP-ARG,22@豐磐牖,*" />
+      <comment position="139" raw="IP-MAT,IP-ARG,IP-ADV,NP,N,C-N,23@命櫛磐牖,*" />
+      <comment position="142" raw="IP-MAT,IP-ARG,IP-ADV,NP,N,C-N;@2,24@命止,*" />
+      <comment position="144" raw="IP-MAT,IP-ARG,25@御名乎稱辭竟奉久止白,*" />
+    </roundtrip-data>
+    <raw-text role="processing">
+      <sentence n="1">
+        <kanji>櫛磐牖豐磐牖</kanji>
+        <transcription>kusi ipamatwo toyoipamatwo no</transcription>
+      </sentence>
+      <sentence n="2">
+        <kanji>命止</kanji>
+        <transcription>mikoto to</transcription>
+      </sentence>
+      <sentence n="3">
+        <kanji>御名乎申</kanji>
+        <transcription>mi na wo mawosu</transcription>
+      </sentence>
+      <sentence n="4">
+        <kanji>事波四方内外御門爾如湯津磐材久塞坐弖</kanji>
+        <transcription>koto pa yo mo uti two no mi kadwo ni yutu ipa mura no goto ku sayari masi te</transcription>
+      </sentence>
+      <sentence n="5">
+        <kanji>四方四角與利疎備荒備來武</kanji>
+        <transcription>yo mo yo sumi ywori utwo bwi ara bwi ko mu</transcription>
+      </sentence>
+      <sentence n="6">
+        <kanji>天乃麻我都比止云</kanji>
+        <transcription>amenomagatupi to ipu</transcription>
+      </sentence>
+      <sentence n="7">
+        <kanji>神乃言武</kanji>
+        <transcription>kamwi no ipa mu</transcription>
+      </sentence>
+      <sentence n="8">
+        <kanji>惡事爾古語云万可許登相麻自許利</kanji>
+        <transcription>maga koto ni purugoto ni maga koto to ipu api mazikori</transcription>
+      </sentence>
+      <sentence n="9">
+        <kanji>相口會賜</kanji>
+        <transcription>api kuti ape tamapu</transcription>
+      </sentence>
+      <sentence n="10">
+        <kanji>事无久</kanji>
+        <transcription>koto na ku</transcription>
+      </sentence>
+      <sentence n="11">
+        <kanji>自上往波</kanji>
+        <transcription>upe ywori yuka ba</transcription>
+      </sentence>
+      <sentence n="12">
+        <kanji>上護利</kanji>
+        <transcription>upe wo mamo ri</transcription>
+      </sentence>
+      <sentence n="13">
+        <kanji>自下往波</kanji>
+        <transcription>sita ywori yuka ba</transcription>
+      </sentence>
+      <sentence n="14">
+        <kanji>下護利待防掃却言排坐弖</kanji>
+        <transcription>sita wo mamo ri moti pusegi parapi yari ipi soke masi te</transcription>
+      </sentence>
+      <sentence n="15">
+        <kanji>朝波開門</kanji>
+        <transcription>asita pa mi kadwo wo piraki</transcription>
+      </sentence>
+      <sentence n="16">
+        <kanji>夕波閉門弖</kanji>
+        <transcription>yupubye pa mikadwo wo tate te</transcription>
+      </sentence>
+      <sentence n="17">
+        <kanji>參入罷出</kanji>
+        <transcription>mawiri magaduru</transcription>
+      </sentence>
+      <sentence n="18">
+        <kanji>人名乎問所知之</kanji>
+        <transcription>pito no na wo twopi sira si</transcription>
+      </sentence>
+      <sentence n="19">
+        <kanji>咎過在乎波神直備大直備爾見直聞直坐弖</kanji>
+        <transcription>toga ayamati ara mu woba kamunapobi oponapobi ni mi naposi kiki naposi masi te</transcription>
+      </sentence>
+      <sentence n="20">
+        <kanji>平久安久</kanji>
+        <transcription>tapi rake ku yasu rake ku</transcription>
+      </sentence>
+      <sentence n="21">
+        <kanji>令奉仕賜</kanji>
+        <transcription>tukape matura sime tamapu ga</transcription>
+      </sentence>
+      <sentence n="22">
+        <kanji>故爾</kanji>
+        <transcription>yuwe ni</transcription>
+      </sentence>
+      <sentence n="23">
+        <kanji>豐磐牖</kanji>
+        <transcription>toyoipamatwo no</transcription>
+      </sentence>
+      <sentence n="24">
+        <kanji>命櫛磐牖</kanji>
+        <transcription>mikoto kusiipamatwo no</transcription>
+      </sentence>
+      <sentence n="25">
+        <kanji>命止</kanji>
+        <transcription>mikoto to</transcription>
+      </sentence>
+      <sentence n="26">
+        <kanji>御名乎稱辭竟奉久止白</kanji>
+        <transcription>mi na wo tatapegoto wope matura ku to mawosu</transcription>
+      </sentence>
+    </raw-text>
     <IP-MAT>
       <IP-ARG>
         <PP-TOP>
@@ -37,7 +145,7 @@
                   <IP-REL>
                     <NP-PRD>
                       <N>
-                        <C-N index="1">
+                        <C-N index="1" inferred_index="1">
                           <PEN phon="PHON" form="kusi" />
                           <PEN phon="LOG" form="ipamatwo" />
                         </C-N>
@@ -55,7 +163,7 @@
               <PP-OB1>
                 <NP>
                   <N>
-                    <PFX phon="LOG" form="mi" />
+                    <PFX-HON lemma="L000035" phon="LOG" form="mi" />
                     <N phon="LOG" form="na" />
                   </N>
                 </NP>
@@ -73,15 +181,15 @@
               <PP-GEN>
                 <NP>
                   <N>
-                    <C-N index="1">
+                    <C-N index="1" inferred_index="1">
                       <N>
-                        <N index="1" phon="LOG" form="yo" />
+                        <N phon="LOG" form="yo" index="1" inferred_index="1" />
                         <N index="2" phon="LOG" form="mo" />
                       </N>
                     </C-N>
                     <C-N index="2">
                       <N>
-                        <N index="1" phon="LOG" form="uti" />
+                        <N phon="LOG" form="uti" index="1" inferred_index="1" />
                         <N index="2" phon="LOG" form="two" />
                       </N>
                     </C-N>
@@ -89,20 +197,24 @@
                 </NP>
                 <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
               </PP-GEN>
+              <N>
+                <L050749N>
+                  <PFX-HON lemma="L000035" phon="LOG" form="mi" />
+                </L050749N>
+              </N>
               <N lemma="L050749">
-                <PFX phon="LOG" form="mi" />
                 <N phon="LOG" form="kadwo" />
               </N>
             </NP>
             <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
           </PP-DAT>
-          <IP-ADV index="1">
+          <IP-ADV>
             <PP-GEN>
               <NP>
                 <N>
-                  <N index="1" phon="PHON" form="yutu" />
+                  <N phon="PHON" form="yutu" index="1" inferred_index="1" />
                   <N index="2" phon="LOG" form="ipa" />
-                  <N index="1" phon="LOG" form="mura" />
+                  <N phon="LOG" form="mura" index="1" inferred_index="1" />
                 </N>
               </NP>
               <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
@@ -117,6 +229,8 @@
             <VB-GER phon="LOG" form="masi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <IP-REL>
               <IP-ADV>
@@ -129,15 +243,15 @@
                             <PP-ABL>
                               <NP>
                                 <N>
-                                  <C-N index="1">
+                                  <C-N index="1" inferred_index="1">
                                     <N>
-                                      <N index="1" phon="LOG" form="yo" />
+                                      <N phon="LOG" form="yo" index="1" inferred_index="1" />
                                       <N index="2" phon="LOG" form="mo" />
                                     </N>
                                   </C-N>
                                   <C-N index="2">
                                     <N>
-                                      <N index="1" phon="LOG" form="yo" />
+                                      <N phon="LOG" form="yo" index="1" inferred_index="1" />
                                       <N index="2" phon="LOG" form="sumi" />
                                     </N>
                                   </C-N>
@@ -150,18 +264,20 @@
                               <VB-INF phon="PHON" form="bwi" />
                             </IP-ADV>
                             <VB>
-                              <VB-STM index="1" phon="LOG" form="ara" />
-                              <VB-STM index="1" phon="PHON" form="bwi" />
+                              <VB-STM phon="LOG" form="ara" index="1" inferred_index="1" />
+                              <VB-STM phon="PHON" form="bwi" index="1" inferred_index="1" />
                               <VB-STM index="2" phon="LOG" form="ko" />
                               <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
                             </VB>
+                          </IP-REL>
+                          <IP-REL>
                             <IP-ARG>
                               <PEN phon="LOG" form="amenomagatupi" />
                               <P-COMP lemma="L000530" phon="PHON" form="to" />
                             </IP-ARG>
                             <VB-ADC phon="LOG" form="ipu" />
                           </IP-REL>
-                          <N phon="LOG" form="kamwi" />
+                          <N lemma="L050005a" phon="LOG" form="kamwi" />
                         </NP>
                         <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
                       </PP-SBJ>
@@ -171,7 +287,7 @@
                       </VB>
                     </IP-REL>
                     <N lemma="L050330">
-                      <N index="1" phon="LOG" form="maga" />
+                      <N phon="LOG" form="maga" index="1" inferred_index="1" />
                       <N index="2" phon="LOG" form="koto" />
                     </N>
                   </NP>
@@ -202,22 +318,24 @@
               </IP-ADV>
               <NP>
                 <N>
-                  <N-DVB phon="LOG" form="api" />
+                  <DVN phon="LOG" form="api" />
                   <N phon="LOG" form="kuti" />
                 </N>
               </NP>
               <VB>
                 <VB-STM phon="LOG" form="ape" />
-                <VB-ADC phon="LOG" form="tamapu" />
+                <VB-ADC lemma="L031077a" phon="LOG" form="tamapu" />
               </VB>
             </IP-REL>
             <N phon="LOG" form="koto" />
           </NP>
           <ADJ>
-            <ADJ-STM phon="LOG" form="na" />
+            <ADJ-STM lemma="L007028" phon="LOG" form="na" />
             <ACP-INF lemma="L000033" phon="PHON" form="ku" />
           </ADJ>
-          <IP-ADV index="1">
+        </IP-ADV>
+        <IP-ADV>
+          <IP-ADV index="1" inferred_index="1">
             <IP-ADV>
               <PP-ABL>
                 <N phon="LOG" form="upe" />
@@ -234,6 +352,8 @@
             </PP-OB1>
             <VB-INF phon="LOG" form="mamo" />
             <VB-INF phon="PHON" form="ri" />
+          </IP-ADV>
+          <IP-ADV index="1" inferred_index="1">
             <IP-ADV>
               <PP-CASE-ABL lemma="L000540">
                 <N phon="LOG" form="sita" />
@@ -257,18 +377,20 @@
               <VB-INF phon="LOG" form="pusegi" />
             </VB>
           </IP-ADV>
-          <IP-ADV index="1">
+          <IP-ADV index="1" inferred_index="1">
             <VB>
               <VB-STM phon="LOG" form="parapi" />
               <VB-INF phon="LOG" form="yari" />
             </VB>
           </IP-ADV>
           <VB>
-            <VB-STM index="1" phon="LOG" form="ipi" />
+            <VB-STM phon="LOG" form="ipi" index="1" inferred_index="1" />
             <VB-STM index="2" phon="LOG" form="soke" />
             <VB-GER phon="LOG" form="masi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP-TOP>
             <NP>
               <N phon="LOG" form="asita" />
@@ -277,14 +399,20 @@
           </PP-TOP>
           <PP-OB1>
             <NP>
+              <N>
+                <L050749N>
+                  <PFX-HON lemma="L000035" phon="LOG" form="mi" />
+                </L050749N>
+              </N>
               <N lemma="L050749">
-                <PFX phon="LOG" form="mi" />
                 <N phon="LOG" form="kadwo" />
               </N>
             </NP>
             <P-CASE-ACC lemma="L000534" phon="LOG" form="wo" />
           </PP-OB1>
           <VB-INF phon="LOG" form="piraki" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-TOP>
             <NP>
               <N phon="LOG" form="yupubye" />
@@ -299,6 +427,8 @@
           </PP-OB1>
           <VB-GER phon="LOG" form="tate" />
           <VB-GER phon="PHON" form="te" />
+        </IP-ADV>
+        <IP-ADV>
           <PP-OB1>
             <NP>
               <PP-GEN>
@@ -318,15 +448,17 @@
             <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
           </PP-OB1>
           <VB>
-            <VB-STM index="1" phon="LOG" form="twopi" />
+            <VB-STM phon="LOG" form="twopi" index="1" inferred_index="1" />
             <VB-STM index="2" phon="LOG" form="sira" />
             <VAX-RSP-INF phon="PHON" form="si" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <PP-OB1>
             <IP-NMZ>
               <NP-SBJ>
                 <N>
-                  <C-N index="1">
+                  <C-N index="1" inferred_index="1">
                     <N phon="LOG" form="toga" />
                   </C-N>
                   <C-N index="2">
@@ -342,7 +474,7 @@
             <P-CASE-ACC phon="PHON" form="woba" />
           </PP-OB1>
           <N>
-            <C-N index="1">
+            <C-N index="1" inferred_index="1">
               <PEN phon="LOG" form="kamunapobi" />
             </C-N>
             <C-N index="2">
@@ -350,21 +482,23 @@
             </C-N>
           </N>
           <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
-          <IP-ADV index="1">
+          <IP-ADV>
             <VB>
               <VB-STM phon="LOG" form="mi" />
               <VB-INF phon="LOG" form="naposi" />
             </VB>
           </IP-ADV>
           <VB>
-            <VB-STM index="1" phon="LOG" form="kiki" />
+            <VB-STM phon="LOG" form="kiki" index="1" inferred_index="1" />
             <VB-STM index="2" phon="LOG" form="naposi" />
             <VB-GER phon="LOG" form="masi" />
             <VB-GER phon="PHON" form="te" />
           </VB>
+        </IP-ADV>
+        <IP-ADV>
           <NP-PRD>
             <IP-EMB>
-              <IP-ADV index="1">
+              <IP-ADV index="1" inferred_index="1">
                 <ADJ>
                   <ADJ-STM phon="LOG" form="tapi" />
                   <ADJ-STM phon="PHON" form="rake" />
@@ -379,19 +513,21 @@
                 </ADJ>
               </IP-ADV>
               <VB>
-                <VB-STM index="1" phon="LOG" form="tukape" />
+                <VB-STM phon="LOG" form="tukape" index="1" inferred_index="1" />
                 <VB-STM index="2" phon="LOG" form="matura" />
                 <VAX-CTV phon="LOG" form="sime" />
-                <VB-ADC phon="LOG" form="tamapu" />
+                <VB-ADC lemma="L031077a" phon="LOG" form="tamapu" />
               </VB>
               <P-COMP lemma="L090436" phon="LOG" form="ga" />
             </IP-EMB>
             <N phon="LOG" form="yuwe" />
           </NP-PRD>
           <COP-INF lemma="L031965" phon="PHON" form="ni" />
+        </IP-ADV>
+        <IP-ADV>
           <NP>
             <N>
-              <C-N index="1">
+              <C-N index="1" inferred_index="1">
                 <IP-REL>
                   <NP-PRD>
                     <PEN phon="LOG" form="toyoipamatwo" />
@@ -416,7 +552,7 @@
         <PP-OB1>
           <NP>
             <N>
-              <PFX phon="LOG" form="mi" />
+              <PFX-HON lemma="L000035" phon="LOG" form="mi" />
               <N phon="LOG" form="na" />
             </N>
           </NP>
