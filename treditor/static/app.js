@@ -1232,22 +1232,17 @@ function buildDisplayNode(node, options) {
   if (collapsedNodeIds.has(node._nodeId)) {
     const collapsedTokens = leaves
       .filter(leaf => leaf.form)
-      .flatMap(leaf => leaf.parts?.length
-        ? leaf.parts.map(part => ({
-          text: part.form,
-          phon: part.phon || "",
-          lemma: leaf.lemma || "",
-        }))
-        : [{
-          text: leaf.form,
-          phon: leaf.phon || "",
-          lemma: leaf.lemma || "",
-        }]
-      );
+      .map(leaf => ({
+        text: leaf.form,
+        phon: leaf.phon || "",
+        lemma: leaf.lemma || "",
+        gloss: leaf.gloss || "",
+        parts: leaf.parts?.map(part => ({...part})) || [],
+      }));
     return {
       ...node,
       children: undefined,
-      form: collapsedTokens.map(token => token.text).join(""),
+      form: collapsedTokens.map(token => token.text).join(" "),
       phon: "",
       _toggleable: true,
       _collapsed: true,
@@ -1273,6 +1268,19 @@ function buildDisplayNode(node, options) {
   };
 }
 
+function collapsedTokenWidth(token, options) {
+  return Math.max(
+    token.text.length * CHARACTER_WIDTH,
+    options.gloss ? token.gloss.length * 6 : 0,
+  ) + 8;
+}
+
+function collapsedTokensWidth(tokens, options) {
+  return tokens.reduce(
+    (total, token) => total + collapsedTokenWidth(token, options), 0
+  ) + Math.max(0, tokens.length - 1) * 12;
+}
+
 function labelWidth(node, options) {
   let width = node.tag.length * CHARACTER_WIDTH;
   if (options.lemma && node.lemma) {
@@ -1282,7 +1290,9 @@ function labelWidth(node, options) {
     width = Math.max(width, node.gloss.length * CHARACTER_WIDTH);
   }
   if (!node.children) {
-    if (node.form) {
+    if (node._collapsedTokens?.length) {
+      width = Math.max(width, collapsedTokensWidth(node._collapsedTokens, options));
+    } else if (node.form) {
       width = Math.max(width, node.form.length * CHARACTER_WIDTH);
     }
     const phonLabel = node.parts?.length
@@ -1493,22 +1503,42 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
   }
   let offset = annotationY;
   if (node._collapsedTokens?.length) {
-    const combined = svgElement("text", {
-      x: centerX,
-      y: offset,
-      class: `form-label${searchHit ? " tree-search-hit-label" : ""}`,
-      "text-anchor": "middle",
-    });
+    let tokenLeft = centerX
+      - collapsedTokensWidth(node._collapsedTokens, options) / 2;
     node._collapsedTokens.forEach(token => {
-      combined.appendChild(svgElement("tspan", {
-        class: `${scriptStyleClass(token.phon, true)} interactive-form${searchHit ? " tree-search-hit-label" : ""}`,
+      const tokenWidth = collapsedTokenWidth(token, options);
+      const tokenX = tokenLeft + tokenWidth / 2;
+      const formLabel = svgElement("text", {
+        x: tokenX,
+        y: offset,
+        class: `form-label interactive-form${searchHit ? " tree-search-hit-label" : ""}`,
         "data-dictionary-query": token.lemma || token.text,
         ...(token.lemma ? {"data-lemma": token.lemma} : {}),
         role: "link",
         tabindex: "0",
-      }, token.text));
+        "text-anchor": "middle",
+      });
+      if (token.parts.length) {
+        token.parts.forEach(part => {
+          formLabel.appendChild(svgElement("tspan", {
+            class: scriptStyleClass(part.phon, true),
+          }, part.form));
+        });
+      } else {
+        formLabel.classList.add(scriptStyleClass(token.phon, true));
+        formLabel.textContent = token.text;
+      }
+      svg.appendChild(formLabel);
+      if (options.gloss && token.gloss) {
+        svg.appendChild(svgElement("text", {
+          x: tokenX,
+          y: offset + 17,
+          class: "gloss-label",
+          "text-anchor": "middle",
+        }, token.gloss));
+      }
+      tokenLeft += tokenWidth + 12;
     });
-    svg.appendChild(combined);
   } else if (node.form) {
     const formLabel = svgElement("text", {
       x: centerX,

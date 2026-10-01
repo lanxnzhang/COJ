@@ -80,7 +80,9 @@ Variable-width leaf slots keep long words, collapsed forms, and kanji from
 overlapping without making every column equally wide. The text panel opens in
 the Split layout by default, with Stacked available from its layout switch.
 Hover a non-leaf tag to
-reveal its collapse control; collapsed nodes retain a visible `+`. Clicking
+reveal its collapse control; collapsed nodes retain a visible `+`, separated
+descendant words, and each word's gloss when glosses are enabled. Multipart
+words retain their script styling within a single word. Clicking
 either a lemma ID or a word form opens a right-side dictionary quick-reference
 drawer.
 

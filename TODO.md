@@ -412,15 +412,18 @@ Retain other existing functions and avoid causing severe conflicts with them.
 #### After commit 0ba48ae (2)
 1. When lemma IDs are placed under the tags, they overlap slightly with the upper part of the words.
 2. The layout settings should always be placed on a new line below the annotations.
-3. Currently, the kanji characters are too close to the horizontal line above them, whereas the distance between that line and the word itself is just right. Please increase the spacing between the Chinese characters and the horizontal line above.          
+3. Currently, the kanji characters are too close to the horizontal line above them, whereas the distance between that line and the word itself is just right. Please increase the spacing between the Chinese characters and the horizontal line above. 
+
+### After commit e041b62
+Users require a display function optimisation: the text remain segmented after collapsing nodes in the syntactic tree. 
+For example, when collaspe ipapo sura as a PP-OB1, the UI currently shows ipaposura as a whole. The current function does not support user to see ipapo sura. Also, it will not display the gloss for ipapo and sura when collasping nodes.
+Refine this function to allow user see the segmentation after they collapse the nodes. Users need the text to remain segmented after collapsing nodes in the syntactic tree, and still to be able to view the gloss for each word.
+Retain other existing functions and avoid causing severe conflicts with them.
+
+
 
 
 ### TBD
-
-Users require an optional display function: the text remain segmented after collapsing nodes in the syntactic tree. 
-For example, when collaspe ipapo sura as a PP-OB1, the UI currently shows ipaposura as a whole. The current function does not support user to see ipapo sura.
-Add an optional display function to allow user see the segmentation after they collapse the nodes.
-Retain other existing functions and avoid causing severe conflicts with them.
 
 The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
