@@ -400,21 +400,29 @@ Please check and correct this type of encoding bug, while ensuring it can be cor
 ### After commit 40a4a37
 Add an option to display the gloss for each word in the syntactic tree. Automatically adjusts spacing when displaying different types of content to ensure a comfortable visual experience.The gloss should be placed beneath each word; for compound words, it should be placed beneath the corresponding node—for example, under a VB-ADC node. "Gloss" refers to the content found in the ".GLOSS" section in the dictionary. Retain other existing functions and avoid causing severe conflicts with them.
 
-          
+### After commit 0ba48ae
+The gloss display functionality is implemented, but the UI needs optimization.
+1. Rename the "Kanji under transcription" button to simply "Kanji".
+2. In the annotation panel, the default state upon opening should have "Glosses" and "Kanji" checked, while "Script tags" and "Lemma IDs" are unchecked.
+3. The order of the function selection checkboxes should be: Glosses, Kanji, Script tags, Lemma IDs.
+4. Do not display the "Place below" checkbox when "Lemma IDs" is unchecked; show it only when "Lemma IDs" is selected. This checkbox must always be positioned immediately after "Lemma IDs" to avoid confusion.
+5. Reduce the spacing between the kanji text and the word within the node to half the current distance. At the same time, ensure there is no content overlap between the nodes and other elements (such as glosses or lemma IDs), as overlap would make the content difficult to read.
+Retain other existing functions and avoid causing severe conflicts with them.
+
+#### After commit 0ba48ae (2)
+1. When lemma IDs are placed under the tags, they overlap slightly with the upper part of the words.
+2. The layout settings should always be placed on a new line below the annotations.
+3. Currently, the kanji characters are too close to the horizontal line above them, whereas the distance between that line and the word itself is just right. Please increase the spacing between the Chinese characters and the horizontal line above.          
 
 
 ### TBD
-The gloss display functionality is implemented, but the UI needs optimization.
-1. In the annotation panel, the default state upon opening should have "Glosses" and "Kanji" checked, while "Script tags" and "Lemma IDs" remain unchecked.
-2. Rename the "Kanji under transcription" button to simply "Kanji".
-3. The order of the function selection checkboxes should be: Glosses, Kanji, Script tags, Lemma IDs.
-4. Do not display the "Place below" checkbox when "Lemma IDs" is unchecked; show it only when "Lemma IDs" is selected. This checkbox must always be positioned immediately after "Lemma IDs" to avoid confusion.
-5. Reduce the spacing between the Kanji and the word within the node to half the current distance. At the same time, ensure there is no content overlap between the nodes and other elements (such as glosses or lemma IDs), as overlap would make the content difficult to read.
 
 Users require an optional display function: the text remain segmented after collapsing nodes in the syntactic tree. 
 For example, when collaspe ipapo sura as a PP-OB1, the UI currently shows ipaposura as a whole. The current function does not support user to see ipapo sura.
 Add an optional display function to allow user see the segmentation after they collapse the nodes.
 Retain other existing functions and avoid causing severe conflicts with them.
+
+The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
 合并搜索框
 搜索结果下载

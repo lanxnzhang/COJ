@@ -795,9 +795,17 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert "Two columns" not in html
     assert 'placeholder="Find documents or open passages"' in html
     assert 'id="tog-lemma">' in html
-    assert 'id="tog-gloss">' in html
+    assert 'id="tog-gloss" checked' in html
     assert 'id="tog-phon">' in html
     assert 'id="tog-tree-kanji" checked' in html
+    assert "Kanji under transcription" not in html
+    assert 'id="lemma-position-control" class="select-control hidden"' in html
+    assert 'class="toolbar-group annotation-settings"' in html
+    assert 'class="toolbar-group layout-settings"' in html
+    assert html.index('id="tog-gloss"') < html.index('id="tog-tree-kanji"')
+    assert html.index('id="tog-tree-kanji"') < html.index('id="tog-phon"')
+    assert html.index('id="tog-phon"') < html.index('id="tog-lemma"')
+    assert html.index('id="tog-lemma"') < html.index('id="lemma-position"')
     assert 'id="tog-null" checked' in html
     assert 'id="tog-bottomup">' in html
     assert 'id="lemma-position"' in html
@@ -875,6 +883,14 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert 'gloss: $("tog-gloss").checked' in javascript
     assert "measureSubtreeWidth" in javascript
     assert "effectiveRowHeight" in javascript
+    assert "updateLemmaPositionControl" in javascript
+    assert "lowerAnnotationRows" in javascript
+    assert "tagLemmaClearance" in javascript
+    assert "defaultAnnotationY" in javascript
+    assert "(tagAnnotationCount - 1) * 15 + 20" in javascript
+    assert "const labelY = lineY + 17" in javascript
+    assert ".annotation-settings" in css
+    assert ".layout-settings" in css
     assert ".gloss-label" in css
     assert ".tree-search-highlight" in css
     assert ".tree-search-hit-label" in css

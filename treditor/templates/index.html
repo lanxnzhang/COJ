@@ -238,21 +238,21 @@
             </header>
             <div id="tree-panel-body" class="tree-panel-body">
               <div class="tree-toolbar" aria-label="Tree display settings">
-                <div class="toolbar-group">
+                <div class="toolbar-group annotation-settings">
                   <span class="toolbar-label">Annotations</span>
+                  <label class="toggle"><input type="checkbox" id="tog-gloss" checked> Glosses</label>
+                  <label class="toggle"><input type="checkbox" id="tog-tree-kanji" checked> Kanji</label>
+                  <label class="toggle"><input type="checkbox" id="tog-phon"> Script tags</label>
                   <label class="toggle"><input type="checkbox" id="tog-lemma"> Lemma IDs</label>
-                  <label class="toggle"><input type="checkbox" id="tog-gloss"> Glosses</label>
-                  <label class="select-control">
+                  <label id="lemma-position-control" class="select-control hidden">
                     <span>Place below</span>
                     <select id="lemma-position" disabled>
                       <option value="tag" selected>tag</option>
                       <option value="form">word form</option>
                     </select>
                   </label>
-                  <label class="toggle"><input type="checkbox" id="tog-phon"> Script tags</label>
-                  <label class="toggle"><input type="checkbox" id="tog-tree-kanji" checked> Kanji under transcription</label>
                 </div>
-                <div class="toolbar-group">
+                <div class="toolbar-group layout-settings">
                   <span class="toolbar-label">Layout</span>
                   <label class="toggle"><input type="checkbox" id="tog-null" checked> Null nodes</label>
                   <label class="toggle"><input type="checkbox" id="tog-bottomup"> Align leaves</label>

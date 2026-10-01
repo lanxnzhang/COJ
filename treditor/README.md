@@ -73,8 +73,8 @@ PHON-family forms are italic, NLOG forms are underlined, and other forms remain
 plain in both Text and the syntax tree. Tree controls can show script tags,
 lemma IDs beneath either tags or word forms, dictionary glosses beneath their
 words or compound nodes, and spaced kanji beneath each sentence's
-transcription. By default kanji and null nodes are shown, while lemma IDs,
-glosses, script tags, and aligned leaves are off. The tree can be scaled,
+transcription. By default glosses, kanji, and null nodes are shown, while lemma
+IDs, script tags, and aligned leaves are off. The tree can be scaled,
 displayed full-screen, and given much narrower or wider word spacing.
 Variable-width leaf slots keep long words, collapsed forms, and kanji from
 overlapping without making every column equally wide. The text panel opens in

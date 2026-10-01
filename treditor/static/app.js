@@ -978,8 +978,7 @@ async function selectPassage(passage, treeSearchContext = null) {
   clearError();
   setEditMode(false);
   activeTreeSearchContext = treeSearchContext;
-  $("lemma-position").disabled = !$("tog-lemma").checked
-    && !activeTreeSearchContext?.show_lemma;
+  updateLemmaPositionControl();
   activePassage = passage;
   $("editor-tree-label").textContent = passage.sentence_id || "Syntax tree";
   showEditorPage("tree");
@@ -1122,6 +1121,12 @@ function treeOptions() {
   };
 }
 
+function updateLemmaPositionControl() {
+  const visible = $("tog-lemma").checked;
+  $("lemma-position-control").classList.toggle("hidden", !visible);
+  $("lemma-position").disabled = !visible;
+}
+
 function renderPassageMatches(documentData, passages, container) {
   container.innerHTML = "";
   passages.forEach((passage, index) => {
@@ -1165,8 +1170,7 @@ function renderPassageMatches(documentData, passages, container) {
 ["tog-lemma", "tog-gloss", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
   .forEach(id => {
     $(id).addEventListener("change", () => {
-      $("lemma-position").disabled = !$("tog-lemma").checked
-        && !activeTreeSearchContext?.show_lemma;
+      updateLemmaPositionControl();
       if (currentTreeData) renderSvgTree(currentTreeData);
     });
   });
@@ -1470,7 +1474,14 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     return;
   }
 
-  const annotationY = yPosition(maxRow, topPadding, options) + 30;
+  const defaultAnnotationY = yPosition(maxRow, topPadding, options)
+    + 30 + tagLemmaClearance(options);
+  const annotationY = tagAnnotationCount
+    ? Math.max(
+        defaultAnnotationY,
+        centerY + 19 + (tagAnnotationCount - 1) * 15 + 20,
+      )
+    : defaultAnnotationY;
   if (node._row < maxRow) {
     svg.appendChild(svgElement("line", {
       x1: centerX,
@@ -1559,6 +1570,16 @@ function visibleLeafUnits(node) {
   return node.children.flatMap(visibleLeafUnits);
 }
 
+function lowerAnnotationRows(options) {
+  return Number(options.gloss)
+    + Number(options.lemma && options.lemmaPosition === "form")
+    + Number(options.phon);
+}
+
+function tagLemmaClearance(options) {
+  return options.lemma && options.lemmaPosition === "tag" ? 6 : 0;
+}
+
 function assignCollapsedKanjiWidths(data, tree) {
   const kanjiByNumber = new Map(
     data.raw_text
@@ -1581,8 +1602,9 @@ function renderTreeKanji(
   data, tree, svg, columnWidth, maxRow, topPadding, options
 ) {
   const units = visibleLeafUnits(tree);
-  const baseY = yPosition(maxRow, topPadding, options)
-    + 86 + (options.gloss ? 17 : 0);
+  const lineY = yPosition(maxRow, topPadding, options)
+    + 42 + lowerAnnotationRows(options) * 17 + tagLemmaClearance(options);
+  const labelY = lineY + 17;
   const groups = new Map();
   data.raw_text.forEach(sentence => {
     if (!sentence.kanji) return;
@@ -1611,14 +1633,14 @@ function renderTreeKanji(
     const center = (left + right) / 2;
     svg.appendChild(svgElement("line", {
       x1: left,
-      y1: baseY - 19,
+      y1: lineY,
       x2: right,
-      y2: baseY - 19,
+      y2: lineY,
       class: "kanji-span-line",
     }));
     const label = svgElement("text", {
       x: center,
-      y: baseY,
+      y: labelY,
       class: "tree-kanji-label",
       "text-anchor": "middle",
     });
@@ -1681,8 +1703,9 @@ function renderSvgTree(data) {
   const topPadding = 38;
   const width = counter.value + HORIZONTAL_PADDING * 2;
   const height = topPadding + maxRow * effectiveRowHeight(options)
-    + ANNOTATION_HEIGHT + (options.gloss ? 17 : 0)
-    + (options.treeKanji ? 48 : 0);
+    + ANNOTATION_HEIGHT + lowerAnnotationRows(options) * 17
+    + tagLemmaClearance(options)
+    + (options.treeKanji ? 21 : 0);
   const scale = treeScale();
   const svg = svgElement("svg", {
     width: width * scale,
