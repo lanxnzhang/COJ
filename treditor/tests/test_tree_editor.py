@@ -60,6 +60,42 @@ def test_document_index_uses_canonical_passage_ids(client):
     assert passages[0]["raw_sentence_count"] == 3
 
 
+def test_tree_payload_adds_dictionary_glosses_to_words_and_compounds(
+    client, tmp_path, monkeypatch
+):
+    text_directory = tmp_path / "text"
+    text_directory.mkdir()
+    (text_directory / "TEST.xml").write_text(
+        '<corpus filename="TEST.txt">'
+        '<block id="TEST.1" header="ipaku">'
+        '<IP-MAT><VB-ADC lemma="L900001">'
+        '<VB lemma="L900002" phon="PHON" form="ipaku" />'
+        '</VB-ADC></IP-MAT>'
+        '</block></corpus>',
+        encoding="utf-8",
+    )
+    monkeypatch.setitem(
+        tree_editor.DOCUMENT_SOURCES["text"], "directory", text_directory
+    )
+    dictionary = Dictionary()
+    compound = DictEntry("L900001")
+    compound.set(".GLOSS", "COMPOUND")
+    dictionary.add(compound)
+    word = DictEntry("L900002")
+    word.set(".GLOSS", "WORD")
+    dictionary.add(word)
+    monkeypatch.setattr(tree_editor, "_dictionary", dictionary)
+
+    response = client.get("/api/utterances/text/TEST/TEST.1/tree")
+
+    assert response.status_code == 200
+    root = response.get_json()["roots"][0]
+    compound_node = root["children"][0]
+    assert compound_node["lemma"] == "L900001"
+    assert compound_node["gloss"] == "COMPOUND"
+    assert compound_node["children"][0]["gloss"] == "WORD"
+
+
 @pytest.mark.parametrize(
     ("query", "sentence_id", "document_id"),
     [
@@ -759,6 +795,7 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert "Two columns" not in html
     assert 'placeholder="Find documents or open passages"' in html
     assert 'id="tog-lemma">' in html
+    assert 'id="tog-gloss">' in html
     assert 'id="tog-phon">' in html
     assert 'id="tog-tree-kanji" checked' in html
     assert 'id="tog-null" checked' in html
@@ -835,6 +872,10 @@ def test_interaction_script_supports_requested_workspace_behaviors(client):
     assert "activeTreeSearchContext" in javascript
     assert "result.tree_context || null" in javascript
     assert "highlightedNodeIds" in javascript
+    assert 'gloss: $("tog-gloss").checked' in javascript
+    assert "measureSubtreeWidth" in javascript
+    assert "effectiveRowHeight" in javascript
+    assert ".gloss-label" in css
     assert ".tree-search-highlight" in css
     assert ".tree-search-hit-label" in css
     assert "openDictionaryPopupEntry" in javascript

@@ -930,7 +930,9 @@ def _block_raw_text(
     return sentences
 
 
-def _elem_to_node(elem: ET.Element) -> dict:
+def _elem_to_node(
+    elem: ET.Element, dictionary: Dictionary | None = None
+) -> dict:
     """Convert a current corpus XML element to the tree renderer payload."""
     children = [
         child
@@ -941,9 +943,16 @@ def _elem_to_node(elem: ET.Element) -> dict:
     ]
     node = {"tag": elem.get("raw_tag") or elem.tag}
     if elem.get("lemma"):
-        node["lemma"] = elem.get("lemma")
+        lemma = elem.get("lemma")
+        node["lemma"] = lemma
+        entry = dictionary.get(lemma) if dictionary is not None else None
+        gloss = entry.get_first(".GLOSS") if entry is not None else None
+        if gloss and gloss.strip():
+            node["gloss"] = gloss.strip()
     if children:
-        node["children"] = [_elem_to_node(child) for child in children]
+        node["children"] = [
+            _elem_to_node(child, dictionary) for child in children
+        ]
     else:
         node["form"] = elem.get("form", "")
         node["phon"] = elem.get("phon", "")
@@ -1795,8 +1804,9 @@ def utterance_tree(
         if utterance._block_elem is not None
         else _utterance_to_elem(utterance)
     )
+    dictionary = get_dictionary()
     roots = [
-        _elem_to_node(child)
+        _elem_to_node(child, dictionary)
         for child in block
         if child.tag not in {"comment", "roundtrip-data", "raw-text"}
     ]

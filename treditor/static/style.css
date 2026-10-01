@@ -1452,6 +1452,11 @@ button {
   font: 10px var(--font-mono);
 }
 
+.gloss-label {
+  fill: #426b55;
+  font: 600 10px var(--font-ui);
+}
+
 .interactive-lemma {
   cursor: pointer;
   text-decoration: underline;

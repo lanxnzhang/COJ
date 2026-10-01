@@ -921,6 +921,7 @@ function draftStorageKey() {
 function editableNodeCopy(node) {
   const copy = {tag: String(node.tag || "NEW")};
   if (node.lemma) copy.lemma = String(node.lemma);
+  if (node.gloss) copy.gloss = String(node.gloss);
   if (node.children?.length) {
     copy.children = node.children.map(editableNodeCopy);
   } else {
@@ -1106,6 +1107,7 @@ function treeOptions() {
   const searchContext = activeTreeSearchContext || {};
   return {
     lemma: $("tog-lemma").checked || Boolean(searchContext.show_lemma),
+    gloss: $("tog-gloss").checked,
     phon: $("tog-phon").checked || Boolean(searchContext.show_phon),
     treeKanji: $("tog-tree-kanji").checked || Boolean(searchContext.show_kanji),
     nullNodes: $("tog-null").checked || Boolean(searchContext.show_null),
@@ -1160,7 +1162,7 @@ function renderPassageMatches(documentData, passages, container) {
   });
 });
 
-["tog-lemma", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
+["tog-lemma", "tog-gloss", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
   .forEach(id => {
     $(id).addEventListener("change", () => {
       $("lemma-position").disabled = !$("tog-lemma").checked
@@ -1269,6 +1271,12 @@ function buildDisplayNode(node, options) {
 
 function labelWidth(node, options) {
   let width = node.tag.length * CHARACTER_WIDTH;
+  if (options.lemma && node.lemma) {
+    width = Math.max(width, node.lemma.length * CHARACTER_WIDTH);
+  }
+  if (options.gloss && node.gloss) {
+    width = Math.max(width, node.gloss.length * CHARACTER_WIDTH);
+  }
   if (!node.children) {
     if (node.form) {
       width = Math.max(width, node.form.length * CHARACTER_WIDTH);
@@ -1279,9 +1287,6 @@ function labelWidth(node, options) {
     if (options.phon && phonLabel) {
       width = Math.max(width, phonLabel.length * CHARACTER_WIDTH);
     }
-    if (options.lemma && node.lemma) {
-      width = Math.max(width, node.lemma.length * CHARACTER_WIDTH);
-    }
     if (options.treeKanji && node._kanjiWidth) {
       width = Math.max(width, node._kanjiWidth);
     }
@@ -1289,24 +1294,39 @@ function labelWidth(node, options) {
   return width + 20;
 }
 
-function leafPositions(node) {
-  if (!node.children) return [node._x];
-  return node.children.flatMap(leafPositions);
+function measureSubtreeWidth(node, options) {
+  if (!node.children) {
+    const extraSpacing = Math.max(0, columnSpacing() - 28);
+    node._subtreeWidth = labelWidth(node, options) + extraSpacing;
+    node._slotWidth = node._subtreeWidth;
+    return node._subtreeWidth;
+  }
+  const childrenWidth = node.children.reduce(
+    (total, child) => total + measureSubtreeWidth(child, options),
+    0,
+  );
+  node._subtreeWidth = Math.max(labelWidth(node, options), childrenWidth);
+  return node._subtreeWidth;
 }
 
 function assignHorizontalPosition(node, counter, options) {
+  const start = counter.value;
   if (!node.children) {
-    const extraSpacing = Math.max(0, columnSpacing() - 28);
-    node._slotWidth = labelWidth(node, options) + extraSpacing;
     node._x = counter.value + node._slotWidth / 2;
     counter.value += node._slotWidth;
     return;
   }
+  const childrenWidth = node.children.reduce(
+    (total, child) => total + child._subtreeWidth,
+    0,
+  );
+  const sidePadding = (node._subtreeWidth - childrenWidth) / 2;
+  counter.value += sidePadding;
   node.children.forEach(child =>
     assignHorizontalPosition(child, counter, options)
   );
-  const positions = leafPositions(node);
-  node._x = positions.reduce((total, value) => total + value, 0) / positions.length;
+  counter.value += sidePadding;
+  node._x = start + node._subtreeWidth / 2;
 }
 
 function assignDepth(node, depth = 0) {
@@ -1332,20 +1352,31 @@ function xPosition(value) {
   return HORIZONTAL_PADDING + value;
 }
 
-function yPosition(row, topPadding) {
-  return topPadding + row * rowHeight();
+function effectiveRowHeight(options) {
+  if (!options.gloss) return rowHeight();
+  return Math.max(rowHeight(), options.lemma ? 68 : 52);
+}
+
+function yPosition(row, topPadding, options) {
+  return topPadding + row * effectiveRowHeight(options);
 }
 
 function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
   const centerX = xPosition(node._x, columnWidth);
-  const centerY = yPosition(node._row, topPadding);
+  const centerY = yPosition(node._row, topPadding, options);
   const hasLemma = options.lemma && Boolean(node.lemma);
+  const hasGloss = options.gloss && Boolean(node.gloss);
   const lemmaUnderForm = hasLemma
     && options.lemmaPosition === "form"
     && !node.children
     && !node._collapsed;
   const lemmaUnderTag = hasLemma && !lemmaUnderForm;
-  const edgeOffset = lemmaUnderTag ? 22 : 9;
+  const glossUnderTag = hasGloss && (Boolean(node.children) || node._collapsed);
+  const glossUnderForm = hasGloss && !glossUnderTag;
+  const tagAnnotationCount = Number(lemmaUnderTag) + Number(glossUnderTag);
+  const edgeOffset = tagAnnotationCount
+    ? 26 + (tagAnnotationCount - 1) * 15
+    : 9;
   const searchHit = options.highlightedNodeIds.has(node._nodeId);
   const highlightedParts = options.highlightedPartIndexes.get(node._nodeId);
   const controls = svgElement("g", {
@@ -1401,20 +1432,30 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     }, node._collapsed ? "+" : "−"));
   }
   svg.appendChild(controls);
+  let tagAnnotationY = centerY + 19;
   if (lemmaUnderTag) {
     svg.appendChild(svgElement("text", {
       x: centerX,
-      y: centerY + 19,
+      y: tagAnnotationY,
       class: `lemma-label interactive-lemma${searchHit ? " tree-search-hit-label" : ""}`,
       "data-lemma": node.lemma,
       "text-anchor": "middle",
     }, node.lemma));
+    tagAnnotationY += 15;
+  }
+  if (glossUnderTag) {
+    svg.appendChild(svgElement("text", {
+      x: centerX,
+      y: tagAnnotationY,
+      class: "gloss-label",
+      "text-anchor": "middle",
+    }, node.gloss));
   }
 
   if (node.children) {
     node.children.forEach(child => {
       const childX = xPosition(child._x, columnWidth);
-      const childY = yPosition(child._row, topPadding);
+      const childY = yPosition(child._row, topPadding, options);
       svg.appendChild(svgElement("line", {
         x1: centerX,
         y1: centerY + edgeOffset,
@@ -1429,7 +1470,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     return;
   }
 
-  const annotationY = yPosition(maxRow, topPadding) + 30;
+  const annotationY = yPosition(maxRow, topPadding, options) + 30;
   if (node._row < maxRow) {
     svg.appendChild(svgElement("line", {
       x1: centerX,
@@ -1481,6 +1522,15 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
     svg.appendChild(formLabel);
   }
   offset += 17;
+  if (glossUnderForm) {
+    svg.appendChild(svgElement("text", {
+      x: centerX,
+      y: offset,
+      class: "gloss-label",
+      "text-anchor": "middle",
+    }, node.gloss));
+    offset += 17;
+  }
   if (lemmaUnderForm) {
     svg.appendChild(svgElement("text", {
       x: centerX,
@@ -1531,7 +1581,8 @@ function renderTreeKanji(
   data, tree, svg, columnWidth, maxRow, topPadding, options
 ) {
   const units = visibleLeafUnits(tree);
-  const baseY = yPosition(maxRow, topPadding) + 86;
+  const baseY = yPosition(maxRow, topPadding, options)
+    + 86 + (options.gloss ? 17 : 0);
   const groups = new Map();
   data.raw_text.forEach(sentence => {
     if (!sentence.kanji) return;
@@ -1609,6 +1660,7 @@ function renderSvgTree(data) {
       };
   assignCollapsedKanjiWidths(data, tree);
   const columnWidth = columnSpacing();
+  measureSubtreeWidth(tree, options);
   const counter = {value: 0};
   assignHorizontalPosition(tree, counter, options);
 
@@ -1628,7 +1680,8 @@ function renderSvgTree(data) {
 
   const topPadding = 38;
   const width = counter.value + HORIZONTAL_PADDING * 2;
-  const height = topPadding + maxRow * rowHeight() + ANNOTATION_HEIGHT
+  const height = topPadding + maxRow * effectiveRowHeight(options)
+    + ANNOTATION_HEIGHT + (options.gloss ? 17 : 0)
     + (options.treeKanji ? 48 : 0);
   const scale = treeScale();
   const svg = svgElement("svg", {
@@ -1727,15 +1780,31 @@ function refreshEditedTree() {
 
 $("close-node-editor").addEventListener("click", closeNodeEditor);
 
-$("node-editor-form").addEventListener("submit", event => {
+$("node-editor-form").addEventListener("submit", async event => {
   event.preventDefault();
   const location = findNodeLocation(selectedNodeId);
   if (!location) return;
   const {node} = location;
   node.tag = $("node-tag").value.trim() || "NEW";
+  const previousLemma = node.lemma || "";
   const lemma = $("node-lemma").value.trim();
   if (lemma) node.lemma = lemma;
   else delete node.lemma;
+  if (lemma !== previousLemma) {
+    delete node.gloss;
+    if (lemma) {
+      try {
+        const entry = await apiFetch(
+          `/api/dictionary/${encodeURIComponent(lemma)}`
+        );
+        const gloss = entry.fields.find(field => field.tag === ".GLOSS")
+          ?.values?.[0]?.trim();
+        if (gloss) node.gloss = gloss;
+      } catch {
+        // Tree drafts may refer to dictionary entries that do not exist yet.
+      }
+    }
+  }
   if (!node.children?.length) {
     if (node.parts?.length) {
       node.parts = $("node-parts").value.split(/\r?\n/)
@@ -1776,11 +1845,13 @@ $("add-child").addEventListener("click", () => {
       child.parts = node.parts.map(part => ({...part}));
     }
     if (node.lemma) child.lemma = node.lemma;
+    if (node.gloss) child.gloss = node.gloss;
     node.children = [child];
     delete node.form;
     delete node.phon;
     delete node.parts;
     delete node.lemma;
+    delete node.gloss;
   }
   refreshEditedTree();
   openNodeEditor(node._nodeId);

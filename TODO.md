@@ -396,10 +396,25 @@ However, in xml data they are encoded and presented as one NP-ADV, but this is w
         <N lemma="L050063d" phon="PHON" form="tameni" />
       </NP-ADV>
 Please check and correct this type of encoding bug, while ensuring it can be correctly converted back to the original .txt file. After the modifications, generate a report that includes at least the following: 1. the number of modified lines; 2. IDs of the text containing them and the original content in .txt format. Similar to things you have done for 'ipaku', put the report in 'reports' folder and create a repeatable migration utility.
+
+### After commit 40a4a37
+Add an option to display the gloss for each word in the syntactic tree. Automatically adjusts spacing when displaying different types of content to ensure a comfortable visual experience.The gloss should be placed beneath each word; for compound words, it should be placed beneath the corresponding node—for example, under a VB-ADC node. "Gloss" refers to the content found in the ".GLOSS" section in the dictionary. Retain other existing functions and avoid causing severe conflicts with them.
+
           
 
 
 ### TBD
+The gloss display functionality is implemented, but the UI needs optimization.
+1. In the annotation panel, the default state upon opening should have "Glosses" and "Kanji" checked, while "Script tags" and "Lemma IDs" remain unchecked.
+2. Rename the "Kanji under transcription" button to simply "Kanji".
+3. The order of the function selection checkboxes should be: Glosses, Kanji, Script tags, Lemma IDs.
+4. Do not display the "Place below" checkbox when "Lemma IDs" is unchecked; show it only when "Lemma IDs" is selected. This checkbox must always be positioned immediately after "Lemma IDs" to avoid confusion.
+5. Reduce the spacing between the Kanji and the word within the node to half the current distance. At the same time, ensure there is no content overlap between the nodes and other elements (such as glosses or lemma IDs), as overlap would make the content difficult to read.
+
+Users require an optional display function: the text remain segmented after collapsing nodes in the syntactic tree. 
+For example, when collaspe ipapo sura as a PP-OB1, the UI currently shows ipaposura as a whole. The current function does not support user to see ipapo sura.
+Add an optional display function to allow user see the segmentation after they collapse the nodes.
+Retain other existing functions and avoid causing severe conflicts with them.
 
 合并搜索框
 搜索结果下载
