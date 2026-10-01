@@ -13,14 +13,17 @@ const start = source.indexOf("function isNullNode(");
 const end = source.indexOf("function measureSubtreeWidth(");
 vm.runInContext(source.slice(start, end), context);
 assert.equal(context.displayTag("ADN", {fullTags: true}), "Adnominal");
-assert.equal(context.displayTag("NP-APP", {fullTags: true}), "Noun phrase apposition");
+assert.equal(context.displayTag("NP-APP", {fullTags: true}), "Noun phrase - apposition");
 assert.equal(context.displayTag("CP-FINAL", {fullTags: true}),
-  "Complementizer phrase clauses with a right dislocated element");
+  "Complementizer phrase - clauses with a right dislocated element");
 assert.equal(context.displayTag("IP-PRP", {fullTags: true}),
-  "Inflectional phrase purposive subordinate clause");
+  "Inflectional phrase - purposive subordinate clause");
 assert.equal(context.displayTag("NULL", {fullTags: true}), "Null element");
 assert.equal(context.displayTag("VB-ADC", {fullTags: true}),
-  "Verb syncretic adnominal and conclusive");
+  "Verb - syncretic adnominal and conclusive");
+assert.equal(context.displayTag("VB-ADN", {fullTags: true}), "Verb - adnominal");
+assert.equal(context.displayTag("VAX-NEG-ADN", {fullTags: true}),
+  "Verbal auxiliary - negative - adnominal");
 assert.equal(context.displayTag("NP;@5", {fullTags: true}), "Noun phrase;@5");
 assert.equal(context.displayTag("NP-UNKNOWN", {fullTags: true}), "NP-UNKNOWN");
 assert.equal(context.displayTag("NP", {fullTags: false}), "NP");

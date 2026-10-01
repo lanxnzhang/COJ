@@ -1299,7 +1299,7 @@ function displayTag(tag, options) {
         || treeTagNames.suffixes[suffix]
       );
       if (expansions.every(Boolean)) {
-        name = [treeTagNames.labels[base], ...expansions].join(" ");
+        name = [treeTagNames.labels[base], ...expansions].join(" - ");
       }
     }
   }
@@ -1436,7 +1436,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
         class: "tree-search-highlight",
       }));
     }
-    controls.appendChild(svgElement("text", {
+    const tagElement = svgElement("text", {
       x: centerX,
       y: centerY + 5,
       class: `tree-label${node._toggleable ? " node-toggle" : ""}${node._collapsed ? " collapsed" : ""}`,
@@ -1447,7 +1447,9 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
         "aria-label": `${node._collapsed ? "Expand" : "Collapse"} ${node.tag}`,
       } : {}),
       "text-anchor": "middle",
-    }, tagLabel));
+    }, tagLabel);
+    tagElement.appendChild(svgElement("title", {}, displayTag(node.tag, {fullTags: true})));
+    controls.appendChild(tagElement);
   }
   if (editMode && node._nodeId !== undefined) {
     controls.appendChild(svgElement("text", {

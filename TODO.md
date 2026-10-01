@@ -428,6 +428,10 @@ At this stage, do not include parenthetical information when displaying expanded
 For any unmapped tag, retain its original label rather than guessing a meaning.
 Retain other existing functions and avoid causing severe conflicts with them.
 
+### After commit b29018e
+Keep the hyphens in the expanded forms of the different abbreviations—for example, expand "VB-ADN" to "Verb - syncretic adnominal and conclusive." The current format results in strings that are too long and visually cluttered.
+Additionally, please allow the expanded form to appear when a user hovers their mouse over a node. For instance, hovering over "VB-ADN" should display "Verb - syncretic adnominal and conclusive." This is to accommodate users who may only be unfamiliar with a few of the abbreviations; expanding all of them at once would be too cumbersome for such users.
+Retain other existing functions and avoid causing severe conflicts with them.
 
 ### TBD
 
