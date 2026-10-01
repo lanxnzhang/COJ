@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import sys
 import threading
@@ -1360,7 +1361,10 @@ def _tgrep_forms(node: dict) -> list[str]:
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    tag_names = json.loads(
+        (Path(__file__).parent / "tag_names.json").read_text(encoding="utf-8")
+    )
+    return render_template("index.html", tag_names=tag_names)
 
 
 @app.get("/api/documents")

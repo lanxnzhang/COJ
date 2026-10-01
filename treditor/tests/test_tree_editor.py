@@ -797,6 +797,11 @@ def test_interface_exposes_activity_bar_search_tabs_and_new_defaults(client):
     assert 'id="tog-lemma">' in html
     assert 'id="tog-gloss" checked' in html
     assert 'id="tog-phon">' in html
+    assert 'id="tog-full-tags"> Expand abbr' in html
+    assert html.index('id="tog-phon"') < html.index('id="tog-full-tags"')
+    assert html.index('id="tog-full-tags"') < html.index('id="tog-lemma"')
+    assert '"NULL": "null element"' in html
+    assert '"ADC": "syncretic adnominal and conclusive"' in html
     assert 'id="tog-tree-kanji" checked' in html
     assert "Kanji under transcription" not in html
     assert 'id="lemma-position-control" class="select-control hidden"' in html

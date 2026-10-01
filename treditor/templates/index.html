@@ -243,6 +243,7 @@
                   <label class="toggle"><input type="checkbox" id="tog-gloss" checked> Glosses</label>
                   <label class="toggle"><input type="checkbox" id="tog-tree-kanji" checked> Kanji</label>
                   <label class="toggle"><input type="checkbox" id="tog-phon"> Script tags</label>
+                  <label class="toggle"><input type="checkbox" id="tog-full-tags"> Expand abbr</label>
                   <label class="toggle"><input type="checkbox" id="tog-lemma"> Lemma IDs</label>
                   <label id="lemma-position-control" class="select-control hidden">
                     <span>Place below</span>
@@ -442,6 +443,7 @@
     </section>
   </main>
 
+  <script id="tree-tag-names" type="application/json">{{ tag_names|tojson }}</script>
   <script src="/static/app.js"></script>
 </body>
 </html>

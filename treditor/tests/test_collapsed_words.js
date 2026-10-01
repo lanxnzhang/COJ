@@ -7,10 +7,23 @@ const source = fs.readFileSync(path.join(__dirname, "../static/app.js"), "utf8")
 const context = vm.createContext({
   collapsedNodeIds: new Set(["phrase"]),
   CHARACTER_WIDTH: 7.4,
+  treeTagNames: JSON.parse(fs.readFileSync(path.join(__dirname, "../tag_names.json"), "utf8")),
 });
 const start = source.indexOf("function isNullNode(");
 const end = source.indexOf("function measureSubtreeWidth(");
 vm.runInContext(source.slice(start, end), context);
+assert.equal(context.displayTag("ADN", {fullTags: true}), "Adnominal");
+assert.equal(context.displayTag("NP-APP", {fullTags: true}), "Noun phrase apposition");
+assert.equal(context.displayTag("CP-FINAL", {fullTags: true}),
+  "Complementizer phrase clauses with a right dislocated element");
+assert.equal(context.displayTag("IP-PRP", {fullTags: true}),
+  "Inflectional phrase purposive subordinate clause");
+assert.equal(context.displayTag("NULL", {fullTags: true}), "Null element");
+assert.equal(context.displayTag("VB-ADC", {fullTags: true}),
+  "Verb syncretic adnominal and conclusive");
+assert.equal(context.displayTag("NP;@5", {fullTags: true}), "Noun phrase;@5");
+assert.equal(context.displayTag("NP-UNKNOWN", {fullTags: true}), "NP-UNKNOWN");
+assert.equal(context.displayTag("NP", {fullTags: false}), "NP");
 const original = {
   _nodeId: "phrase",
   tag: "PP-OB1",

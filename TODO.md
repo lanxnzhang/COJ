@@ -420,7 +420,13 @@ For example, when collaspe ipapo sura as a PP-OB1, the UI currently shows ipapos
 Refine this function to allow user see the segmentation after they collapse the nodes. Users need the text to remain segmented after collapsing nodes in the syntactic tree, and still to be able to view the gloss for each word.
 Retain other existing functions and avoid causing severe conflicts with them.
 
-
+### After commit 6f3285e
+Users would like a checkbox to toggle whether the full labels for syntactic tree nodes are displayed. This checkbox should be positioned after the "script tags" and before the "lemma IDs." Name it as "Expand abbr". 
+For example, when checked, the node labeled "ADN" in the syntactic tree would be displayed as "Adnominal." This feature aims to help users unfamiliar with the abbreviations quickly understand what each node label means, without having to repeatedly consult a reference table.
+For the rules regarding the expansion of abbreviations within syntactic tree nodes, please refer primarily to "D:\Lanxin\Desktop\ONCOJ Abbr List.docx". Ignore any hyperlinks in that document. Integrate this table into the repository and note that the source of the information is ONCOJ (https://oncoj.orinst.ox.ac.uk/cgi-bin/oncoj_tgrep2.sh).
+At this stage, do not include parenthetical information when displaying expanded content. For example, expand "CP" to "complementizer phrase" rather than "complementizer phrase (used in CP-FINAL, clauses with a right dislocated element)." Specifically: 1. Expand "-APP" to "apposition." 2.-PRP	to purposive subordinate clause 3. -FINAL to clauses with a right dislocated element 4.NULL	to null element
+For any unmapped tag, retain its original label rather than guessing a meaning.
+Retain other existing functions and avoid causing severe conflicts with them.
 
 
 ### TBD

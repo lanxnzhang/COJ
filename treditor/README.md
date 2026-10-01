@@ -71,6 +71,11 @@ kanji/transcription layouts.
 
 PHON-family forms are italic, NLOG forms are underlined, and other forms remain
 plain in both Text and the syntax tree. Tree controls can show script tags,
+and the optional **Expand abbr** control expands syntax labels using
+[`tag_names.json`](tag_names.json), transcribed from the supplied ONCOJ
+abbreviation list. Its source is [ONCOJ](https://oncoj.orinst.ox.ac.uk/cgi-bin/oncoj_tgrep2.sh).
+Expanded labels omit parenthetical explanations; unknown labels stay unchanged.
+This changes the display only. Tree controls also show
 lemma IDs beneath either tags or word forms, dictionary glosses beneath their
 words or compound nodes, and spaced kanji beneath each sentence's
 transcription. By default glosses, kanji, and null nodes are shown, while lemma

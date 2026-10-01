@@ -1,6 +1,7 @@
 "use strict";
 
 const $ = id => document.getElementById(id);
+const treeTagNames = JSON.parse($("tree-tag-names").textContent);
 let documentGroups = [];
 let activeDocument = null;
 let activePassage = null;
@@ -1108,6 +1109,7 @@ function treeOptions() {
     lemma: $("tog-lemma").checked || Boolean(searchContext.show_lemma),
     gloss: $("tog-gloss").checked,
     phon: $("tog-phon").checked || Boolean(searchContext.show_phon),
+    fullTags: $("tog-full-tags").checked,
     treeKanji: $("tog-tree-kanji").checked || Boolean(searchContext.show_kanji),
     nullNodes: $("tog-null").checked || Boolean(searchContext.show_null),
     bottomUp: $("tog-bottomup").checked,
@@ -1167,7 +1169,7 @@ function renderPassageMatches(documentData, passages, container) {
   });
 });
 
-["tog-lemma", "tog-gloss", "lemma-position", "tog-phon", "tog-tree-kanji", "tog-null", "tog-bottomup"]
+["tog-lemma", "tog-gloss", "lemma-position", "tog-phon", "tog-full-tags", "tog-tree-kanji", "tog-null", "tog-bottomup"]
   .forEach(id => {
     $(id).addEventListener("change", () => {
       updateLemmaPositionControl();
@@ -1281,8 +1283,32 @@ function collapsedTokensWidth(tokens, options) {
   ) + Math.max(0, tokens.length - 1) * 12;
 }
 
+function displayTag(tag, options) {
+  if (!options.fullTags) return tag;
+  const match = tag.match(/^(.*?)(;@\d+)?$/);
+  const baseTag = match[1];
+  let name = treeTagNames.labels[baseTag] || treeTagNames.suffixes[baseTag];
+  if (!name) {
+    const base = Object.keys(treeTagNames.labels)
+      .sort((left, right) => right.length - left.length)
+      .find(label => baseTag.startsWith(`${label}-`));
+    if (base) {
+      const suffixes = baseTag.slice(base.length + 1).split("-");
+      const expansions = suffixes.map(suffix =>
+        (base === "IP" ? treeTagNames.clause_suffixes[suffix] : null)
+        || treeTagNames.suffixes[suffix]
+      );
+      if (expansions.every(Boolean)) {
+        name = [treeTagNames.labels[base], ...expansions].join(" ");
+      }
+    }
+  }
+  if (!name) return tag;
+  return name[0].toUpperCase() + name.slice(1) + (match[2] || "");
+}
+
 function labelWidth(node, options) {
-  let width = node.tag.length * CHARACTER_WIDTH;
+  let width = displayTag(node.tag, options).length * CHARACTER_WIDTH;
   if (options.lemma && node.lemma) {
     width = Math.max(width, node.lemma.length * CHARACTER_WIDTH);
   }
@@ -1376,6 +1402,7 @@ function yPosition(row, topPadding, options) {
 }
 
 function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
+  const tagLabel = displayTag(node.tag, options);
   const centerX = xPosition(node._x, columnWidth);
   const centerY = yPosition(node._row, topPadding, options);
   const hasLemma = options.lemma && Boolean(node.lemma);
@@ -1399,7 +1426,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
 
   if (node.tag) {
     if (searchHit) {
-      const highlightWidth = Math.max(26, node.tag.length * 7.5 + 14);
+      const highlightWidth = Math.max(26, tagLabel.length * 7.5 + 14);
       controls.appendChild(svgElement("rect", {
         x: centerX - highlightWidth / 2,
         y: centerY - 12,
@@ -1420,11 +1447,11 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
         "aria-label": `${node._collapsed ? "Expand" : "Collapse"} ${node.tag}`,
       } : {}),
       "text-anchor": "middle",
-    }, node.tag));
+    }, tagLabel));
   }
   if (editMode && node._nodeId !== undefined) {
     controls.appendChild(svgElement("text", {
-      x: centerX - Math.max(18, node.tag.length * 3.5 + 10),
+      x: centerX - Math.max(18, tagLabel.length * 3.5 + 10),
       y: centerY + 5,
       class: "node-edit",
       "data-edit-node-id": node._nodeId,
@@ -1436,7 +1463,7 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
   }
   if (node._toggleable) {
     controls.appendChild(svgElement("text", {
-      x: centerX + Math.max(18, node.tag.length * 3.5 + 8),
+      x: centerX + Math.max(18, tagLabel.length * 3.5 + 8),
       y: centerY + 5,
       class: `node-disclosure ${node._collapsed ? "collapsed" : "expanded"}`,
       "data-node-id": node._nodeId,
