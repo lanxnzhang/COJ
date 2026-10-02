@@ -1,0 +1,42 @@
+"use strict";
+const assert = require("node:assert/strict");
+const {compareText, compareTrees} = require("../static/workbench-core.js");
+const joined = items => items.map(item => item.text).join("");
+const changed = items => items.filter(item => item.kind !== "plain").map(item => item.text).join("");
+
+assert.equal(compareText("a\t b　\nc", "abc").changes, 0);
+assert.equal(compareText("a\nb", "ab", {spaces: true}).changes, 0);
+assert.equal(compareText("a b", "ab", {lineBreaks: true}).changes, 0);
+assert.equal(compareText("a\r\nb", "ab", {lineBreaks: true}).changes, 1);
+assert.equal(compareText("e\u0301", "é").changes, 0);
+const emoji = compareText("a👩‍🔬b", "a👩‍🎓b");
+assert.equal(emoji.left.length, 3);
+assert.equal(changed(emoji.left), "👩‍🔬");
+assert.equal(changed(emoji.right), "👩‍🎓");
+assert.equal(compareText("", "").changes, 0);
+assert.equal(compareText("a", "").left[0].kind, "delete");
+assert.equal(compareText("", "a").right[0].kind, "add");
+assert.equal(compareText("abc", "axc").left[1].kind, "change");
+for (let n = 0; n < 300; n++) {
+  const a = Array.from({length: n % 17}, (_, i) => "abc "[(i * 7 + n) % 4]).join("");
+  const b = Array.from({length: n % 13}, (_, i) => "acb "[(i * 3 + n) % 4]).join("");
+  const diff = compareText(a, b, {spaces: true, lineBreaks: true});
+  assert.equal(joined(diff.left), a);
+  assert.equal(joined(diff.right), b);
+  assert.equal(joined(diff.left.filter(item => item.kind === "plain")), joined(diff.right.filter(item => item.kind === "plain")));
+}
+const a = {tag: "N", form: "mi", lemma: "L000035", phon: "PHON", annotations: {index: "5"}};
+const b = {...a, lemma: "L000036"};
+let diff = compareTrees([a], [b]);
+assert.deepEqual([...diff.left.get(a).fields], ["lemma"]);
+assert.equal(diff.changes, 1);
+assert.equal(compareTrees([a], [{...a}]).changes, 0);
+const c = {...a, annotations: {index: "2"}};
+assert.deepEqual([...compareTrees([a], [c]).left.get(a).fields], ["annotations"]);
+diff = compareTrees([{tag: "NP", children: [a]}], [{tag: "NP", children: []}]);
+assert.equal(diff.left.get(a).kind, "delete");
+const added = {tag: "N", form: "no", phon: "LOG"};
+diff = compareTrees([a], [b, added]);
+assert.deepEqual([...diff.left.get(a).fields], ["lemma"]);
+assert.equal(diff.right.get(added).kind, "add");
+console.log("Workbench JavaScript comparisons passed.");

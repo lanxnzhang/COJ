@@ -1,6 +1,7 @@
 # TODO
 
 ## Build script editor
+
 An essential purpose for this repository is to facilitate editing of data, with the help of scripts. It is inconvenient for users to revise scripts, download the results, read them in txt, and edit data in different softwares.
 Create a simple GUI which allows the user to run scripts, see the running results, and edit the data.
 
@@ -433,7 +434,405 @@ Keep the hyphens in the expanded forms of the different abbreviations—for exam
 Additionally, please allow the expanded form to appear when a user hovers their mouse over a node. For instance, hovering over "VB-ADN" should display "Verb - syncretic adnominal and conclusive." This is to accommodate users who may only be unfamiliar with a few of the abbreviations; expanding all of them at once would be too cumbersome for such users.
 Retain other existing functions and avoid causing severe conflicts with them.
 
+### After commit 873129e
+I would like to add a new feature to the existing project, with its entry point tentatively placed below **Dictionary**. 
+Before modifying any code, please first inspect the current project structure and relevant implementations. 
+**Do not start implementing the feature yet.** I would first like you to analyze the design, identify ambiguities, and discuss the architecture with me. 
+ 
+Core Interaction 
+The feature should use a two-pane / split-view workspace: 
+- The page can be chosen to divided into left and right panes. 
+- The two panes should be independently scrollable; synchronized scrolling is not required. 
+- Users should be able to enter, paste, or load content into either pane where appropriate. 
+- Depending on the selected mode, the workspace should compare, transform, parse, or visualize the content. 
+- I may add more modes in the future, so the architecture should preferably be extensible rather than tightly coupled to the three initial modes. 
+ 
+At the moment, I have three modes in mind. 
+1. Text Comparison 
+This mode compares text in the left and right panes. 
+Basic requirements: 
+- Compare the two text strings. 
+- Clearly visualize differences between them. 
+- Additions, deletions, and modifications should be distinguishable using colors or other appropriate visual indicators. 
+- The main goal is to allow users to locate differences between two texts quickly. 
+ 
+I have not yet decided whether the comparison should operate at the character, word, or line level, or whether users should be able to switch between different diff granularities. If this decision affects the architecture significantly, please point it out. 
+ 
+2. Transliteration / Conversion 
+This mode converts between different writing or transcription systems. 
+For example: 
+- Japanese kana → romanization 
+- Romanization → Japanese kana 
+Where possible, conversion should use rules already stored in the project's database rather than hard-coding conversion rules directly into the UI component. 
+I may later add other languages or other types of transcription, transliteration, or orthographic conversion, so this mode should ideally be designed with extensibility in mind. 
+ 
+My current idea is that the left pane acts as the source and the right pane displays the converted result. However, I have not decided whether conversion should also support easily reversing or swapping the direction. Please make a recommendation based on the existing architecture and UI. 
+
+3. Syntax Tree 
+This mode visualizes syntactic trees from user-provided data. 
+Basic requirements: 
+- Users can paste or load data representing a syntax tree. 
+- Initially, I would like to consider at least the current content in TXT and XML input, with the possibility of supporting additional formats later. 
+- The input should be parsed and rendered as a simple, readable tree diagram. 
+- The left and right panes should be able to display two separate syntax trees. 
+- Users should be able to compare the two trees. 
+- If practical, structural differences between nodes, labels, or branches should be highlighted visually, for example with different colors. 
+
+Questions to Address Before Implementation 
+After inspecting the existing project, please help me answer the following questions: 
+1. **What should this overall feature be called?**   
+   Please suggest several concise English names suitable for a UI navigation entry and explain what each name emphasizes. Names such as **Workbench**, **Language Lab**, or **Analysis** may be possibilities, but please do not limit yourself to these. 
+2. **Do Text Comparison, Transliteration / Conversion, and Syntax Tree belong under the same top-level feature?**   
+   Please evaluate whether grouping them together makes conceptual and architectural sense. 
+3. **If they should be grouped together, what UI and component structure would you recommend?**   
+   For example, one possible structure might be a shared workspace with mode selection such as: 
+   `Compare | Convert | Syntax Tree` 
+   However, please base your recommendation on the existing project rather than assuming this is necessarily the best design. 
+4. **Which underlying capabilities should be shared between the three modes, and which should remain mode-specific?** 
+5. **How should the architecture be designed so that additional linguistic comparison, conversion, transcription, annotation, or visualization tools can be added later without major restructuring?** 
+6. **After inspecting the current codebase, identify the main files, components, data structures, or modules that would likely need to be added or modified.**   
+   At this stage, please only describe the proposed changes; do not make them yet. 
+7. **Identify any ambiguities in my requirements that could materially affect the UI, data model, component architecture, or implementation.**   
+   Ask me about these points explicitly rather than making irreversible assumptions. 
+ 
+One architectural distinction I would also like you to consider is whether the **split-pane layout should be a general workspace primitive rather than something specifically tied to comparison**. 
+ 
+For example: 
+ 
+- Text Comparison naturally represents `A ↔ B`. 
+- Syntax Tree Comparison also naturally represents `Tree A ↔ Tree B`. 
+- Transliteration is somewhat different and may be better understood as `Source → Result`. 
+ 
+They can all use a visually similar two-pane layout, but the semantic relationship between the panes is not necessarily the same. I would therefore prefer not to prematurely design the shared component around the assumption that both panes always represent two things being compared. 
+ 
+For now, please **inspect the codebase and return only your design analysis, naming suggestions, proposed architecture, and clarification questions**. 
+ 
+Do not implement the feature until we have resolved these design decisions.
+
+#### After commit 873129e (2) - Answer to questions
+1. Workbench
+
+2. The primary layout should be a two-pane view.
+
+However, the underlying workspace should also allow the user to close either pane and temporarily switch to a single-pane view. After closing a pane, it should be easy to restore the two-pane layout.
+
+In other words, two panes should be the default and primary design, but the workspace component should not structurally require both panes to remain visible at all times.
+
+3. The user should be able to choose whether spaces and line breaks count as differences.
+
+By default, they should not count as differences. The default comparison should therefore focus on the textual content while ignoring whitespace differences.
+
+The comparison itself should ultimately operate at the character level. Every differing character or character sequence should be highlighted so that the user can see all differences, rather than only being told that a line is different.
+
+Line-level alignment may still be useful internally or visually for larger texts, but I do not want it to replace character-level difference highlighting.
+
+4. The converter should allow the user to explicitly select the format/transcription system of the input and output, while also supporting automatic format detection where reasonably reliable.
+
+The available systems should eventually include both:
+
+Old Japanese transcription systems
+
+Modern Japanese romanization systems
+
+The exact conversion rules are not complete yet and will be expanded later. Therefore, please design the conversion system so that new rule sets and transcription systems can be added without rewriting the converter itself.
+
+For now, you may research documented conversion/transliteration conventions from reliable sources where necessary. However, there must be a clear distinction between:
+
+project/user-defined rules that I have explicitly specified or approved; and
+
+provisional/reference rules introduced on the basis of external sources during development.
+
+These categories should not silently overwrite one another. Explicitly defined or approved project rules must always take precedence over provisional/reference rules.
+
+Please also keep enough provenance or metadata to make it possible to identify where a rule came from and whether it has been explicitly approved. Do not silently convert externally researched assumptions into authoritative project rules.
+
+5. Reverse ambiguity
+
+For ambiguities such as historical katakana キ corresponding to either ki or kwi, this is an unavoidable limitation when the kana representation does not preserve the relevant Old Japanese distinction.
+
+For this specific class of Old Japanese transcription ambiguity, use a conventional default when the distinction is not represented in the source:
+
+キ → ki rather than kwi
+
+similarly, where the relevant historical distinction is absent, default to e rather than ye
+
+default to o rather than wo
+
+However, these should not be presented as unambiguous conversions. The output should visually highlight such cases, using a distinct color or other indicator, so that the user knows that information has been lost and that the result may require manual review.
+
+Ideally, hovering over or otherwise inspecting the highlighted result should explain the ambiguity and show the possible alternatives.
+
+For other types of ambiguity where there is no explicitly defined default convention, the interface should show the available alternatives rather than silently choosing one.
+
+Please keep these ambiguity policies configurable rather than hard-coding them deeply into the UI, because I may refine the Old Japanese conversion rules later.
+
+6. Tree input
+
+Normally, the user will supply one text/tree per pane.
+
+After input has been parsed, each pane should allow the user to switch between:
+
+the original/source representation, and
+
+the rendered tree view.
+
+The original input should therefore remain available after parsing rather than being discarded.
+
+I would also like users to be able to enter a text identifier, for example MYS.1.1, to load a text that already exists in the project's corpus/database and use it as the input for that pane.
+
+For now, I do not think the Workbench needs to treat an entire multi-text corpus document as a single tree input. The normal unit should be one text/tree in each pane.
+
+7. Tree differences
+
+I am not yet sure what you mean by identifying moved/reparented branches.
+
+For the first version, I only need the system to identify and visually highlight differences between the two trees. We do not need an advanced structural-change classification system unless it is necessary for basic comparison.
+
+Please explain briefly what moved/reparented branch detection would add before we decide whether it is needed later.
+
+8. Storage
+
+For now, I would like Workbench to behave primarily as a temporary workspace.
+
+Its contents do not need to be permanently stored locally when the browser or application is closed.
+
+Temporary in-session caching is fine if useful, for example so that switching between Workbench modes or tabs does not immediately destroy the user's current work.
+
+However, please design the state management so that persistent storage or explicit save/load functionality could be added later without requiring a major redesign.
+
+9. Result editing
+
+For the first version, converted output does not need to be directly editable.
+
+The user should be able to copy the result.
+
+We may add an editing interface later, so please avoid designing the result pane in a way that would make editable output difficult to support in the future.
+
+I am not yet sure whether a dedicated “copy result back into source” action is necessary. Standard copying is sufficient for the first version.
+
+10. Corpus integration
+
+If by “send the currently open corpus text/tree into either pane” you mean adding an action that takes the text or tree currently open elsewhere in the application and directly loads it into a Workbench pane, I do not think this is necessary for the first version.
+
+For now, users can paste/load content manually or load an existing corpus text by entering its identifier, as described above.
+
+However, please keep future direct integration with the main corpus/document view possible.
+
+Before implementation, please respond to the points where I have asked for clarification, especially:
+
+what you mean by moved/reparented branch detection;
+
+whether my proposed character-level comparison with optional whitespace ignoring creates any technical or UX issues;
+
+how you propose representing the distinction between approved/project-defined conversion rules and provisional/reference rules;
+
+whether the current corpus architecture can support loading a single text by an identifier such as MYS.1.1 cleanly.
+
+If there are any remaining decisions that materially affect the architecture, please ask me before implementation.
+
+#### After commit 873129e (3) - Answers to questions
+Thanks. I agree with the proposed approach. Here are my answers to the remaining questions.
+
+1. Corpus source view: offer both TXT and XML
+
+I would like the Workbench to offer **both TXT and XML representations**.
+
+However, I think there may be one point about the current data flow that needs to be rechecked.
+
+My understanding is that, in the current corpus architecture, **XML is generated from the TXT source**, rather than TXT being generated from XML. The syntax-tree/display data may currently be obtained from the XML representation, which might explain why reconstructing TXT from XML came up in your analysis.
+
+Before implementation, please verify the actual source-of-truth and conversion pipeline in the current codebase.
+
+In particular, please determine:
+
+- whether the original TXT is the authoritative source from which XML is generated;
+- whether a specific text such as `MYS.1.1` can be retrieved directly in its TXT representation;
+- or whether the existing per-text APIs only expose XML/tree-derived data, in which case producing a per-text TXT view would currently require serialization/reconstruction.
+
+If the original TXT representation for an individual text is directly available, I would prefer to use that rather than reconstructing TXT from XML.
+
+Regardless of the internal source, the Workbench should support **both TXT and XML**, because manually pasted or loaded input may itself be supplied in either representation.
+
+Please make the UI clear about whether a displayed representation is the original/source representation or a generated/serialized representation where that distinction is relevant.
+
+2. Whitespace scope
+
+Yes. **Ignore spaces** should include tabs, full-width spaces, and other appropriate Unicode spacing characters.
+
+Line breaks should remain a separate option, controlled independently by **Compare line breaks**.
+
+As discussed, both **Compare spaces** and **Compare line breaks** should be off by default.
+
+For character-level comparison, please use a Unicode-aware notion of a visible character (grapheme cluster) where appropriate, so that combining characters are not incorrectly split during comparison or highlighting.
+
+3. Unresolved conversion alternatives
+
+I agree with your recommendation.
+
+Where no approved/default conversion exists, use a **marked unresolved placeholder** in the result, with an inspection interface that shows the possible alternatives and allows the user to select one.
+
+I prefer this to displaying all alternatives inline, because inline alternatives would become part of the converted text itself.
+
+For the first version, no additional warning when copying unresolved results is necessary. We can consider that later if it becomes useful.
+
+4. Initial conversion scope
+
+For the first version, please keep the actual conversion scope relatively narrow.
+
+The initial systems should be:
+
+- **Old Japanese:** Frellesvig–Whitman notation
+- **Modern Japanese:** Hepburn romanization
+- the corresponding kana representations needed for those conversions
+
+For Old Japanese, I suspect the existing implementation in `kana.py` may already correspond to, or at least be based on, Frellesvig–Whitman notation. Please verify this from the actual rules and existing project context rather than assuming that it does.
+
+The first release does **not** need to implement every possible Japanese transcription system.
+
+The important architectural requirement is that additional systems can be registered later without redesigning the converter. For example, future systems might include:
+
+- Frellesvig–Whitman → Yale
+- Frellesvig–Whitman → Historical Katakana
+- additional Old Japanese transcription conventions
+- additional modern Japanese romanization conventions
+
+These are examples of future extensibility, not requirements for the first release.
+
+Please also preserve the rule-authority model we discussed earlier: project-defined/approved rules take precedence over provisional/reference rules, and the origin/status of rules should remain identifiable.
+
+5. Closing a pane
+
+Yes. Closing a pane should **hide it while retaining its contents and state for the current session**.
+
+Restoring the pane should restore its previous content rather than creating an empty pane.
+
+This does not imply permanent persistence across application/browser restarts.
+
+With these decisions, I think the main product requirements are sufficiently defined.
+
+Before beginning implementation, please first verify and report back on the two codebase-specific points above:
+
+1. the actual TXT → XML → tree/display data flow and whether a single text's original TXT can be retrieved directly by ID;
+2. whether the existing `kana.py` rules actually correspond to Frellesvig–Whitman notation, and exactly which conversion direction(s) they currently implement.
+
+If those checks do not reveal any additional architectural decisions that require my input, you can then propose the implementation sequence.
+
+#### After commit 873129e (4)
+Your findings make sense. I agree with the proposed implementation sequence, with the following clarifications.
+
+1. Source TXT vs. Stored XML
+
+For corpus-loaded texts, I would prefer **Source TXT** as the default, since TXT is the primary authoring representation.
+
+If Source TXT and Stored XML differ, please make that discrepancy visible and allow the user to inspect either representation rather than silently choosing one.
+
+Workbench only needs to keep enough **temporary in-session state** to know whether the content currently shown was:
+
+- read from Source TXT;
+- read from Stored XML; or
+- generated temporarily through conversion.
+
+This is only so the UI can accurately tell the user what they are viewing. **Do not create or persist additional TXT/XML copies, and do not modify the existing corpus files for this purpose.**
+
+2. Use a separate lightweight tree view for Workbench
+
+I would like to change one part of the implementation plan:
+
+**Please do not modify or refactor the existing tree renderer for Workbench.**
+
+Instead, create a separate, lightweight tree view specifically for Workbench. Its purpose is quick proofreading and side-by-side comparison, so it does not need features such as node collapsing, editing, draft state, or the other interactions of the existing graphical tree.
+
+The main design goal is for the tree to grow primarily **downward rather than horizontally**, so that two trees can be compared comfortably side by side.
+
+I have not decided on the exact visual design. One possible compact representation might look roughly like this:
+
+```text
+CP-FINAL
+    ├── IP-SUB
+    │   ├── IP-ADV
+    │   │   ├── PP
+    │   │   │   ├── NP
+    │   │   │   │   ├── IP-EPT
+    │   │   │   │   │   └── MK ( tamakiparu PHON-KUN [L091056] )
+    │   │   │   │   ├── PP
+    │   │   │   │   │   ├── NP
+    │   │   │   │   │   │   └── PLN ( uti PHON-KUN [L090040] )
+    │   │   │   │   │   └── P-CASE-GEN ( no PHON [L000520] )
+    │   │   │   │   └── N
+    │   │   │   │       ├── ADJ-STM ( opo LOG [L007009a] )
+    │   │   │   │       └── N ( nwo LOG [L051650] )
+    │   │   │   └── P-CASE-DAT ( ni PHON [L000519] )
+```
+
+This is **only an example of what I mean by a vertically oriented, horizontally compact tree**. I do not necessarily want the final UI to use this exact file-tree/ASCII style. Please choose a visual implementation that fits the existing interface.
+
+The priorities are:
+
+- compact horizontal width;
+- clear parent-child relationships;
+- easy side-by-side comparison;
+- simple visual structure.
+
+3. Node contents and comparison
+
+For lexical nodes, the word form should be clearly visible together with its annotations, for example:
+
+`PFX-HON   mi (L000035, PHON)`
+
+The exact typography is flexible. However, the renderer/comparison logic should still distinguish between:
+
+- node/category label;
+- word form;
+- lemma ID;
+- annotations.
+
+This way, if only one field differs between two corresponding nodes, that field can be highlighted rather than treating the entire row as different.
+
+Subtle color differences between semantic fields would also be useful where appropriate—for example, displaying a lemma ID and an annotation such as `PHON` differently.
+
+Tree comparison should consider both node contents and parent-child structure. V1 does not need to identify moved/reparented branches as a special type of change; it only needs to highlight the differences clearly.
+
+4. Small optional conveniences
+
+If straightforward to implement, I would also like:
+
+- a **Show glosses** checkbox;
+- hover tooltips showing the full meaning of abbreviations where that information already exists;
+- clicking a lemma ID such as `L000035` to open the existing Dictionary popup.
+
+These are useful for quick proofreading, but they are **not essential for V1**. In particular, please do not create unnecessary coupling with the existing tree renderer just to support them.
+
+The existing tree renderer should remain unchanged.
+
+Please update the implementation plan based on these clarifications. If no new architectural or corpus-data decisions are required, you can proceed with implementation.
+
+#### After commit 873129e (5)
+This revised plan looks good. You have my approval to begin implementation.
+
+Two small scope clarifications before you proceed:
+
+1. For Source TXT vs. Stored XML, when I asked you to expose discrepancies, I primarily meant that Workbench should clearly indicate when the two representations differ and allow the user to inspect both. Please do not expand this into a separate semantic-difference analysis system unless that is already naturally required by the implementation.
+
+2. For conversion rules, provisional/reference rules may be used where necessary for V1, but they must remain clearly distinguishable from project-defined or explicitly approved rules. A convention that you find through research should not automatically become a project-approved rule.
+
+Otherwise, please proceed according to the revised implementation plan.
+
+Please keep the existing graphical tree renderer unchanged, as planned. If implementation reveals a new issue that requires a substantive decision about corpus data, conversion semantics, or the Workbench architecture, ask me before making that decision.
+
+
 ### TBD
+vertical tree:
+S
+├── NP
+│   └── 句子
+└── VP
+    ├── VV
+    │   └── 竖
+    ├── AS
+    │   └── 着
+    └── VV
+        └── 画
+
 
 The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "rule_sets": {
+    "fw": {
+      "name": "Frellesvig–Whitman → historical kana",
+      "status": "project-defined",
+      "origin": "Existing src/coj/core/kana.py; identified in repository README",
+      "source": "src/coj/core/kana.py",
+      "approved": false
+    },
+    "fw_defaults": {
+      "name": "Old Japanese reverse ambiguity defaults",
+      "status": "project-approved",
+      "origin": "Project author: TODO After commit 873129e (2), answer 5",
+      "approved": true,
+      "prefer_unmarked_vowels": true,
+      "defaults": {"キ": "ki", "エ": "e", "オ": "o"}
+    },
+    "hepburn": {
+      "name": "Hepburn kana transliteration",
+      "status": "provisional/reference",
+      "origin": "ALA-LC Japanese Romanization Table 2011, modified Hepburn; kana mappings and nasal/gemination conventions only",
+      "source": "https://www.loc.gov/catdir/cpso/romanization/japanese-2011.pdf",
+      "approved": false
+    }
+  },
+  "hepburn_rows": [
+    ["あいうえお", ["a", "i", "u", "e", "o"]],
+    ["かきくけこ", ["ka", "ki", "ku", "ke", "ko"]],
+    ["がぎぐげご", ["ga", "gi", "gu", "ge", "go"]],
+    ["さしすせそ", ["sa", "shi", "su", "se", "so"]],
+    ["ざじずぜぞ", ["za", "ji", "zu", "ze", "zo"]],
+    ["たちつてと", ["ta", "chi", "tsu", "te", "to"]],
+    ["だぢづでど", ["da", "ji", "zu", "de", "do"]],
+    ["なにぬねの", ["na", "ni", "nu", "ne", "no"]],
+    ["はひふへほ", ["ha", "hi", "fu", "he", "ho"]],
+    ["ばびぶべぼ", ["ba", "bi", "bu", "be", "bo"]],
+    ["ぱぴぷぺぽ", ["pa", "pi", "pu", "pe", "po"]],
+    ["まみむめも", ["ma", "mi", "mu", "me", "mo"]],
+    ["やゆよ", ["ya", "yu", "yo"]],
+    ["らりるれろ", ["ra", "ri", "ru", "re", "ro"]],
+    ["わをん", ["wa", "o", "n"]]
+  ],
+  "hepburn_pairs": {
+    "きゃ": "kya", "きゅ": "kyu", "きょ": "kyo",
+    "ぎゃ": "gya", "ぎゅ": "gyu", "ぎょ": "gyo",
+    "しゃ": "sha", "しゅ": "shu", "しょ": "sho",
+    "じゃ": "ja", "じゅ": "ju", "じょ": "jo",
+    "ちゃ": "cha", "ちゅ": "chu", "ちょ": "cho",
+    "にゃ": "nya", "にゅ": "nyu", "にょ": "nyo",
+    "ひゃ": "hya", "ひゅ": "hyu", "ひょ": "hyo",
+    "びゃ": "bya", "びゅ": "byu", "びょ": "byo",
+    "ぴゃ": "pya", "ぴゅ": "pyu", "ぴょ": "pyo",
+    "みゃ": "mya", "みゅ": "myu", "みょ": "myo",
+    "りゃ": "rya", "りゅ": "ryu", "りょ": "ryo"
+  },
+  "project_hepburn_overrides": {}
+}

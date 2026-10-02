@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>COJ Tree Editor</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/workbench.css">
 </head>
 <body>
   <header class="app-header">
@@ -38,6 +39,10 @@
           <path d="M5.6 7.2h.8M5.6 11.2h.8M5.6 15.2h.8"/>
         </svg>
         <span class="sr-only">Dictionary</span>
+      </button>
+      <button type="button" id="activity-workbench" class="activity-button" data-sidebar-view="workbench" data-open-editor="workbench" aria-label="Workbench" title="Workbench" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM12 5v14M6 9h3M15 9h3M6 13h3M15 13h3"/></svg>
+        <span class="sr-only">Workbench</span>
       </button>
     </nav>
 
@@ -167,10 +172,23 @@
           <p>Select a dictionary result to enable editing.</p>
         </div>
       </section>
+      <section id="sidebar-workbench" class="sidebar-view hidden" aria-label="Workbench">
+        <div class="pane-heading"><h1>Workbench</h1><p>Compare, convert, and inspect linguistic content.</p></div>
+        <div class="wb-mode-list" role="group" aria-label="Workbench mode">
+          <button type="button" data-wb-mode="compare" aria-pressed="true">Text Compare</button>
+          <button type="button" data-wb-mode="convert" aria-pressed="false">Convert</button>
+          <button type="button" data-wb-mode="tree" aria-pressed="false">Syntax Trees</button>
+        </div>
+        <p class="search-message">Work stays in this browser session. Closing a pane hides it; restore it to continue.</p>
+      </section>
     </aside>
 
     <section class="detail-pane">
       <nav id="editor-tabs" class="editor-tabs hidden" aria-label="Open editors">
+        <div id="editor-tab-workbench" class="editor-tab hidden" data-editor-tab="workbench">
+          <button type="button" class="editor-tab-label" data-editor-page="workbench"><span class="editor-tab-icon" aria-hidden="true">◫</span>Workbench</button>
+          <button type="button" class="editor-tab-close" data-close-editor="workbench" aria-label="Close Workbench">×</button>
+        </div>
         <div id="editor-tab-tree" class="editor-tab hidden" data-editor-tab="tree">
           <button type="button" class="editor-tab-label" data-editor-page="tree">
             <span class="editor-tab-icon" aria-hidden="true">⌘</span>
@@ -445,5 +463,7 @@
 
   <script id="tree-tag-names" type="application/json">{{ tag_names|tojson }}</script>
   <script src="/static/app.js"></script>
+  <script src="/static/workbench-core.js"></script>
+  <script src="/static/workbench.js"></script>
 </body>
 </html>

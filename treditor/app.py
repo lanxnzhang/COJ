@@ -6,6 +6,7 @@ import sys
 import threading
 import xml.etree.ElementTree as ET
 from difflib import SequenceMatcher
+from functools import wraps
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, render_template, request
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_XML = ROOT / "data" / "xml"
 DICT_PATH = DATA_XML / "dict" / "dictionary.xml"
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))
 
 from coj.core.corpus import CorpusDocument, _utterance_to_elem
 from coj.core.dictionary import DictEntry, Dictionary
@@ -46,6 +48,15 @@ _passage_search_records: list[dict] = []
 _passage_location_signature: tuple | None = None
 _passage_indexed_documents: set[tuple[str, str]] = set()
 _dictionary_write_lock = threading.Lock()
+_passage_index_lock = threading.RLock()
+
+
+def serialized_passage_lookup(function):
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        with _passage_index_lock:
+            return function(*args, **kwargs)
+    return wrapped
 
 CORPUS_SEARCH_FIELDS = (
     "transcription",
@@ -147,6 +158,7 @@ def _passage_metadata_values(block: ET.Element) -> list[str]:
     return list(dict.fromkeys(values))
 
 
+@serialized_passage_lookup
 def _index_passage_document(source: str, path: Path) -> None:
     location_index, alias_index = _ensure_passage_location_indexes()
     key = (source, path.stem)
@@ -1392,6 +1404,7 @@ def list_documents():
 
 
 @app.get("/api/poems")
+@serialized_passage_lookup
 def find_poem():
     sentence_id = request.args.get("q", "").strip()
     if not sentence_id:
@@ -1441,6 +1454,7 @@ def _public_passage_record(record: dict) -> dict:
 
 
 @app.get("/api/passages")
+@serialized_passage_lookup
 def search_passages():
     query = request.args.get("q", "").strip()
     if not query:
@@ -1903,6 +1917,51 @@ def update_dictionary_entry(entry_id: str):
         dictionary.add(entry, allow_update=True)
         _save_dictionary(dictionary)
     return jsonify(_dictionary_result_payload(entry))
+
+
+from treditor.workbench import create_blueprint
+
+
+@serialized_passage_lookup
+def _workbench_resolve(identifier):
+    if not identifier:
+        abort(400, description="Enter a text ID, for example MYS.1.1.")
+    _refresh_passage_location_cache()
+    return find_poem_location(identifier)
+
+
+def _workbench_roots(block):
+    dictionary = get_dictionary()
+    def node(element):
+        result = {"tag": element.get("raw_tag") or element.tag}
+        for field in ("form", "lemma", "phon"):
+            if element.get(field):
+                result[field] = element.get(field)
+        entry = dictionary.get(result["lemma"]) if result.get("lemma") else None
+        gloss = entry.get_first(".GLOSS") if entry is not None else None
+        if gloss and gloss.strip():
+            result["gloss"] = gloss.strip()
+        parts = element.find("form-parts")
+        if parts is not None:
+            result["parts"] = [dict(part.attrib) for part in parts.findall("part")]
+        result["annotations"] = {
+            key: value for key, value in element.attrib.items()
+            if key not in {"raw_tag", "form", "lemma", "phon"}
+        }
+        children = [child for child in element if child.tag not in {
+            "comment", "roundtrip-data", "raw-text", "form-parts"
+        }]
+        if children:
+            result["children"] = [node(child) for child in children]
+        return result
+    return [
+        node(child)
+        for child in block
+        if child.tag not in {"comment", "roundtrip-data", "raw-text"}
+    ]
+
+
+app.register_blueprint(create_blueprint(_workbench_resolve, _workbench_roots, ROOT / "data"))
 
 
 if __name__ == "__main__":

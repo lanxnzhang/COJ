@@ -97,7 +97,7 @@ document.querySelectorAll("[data-sidebar-view]").forEach(button => {
     showSidebarView(button.dataset.sidebarView);
     if (button.dataset.openEditor) {
       showEditorPage(button.dataset.openEditor);
-      $("dict-input").focus();
+      if (button.dataset.openEditor === "dictionary") $("dict-input").focus();
     }
   });
 });
