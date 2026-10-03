@@ -1,24 +1,30 @@
 .wb-page { display: flex; flex-direction: column; min-height: 0; }
-.wb-header { padding: 18px 22px 10px; border-bottom: 1px solid var(--line); }
-.wb-header h2 { margin: 0 0 8px; font-size: 22px; }
+.wb-header { padding: 10px 16px 4px; border-bottom: 1px solid var(--line); }
+.wb-header h2 { margin: 0; font-size: 18px; }
+#sidebar-workbench { overflow: auto; }
+#sidebar-workbench .search-message { margin: 20px 18px 12px; line-height: 1.6; flex-shrink: 0; }
+.wb-mode-list { flex-shrink: 0; }
 .wb-mode-list { display: grid; gap: 8px; padding: 0 16px; }
 .wb-mode-list button { padding: 12px; text-align: left; border: 1px solid var(--line); border-radius: 6px; background: white; cursor: pointer; }
 .wb-mode-list button[aria-pressed="true"] { background: #eaf0fa; border-color: var(--blue); color: var(--blue-deep); }
 .wb-toolbar, .wb-pane-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.wb-toolbar { padding: 10px 0; }
+.wb-toolbar { padding: 6px 0; }
+.wb-page .wb-swap { padding: 2px 7px; font-size: 20px; line-height: 1; }
 .wb-toolbar label, .wb-pane-tools label { display: flex; align-items: center; gap: 5px; font-size: 12px; }
 .wb-page button, .wb-page select { padding: 5px 9px; border: 1px solid #cbd4e4; border-radius: 5px; background: white; color: var(--blue-deep); cursor: pointer; }
 .wb-page button:disabled { opacity: .5; cursor: default; }
-.wb-status { margin: 8px 0; min-height: 18px; font-size: 12px; color: var(--muted); }
+.wb-status { margin: 4px 0; font-size: 12px; color: var(--muted); }
+.wb-status:empty { display: none; }
 .wb-status.error { color: var(--danger); }
 .wb-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 0; flex: 1; overflow: hidden; }
 .wb-panes.single { grid-template-columns: minmax(0, 1fr); }
-.wb-pane { min-width: 0; min-height: 0; overflow: auto; padding: 14px; border-right: 1px solid var(--line); }
+.wb-pane { min-width: 0; min-height: 0; overflow: auto; padding: 10px; border-right: 1px solid var(--line); }
 .wb-pane h3 { margin: 0; font-size: 14px; }
-.wb-pane-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.wb-pane-tools { margin-bottom: 10px; }
+.wb-pane-heading { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.wb-pane-heading h3 { margin-right: auto; }
+.wb-pane-tools { margin-bottom: 6px; gap: 4px 8px; }
+.wb-pane-heading .wb-pane-tools { margin-bottom: 0; }
 .wb-pane-tools input[type="text"] { width: 135px; padding: 5px; }
-.wb-file { max-width: 200px; font-size: 11px; }
 .wb-input { display: block; width: 100%; min-height: 240px; resize: vertical; padding: 12px; border: 1px solid #cbd4e4; border-radius: 6px; font: 13px/1.65 var(--font-mono); }
 .wb-origin { margin: 8px 0; font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
 .wb-output { margin: 12px 0 0; padding: 12px; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.8 var(--font-mono); background: #f8fafd; border: 1px solid var(--line); border-radius: 6px; }
@@ -31,7 +37,11 @@
 .wb-inspect { margin-top: 12px; padding: 10px; border: 1px solid var(--line); font-size: 12px; }
 .wb-inspect p { margin: 5px 0; }
 .wb-tree { margin-top: 12px; padding: 0; list-style: none; font-size: 12px; }
-.wb-tree ul { list-style: none; margin: 0 0 0 9px; padding-left: 12px; border-left: 1px solid #ccd5e4; }
+.wb-tree ul { list-style: none; margin: 0 0 0 7px; padding-left: 15px; }
+.wb-tree ul > li { position: relative; }
+.wb-tree ul > li::before { content: ""; position: absolute; left: -15px; top: 0; bottom: 0; border-left: 1px solid #9aaac4; pointer-events: none; }
+.wb-tree ul > li:last-child::before { bottom: auto; height: 13px; }
+.wb-tree ul > li::after { content: ""; position: absolute; left: -15px; top: 13px; width: 15px; border-top: 1px solid #9aaac4; pointer-events: none; }
 .wb-tree-row { display: flex; gap: 7px; flex-wrap: wrap; align-items: baseline; padding: 4px 5px; border-radius: 3px; line-height: 1.5; }
 .wb-field-tag { color: #475574; font-weight: 650; }
 .wb-field-form { color: var(--blue-dark); font-weight: 650; }

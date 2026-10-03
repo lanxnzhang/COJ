@@ -9,26 +9,25 @@ from coj.core.kana import _KANA_RAW
 
 RULES = json.loads((Path(__file__).parent / "conversion_rules.json").read_text(encoding="utf-8"))
 SYSTEMS = {
-    "fw": "Old Japanese · Frellesvig–Whitman",
-    "historical-katakana": "Old Japanese · historical katakana",
-    "hepburn": "Modern Japanese · Hepburn",
-    "hiragana": "Modern Japanese · hiragana",
-    "katakana": "Modern Japanese · katakana",
+    "kana": "Japanese kana",
+    "hepburn": "Modern Hepburn",
+    "fw": "Frellesvig–Whitman",
 }
 MODERN = {kana: roman for row, readings in RULES["hepburn_rows"] for kana, roman in zip(row, readings)}
 MODERN.update(RULES["hepburn_pairs"])
 MODERN.update(RULES["project_hepburn_overrides"])
-PAIRS = {
+DIRECT_PAIRS = {
     ("fw", "historical-katakana"), ("historical-katakana", "fw"),
     ("hepburn", "hiragana"), ("hepburn", "katakana"),
     ("hiragana", "hepburn"), ("katakana", "hepburn"),
     ("hiragana", "katakana"), ("katakana", "hiragana"),
 }
+PAIRS = {(source, target) for source in SYSTEMS for target in SYSTEMS if source != target}
 
 
 def conversion_catalog():
     return {"systems": SYSTEMS, "pairs": sorted(PAIRS), "rule_sets": RULES["rule_sets"],
-            "version": RULES["version"]}
+            "version": RULES["version"], "kana_styles": {"hiragana": "Hiragana", "katakana": "Katakana"}}
 
 
 def kana_script(text: str, katakana: bool) -> str:
@@ -53,20 +52,14 @@ def reverse_map(table):
 
 
 def detect_system(text: str, target: str) -> str:
-    if re.search(r"[ぁ-ゖ]", text) and not re.search(r"[ァ-ヺ]", text):
-        return "hiragana"
-    if re.search(r"[ァ-ヺ]", text) and not re.search(r"[ぁ-ゖ]", text):
-        if target == "fw":
-            raise ValueError("Katakana alone cannot establish a historical transcription system. Select historical katakana explicitly.")
-        return "katakana"
+    if re.search(r"[ぁ-ゖァ-ヺ]", text) and not re.search(r"[A-Za-z]", text):
+        return "kana"
     raise ValueError("The input system cannot be detected reliably. Select it explicitly.")
 
 
-def convert(text: str, source: str, target: str) -> dict:
-    detected = source == "auto"
-    if detected:
-        source = detect_system(text, target)
-    if (source, target) not in PAIRS:
+def _convert_direct(text: str, source: str, target: str) -> dict:
+    detected = False
+    if (source, target) not in DIRECT_PAIRS:
         raise ValueError("This conversion direction is not registered. Select a supported source/result pair.")
     if source in {"hiragana", "katakana"} and target in {"hiragana", "katakana"}:
         output = kana_script(unicodedata.normalize("NFC", text), target == "katakana")
@@ -177,3 +170,74 @@ def convert(text: str, source: str, target: str) -> dict:
         position += len(key)
     return {"source": source, "target": target, "detected": detected, "segments": segments,
             "rule_sets": RULES["rule_sets"], "version": RULES["version"]}
+
+
+def _compose(text: str, source: str, target: str) -> dict:
+    """Compose existing spelling mappings via kana, retaining stage uncertainty."""
+    intermediate = _convert_direct(text, source, "historical-katakana" if source == "fw" else "katakana")
+    kana = "".join(segment["text"] for segment in intermediate["segments"])
+    final = _convert_direct(kana, "historical-katakana" if target == "fw" else "katakana", target)
+    ranges = []
+    position = 0
+    for segment in intermediate["segments"]:
+        ranges.append((position, position + len(segment["text"]), segment))
+        position += len(segment["text"])
+    position = 0
+    cursor = 0
+    for segment in final["segments"]:
+        end = position + len(segment["input"])
+        while cursor < len(ranges) and ranges[cursor][1] <= position:
+            cursor += 1
+        origins = []
+        current = cursor
+        while current < len(ranges) and ranges[current][0] < end:
+            origins.append(ranges[current][2])
+            current += 1
+        position = end
+        segment["rules"] = list(dict.fromkeys([item["rule"] for item in origins] + [segment["rule"]]))
+        segment["input"] = "".join(item["input"] for item in origins)
+        uncertain = [item for item in origins if item["kind"] != "plain"]
+        if uncertain:
+            alternatives = []
+            # An unresolved first-stage syllable stays unresolved; never feed its
+            # placeholder back into the tokenizer as though it were source data.
+            for item in uncertain:
+                for alternative in item["alternatives"]:
+                    converted = _convert_direct(alternative, "historical-katakana" if target == "fw" else "katakana", target)
+                    if len(converted["segments"]) == 1 and converted["segments"][0]["alternatives"]:
+                        alternatives.extend(converted["segments"][0]["alternatives"])
+                    else:
+                        value = "".join(part["text"] for part in converted["segments"])
+                        if "□" not in value:
+                            alternatives.append(value)
+            segment["alternatives"] = list(dict.fromkeys(alternatives))
+            segment["kind"] = "unresolved"
+            segment["text"] = "□"
+            segment["reason"] = "The source spelling leaves the kana reading unresolved. " + uncertain[0]["reason"]
+    return final
+
+
+def convert(text: str, source: str, target: str, kana_style: str = "hiragana") -> dict:
+    if not isinstance(source, str) or not isinstance(target, str):
+        raise ValueError("Select source and target representations.")
+    if not isinstance(kana_style, str) or kana_style not in {"hiragana", "katakana"}:
+        raise ValueError("Kana output must use Hiragana or Katakana.")
+    detected = source == "auto"
+    if detected:
+        source = detect_system(text, target)
+    if source in {"fw", "hepburn"} and target in {"fw", "hepburn"} and source != target:
+        result = _compose(text, source, target)
+    elif source == "kana" and target in {"fw", "hepburn"}:
+        result = _convert_direct(text, "historical-katakana" if target == "fw" else "hiragana", target)
+    elif target == "kana" and source in {"fw", "hepburn"}:
+        result = _convert_direct(text, source, "historical-katakana" if source == "fw" else kana_style)
+        if source == "fw" and kana_style == "hiragana":
+            for segment in result["segments"]:
+                segment["text"] = kana_script(segment["text"], False)
+                segment["alternatives"] = [kana_script(item, False) for item in segment["alternatives"]]
+    else:
+        # Retain the first version's API spellings for compatibility, without
+        # presenting them as additional linguistic systems in the interface.
+        result = _convert_direct(text, source, target)
+    result.update(source=source, target=target, detected=detected, kana_style=kana_style)
+    return result

@@ -12,7 +12,7 @@ the page is reloaded or closed.
 
 ## Text Compare
 
-Enter, paste, or load text into Text A and Text B, then select **Compare**.
+Enter or paste text into Text A and Text B, then select **Compare**.
 The result below each input preserves its original spacing and line breaks.
 Removed characters are red, additions green, and replacements yellow.
 
@@ -33,19 +33,32 @@ or very different inputs, compare smaller sections.
 
 Select **From** and **To**, provide the source, and select **Convert**.
 The result is read-only, but **Copy result** copies the current output,
-including any unresolved placeholders. **Swap direction** is available when
-the reverse conversion is registered; it uses the current result as its source.
+including any unresolved placeholders. The compact **⇄** control between the
+selectors swaps the representations; if a result exists, it becomes the source.
 
 Registered directions in this first version are:
 
-- Frellesvig–Whitman notation ↔ historical katakana;
-- modern Hepburn ↔ hiragana or katakana;
-- hiragana ↔ katakana.
+- Japanese kana ↔ modern Hepburn;
+- Japanese kana ↔ Frellesvig–Whitman notation;
+- modern Hepburn ↔ Frellesvig–Whitman notation.
+
+Kana input accepts hiragana, katakana, or both. When the target is kana,
+**Kana script** chooses hiragana (the initial default) or katakana output.
+For example, `たらちし`, `tarachishi`, and `taratisi` can be converted in all
+six directions. These are spelling/transcription representations, not a
+conversion of Old Japanese linguistic content into Modern Japanese.
+
+Romanization-to-romanization routes compose the existing mappings through an
+in-memory kana representation. Uncertainty in either stage remains marked;
+the inspection shows the origins of the rules involved. This does not add
+unsupported FW mappings for modern contracted sounds, gemination, or long
+vowels. Forms outside the registered FW inventory remain unresolved rather
+than being assigned a new linguistic convention.
 
 Auto detection recognizes unambiguous kana-script input. Romanized input
 requires an explicit system because spelling alone cannot reliably distinguish
-Old Japanese notation from modern Hepburn. Katakana-to-FW conversion also
-requires explicit selection of historical katakana.
+FW notation from modern Hepburn. Explicit source/target choices remain the
+recommended way to convert romanized input.
 
 ### Rule authority and uncertainty
 
@@ -87,7 +100,7 @@ registered in the backend; no conversion rules are embedded in the UI.
 ## Syntax Trees
 
 Each pane accepts one TXT text or one XML `<block>` (also a `<document>`
-containing exactly one block). Paste input, load a file, or enter a corpus text
+containing exactly one block). Paste input or enter a corpus text
 ID such as `MYS.1.1`. **Parse / show tree** displays a compact downward-growing
 tree; **Compare** parses both panes and marks their differences.
 
@@ -123,7 +136,8 @@ does not use or alter the main graphical tree renderer.
 - `treditor/static/workbench.js` / `workbench.css`: session state and panes.
 
 Tree and conversion inputs are limited to 250,000 characters per request.
-File loading accepts files below 1 MB. Oversized or malformed inputs report an
+File loading and Copy Input are not provided in the current interface.
+Oversized or malformed inputs report an
 error without changing stored corpus data.
 
 Run focused checks from the repository root:
@@ -131,5 +145,6 @@ Run focused checks from the repository root:
 ```powershell
 python -m pytest treditor/tests -q
 node treditor/tests/test_workbench.js
+node treditor/tests/test_workbench_ui.js
 node --check treditor/static/workbench.js
 ```

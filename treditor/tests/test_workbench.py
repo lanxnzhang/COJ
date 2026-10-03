@@ -104,14 +104,46 @@ def test_modern_readings_and_uncertainty():
 
 
 def test_auto_detection_and_rule_authority(client):
-    assert convert("み", "auto", "hepburn")["source"] == "hiragana"
-    for text, target in [("mi", "hiragana"), ("キ", "fw")]:
+    assert convert("み", "auto", "hepburn")["source"] == "kana"
+    assert output(convert("キ", "auto", "fw")) == "ki"
+    for text, target in [("mi", "kana"), ("miキ", "fw")]:
         with pytest.raises(ValueError):
             convert(text, "auto", target)
     catalog = client.get("/api/workbench/conversions").get_json()
     assert catalog["rule_sets"]["hepburn"]["approved"] is False
     assert catalog["rule_sets"]["fw_defaults"]["approved"] is True
+    assert set(catalog["systems"]) == {"kana", "hepburn", "fw"}
+    assert len(catalog["pairs"]) == 6
     assert client.post("/api/workbench/convert", json={"content": "mi", "source": "fw", "target": "hiragana"}).status_code == 400
+
+
+@pytest.mark.parametrize("text,source,target,expected", [
+    ("たらちし", "kana", "hepburn", "tarachishi"),
+    ("タラちシ", "kana", "hepburn", "tarachishi"),
+    ("tarachishi", "hepburn", "kana", "たらちし"),
+    ("たらちし", "kana", "fw", "taratisi"),
+    ("タラチシ", "kana", "fw", "taratisi"),
+    ("taratisi", "fw", "kana", "たらちし"),
+    ("tarachishi", "hepburn", "fw", "taratisi"),
+    ("taratisi", "fw", "hepburn", "tarachishi"),
+])
+def test_six_representation_directions(client, text, source, target, expected):
+    response = client.post("/api/workbench/convert", json={"content": text, "source": source, "target": target})
+    assert response.status_code == 200
+    assert output(response.get_json()) == expected
+
+
+def test_kana_output_style_and_composed_ambiguity():
+    assert output(convert("taratisi", "fw", "kana", "katakana")) == "タラチシ"
+    reverse = convert("ki", "hepburn", "fw")
+    assert output(reverse) == "ki"
+    assert reverse["segments"][0]["alternatives"] == ["kwi", "ki"]
+    assert set(reverse["segments"][0]["rules"]) == {"hepburn", "fw_defaults"}
+    uncertain = convert("ji", "hepburn", "fw")
+    assert output(uncertain) == "□"
+    assert uncertain["segments"][0]["alternatives"] == ["zi", "di"]
+    assert output(convert("☃", "fw", "hepburn")) == "□"
+    assert output(convert("tara\tchi\nshi　", "hepburn", "fw")) == "tara\tti\nsi　"
 
 
 def test_concurrent_passage_lookup_does_not_duplicate_records():

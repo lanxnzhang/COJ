@@ -819,6 +819,116 @@ Otherwise, please proceed according to the revised implementation plan.
 
 Please keep the existing graphical tree renderer unchanged, as planned. If implementation reveals a new issue that requires a substantive decision about corpus data, conversion semantics, or the Workbench architecture, ask me before making that decision.
 
+### After commit 2cc6e1c
+I have tested the first Workbench implementation. The overall structure is fine, but several details need revision.
+Please keep the current overall Workbench architecture and address the following issues.
+
+1. Workbench sidebar
+The text at the bottom of the sidebar:
+> Work stays in this browser session. Closing a pane hides it; restore it to continue.
+currently overlaps the **Syntax Trees** button.
+Please move this note further down / adjust the sidebar layout so that it does not overlap any mode buttons.
+
+2. The workbench does not need the function **Load File** for now. Please remove it at this stage.
+Also simplify the interface and give the panes more space.
+I also do not currently need the **Copy Input** button. Please remove it.
+Keep the UI **Clear**. Please make the remaining controls more compact and move the two main panes upward where possible. The priority should be giving users as much visual space as practical for reading the input and comparison results. In general, avoid spending vertical space on controls that are not necessary for the basic comparison workflow.
+
+3. Convert: correct the conversion model
+
+The current Convert implementation does not reflect my main intended use case, and at the moment I also cannot seem to get useful conversions from it.
+The primary purpose of Convert is **conversion between kana and romanization**, plus conversion between the two supported romanization systems.
+For V1, I need these three representations:
+- **Japanese kana**
+- **Modern Hepburn romanization**
+- **Old Japanese Frellesvig–Whitman romanization**
+
+The required conversion relationships are:
+```text
+Kana ↔ Modern Hepburn
+Kana ↔ Frellesvig–Whitman
+Modern Hepburn ↔ Frellesvig–Whitman
+```
+Note that kana can be hirakana or katakana.
+
+Conceptually, for example:
+```text
+たらちし
+   ↕
+tarachishi     (Modern Hepburn)
+   ↕
+taratisi       (Frellesvig–Whitman)
+```
+
+Here `taratisi` is an example illustrating the intended relationship, temporarily ignoring Old Japanese kō/otsu distinctions where the kana itself does not encode them. Please do not treat this single example as the complete definition of the Frellesvig–Whitman system.
+
+The important conceptual point is that these are **different written/transcription representations of the same linguistic content**. Convert is not primarily intended to convert “Old Japanese” into “Modern Japanese.”
+
+Please first make these six directions function correctly:
+- Kana → Hepburn
+- Hepburn → Kana
+- Kana → Frellesvig–Whitman
+- Frellesvig–Whitman → Kana
+- Hepburn → Frellesvig–Whitman
+- Frellesvig–Whitman → Hepburn
+
+For ambiguous reverse mappings in Frellesvig–Whitman, retain the ambiguity/default behavior we previously discussed.
+
+Eventually, the UI should support automatic detection or otherwise make it easy to distinguish the input representation, but **reliable conversion functionality is more important than automatic detection for this revision**. Please get the explicit source/target selections working correctly first.
+
+No additional transcription systems are needed at this stage.
+
+4. Convert: swap control
+
+Please replace the current **Swap direction** button with a compact **bidirectional-arrow control** between the source and target selectors, similar in interaction concept to the swap-language control in Google Translate.
+It should swap the selected source and target representations without taking unnecessary UI space.
+
+5. Syntax Trees: make parent-child relationships visually clear
+The current tree representation is difficult to read because the vertical lines do not make the tree structure sufficiently clear.
+I would like the compact tree to use connectors that visibly show the relationship between each parent and its children.
+For example, the general visual principle could resemble:
+
+```text
+S
+├── NP
+│   └── 句子
+└── VP
+    ├── VV
+    │   └── 竖
+    ├── AS
+    │   └── 着
+    └── VV
+        └── 画
+
+OR:
+
+PP
+├── NP
+│   ├── IP-EPT
+│   │   └── MK ( tamakiparu PHON-KUN [L091056] )
+│   ├── PP
+│   │   ├── NP
+│   │   │   └── PLN ( uti PHON-KUN [L090040] )
+│   │   └── P-CASE-GEN ( no PHON [L000520] )
+│   └── N
+│       ├── ADJ-STM ( opo LOG [L007009a] )
+│       └── N ( nwo LOG [L051650] )
+└── P-CASE-DAT ( ni PHON [L000519] )
+```
+
+This is again an **illustration of the desired structural readability, not a requirement to literally render ASCII characters**.
+The important requirement is that users should be able to follow the connecting lines from a parent node to its children immediately. A CSS/HTML implementation with proper branch connectors is preferable if it produces a cleaner result.
+The tree should remain vertically oriented and horizontally compact, because the main purpose is still side-by-side comparison.
+Please preserve the semantic separation of category labels, word forms, lemma IDs, and annotations from the existing implementation.
+
+Scope
+Please treat this as a refinement of the current Workbench rather than a redesign of the whole feature.
+In particular:
+- keep the existing Workbench architecture where it is working;
+- continue to leave the original graphical tree renderer unchanged;
+- do not add additional conversion systems yet;
+- prioritize usable pane space and a simple proofreading workflow.
+Please inspect the current implementation against these requirements, make the revisions, and run the relevant tests afterward. If the conversion requirements reveal a genuine linguistic ambiguity that requires a decision from me rather than an implementation detail, ask me instead of silently choosing a convention.
 
 ### TBD
 vertical tree:

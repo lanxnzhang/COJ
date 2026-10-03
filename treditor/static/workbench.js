@@ -11,7 +11,7 @@
     revision: 0, scroll: 0, textareaScroll: 0, corpusId: ""});
   const states = Object.fromEntries(Object.keys(modes).map(mode => [mode, {
     panes: [makePane(), makePane()], spaces: false, lineBreaks: false, glosses: false,
-    source: "fw", target: "historical-katakana", result: null,
+    source: "kana", target: "hepburn", kanaStyle: "hiragana", result: null,
   }]));
   let mode = "compare";
   let catalog = null;
@@ -177,8 +177,10 @@
       if (segment.kind === "plain") { result.appendChild(document.createTextNode(segment.text)); continue; }
       const part = button(segment.text, () => {
         inspect.replaceChildren(element("p", `${segment.input}: ${segment.reason}`));
-        const metadata = state.result.rule_sets[segment.rule];
-        inspect.appendChild(element("p", `${metadata.name} · ${metadata.status} · ${metadata.origin}`));
+        for (const ruleId of segment.rules || [segment.rule]) {
+          const metadata = state.result.rule_sets[ruleId];
+          inspect.appendChild(element("p", `${metadata.name} · ${metadata.status} · ${metadata.origin}`));
+        }
         for (const alternative of segment.alternatives) {
           inspect.appendChild(button(`Use ${alternative}`, () => {
             segment.text = alternative;
@@ -216,31 +218,10 @@
       container.scrollTop = pane.scroll;
       return;
     }
-    const fileLabel = element("label", "Load file ");
-    const file = element("input", undefined, "wb-file");
-    file.type = "file";
-    file.accept = ".txt,.xml,text/plain,application/xml";
-    file.setAttribute("aria-label", `Load file into ${modes[mode].paneLabels[index]}`);
-    file.addEventListener("change", async () => {
-      try {
-        const selected = file.files[0];
-        if (!selected) return;
-        if (selected.size > 1000000) throw new Error("Please load a file smaller than 1 MB.");
-        const revision = pane.revision;
-        const originalMode = mode;
-        const content = await selected.text();
-        if (pane.revision !== revision || mode !== originalMode) return;
-        touch(pane, content, `Loaded file: ${selected.name}`);
-        pane.discrepancy = "";
-        pane.view = "source";
-        if (mode === "tree") pane.format = selected.name.endsWith(".xml") ? "xml" : "txt";
-        render();
-      } catch (error) { status(error.message, true); }
-    });
-    fileLabel.appendChild(file);
-    tools.append(fileLabel, button("Clear", () => {
+    tools.append(button("Clear", () => {
       touch(pane, ""); pane.discrepancy = ""; pane.view = "source"; render();
-    }), button("Copy input", () => copy(pane.text)));
+    }));
+    if (mode !== "tree") heading.appendChild(tools);
     if (mode === "tree") {
       tools.appendChild(select("Input format", [["auto", "Auto"], ["txt", "TXT"], ["xml", "XML"]], pane.format,
         value => {
@@ -281,7 +262,10 @@
         rememberScroll(); pane.view = value; render();
       }));
     }
-    container.append(tools, element("p", `${pane.origin}${pane.discrepancy ? " · " + pane.discrepancy : ""}`, "wb-origin"));
+    if (mode === "tree") container.appendChild(tools);
+    const origin = element("p", `${pane.origin}${pane.discrepancy ? " · " + pane.discrepancy : ""}`, "wb-origin");
+    if (pane.origin === "User input" && !pane.discrepancy) origin.classList.add("hidden");
+    container.appendChild(origin);
     if (pane.view === "tree" && mode === "tree" && pane.parsed) {
       container.appendChild(renderTree(pane.parsed.roots, pane.differences, state.glosses));
     } else {
@@ -333,7 +317,7 @@
     } else {
       const result = await apiFetch("/api/workbench/convert", {
         method: "POST", headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({content: state.panes[0].text, source: state.source, target: state.target}),
+        body: JSON.stringify({content: state.panes[0].text, source: state.source, target: state.target, kana_style: state.kanaStyle}),
       });
       if (mode !== originalMode || actionRevision !== revision) return;
       state.result = result;
@@ -353,11 +337,7 @@
     } else if (mode === "tree") {
       toolbar.appendChild(checkbox("Show glosses", state.glosses, value => { rememberScroll(); state.glosses = value; render(); }));
     } else if (catalog) {
-      toolbar.append(select("From", [["auto", "Auto detect"], ...Object.entries(catalog.systems)], state.source, value => {
-        state.source = value; state.result = null; actionRevision++; render();
-      }), select("To", Object.entries(catalog.systems), state.target, value => {
-        state.target = value; state.result = null; actionRevision++; render();
-      }), button("Swap direction", () => {
+      const swap = button("⇄", () => {
         const actualSource = state.source === "auto" ? state.result?.source : state.source;
         if (!actualSource || !catalog.pairs.some(pair => pair[0] === state.target && pair[1] === actualSource)) {
           throw new Error("The reverse direction is unavailable. Choose explicit systems first.");
@@ -365,9 +345,22 @@
         const text = outputText(state);
         [state.source, state.target] = [state.target, actualSource];
         if (state.result) touch(state.panes[0], text, "Generated conversion result");
-      state.result = null;
-      actionRevision++;
+        state.result = null;
+        actionRevision++;
         render();
+      });
+      swap.className = "wb-swap";
+      swap.setAttribute("aria-label", "Swap representations");
+      swap.title = "Swap source and target representations";
+      toolbar.append(select("From", [["auto", "Auto detect"], ...Object.entries(catalog.systems)], state.source, value => {
+        state.source = value;
+        if (state.source === state.target) state.target = Object.keys(catalog.systems).find(key => key !== value);
+        state.result = null; actionRevision++; render();
+      }), swap, select("To", Object.entries(catalog.systems).filter(([key]) => key !== state.source), state.target, value => {
+        state.target = value; state.result = null; actionRevision++; render();
+      }));
+      if (state.target === "kana") toolbar.appendChild(select("Kana script", Object.entries(catalog.kana_styles), state.kanaStyle, value => {
+        state.kanaStyle = value; state.result = null; actionRevision++; render();
       }));
     }
     toolbar.appendChild(button(mode === "convert" ? "Convert" : "Compare", run));

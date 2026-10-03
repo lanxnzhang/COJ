@@ -136,7 +136,7 @@ def create_blueprint(resolve, tree_payload, data_root: Path) -> Blueprint:
         if len(content) > MAX_INPUT:
             abort(400, description="Conversion input is limited to 250,000 characters.")
         try:
-            return jsonify(convert(content, body.get("source", "auto"), body.get("target", "")))
+            return jsonify(convert(content, body.get("source", "auto"), body.get("target", ""), body.get("kana_style", "hiragana")))
         except ValueError as error:
             abort(400, description=str(error))
 
