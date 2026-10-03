@@ -64,22 +64,67 @@ const WorkbenchCore = (() => {
     const operations = edits(leftIndexes.map(index => left[index].value), rightIndexes.map(index => right[index].value));
     let group = [];
     let changes = 0;
+    const groups = [];
+    let leftCursor = 0;
+    let rightCursor = 0;
     function flush() {
       if (!group.length) return;
       changes++;
+      const leftPositions = group.filter(item => item.kind === "delete").map(item => leftIndexes[item.left]);
+      const rightPositions = group.filter(item => item.kind === "add").map(item => rightIndexes[item.right]);
+      const range = (positions, indexes, cursor, length) => positions.length
+        ? [positions[0], positions.at(-1) + 1] : [indexes[cursor] ?? length, indexes[cursor] ?? length];
+      groups.push({id: groups.length,
+        left: range(leftPositions, leftIndexes, leftCursor, left.length),
+        right: range(rightPositions, rightIndexes, rightCursor, right.length)});
       const replacement = group.some(item => item.kind === "add") && group.some(item => item.kind === "delete");
       for (const item of group) {
-        if (item.kind === "add") right[rightIndexes[item.right]].kind = replacement ? "change" : "add";
-        else left[leftIndexes[item.left]].kind = replacement ? "change" : "delete";
+        const character = item.kind === "add" ? right[rightIndexes[item.right]] : left[leftIndexes[item.left]];
+        character.kind = replacement ? "change" : item.kind;
+        character.group = groups.length - 1;
       }
       group = [];
     }
     for (const operation of operations) {
       if (operation.kind === "equal") flush();
       else group.push(operation);
+      if (operation.left !== undefined) leftCursor = operation.left + 1;
+      if (operation.right !== undefined) rightCursor = operation.right + 1;
     }
     flush();
-    return {left, right, changes};
+    return {left, right, changes, groups};
+  }
+
+  function extractKanji(text) {
+    return (text.match(/[\p{Unified_Ideograph}\u3007](?:[\p{Unified_Ideograph}\u3007]|\p{Variation_Selector})*/gu) || []).join(" ");
+  }
+
+  function resolveText(comparison, choices) {
+    if (comparison.groups.some(group => !["left", "right"].includes(choices[group.id]))) return null;
+    let position = 0;
+    let text = "";
+    const slice = (items, start, end) => items.slice(start, end).map(item => item.text).join("");
+    for (const group of comparison.groups) {
+      text += slice(comparison.left, position, group.left[0]);
+      const side = choices[group.id];
+      if (side === "left") text += slice(comparison.left, ...group.left);
+      else {
+        const selected = comparison.right.slice(...group.right).filter(item => !item.ignored);
+        const spacing = new Map();
+        let index = 0;
+        for (const item of comparison.left.slice(...group.left)) {
+          if (item.ignored) {
+            const boundary = Math.min(index, selected.length);
+            spacing.set(boundary, (spacing.get(boundary) || "") + item.text);
+          } else index++;
+        }
+        for (let index = 0; index <= selected.length; index++) {
+          text += (spacing.get(index) || "") + (selected[index]?.text || "");
+        }
+      }
+      position = group.left[1];
+    }
+    return text + slice(comparison.left, position, comparison.left.length);
   }
 
   const fields = ["tag", "form", "lemma", "phon", "parts", "annotations"];
@@ -142,7 +187,7 @@ const WorkbenchCore = (() => {
     align(leftRoots, rightRoots);
     return {left, right, changes};
   }
-  return {compareText, compareTrees, fieldValue};
+  return {compareText, compareTrees, fieldValue, extractKanji, resolveText};
 })();
 
 if (typeof module !== "undefined") module.exports = WorkbenchCore;

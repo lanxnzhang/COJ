@@ -16,6 +16,35 @@ Enter or paste text into Text A and Text B, then select **Compare**.
 The result below each input preserves its original spacing and line breaks.
 Removed characters are red, additions green, and replacements yellow.
 
+Each pane's **Compare as** selector offers original text, **Kanji only**, or
+**Lexical fields (TXT)**. These are temporary comparison representations:
+the pasted input remains unchanged. Kanji extraction keeps contiguous Han
+ideograph sequences (including supplementary characters, ideographic zero,
+and attached variation selectors), separating locations with spaces. Kana and
+the repetition symbol `々` are not extracted as kanji characters.
+
+Lexical extraction reads the final field of TXT comma-path rows with a writing
+mode or lemma annotation; it excludes headers, IDs, marker lines, and bare
+structural paths. It works on pasted fragments without a text ID. Multipart
+component rows remain separate extracted fields; this is row extraction, not
+a reconstruction of complete words from the tree. XML lexical extraction is
+not provided by this initial option.
+
+After comparison, click a differing word on A or B to keep that reading. If
+several character differences occur within that word, the click selects them
+together. Highlight colors still identify the exact changed characters.
+A selected reading has an outlined background; selecting its counterpart
+switches the choice. An empty side offers **∅**, meaning keep the omission.
+Unspaced kanji text offers a choice for each changed character sequence, not
+one choice for the entire sentence.
+
+**Copy Result** is enabled once every difference has a choice. The resolved
+result uses the temporary comparison texts, never modifies either input, and
+retains A's ignored spacing and line breaks. If B is chosen for a changed span,
+A's ignored whitespace within that span is retained at character boundaries
+(or at the span's end if the chosen text is shorter). Whitespace that is being
+compared normally is treated as selectable content instead.
+
 Comparison uses visible Unicode characters (grapheme clusters), so a character
 with a combining accent or a joined emoji is not split into smaller pieces.
 Canonically equivalent Unicode spellings compare equally without altering
@@ -101,7 +130,7 @@ registered in the backend; no conversion rules are embedded in the UI.
 
 Each pane accepts one TXT text or one XML `<block>` (also a `<document>`
 containing exactly one block). Paste input or enter a corpus text
-ID such as `MYS.1.1`. **Parse / show tree** displays a compact downward-growing
+ID such as `MYS.1.1`. The prominent **Parse Tree** action displays a compact downward-growing
 tree; **Compare** parses both panes and marks their differences.
 
 **View** switches between source and tree. **Representation** offers the
@@ -127,6 +156,10 @@ addition, rather than a separately classified move.
 reuse existing tag descriptions; selecting a lemma opens the existing Dictionary
 popup. The Workbench tree has no editing, collapsing, or draft controls and
 does not use or alter the main graphical tree renderer.
+
+The proposed future text-like structured editor is analyzed separately in
+[the tree-editing design report](workbench-tree-editing-design.md). It is not
+implemented in this version.
 
 ## Implementation and checks
 

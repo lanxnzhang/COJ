@@ -7,7 +7,8 @@ from pathlib import Path
 
 from flask import Blueprint, abort, jsonify, request
 
-from coj.core.corpus import CorpusDocument, _canonical_sentence_id
+from coj.core.corpus import CorpusDocument, CorpusLine, _canonical_sentence_id, _classify_line
+from coj.core.tags import PHON_TAGS, strip_disambig
 from coj.xml.corpus_xml import utterance_to_xml
 from treditor.workbench_conversion import convert, conversion_catalog
 
@@ -126,6 +127,28 @@ def create_blueprint(resolve, tree_payload, data_root: Path) -> Blueprint:
     @blueprint.get("/api/workbench/conversions")
     def catalog():
         return jsonify(conversion_catalog())
+
+    @blueprint.post("/api/workbench/extract")
+    def extract():
+        body = request.get_json(silent=True) or {}
+        if not isinstance(body, dict) or not isinstance(body.get("content"), str):
+            abort(400, description="Supply text in a JSON content field.")
+        if body.get("mode") != "lexical":
+            abort(400, description="Select lexical-field extraction.")
+        content = body["content"]
+        if len(content) > MAX_INPUT:
+            abort(400, description="Extraction input is limited to 250,000 characters.")
+        forms = []
+        for raw in content.splitlines():
+            line = _classify_line(raw.strip())
+            if not isinstance(line, CorpusLine):
+                continue
+            fields = [field.strip() for field in line.fields]
+            if len(fields) >= 3 and (strip_disambig(fields[-2]) in PHON_TAGS
+                    or (len(fields) >= 4 and re.fullmatch(r"[A-Za-z]\d+[a-z]*", fields[-3]))):
+                if fields[-1]:
+                    forms.append(fields[-1])
+        return jsonify({"content": " ".join(forms), "mode": "lexical", "rows": len(forms)})
 
     @blueprint.post("/api/workbench/convert")
     def conversion():

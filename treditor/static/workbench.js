@@ -8,7 +8,7 @@
   };
   const makePane = () => ({text: "", hidden: false, format: "auto", origin: "User input",
     representations: [], selectedRepresentation: 0, parsed: null, view: "source", differences: null,
-    revision: 0, scroll: 0, textareaScroll: 0, corpusId: ""});
+    revision: 0, scroll: 0, textareaScroll: 0, corpusId: "", preprocessing: "raw"});
   const states = Object.fromEntries(Object.keys(modes).map(mode => [mode, {
     panes: [makePane(), makePane()], spaces: false, lineBreaks: false, glosses: false,
     source: "kana", target: "hepburn", kanaStyle: "hiragana", result: null,
@@ -81,6 +81,7 @@
     actionRevision++;
     states[mode].panes.forEach(item => { item.differences = null; });
     states[mode].result = null;
+    states[mode].comparison = null;
   }
   function outputText(state) {
     return state.result ? state.result.segments.map(segment => segment.text).join("") : "";
@@ -132,6 +133,51 @@
         target.appendChild(current);
       }
       current.appendChild(document.createTextNode(item.text));
+    }
+  }
+  function chooseDifference(state, ids, side) {
+    rememberScroll();
+    for (const id of ids) state.choices[id] = side;
+    render();
+  }
+  function renderChoices(target, state, side) {
+    const comparison = state.comparison;
+    const characters = comparison[side];
+    const empty = new Map();
+    for (const group of comparison.groups) {
+      if (group[side][0] === group[side][1]) {
+        const position = group[side][0];
+        if (!empty.has(position)) empty.set(position, []);
+        empty.get(position).push(group.id);
+      }
+    }
+    function choice(items, ids, omitted = false) {
+      const control = button("", () => chooseDifference(state, ids, side));
+      const selected = ids.every(id => state.choices[id] === side);
+      control.className = `wb-choice${selected ? " wb-choice-selected" : ""}`;
+      control.setAttribute("aria-pressed", String(selected));
+      control.setAttribute("aria-label", `Keep ${side === "left" ? "A" : "B"}: ${omitted ? "nothing" : items.map(item => item.text).join("")}`);
+      if (omitted) control.textContent = "∅";
+      else renderCharacters(control, items);
+      control.title = omitted ? "Keep this side's omission (no text)" : "Keep this reading";
+      target.appendChild(control);
+    }
+    let position = 0;
+    const tokenKind = item => /^\s+$/u.test(item.text) ? "space"
+      : /^[\p{Script=Latin}\p{Mark}\p{Number}'’\-]+$/u.test(item.text) ? "word"
+        : item.group === undefined ? "plain" : `difference-${item.group}`;
+    while (position <= characters.length) {
+      for (const id of empty.get(position) || []) choice([], [id], true);
+      if (position === characters.length) break;
+      const start = position;
+      const kind = tokenKind(characters[position]);
+      position++;
+      while (position < characters.length && !empty.has(position)
+        && tokenKind(characters[position]) === kind) position++;
+      const items = characters.slice(start, position);
+      const ids = [...new Set(items.filter(item => item.group !== undefined).map(item => item.group))];
+      if (ids.length) choice(items, ids);
+      else renderCharacters(target, items);
     }
   }
   function renderTree(roots, differences, glosses) {
@@ -229,11 +275,13 @@
           state.panes.forEach(item => { item.differences = null; });
           pane.view = "source"; render();
         }));
-      tools.appendChild(button("Parse / show tree", async () => {
+      const parseButton = button("Parse Tree", async () => {
         const originalMode = mode;
         await parsePane(pane);
         if (mode === originalMode) { render(); status("Parsed input. Original content is retained."); }
-      }));
+      });
+      parseButton.className = "wb-primary-action";
+      heading.appendChild(parseButton);
       const identifier = element("input");
       identifier.type = "text";
       identifier.placeholder = "MYS.1.1";
@@ -262,6 +310,10 @@
         rememberScroll(); pane.view = value; render();
       }));
     }
+    if (mode === "compare") tools.appendChild(select("Compare as", [["raw", "Original text"], ["kanji", "Kanji only"], ["lexical", "Lexical fields (TXT)"]], pane.preprocessing, value => {
+      rememberScroll(); pane.preprocessing = value; state.comparison = null;
+      state.panes.forEach(item => { item.differences = null; }); actionRevision++; render();
+    }));
     if (mode === "tree") container.appendChild(tools);
     const origin = element("p", `${pane.origin}${pane.discrepancy ? " · " + pane.discrepancy : ""}`, "wb-origin");
     if (pane.origin === "User input" && !pane.discrepancy) origin.classList.add("hidden");
@@ -278,6 +330,7 @@
         touch(pane, input.value);
         pane.discrepancy = "";
         page.querySelectorAll(".wb-output").forEach(node => node.remove());
+        page.querySelector(".wb-resolution")?.remove();
         page.querySelectorAll(".wb-tree .wb-change, .wb-tree .wb-add, .wb-tree .wb-delete")
           .forEach(node => node.classList.remove("wb-change", "wb-add", "wb-delete"));
         container.querySelector(".wb-origin").textContent = "User input";
@@ -289,7 +342,7 @@
       if (mode === "compare" && pane.differences) {
         const output = element("pre", undefined, "wb-output");
         output.setAttribute("aria-label", `${modes[mode].paneLabels[index]} differences`);
-        renderCharacters(output, pane.differences);
+        renderChoices(output, state, index === 0 ? "left" : "right");
         container.appendChild(output);
       }
     }
@@ -303,10 +356,21 @@
     const revision = ++actionRevision;
     status("Working…");
     if (mode === "compare") {
-      const result = WorkbenchCore.compareText(state.panes[0].text, state.panes[1].text, state);
+      const texts = await Promise.all(state.panes.map(async pane => {
+        if (pane.preprocessing === "kanji") return WorkbenchCore.extractKanji(pane.text);
+        if (pane.preprocessing === "lexical") return (await apiFetch("/api/workbench/extract", {
+          method: "POST", headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({content: pane.text, mode: "lexical"}),
+        })).content;
+        return pane.text;
+      }));
+      if (mode !== originalMode || actionRevision !== revision) return;
+      const result = WorkbenchCore.compareText(texts[0], texts[1], state);
+      state.comparison = result;
+      state.choices = {};
       state.panes[0].differences = result.left;
       state.panes[1].differences = result.right;
-      render(); status(`${result.changes} difference group${result.changes === 1 ? "" : "s"}.`);
+      render(); status(`${result.changes} difference group${result.changes === 1 ? "" : "s"}. Select a preferred reading on either side.`);
     } else if (mode === "tree") {
       await Promise.all(state.panes.map(pane => pane.parsed ? Promise.resolve(pane.parsed) : parsePane(pane)));
       if (mode !== originalMode || actionRevision !== revision) return;
@@ -332,8 +396,9 @@
     header.append(element("h2", `Workbench · ${modes[mode].label}`));
     const toolbar = element("div", undefined, "wb-toolbar");
     if (mode === "compare") {
-      toolbar.append(checkbox("Compare spaces", state.spaces, value => { state.spaces = value; state.panes.forEach(pane => { pane.differences = null; }); render(); }),
-        checkbox("Compare line breaks", state.lineBreaks, value => { state.lineBreaks = value; state.panes.forEach(pane => { pane.differences = null; }); render(); }));
+      const invalidate = () => { state.comparison = null; actionRevision++; state.panes.forEach(pane => { pane.differences = null; }); render(); };
+      toolbar.append(checkbox("Compare spaces", state.spaces, value => { state.spaces = value; invalidate(); }),
+        checkbox("Compare line breaks", state.lineBreaks, value => { state.lineBreaks = value; invalidate(); }));
     } else if (mode === "tree") {
       toolbar.appendChild(checkbox("Show glosses", state.glosses, value => { rememberScroll(); state.glosses = value; render(); }));
     } else if (catalog) {
@@ -391,6 +456,18 @@
     grid.classList.toggle("single", state.panes.filter(pane => !pane.hidden).length < 2);
     state.panes.forEach((pane, index) => renderPane(index, state, grid));
     page.appendChild(grid);
+    if (mode === "compare" && state.comparison) {
+      const resolved = WorkbenchCore.resolveText(state.comparison, state.choices);
+      const resolution = element("section", undefined, "wb-resolution");
+      const remaining = state.comparison.groups.filter(group => !state.choices[group.id]).length;
+      const copyButton = button("Copy Result", () => copy(WorkbenchCore.resolveText(state.comparison, state.choices)));
+      copyButton.disabled = resolved === null;
+      const heading = element("div", undefined, "wb-toolbar");
+      heading.append(element("strong", "Resolved result"), copyButton,
+        element("span", remaining ? `${remaining} choice${remaining === 1 ? "" : "s"} remaining` : "All differences resolved"));
+      resolution.append(heading, element("pre", resolved === null ? "Choose the highlighted reading for each difference. Ignored whitespace is retained from A." : resolved, "wb-resolved-text"));
+      page.appendChild(resolution);
+    }
   }
   document.querySelectorAll("[data-wb-mode]").forEach(control => {
     control.addEventListener("click", () => {

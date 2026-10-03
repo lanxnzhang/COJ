@@ -1,6 +1,6 @@
 "use strict";
 const assert = require("node:assert/strict");
-const {compareText, compareTrees} = require("../static/workbench-core.js");
+const {compareText, compareTrees, extractKanji, resolveText} = require("../static/workbench-core.js");
 const joined = items => items.map(item => item.text).join("");
 const changed = items => items.filter(item => item.kind !== "plain").map(item => item.text).join("");
 
@@ -39,4 +39,23 @@ const added = {tag: "N", form: "no", phon: "LOG"};
 diff = compareTrees([a], [b, added]);
 assert.deepEqual([...diff.left.get(a).fields], ["lemma"]);
 assert.equal(diff.right.get(added).kind, "add");
+assert.equal(extractKanji("IP-MAT,0@春去者,*\nIP-MAT,N,LOG,paru\n1@挿頭爾將爲跡,*"), "春去者 挿頭爾將爲跡");
+assert.equal(extractKanji("A𠮷B葛\u{E0100}C〇"), "𠮷 葛\u{E0100} 〇");
+assert.equal(extractKanji("kana かな"), "");
+let comparison = compareText("paru saraba kazasi", "paru saraba kasasi");
+assert.equal(resolveText(comparison, {}), null);
+assert.equal(resolveText(comparison, {0: "left"}), "paru saraba kazasi");
+assert.equal(resolveText(comparison, {0: "right"}), "paru saraba kasasi");
+assert.equal(resolveText(compareText("a", "aX"), {0: "right"}), "aX");
+assert.equal(resolveText(compareText("aX", "a"), {0: "right"}), "a");
+comparison = compareText("x \n y", "ab");
+assert.equal(resolveText(comparison, {0: "right"}), "a \n b");
+assert.equal(resolveText(compareText("a b", "ab"), {}), "a b");
+for (let n = 0; n < 100; n++) {
+  const a = "ax b👩‍🔬".slice(0, n % 10);
+  const b = "ay c👩‍🎓".slice(0, (n * 3) % 10);
+  const compared = compareText(a, b, {spaces: true, lineBreaks: true});
+  assert.equal(resolveText(compared, Object.fromEntries(compared.groups.map(group => [group.id, "left"]))), a);
+  assert.equal(resolveText(compared, Object.fromEntries(compared.groups.map(group => [group.id, "right"]))), b);
+}
 console.log("Workbench JavaScript comparisons passed.");

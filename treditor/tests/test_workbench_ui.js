@@ -59,6 +59,7 @@ async function main() {
     const button = new Element("button"); button.dataset.wbMode = mode; body.append(button); return button;
   });
   const requests = [];
+  const copied = [];
   const context = vm.createContext({
     document: {
       createElement: tag => new Element(tag),
@@ -66,7 +67,8 @@ async function main() {
       querySelector: selector => body.querySelector(selector),
       querySelectorAll: selector => body.querySelectorAll(selector),
     },
-    navigator: {clipboard: {writeText: async () => {}}},
+    navigator: {clipboard: {writeText: async text => { copied.push(text); }}},
+    WorkbenchCore: require("../static/workbench-core.js"),
     showSidebarView() {}, showEditorPage() {}, displayTag: tag => tag,
     openDictionaryPopupEntry() {},
     apiFetch: async (url, options) => {
@@ -76,6 +78,7 @@ async function main() {
         kana_styles: {hiragana: "Hiragana", katakana: "Katakana"}, rule_sets: {},
       };
       const request = JSON.parse(options.body); requests.push(request);
+      if (url.endsWith("extract")) return {content: "paru saraba kazasi"};
       return {source: request.source, target: request.target, rule_sets: {}, segments: [{text: "tarachishi", kind: "plain"}]};
     },
   });
@@ -108,10 +111,47 @@ async function main() {
   await controls[1].dispatch("click");
   assert.equal(field("Source input").value, "tarachishi");
   assert.equal(button("Load file"), undefined);
+  await controls[0].dispatch("click");
+  field("Text A input").value = "CP,N,LOG,paru\nCP,N,LOG,saraba\nCP,N,LOG,kazasi";
+  await field("Text A input").dispatch("input");
+  const preprocessing = page.querySelectorAll('[aria-label="Compare as"]')[0];
+  preprocessing.value = "lexical";
+  await preprocessing.dispatch("change");
+  field("Text B input").value = "paru saraba kasasi";
+  await field("Text B input").dispatch("input");
+  await button("Compare").dispatch("click");
+  assert.equal(button("Copy Result").disabled, true);
+  await button("kasasi").dispatch("click");
+  assert.equal(button("Copy Result").disabled, false);
+  assert.equal(button("kasasi").attributes["aria-pressed"], "true");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "paru saraba kasasi");
+  await button("kazasi").dispatch("click");
+  assert.equal(button("kazasi").attributes["aria-pressed"], "true");
+  assert.equal(button("kasasi").attributes["aria-pressed"], "false");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "paru saraba kazasi");
+  assert.equal(field("Text A input").value, "CP,N,LOG,paru\nCP,N,LOG,saraba\nCP,N,LOG,kazasi");
+  const originalMode = page.querySelectorAll('[aria-label="Compare as"]')[0];
+  originalMode.value = "raw";
+  await originalMode.dispatch("change");
+  field("Text A input").value = "春去者挿頭";
+  await field("Text A input").dispatch("input");
+  field("Text B input").value = "秋去者插頭";
+  await field("Text B input").dispatch("input");
+  await button("Compare").dispatch("click");
+  await button("秋").dispatch("click");
+  assert.equal(button("Copy Result").disabled, true);
+  await button("插").dispatch("click");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "秋去者插頭");
+  await controls[2].dispatch("click");
+  assert.ok(button("Parse Tree"));
+  assert.equal(button("Parse Tree").className, "wb-primary-action");
   const css = fs.readFileSync(path.join(__dirname, "../static/workbench.css"), "utf8");
   assert.match(css, /#sidebar-workbench \.search-message \{ margin: 20px/);
   assert.match(css, /\.wb-tree ul > li::after/);
   assert.match(css, /\.wb-tree ul > li:last-child::before/);
-  console.log("Workbench controls, swap, kana script, session state, and connector contracts passed.");
+  console.log("Workbench controls, preprocessing, reading choices, copying, parse action, and session state passed.");
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

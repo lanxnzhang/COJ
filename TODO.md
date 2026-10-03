@@ -930,19 +930,149 @@ In particular:
 - prioritize usable pane space and a simple proofreading workflow.
 Please inspect the current implementation against these requirements, make the revisions, and run the relevant tests afterward. If the conversion requirements reveal a genuine linguistic ambiguity that requires a decision from me rather than an implementation detail, ask me instead of silently choosing a convention.
 
-### TBD
-vertical tree:
-S
-├── NP
-│   └── 句子
-└── VP
-    ├── VV
-    │   └── 竖
-    ├── AS
-    │   └── 着
-    └── VV
-        └── 画
+### After commit 1bd6959
+I would like to add several features to Workbench. Items 1 and 2 can be implemented now. Item 3 includes a small current UI improvement followed by a larger feature that needs design analysis before implementation. Item 4 is a future enhancement and does not need to be implemented yet.
 
+1. Text Compare: temporary extraction / preprocessing
+Users sometimes paste annotated corpus data into Text Compare when they only want to compare the underlying text or transcription.
+
+For example:
+
+IP-MAT,0@春去者,*
+IP-MAT,PP,NP,IP-REL,IP-ADV,NP-SBJ,N,L051724,LOG,paru
+IP-MAT,PP,NP,IP-REL,IP-ADV,VB-CND,L030841a,LOG,saraba
+IP-MAT,PP,NP,IP-REL,1@挿頭爾將爲跡,*
+IP-MAT,PP,NP,IP-REL,IP-ARG,IP-ARG,NP-PRD,DVN,L030454b,LOG,kazasi
+IP-MAT,PP,NP,IP-REL,IP-ARG,IP-ARG,COP-INF,L031965,PHON,ni
+IP-MAT,PP,NP,IP-REL,IP-ARG,VB-ADC,VB-STM,L030919a,LOG,se
+IP-MAT,PP,NP,IP-REL,IP-ARG,VB-ADC,VAX-CJR-ADC,L000002,LOG,mu
+IP-MAT,PP,NP,IP-REL,IP-ARG,P-COMP,L000530,PHON,to
+
+I want each Text Compare pane to support temporary preprocessing before comparison.
+
+For V1, please add two extraction modes:
+a. Extract kanji characters
+Keep only kanji characters.
+Separate character sequences that occur in different locations in the source with spaces.
+For the example above, the result should be:
+春去者 挿頭爾將爲跡
+b. Extract the lexical field from the relevant rows
+For the example above:
+paru saraba kazasi ni se mu to
+The purpose is to make it easy to compare the kanji text or romanized text against another edition or transcription without the syntactic annotation.
+These transformations must be non-destructive. Do not modify the pasted input or corpus data. They should only produce a temporary representation used for comparison.
+Please keep the mechanism simple but extensible enough that additional preprocessing options could be added later.
+
+2. Text Compare: directly select preferred differences and copy the result
+
+After Text Compare identifies differences, I want the user to be able to construct a resolved result by choosing which version to keep.
+
+Make the differing text itself interactive.
+For example, if the panes contain:
+A:   paru saraba kazasi
+B:  paru saraba kasasi
+the user should be able to click directly on kazasi to choose the A version, or click directly on kasasi to choose the B version.
+The selected version should be visually obvious, and clicking the corresponding difference on the other side should switch the selection.
+
+The resulting workflow should be approximately:
+Input A + Input B → Compare → click preferred differences → resolved result → Copy Result
+The original inputs must remain unchanged.
+
+Please keep this interaction visually lightweight. The purpose is to let the user proofread differences and choose the preferred reading directly, rather than operate a separate merge-control interface.
+
+3. Syntax Trees
+
+Current UI improvement: make Parse Tree prominent
+The current Parse Tree action is too difficult to find because it is visually mixed together with the other controls.
+Parsing is one of the primary actions in Syntax Trees, so please make Parse Tree noticeably more prominent and easy to locate.
+You can adjust its placement, grouping, visual hierarchy, or button treatment as appropriate for the existing Workbench design. I do not have a fixed visual design in mind.
+The goal is simply that when a user enters or pastes tree data, it should be immediately obvious what they need to click to generate the tree.
+Please implement this UI improvement in the current version.
+Future feature: text-editor-like structured tree editing
+I would eventually like to edit the Workbench tree directly, but I do not think a conventional graphical tree editor with many Add Parent / Add Child / Move buttons is the interaction I primarily want.
+I would prefer something closer to editing structured text while preserving a visible tree structure.
+For example, the user might see something conceptually like:
+
+CP-FINAL
+├── IP-SUB
+│   ├── NP-SBJ
+│   │   └── N ( paru LOG [L051724] )
+│   └── VP
+│       └── VB ( saraba LOG [L030841a] )
+
+and be able to interact with it in a way closer to a text editor:
+click into a node and directly edit its label or lexical information;
+press Enter to create a new node/line;
+use indentation to change hierarchy;
+delete nodes directly;
+select and copy/cut/paste a node or subtree;
+move a subtree by cutting/pasting or another similarly simple operation;
+edit several lines/nodes without repeatedly opening operation dialogs.
+The user should not need to manually maintain characters such as ├──, │, and └──. Those connectors should preferably be generated automatically from the underlying hierarchy.
+A possible interaction model might therefore use:
+Enter for a new sibling;
+Tab to indent a node / make it a child where structurally valid;
+Shift+Tab to move it outward one level;
+normal editing for node contents;
+normal copy/cut/paste behavior for nodes or subtrees;
+automatically updated branch connectors.
+These exact keyboard behaviors are only a design suggestion, not yet a fixed specification.
+The important goal is that editing should feel direct and text-like, while the application continues to understand the content as a structured tree.
+A small context menu or explicit structural commands could also exist as a secondary method if useful, but I do not want menu-driven structural editing to be the primary workflow.
+Most importantly, edits made in this view must be reflected equivalently in the underlying TXT/XML representation. The visual tree and source representation must not become independent copies that can silently diverge.
+Do not implement this tree editor yet.
+First inspect the current parser, tree model, TXT/XML representations, and serializers and give me a design analysis covering:
+Whether this kind of text-editor-like structure tree editing is feasible with the current data model.
+What editable intermediate tree model you would use.
+How direct edits, indentation changes, copy/paste, and subtree movement would map back to the existing TXT/XML formats.
+Whether round-tripping can preserve all relevant annotations and source information.
+What should happen when the user performs an invalid structural edit.
+How the editable tree and raw source view should stay synchronized.
+Whether undo/redo should be built into the editing model from the beginning.
+What interaction model you recommend after considering the existing application architecture.
+Please identify any cases where this editing model could lose information or create ambiguity before we implement it.
+The existing graphical tree renderer should remain unchanged.
+
+4. Future pane improvements
+Later, I may want to improve the Workbench pane system with features such as:
+dragging the divider to resize pane proportions;
+controls similar to VS Code for increasing or decreasing the number of panes.
+These are not current priorities. Do not implement them now.
+
+For this iteration, please:
+implement Items 1 and 2;
+make the current Parse Tree action more prominent;
+otherwise leave the current tree comparison/viewer working as it is;
+analyze the proposed direct tree-editing model and report your design before implementing it;
+leave the pane improvements in Item 4 for later.
+If the requested implementation reveals a substantive ambiguity that affects the intended behavior rather than merely an implementation detail, ask me before making that decision.
+
+### TBD
+Please read the rules below carefully.
+If any rule is ambiguous, underspecified, internally inconsistent, or open to more than one reasonable interpretation, do not make assumptions. Ask me for clarification first. In particular, if you are unsure how a rule should apply to a specific structural configuration or edge case, ask me before formalizing it.
+Once all ambiguities have been resolved, organize the confirmed rules into the dataset in a clear and systematic document.
+1. Words and lexical items.
+A word is, in essence, an item annotated under the tags in Parts of speech: Words.
+Structurally, it can also be understood as a node that is directly connected to a phrase node.
+Items of this type are lexical items.
+2. Bound morphemes and grammatical items
+Items annotated under Parts of speech: Bound morphemes are grammatical items.
+3. Lexical vs. grammatical items in the syntactic tree
+The current annotation system distinguishes between lexical items and grammatical items in the syntactic tree.
+4. Assignment of lemma IDs
+The assignment of a lemma ID is not determined by whether a form is classified as a lexical item or a grammatical item.
+Instead, a lemma ID should, in principle, be assigned to each form or expression that a reader would reasonably expect to find as an entry in a dictionary.
+Therefore, an item with its own lemma ID may be, for example, a lexical item, a grammatical item, or another form/expression that warrants an independent dictionary entry.
+5. Formation of new lexical items
+As a general rule, a combination of lexical item + lexical item may create a new lexical item.
+By contrast, a combination of lexical item + grammatical item normally does not create a new lexical item.
+One possible reason for this distinction is that combinations between grammatical items and lexical items are relatively productive according to grammatical rules. They therefore do not normally need to be treated as independent lexical items.
+Possible exceptions include grammatical items belonging to the following categories: PFX,SFX,CL.
+Combinations involving these grammatical items and lexical items may sometimes need to be treated as new lexical items, because the possible combinations are not always fully free or predictable.
+
+Instruction for formalizing these rules
+Before adding these rules to the dataset, identify any points that still require an operational definition. 
+If the current rules do not specify how to classify a particular case, ask me for a decision. After I answer, incorporate the clarified rule into the dataset so that the resulting annotation guidelines are explicit and reusable.
 
 The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

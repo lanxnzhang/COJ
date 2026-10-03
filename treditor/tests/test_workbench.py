@@ -158,3 +158,32 @@ def test_concurrent_passage_lookup_does_not_duplicate_records():
     assert locations[0] == locations[1]
     matching = [record for record in editor._passage_search_records if record["sentence_id"] == "MYS.17.4000"]
     assert len(matching) == 1
+
+
+def test_lexical_extraction_is_row_based_and_non_destructive(client):
+    original = '\n'.join([
+        'IP-MAT,0@春去者,*',
+        'IP-MAT,PP,NP,IP-REL,IP-ADV,NP-SBJ,N,L051724,LOG,paru',
+        'IP-MAT,PP,NP,IP-REL,IP-ADV,VB-CND,L030841a,LOG,saraba',
+        'IP-MAT,PP,NP,IP-REL,1@挿頭爾將爲跡,*',
+        'IP-MAT,PP,NP,IP-REL,IP-ARG,IP-ARG,NP-PRD,DVN,L030454b,LOG,kazasi',
+        'IP-MAT,PP,NP,IP-REL,IP-ARG,IP-ARG,COP-INF,L031965,PHON,ni',
+        'IP-MAT,PP,NP,IP-REL,IP-ARG,VB-ADC,VB-STM,L030919a,LOG,se',
+        'IP-MAT,PP,NP,IP-REL,IP-ARG,VB-ADC,VAX-CJR-ADC,L000002,LOG,mu',
+        'IP-MAT,PP,NP,IP-REL,IP-ARG,P-COMP,L000530,PHON,to',
+        'ID,BS.1', 'NP,N', '=N("ignored header")',
+    ])
+    response = client.post('/api/workbench/extract', json={'content': original, 'mode': 'lexical'})
+    assert response.status_code == 200
+    assert response.get_json()['content'] == 'paru saraba kazasi ni se mu to'
+    assert response.get_json()['rows'] == 7
+    assert '0@春去者' in original
+
+
+def test_lexical_extraction_preserves_special_final_fields(client):
+    response = client.post('/api/workbench/extract', json={
+        'content': 'CP,N,L000001,ILL,漢字\nCP,N,PHON;@2,ipa\nCP,N,LOG,ku', 'mode': 'lexical',
+    })
+    assert response.get_json()['content'] == '漢字 ipa ku'
+    assert client.post('/api/workbench/extract', json={'content': 'x', 'mode': 'unknown'}).status_code == 400
+    assert client.post('/api/workbench/extract', json=[]).status_code == 400
