@@ -1,6 +1,6 @@
 # Questions about unlisted corpus annotations
 
-Several annotations in the current corpus are absent from, or insufficiently explained by, the current ONCOJ abbreviation reference. Please help confirm their meanings and whether they should be added to that reference. The examples below retain the existing annotations; no corrections have been made.
+Several annotations in the current corpus are absent from, or insufficiently explained by, the current ONCOJ abbreviation reference. The examples below retain the existing annotations; no corrections have been made.
 
 For each genuine category, please provide its expansion, annotation function, relationship to similar labels, and appropriate reference section. Where applicable, please specify **Parts of speech: Words**, **Parts of speech: Bound morphemes**, or another category. Existing explanations in software are provisional, not assumed to be authoritative.
 

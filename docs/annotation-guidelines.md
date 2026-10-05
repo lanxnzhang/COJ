@@ -8,7 +8,7 @@ Working reference for annotation-related development. Confirmed rules below deri
 
 Use the project author's explicit decisions and the designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx` for linguistic categories. [tag_names.json](../treditor/tag_names.json) supplies corresponding display expansions; it is not a complete classification registry.
 
-Application code, variable names, historical processors, tests, and inferred corpus patterns are not independent sources of linguistic authority. In particular, `LEXICAL_TAGS` does not define the lexical/grammatical distinction in this guideline.
+Application code, variable names, historical processors, tests, and inferred corpus patterns are not independent sources of linguistic authority.
 
 ### TERM-01 — Separate the concepts
 
@@ -78,7 +78,7 @@ The program need not distinguish these exceptional cases automatically at this s
 | Representation | Rule | BS.1 example |
 | --- | --- | --- |
 | Tree-terminal segmentation | Expose the existing terminal units; perform no new morphological analysis. | `mi ato tukuru` |
-| Word-level segmentation | Merge upward from smaller units; stop at phrase boundaries. | `miato tukuru` |
+| Word-level segmentation | Merge upward from smaller units; stop at any phrase-level or higher constituent boundary. | `miato tukuru` |
 | Hyphenated word-level segmentation | Keep exactly the same word-level boundaries; expose annotated internal morpheme boundaries with hyphens. | `mi-ato tukuru` |
 
 Use **tree-terminal segmentation**, not “morpheme-level segmentation,” for the existing tree's finest represented units.
@@ -89,30 +89,37 @@ Use the existing ordered syntax structure and its represented forms. Preserve th
 
 Do not substitute the manually segmented header for the tree or infer missing morphological decomposition from a dictionary entry. A lemma ID is not an instruction to merge or split forms.
 
-### SEG-03 — Merge upward and stop at phrase boundaries
+### SEG-03 — Merge upward and stop at phrase-level or higher boundaries
 
 The operational rule is:
 
-> Start from smaller represented units and merge upward. Once a phrase boundary is encountered, stop merging across that boundary.
+> Start from smaller represented units and merge upward. Stop merging at any phrase-level or higher constituent boundary.
+
+This includes clauses and higher syntactic groupings; clause boundaries do not require a separate special-case rule.
 
 For implementation purposes:
 
 1. Begin with the tree's ordered terminal material.
-2. Recombine smaller components within the relevant internal structure until a phrase boundary is reached.
-3. Keep the groups separated at that boundary. Do not concatenate the yields of separate phrase children into a single group.
-4. Preserve the stopping boundary when processing higher ancestors. A higher non-phrase or Words-tagged parent does not permit merging across a phrase boundary already encountered inside it.
+2. Recombine smaller components within the relevant internal structure until a phrase-level or higher constituent boundary is reached.
+3. Keep the groups separated at that boundary. Do not concatenate the yields of separate children of a phrase-level or higher constituent into a single group.
+4. Preserve the stopping boundary when processing higher ancestors. A Words-tagged ancestor does not permit merging across a phrase-level or higher constituent boundary already encountered inside it.
 
-A phrase with a single word-bearing child still provides a stopping boundary: that child's material must not subsequently be merged with neighboring material outside the phrase merely because a higher ancestor is word-tagged. This is illustrated by KK.30 in SEG-06.
+A phrase-level or higher constituent with a single word-bearing child still provides a stopping boundary: that child's material must not subsequently be merged with neighboring material outside the constituent merely because a higher ancestor is word-tagged. This is illustrated by KK.30 in SEG-06.
 
 Thus, the rule is not “concatenate all descendants of every Words-tagged node.” Nor is it “put a space between every terminal.” It is independent of whether an exceptional higher structure is editorially regarded as a word.
 
-### SEG-04 — Recognizing phrase boundaries
+### SEG-04 — Recognizing phrase-level or higher boundaries
 
-The authoritative reference explicitly lists `NP`, `PP`, `IP`, and `CP` as phrases; `IP` includes clauses. Recognized role/type extensions such as `NP-OB1` and `IP-REL` do not remove their phrase status.
+The general stopping rule in SEG-03 is confirmed. Classification of a particular label determines whether that rule applies to it; it does not change the rule itself.
 
-Do not use the historical Python `CLAUSE_LABELS` collection as the phrase-boundary definition: it also contains categories such as `MK` and `PLN` that the reference places under Words.
+Confirmed stopping boundaries are:
 
-**TBD — requires author/editorial confirmation (TBD-01):** Complete operational treatment of additional grouping labels: `CONJP`, `FRAG`, `multi-sentence`, `multi-clause`, the `C-` and `APP-` families, and other unlisted or unusual labels. `CONJP` is described in the reference as a coordinated phrase, but its precise treatment in this segmentation procedure has not been explicitly settled. Do not infer all boundary decisions from names alone.
+- `NP`, `PP`, `IP`, and `CP`, including their documented subtypes. The authoritative reference identifies these as phrases, with `IP` including clauses.
+- `CONJP`, explicitly identified in the authoritative reference as a coordinated phrase.
+- `multi-sentence`, a sentence-level grouping.
+- `multi-clause`, already established in the corpus investigation as a clause-level grouping.
+
+**TBD — requires author/editorial confirmation (TBD-01):** Whether unresolved structural labels, such as the `C-` and `APP-` families, `FRAG`, and other unclassified grouping labels, are phrase-level or higher. Once a label is established as phrase-level or higher, SEG-03 requires merging to stop there; that consequence is not a separate open question. Do not infer an unresolved label's structural level from its spelling alone.
 
 ### SEG-05 — Confirmed BS.1 output
 
@@ -177,7 +184,7 @@ The same principle applies to any terminal not further decomposed in the annotat
 
 ### SEG-08 — Hyphenation preserves word boundaries
 
-Hyphenated word-level segmentation uses SEG-03 without changing its word-level groups. Hyphens expose internal morpheme boundaries only where the annotation represents them. They must not create new spaces, remove phrase-boundary spaces, or imply new lexical items or dictionary entries.
+Hyphenated word-level segmentation uses SEG-03 without changing its word-level groups. Hyphens expose internal morpheme boundaries only where the annotation represents them. They must not create new spaces, remove spaces at phrase-level or higher boundaries, or imply new lexical items or dictionary entries.
 
 `mi-ato tukuru` is explicitly confirmed. Do not infer hyphens inside an unanalyzed terminal such as `saraba`.
 
@@ -185,7 +192,7 @@ Hyphenated word-level segmentation uses SEG-03 without changing its word-level g
 
 ### SEG-09 — Keep linguistic segmentation separate from UI state
 
-Phrase-boundary decisions come from the annotated structure, not the accidental visibility of nodes, presence of lemma IDs, or layout depth. Collapsing a subtree does not remove the phrase boundaries inside it or establish that its entire yield is one word.
+Phrase-level-or-higher boundary decisions come from the annotated structure, not the accidental visibility of nodes, presence of lemma IDs, or layout depth. Collapsing a subtree does not remove these boundaries inside it or establish that its entire yield is one word.
 
 This is a segmentation invariant, not approval for a particular tree-control redesign. The next UI investigation must determine where and how to apply these representations.
 
@@ -280,7 +287,7 @@ All entries below have status **TBD — requires author/editorial confirmation**
 
 | ID | Decision still needed |
 | --- | --- |
-| TBD-01 | Phrase-boundary treatment of additional grouping/root labels, including `CONJP`, `FRAG`, `multi-sentence`, `multi-clause`, `C-`, and `APP-` structures. |
+| TBD-01 | Whether unresolved labels, including `C-`, `APP-`, and `FRAG`, are phrase-level or higher. The stopping rule itself is confirmed. |
 | TBD-02 | Recognition/selection of internal morpheme boundaries for hyphenation beyond confirmed examples, including nested and multipart structures. |
 | TBD-03 | Treatment of traces, null/empty terminals, ILL special forms, malformed/unclassified labels, and missing forms in segmentation output. |
 | TBD-04 | Multiple-root/segment formatting and whitespace handling outside the confirmed ordinary examples. |

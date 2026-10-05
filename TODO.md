@@ -1387,6 +1387,25 @@ Do not modify the UI, segmentation implementation, corpus annotations, tests, pr
 The **next task**, after I review and confirm this guideline, will be to inspect the current syntactic-tree UI and determine how the confirmed word-level segmentation rule should be applied there.
 After creating the guideline, give me only a brief summary of what was written and a list of any `TBD` items that require my attention. Do not paste the full guideline into chat.
 
+### After commit 4674d2d
+I have manually edited docs/annotation-guidelines.md and removed some redundant or overly explanatory material. Please preserve my edits and do not restore deleted wording merely because it appeared in an earlier version or in our conversation history.
+I also want to refine the word-level segmentation rule.
+The intended general principle is now:
+For word-level segmentation, start from smaller represented units and merge upward. Stop merging at any phrase-level or higher constituent boundary.
+Please revise the guideline consistently to reflect this formulation.
+In particular:
+1. Replace formulations that say only “stop at a phrase boundary” where they are intended to express this general rule.
+2. Make clear that phrase-level or higher includes higher syntactic levels such as clauses. The rule should not require a separate special case for clause boundaries.
+3. Keep the distinction between the general structural rule and the classification of individual tags:
+   - the general rule is confirmed;
+   - NP, PP, IP, and CP, including their documented subtypes, are confirmed stopping boundaries. CONJP is also a stopping boundary because the authoritative reference explicitly identifies it as a coordinated phrase. multi-sentence is transparently a sentence-level grouping and is therefore also a stopping boundary. If multi-clause is already established as a clause-level grouping, it should likewise be treated as a stopping boundary;
+   - for undocumented or unresolved structural labels, the remaining question is whether they are phrase-level or higher—not whether phrase-level-or-higher boundaries should stop merging.
+4. Review SEG-03, SEG-04, TBD-01, and any other affected passages for consistency. Revise TBD-01 accordingly. Do not leave labels in TBD-01 merely because they were previously grouped there. Remove cases whose structural level is already clear, such as CONJP and multi-sentence (and multi-clause if its clause-level status is already established). TBD-01 should retain only labels whose structural level is genuinely unresolved, such as the C- and APP- families and other labels for which it is not yet established whether they are phrase-level or higher.
+5. Preserve the confirmed examples and expected outputs.
+6. Do not introduce a new automatic rule for determining whether an exceptional higher Words-tagged structure is linguistically a word. That remains separate from the operational segmentation rule.
+Please make only the necessary edits to docs/annotation-guidelines.md. Do not modify code, tests, corpus data, or other documentation.
+Afterward, give me a very brief summary of the passages you changed. Do not paste the full guideline into chat.
+
 
 ### TBD
 
