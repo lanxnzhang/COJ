@@ -1047,7 +1047,7 @@ analyze the proposed direct tree-editing model and report your design before imp
 leave the pane improvements in Item 4 for later.
 If the requested implementation reveals a substantive ambiguity that affects the intended behavior rather than merely an implementation detail, ask me before making that decision.
 
-### TBD
+### After commit e15ad38
 Please read the rules below carefully.
 If any rule is ambiguous, underspecified, internally inconsistent, or open to more than one reasonable interpretation, do not make assumptions. Ask me for clarification first. In particular, if you are unsure how a rule should apply to a specific structural configuration or edge case, ask me before formalizing it.
 Once all ambiguities have been resolved, organize the confirmed rules into the dataset in a clear and systematic document.
@@ -1074,7 +1074,336 @@ Instruction for formalizing these rules
 Before adding these rules to the dataset, identify any points that still require an operational definition. 
 If the current rules do not specify how to classify a particular case, ask me for a decision. After I answer, incorporate the clarified rule into the dataset so that the resulting annotation guidelines are explicit and reusable.
 
-The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
+#### After commit e15ad38 (2)
+Here are my clarifications. Some questions still require concrete examples before I can answer them precisely.
+1. Authoritative tag categories
+Please use the following document as the authoritative reference for the relevant abbreviation/tag classifications:
+D:\Lanxin\Desktop\ONCOJ Abbr List.docx (ignore hyperlink in this document, it's the content in ONCOJ website)
+This document has previously been designated as the reference for abbreviations. See also:
+D:/Lanxin/Desktop/COJ/treditor/tag_names.json
+The fact that the current Python constant LEXICAL_TAGS contains PFX, SFX, and CL should therefore not be taken as authoritative evidence for the lexical-item/grammatical-item distinction being defined here. The existing variable name may reflect a different or older use of the term "lexical."
+Please inspect the reference document and use its Parts of speech: Words and Parts of speech: Bound morphemes classifications for the distinction discussed here.
+
+2. Tag classification, tree position, and word-level segmentation
+In the BS.1 example, mi is a grammatical item, whereas ato is a lexical item.
+The combination miato is itself a new noun and is also a lexical item.
+The highest-level units directly attached to a phrase node can be understood as the word-level units of that phrase. Crossing above this level takes us from the internal structure of a word to the structure of a phrase.
+For example, suppose an IP-REL directly contains two nodes:
+an NP-OB1, whose descendants ultimately represent miato;
+a VB-ADC, representing tukuru.
+At the word level, this can naturally be segmented as:
+miato tukuru
+This does not prevent ato, inside miato, from also being a lexical item and from existing independently as a word in other contexts.
+An important distinction is therefore required between syntactic decomposition and word segmentation. The syntactic tree may decompose a word into smaller units, including grammatical items that do not normally occur independently, even though those smaller units are not separated by spaces in ordinary word-level segmentation.
+For example:
+mi ato tukuru
+would generally be a less natural word-level segmentation than:
+miato tukuru
+A representation such as:
+mi-ato tukuru
+may also be useful when we want to preserve the word-level boundaries while making a smaller internal boundary visible.
+For future documentation and UI work, I propose using the following terminology:
+a. word-level segmentation
+A segmentation in which spaces are inserted only between the immediate children of phrase nodes. Material represented by lower-level descendants within each such word-level unit is recombined rather than separated by spaces.
+Example:
+miato tukuru
+b. hyphenated word-level segmentation
+A variant of word-level segmentation in which the same word boundaries are preserved, but selected boundaries between smaller units inside a word may additionally be represented with hyphens.
+Example:
+mi-ato tukuru
+c. morpheme-level segmentation
+Example:
+mi ato tukuru
+This terminology and distinction should be documented explicitly, because different segmentation schemes will be important in future UI development.
+It also helps explain why the segmentation shown in a corpus header does not necessarily correspond to the segmentation obtained by simply concatenating all terminal or lower-level nodes of the syntactic tree with spaces. The header is segmented by words, whereas the syntactic tree may further decompose those words into smaller units such as grammatical items.
+
+3. What counts as a word / relevant tag category
+MK is a word.
+For the broader question of which tags belong to which categories, consult:
+D:\Lanxin\Desktop\ONCOJ Abbr List.docx (ignore hyperlink in this document, it's the content in ONCOJ website)
+You also asked:
+Should a Words-tagged node containing children itself count as a lexical item?
+I am not yet certain what structural situation you intend this question to cover. Please give me a concrete tree example.
+If you mean a configuration such as the outer N representing miato, which itself has children corresponding to mi and ato, please say so explicitly. In that particular example, miato is a lexical item even though it has internal structure, and ato is also a lexical item.
+However, I do not want to generalize from this example to every possible Words-tagged non-terminal node until I understand the cases you have in mind.
+
+4. “Combination” and “new lexical item”
+I do not yet understand the distinction you are asking me to make here. Please provide one or more concrete tree examples illustrating:
+a case where components are grouped beneath a word-level parent;
+a case where items are merely adjacent within a phrase; and
+if relevant, a tree configuration that you think might automatically imply the creation of a new lexical item.
+Both manual/editorial judgment and automatic machine judgment will eventually be relevant to the tool.
+At present, however, we should not invent automatic rules merely because future automation is planned. When a structure later needs to be recognized automatically, the author can add an explicit rule for it.
+
+5. PFX, SFX, and CL exceptions
+For now, whether a combination involving PFX, SFX, or CL constitutes a new lexical item is determined by editorial judgment.
+There is currently no need to formalize an automatic decision procedure for these cases.
+In the future, it may be useful to develop a tool that automatically searches for or identifies candidate cases requiring this kind of editorial decision. That is a future feature and should not be implemented as part of the present task.
+
+6. Lemma-ID consequences
+Yes. As a general pattern, when a combination warrants its own dictionary entry:
+the parent receives the lemma ID for the complete combination; and
+the children retain their own lemma IDs where applicable.
+The titi + papa structure you identified, in which the parent has L050402 while the components retain separate IDs, is an example of this general pattern.
+Also, an existing lemma ID on a parent establishes dictionary-entry status, but it does not by itself establish lexical-item status.
+This distinction is important:
+having a lemma ID / dictionary-entry status must not be used as a test for whether something is a lexical item.
+Lemma-ID assignment and lexical/grammatical classification are separate dimensions.
+
+7. Scope and documentation destination
+For now, do not attempt to formalize cases involving:
+grammatical item + grammatical item combinations; or
+expressions spanning phrase nodes;
+unless the existing rules already clearly determine the answer.
+If such cases become relevant and the correct treatment is not specified, ask the author rather than extrapolating a new rule.
+For the present task, do not modify any corpus annotations or application code.
+The goal is only to create a dedicated documentation resource recording these rules so that the author can quickly retrieve, cite, and extend them in the future.
+If there is already an appropriate documentation file in the repository whose purpose clearly encompasses these annotation principles, you may propose adding the rules there instead of creating a new document. Otherwise, propose a dedicated guidelines document.
+
+8. Consistency audit of the existing repository
+In addition to formalizing these rules, inspect the existing repository for any code, documentation, configuration, terminology, or existing assumptions that may conflict with, misrepresent, or need to be updated in light of these rules.
+This should include, where relevant:
+constants or category lists such as LEXICAL_TAGS;
+tag definitions and mappings;
+existing documentation;
+segmentation logic;
+lemma-ID handling;
+lexical-item or grammatical-item detection logic;
+UI code that assumes a particular segmentation or word boundary;
+comments, variable names, or terminology that may encode an older or different definition;
+tests whose expected behavior may conflict with the clarified rules.
+For every potential conflict you find, report:
+the relevant file and location;
+the current behavior, definition, or assumption;
+which clarified rule it may conflict with;
+whether it is a definite conflict, a possible conflict requiring clarification, or merely potentially misleading terminology;
+what kind of change would likely be needed; and
+whether changing it could have downstream consequences elsewhere in the repository.
+Do not modify any of these files yet.
+At this stage, I want an audit and a proposed change list only. This applies even when a conflict appears obvious or the required fix seems trivial.
+Do not update code, documentation, configuration, tests, corpus annotations, or other repository files to resolve these conflicts until I have reviewed the findings and explicitly approved the relevant changes.
+
+Next step
+Before making any modifications:
+inspect D:\Lanxin\Desktop\ONCOJ Abbr List.docx and the relevant tag_names.json;
+reconcile the terminology with the authoritative tag categories found there;
+give me concrete examples for the unresolved questions in sections 3 and 4;
+identify any additional ambiguities and ask me about them;
+perform the repository consistency audit described above; and
+report your findings and proposed changes to me for review.
+Do not modify any files until I explicitly approve the proposed changes.
+
+#### After commit e15ad38 (3)
+1. Word-tagged parents with phrase children
+In KK.30, the outer VB-ADN can be regarded as a word.
+In an idealized hierarchy, we might expect something like:
+morpheme → word → phrase → clause
+but actual syntactic annotation does not always conform perfectly to such cleanly separated levels. A word-level structure may, in some cases, dominate phrase-level structure.
+However, this linguistic/editorial judgment should be kept separate from the procedure used to generate word-level segmentation.
+At the current stage, the program does not need to determine mechanically whether a structure such as the outer VB-ADN in KK.30 is genuinely a word, while a superficially similar higher node elsewhere is merely present because of an annotation convention. A reader/editor can make that judgment when it matters.
+
+2. Outer N in MYS.2.150
+The outer N in MYS.2.150 should instead be understood as an annotation convention.
+In this corpus, every phrase is required to have a head. For example, an NP must have an N as its head. As a result, Words-category nodes can occur at relatively high structural levels in order to maintain a uniform headed syntactic topology.
+This uniformity is useful for syntactic-tree search and retrieval. Therefore, the fact that a high-level node has a tag such as N does not necessarily mean that everything dominated by it constitutes one word.
+The distinction between KK.30 and MYS.2.150 is therefore meaningful at the level of linguistic/editorial interpretation:
+the outer VB-ADN in KK.30 can be regarded as a word;
+the outer N in MYS.2.150 is a consequence of an annotation convention.
+For now, however, the program does not need to distinguish these two situations automatically. Do not invent a mechanical classification rule for them.
+
+Word-level segmentation
+The operational rule for word-level segmentation is simpler and independent of the distinction above:
+Starting from smaller units, merge upward. Once a phrase boundary is encountered, stop merging across that boundary.
+In other words, phrase boundaries determine where the upward merging process used for word-level segmentation stops.
+Under this rule, KK.30 is segmented as:
+awokakiyama gomoreru
+This does not contradict the editorial judgment that the higher VB-ADN may itself be regarded as a word. Word status as an editorial/linguistic judgment and the operational output of word-level segmentation are not required to coincide in every exceptional syntactic configuration.
+Likewise, the higher structural N in MYS.2.150 does not cause material across its internal phrase boundaries to be concatenated.
+For the relevant portion discussed above, word-level segmentation therefore yields:
+sakariwite asa nageku kimi
+
+Hyphenated word-level segmentation
+Hyphenated word-level segmentation is based on exactly the same word-level segmentation procedure.
+The word boundaries remain unchanged, but morpheme boundaries inside those word-level units are additionally represented with hyphens.
+For example:
+word-level segmentation: miato tukuru
+hyphenated word-level segmentation: mi-ato tukuru
+Thus, the current implementation principle should remain simple:
+merge upward from smaller units → stop at phrase boundaries.
+Do not add an automatic procedure for deciding whether exceptional higher structures such as those in KK.30 and MYS.2.150 are “really” words. That remains an editorial judgment unless a future rule explicitly requires the program to make that distinction.
+
+3. Nested phrase traversal and word-level segmentation
+Yes. At the current stage, the operational rule I want for word-level segmentation is:
+Start from smaller units and merge upward. Once a phrase boundary is reached, stop merging across that boundary.
+For example:
+NP-OB1
+└── N
+    ├── PFX-HON    mi
+    └── N          ato
+mi and ato are recombined as miato. The upward merging then reaches the NP-OB1 phrase boundary and stops.
+Thus:
+mi + ato → miato
+This operational segmentation rule should remain separate from the editorial question of whether a particular higher syntactic node can itself be regarded as a word. As discussed in Questions 1–2, the program does not currently need to determine mechanically whether exceptional higher structures are linguistically “words.”
+
+4. Tree-terminal segmentation
+Please use the term tree-terminal segmentation, rather than morpheme-level segmentation.
+By tree-terminal segmentation, I mean segmentation according to the smallest units that are actually represented as terminals in the existing tree. It does not mean that the program should perform a new or complete morphological analysis.
+Therefore, if the tree contains:
+VB-CND saraba
+as a single terminal and does not further decompose saraba, tree-terminal segmentation should preserve:
+saraba
+The program does not currently need to infer additional morphological boundaries or split such forms automatically.
+However, this gives us a useful future requirement: the system should eventually be able to search for and locate terminal forms that have not been further morphologically analyzed, so that the author can inspect them or perform other requested operations on them.
+Do not implement that feature now; record it as a future tooling requirement.
+We therefore currently have three useful segmentation concepts:
+tree-terminal segmentation: expose the segmentation represented by the terminal nodes of the existing tree;
+word-level segmentation: merge upward from smaller units and stop at phrase boundaries;
+hyphenated word-level segmentation: use the same word boundaries as word-level segmentation, while additionally representing internal morpheme boundaries with hyphens where such boundaries are represented in the annotation.
+
+5. Historical compound automation / NP_EXPANSION
+NP_EXPANSION and the existing compound-processing code should not be treated as linguistic or annotation rules.
+I originally created this processor as a tool to help identify compounds. It is still quite incomplete, and I already plan to redesign it.
+Therefore:
+do not infer annotation policy from its current heuristics;
+do not use its behavior as evidence that adjacent noun children automatically form a new lexical item;
+do not treat its automatic structural grouping or dictionary-entry creation as authoritative;
+and do not modify it as part of the present task.
+This is an existing experimental/incomplete compound-finding mechanism whose current behavior should not be interpreted as part of the linguistic specification.
+
+6. Tags absent from the authoritative reference
+Please identify all tags currently used or defined in the repository/corpus that are absent from the authoritative abbreviation reference, not only NUMCL, C-N, and C-NP.
+Give me a complete list so that I can ask the chief editor what these tags mean and then add the confirmed information to the current abbreviation table.
+Before I consult the chief editor, you may also investigate these unlisted tags in the repository and corpus.
+For each unlisted tag, where possible, please provide:
+the tag itself;
+where it occurs or is defined;
+one or more representative corpus examples, preferably with text/sentence identifiers;
+its apparent structural function based on those examples;
+any explanation found in existing code, documentation, comments, tests, or historical material;
+and your tentative interpretation, clearly marked as an inference rather than an authoritative definition.
+Do not assign any of these tags to the Words or Bound morphemes categories merely by inference.
+Their authoritative classification should remain unresolved until it is confirmed by the chief editor and added to the reference table. 
+Do not modify the reference table or any other files yet. First report the complete list and your investigation results to me.
+
+#### After commit e15ad38 (4)
+One clarification before you proceed:
+The statement “Word status is an editorial judgment” is too broad.
+More precisely, the program should not determine whether a higher-level structure constitutes a word solely from its Words-category tag or its syntactic-tree topology. For exceptional higher-level structures such as those in KK.30 and MYS.2.150, this distinction should currently remain a matter of editorial judgment.
+This does not mean that word status at all structural levels is generally uncertain or requires editorial judgment. Lower-level cases are comparatively well-defined by the existing annotation rules and categories.
+Please preserve this narrower distinction in the eventual documentation.
+You can now proceed with the complete inventory and investigation of unlisted tags as described. For now, only report your findings. Do not modify any files, and do not start the unrelated TBD tasks.
+
+#### After commit e15ad38 (5)
+Based on the tag investigation you have just completed, please now organize the results into **two Markdown reports under `COJ/docs/`**.
+
+You may create and modify **only these two new report files** for this task. Do not modify any existing code, corpus data, tests, configuration, reference tables, or other documentation.
+
+1. Detailed report for the author
+
+Create:
+`docs/tag-investigation-report.md`
+This should be the comprehensive version for my own review.
+Preserve the distinctions from your investigation rather than treating every unlisted string as a genuine linguistic tag. Include the relevant categories you identified, such as:
+- substantive unlisted or unclear annotation tags;
+- writing-mode strings;
+- likely spelling/typing variants or suspicious labels;
+- XML/serialization artifacts;
+- lemma-like or free-text fields represented as XML elements;
+- definitions without current corpus occurrences;
+- documented abbreviations used in undocumented contexts or combinations.
+For substantive or genuinely uncertain items, preserve useful evidence such as occurrence counts, representative text/sentence IDs, corpus examples, relevant tree context, repository definitions, existing explanations, and tentative interpretations.
+Clearly distinguish:
+- corpus evidence;
+- existing implementation/documentation descriptions;
+- tentative interpretations;
+- unresolved questions;
+- likely technical/data issues.
+Do not silently normalize suspicious labels, and do not assign authoritative meanings or classifications by inference.
+The report should be detailed enough to serve as a durable investigation record and to support later corpus, parser, documentation, and annotation work.
+
+2. Concise report for the chief editor
+Create:
+`docs/tag-questions-for-chief-editor.md`
+This should be a much shorter document that I can send to the chief editor.
+Its purpose is to obtain authoritative definitions and classifications for genuine or plausible annotation categories that are absent from or insufficiently explained by the current abbreviation reference.
+Prioritize the substantive unresolved tags from your investigation. Group related tags where appropriate, especially tag families such as the `C-` series.
+For each question, include only enough context for the chief editor to recognize the annotation: for example, a representative text ID and a short tree or surface example when useful.
+Ask specifically for information such as:
+- the full meaning or expansion of the abbreviation;
+- its linguistic/annotation function;
+- its relationship to similar existing tags;
+- where it belongs in the abbreviation reference;
+- whether it belongs to **Parts of speech: Words**, **Parts of speech: Bound morphemes**, or another category, where applicable.
+Do not burden this report with obvious XML/parser artifacts or implementation details. Suspected spelling variants or unusual annotation combinations should only be included if editorial confirmation is genuinely useful, and should be placed in a short secondary section.
+
+Constraints
+Existing descriptions in code such as `tags.py` are evidence, not authoritative linguistic definitions.
+Do not modify the authoritative abbreviation reference yet.
+Do not resolve uncertain classifications yourself.
+Do not make any of the code/documentation/corpus changes identified in the earlier consistency audit.
+After creating the two files, **do not paste their contents into chat**. Just tell me:
+1. which files you created;
+2. a very brief description of each; and
+3. whether you encountered any issue that requires my decision.
+
+#### After commit e15ad38 (6)
+Please now create a guideline document based on the annotation principles and clarifications I have already provided throughout this task.
+Create:
+`docs/annotation-guidelines.md`
+This document will serve as the aworking guideline for future annotation-related development. In particular, the next development task will apply the confirmed **word-level segmentation** rules to parts of the syntactic-tree UI, so the segmentation section must be precise enough to serve as the specification for that implementation.
+
+Source of authority
+Base the guideline on:
+1. the rules and clarifications I have explicitly provided in our conversation;
+2. the authoritative abbreviation reference we already identified; and
+3. confirmed corpus examples we have discussed.
+Do **not** treat existing application code, historical processors, variable names, tests, or inferred corpus behavior as authoritative linguistic rules unless I have explicitly confirmed them.
+Existing implementation may be cited as context where useful, but it must not silently determine the guideline.
+
+Handling uncertainty
+Do not invent or infer missing rules.
+If a point is still uncertain, unresolved, awaiting chief-editor confirmation, or has not yet been explicitly decided by me, leave it clearly marked as:
+`TBD — requires author/editorial confirmation`
+where appropriate.
+It is acceptable for the first version of this guideline to contain unresolved sections or incomplete classifications. I will review the document and provide the missing decisions later.
+Do not attempt to make the guideline appear complete by filling gaps from your own interpretation.
+
+Writing style
+Write this as a **reference guideline**, not as a narrative account of our conversation.
+Prefer:
+- explicit definitions;
+- short rules;
+- clearly labeled examples;
+- distinctions between concepts;
+- implementation-relevant invariants;
+- `TBD` markers for unresolved issues.
+Avoid recounting the history of how we reached each decision.
+Because this document will be consulted during future development, make individual rules easy to locate and cite.
+
+Scope of changes
+For this task, you may create or modify:
+`docs/annotation-guidelines.md`
+Do not modify the UI, segmentation implementation, corpus annotations, tests, processors, tag definitions, or other existing files yet.
+The **next task**, after I review and confirm this guideline, will be to inspect the current syntactic-tree UI and determine how the confirmed word-level segmentation rule should be applied there.
+After creating the guideline, give me only a brief summary of what was written and a list of any `TBD` items that require my attention. Do not paste the full guideline into chat.
+
+
+### TBD
+
+1. Please revise the **preferred reading / resolved result** workflow.
+
+- Preferred-reading selection should be **off by default**. Normal Text Compare should remain non-interactive.
+- Add a button next to **Compare** to enter a selection/resolution mode.
+- Only after the user activates this mode should they be able to click differences to choose the preferred reading.
+- The bottom **Resolved Result** section should only appear in this mode, and **Copy Result** should only be available there.
+- Selecting differences one by one is too slow. Please support faster selection of multiple differences, for example by clicking and dragging across a range or another simple multi-selection interaction.
+- If `∅` represents content that exists on one side but is absent on the other—for example `warapagam∅i` vs. `warapagamwi`—the `∅` marker itself should also receive difference highlighting. It should not be visually easy to miss.
+
+Please keep the interaction lightweight: normal comparison first, and resolution/merged-output functionality only when explicitly activated by the user.
+
+2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
+
+3. txt数据在另一个github库的问题
 
 合并搜索框
 搜索结果下载
