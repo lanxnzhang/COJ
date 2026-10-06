@@ -30,13 +30,25 @@ component rows remain separate extracted fields; this is row extraction, not
 a reconstruction of complete words from the tree. XML lexical extraction is
 not provided by this initial option.
 
-After comparison, click a differing word on A or B to keep that reading. If
+Normal comparison is read-only. Select **Resolve differences**, next to
+**Compare**, to enable preferred-reading choices and show **Resolved result**
+and **Copy Result**. **Exit resolution** returns to read-only comparison;
+choices are retained until the comparison inputs/options change or Compare is
+run again. Resolution mode stays active until explicitly exited.
+
+In resolution mode, click a differing word on A or B to keep that reading. If
 several character differences occur within that word, the click selects them
 together. Highlight colors still identify the exact changed characters.
 A selected reading has an outlined background; selecting its counterpart
-switches the choice. An empty side offers **∅**, meaning keep the omission.
+switches the choice. An empty side offers highlighted **∅**, meaning keep the
+omission; this marker is also highlighted in read-only comparison.
 Unspaced kanji text offers a choice for each changed character sequence, not
 one choice for the entire sentence.
+
+For faster selection, click a reading, then **Shift-click** another difference
+in the same pane to choose all differences between them. **Use all A** and
+**Use all B** select every difference from that side. Individual choices can
+still be changed afterward.
 
 **Copy Result** is enabled once every difference has a choice. The resolved
 result uses the temporary comparison texts, never modifies either input, and

@@ -29,7 +29,7 @@ class Element {
   remove() { this.parentElement.children = this.parentElement.children.filter(item => item !== this); }
   setAttribute(key, value) { this.attributes[key] = value; }
   addEventListener(type, callback) { (this.events[type] ||= []).push(callback); }
-  async dispatch(type) { for (const callback of this.events[type] || []) await callback({target: this}); }
+  async dispatch(type, properties = {}) { for (const callback of this.events[type] || []) await callback({target: this, ...properties}); }
   matches(selector) {
     if (selector.startsWith(".")) return this.className.split(" ").includes(selector.slice(1));
     const attribute = selector.match(/^\[([^=\]]+)(?:="([^"]*)")?\]$/);
@@ -120,6 +120,10 @@ async function main() {
   field("Text B input").value = "paru saraba kasasi";
   await field("Text B input").dispatch("input");
   await button("Compare").dispatch("click");
+  assert.equal(button("Copy Result"), undefined);
+  assert.equal(page.querySelector(".wb-resolution"), null);
+  assert.equal(page.querySelectorAll(".wb-choice").length, 0);
+  await button("Resolve differences").dispatch("click");
   assert.equal(button("Copy Result").disabled, true);
   await button("kasasi").dispatch("click");
   assert.equal(button("Copy Result").disabled, false);
@@ -145,6 +149,48 @@ async function main() {
   await button("插").dispatch("click");
   await button("Copy Result").dispatch("click");
   assert.equal(copied.at(-1), "秋去者插頭");
+  await button("Exit resolution").dispatch("click");
+  field("Text A input").value = "warapagami";
+  await field("Text A input").dispatch("input");
+  field("Text B input").value = "warapagamwi";
+  await field("Text B input").dispatch("input");
+  await button("Compare").dispatch("click");
+  assert.equal(button("Copy Result"), undefined);
+  assert.equal(page.querySelectorAll(".wb-choice").length, 0);
+  assert.equal(page.querySelector(".wb-omission").textContent, "∅");
+  assert.ok(page.querySelector(".wb-omission").className.includes("wb-change"));
+  await button("Resolve differences").dispatch("click");
+  await field("Keep A: nothing").dispatch("click");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "warapagami");
+  await button("Use all B").dispatch("click");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "warapagamwi");
+  field("Text A input").value = "alpha beta gamma";
+  await field("Text A input").dispatch("input");
+  field("Text B input").value = "alphi beto gammo";
+  await field("Text B input").dispatch("input");
+  await button("Compare").dispatch("click");
+  await button("alphi").dispatch("click");
+  assert.equal(button("Copy Result").disabled, true);
+  await button("gammo").dispatch("click", {shiftKey: true});
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "alphi beto gammo");
+  await button("Exit resolution").dispatch("click");
+  assert.equal(button("Copy Result"), undefined);
+  assert.equal(page.querySelectorAll(".wb-choice").length, 0);
+  await button("Resolve differences").dispatch("click");
+  assert.equal(button("Copy Result").disabled, false);
+  await button("Compare").dispatch("click");
+  await button("alpha").dispatch("click");
+  await button("gammo").dispatch("click", {shiftKey: true});
+  assert.equal(button("Copy Result").disabled, true); // A's anchor does not select a range in B.
+  await button("beto").dispatch("click", {shiftKey: true});
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "alpha beto gammo");
+  await button("Use all A").dispatch("click");
+  await button("Copy Result").dispatch("click");
+  assert.equal(copied.at(-1), "alpha beta gamma");
   await controls[2].dispatch("click");
   assert.ok(button("Parse Tree"));
   assert.equal(button("Parse Tree").className, "wb-primary-action");
@@ -152,6 +198,6 @@ async function main() {
   assert.match(css, /#sidebar-workbench \.search-message \{ margin: 20px/);
   assert.match(css, /\.wb-tree ul > li::after/);
   assert.match(css, /\.wb-tree ul > li:last-child::before/);
-  console.log("Workbench controls, preprocessing, reading choices, copying, parse action, and session state passed.");
+  console.log("Workbench controls, opt-in resolution, range/bulk choices, omissions, copying, and session state passed.");
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

@@ -16,6 +16,7 @@
 .wb-page .wb-primary-action { background: var(--blue-deep); border-color: var(--blue-deep); color: white; font-weight: 650; padding: 6px 12px; }
 .wb-pane-heading { flex-wrap: wrap; }
 .wb-choice { font: inherit; }
+.wb-omission { display: inline-block; min-width: .8em; text-align: center; font-weight: 700; }
 .wb-output button.wb-choice { border: 0; border-radius: 3px; background: transparent; padding: 0; white-space: pre-wrap; text-align: left; }
 .wb-output button.wb-choice-selected { box-shadow: 0 0 0 2px #427759; background: #e5f2e8; }
 .wb-choice:focus-visible { outline: 2px solid var(--blue-deep); outline-offset: 2px; }

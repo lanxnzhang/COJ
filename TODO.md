@@ -1406,10 +1406,8 @@ In particular:
 Please make only the necessary edits to docs/annotation-guidelines.md. Do not modify code, tests, corpus data, or other documentation.
 Afterward, give me a very brief summary of the passages you changed. Do not paste the full guideline into chat.
 
-
-### TBD
-
-1. Please revise the **preferred reading / resolved result** workflow.
+### After commit bfe2189
+Please revise the **preferred reading / resolved result** workflow.
 
 - Preferred-reading selection should be **off by default**. Normal Text Compare should remain non-interactive.
 - Add a button next to **Compare** to enter a selection/resolution mode.
@@ -1419,6 +1417,10 @@ Afterward, give me a very brief summary of the passages you changed. Do not past
 - If `∅` represents content that exists on one side but is absent on the other—for example `warapagam∅i` vs. `warapagamwi`—the `∅` marker itself should also receive difference highlighting. It should not be visually easy to miss.
 
 Please keep the interaction lightweight: normal comparison first, and resolution/merged-output functionality only when explicitly activated by the user.
+
+
+
+### TBD
 
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

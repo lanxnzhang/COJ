@@ -11,7 +11,7 @@
     revision: 0, scroll: 0, textareaScroll: 0, corpusId: "", preprocessing: "raw"});
   const states = Object.fromEntries(Object.keys(modes).map(mode => [mode, {
     panes: [makePane(), makePane()], spaces: false, lineBreaks: false, glosses: false,
-    source: "kana", target: "hepburn", kanaStyle: "hiragana", result: null,
+    source: "kana", target: "hepburn", kanaStyle: "hiragana", result: null, resolving: false,
   }]));
   let mode = "compare";
   let catalog = null;
@@ -30,7 +30,7 @@
   function button(text, action) {
     const node = element("button", text);
     node.type = "button";
-    node.addEventListener("click", () => Promise.resolve().then(action).catch(error => status(error.message, true)));
+    node.addEventListener("click", event => Promise.resolve().then(() => action(event)).catch(error => status(error.message, true)));
     return node;
   }
   function status(message, error = false) {
@@ -82,6 +82,7 @@
     states[mode].panes.forEach(item => { item.differences = null; });
     states[mode].result = null;
     states[mode].comparison = null;
+    states[mode].selectionAnchor = null;
   }
   function outputText(state) {
     return state.result ? state.result.segments.map(segment => segment.text).join("") : "";
@@ -144,6 +145,7 @@
     const comparison = state.comparison;
     const characters = comparison[side];
     const empty = new Map();
+    const controls = [];
     for (const group of comparison.groups) {
       if (group[side][0] === group[side][1]) {
         const position = group[side][0];
@@ -152,14 +154,27 @@
       }
     }
     function choice(items, ids, omitted = false) {
-      const control = button("", () => chooseDifference(state, ids, side));
-      const selected = ids.every(id => state.choices[id] === side);
-      control.className = `wb-choice${selected ? " wb-choice-selected" : ""}`;
-      control.setAttribute("aria-pressed", String(selected));
-      control.setAttribute("aria-label", `Keep ${side === "left" ? "A" : "B"}: ${omitted ? "nothing" : items.map(item => item.text).join("")}`);
-      if (omitted) control.textContent = "∅";
+      if (!state.resolving && !omitted) { renderCharacters(target, items); return; }
+      const index = controls.length;
+      controls.push(ids);
+      const control = state.resolving ? button("", event => {
+        const anchor = state.selectionAnchor;
+        const selectedIds = event.shiftKey && anchor?.side === side
+          ? controls.slice(Math.min(anchor.index, index), Math.max(anchor.index, index) + 1).flat() : ids;
+        if (!event.shiftKey || anchor?.side !== side) state.selectionAnchor = {side, index};
+        chooseDifference(state, selectedIds, side);
+      }) : element("span");
+      if (state.resolving) {
+        const selected = ids.every(id => state.choices[id] === side);
+        control.className = `wb-choice${selected ? " wb-choice-selected" : ""}`;
+        control.setAttribute("aria-pressed", String(selected));
+        control.setAttribute("aria-label", `Keep ${side === "left" ? "A" : "B"}: ${omitted ? "nothing" : items.map(item => item.text).join("")}`);
+      }
+      if (omitted) control.appendChild(element("span", "∅", "wb-change wb-omission"));
       else renderCharacters(control, items);
-      control.title = omitted ? "Keep this side's omission (no text)" : "Keep this reading";
+      control.title = state.resolving
+        ? "Keep this reading; Shift-click another difference on this side to select a range"
+        : "No text on this side";
       target.appendChild(control);
     }
     let position = 0;
@@ -368,9 +383,10 @@
       const result = WorkbenchCore.compareText(texts[0], texts[1], state);
       state.comparison = result;
       state.choices = {};
+      state.selectionAnchor = null;
       state.panes[0].differences = result.left;
       state.panes[1].differences = result.right;
-      render(); status(`${result.changes} difference group${result.changes === 1 ? "" : "s"}. Select a preferred reading on either side.`);
+      render(); status(`${result.changes} difference group${result.changes === 1 ? "" : "s"}.${state.resolving ? " Select a preferred reading on either side." : ""}`);
     } else if (mode === "tree") {
       await Promise.all(state.panes.map(pane => pane.parsed ? Promise.resolve(pane.parsed) : parsePane(pane)));
       if (mode !== originalMode || actionRevision !== revision) return;
@@ -429,6 +445,13 @@
       }));
     }
     toolbar.appendChild(button(mode === "convert" ? "Convert" : "Compare", run));
+    if (mode === "compare") {
+      const resolveButton = button(state.resolving ? "Exit resolution" : "Resolve differences", () => {
+        rememberScroll(); state.resolving = !state.resolving; state.selectionAnchor = null; render();
+      });
+      resolveButton.setAttribute("aria-pressed", String(state.resolving));
+      toolbar.appendChild(resolveButton);
+    }
     state.panes.forEach((pane, index) => {
       if (pane.hidden) toolbar.appendChild(button(`Restore ${modes[mode].paneLabels[index]}`, () => { pane.hidden = false; render(); }));
     });
@@ -456,7 +479,7 @@
     grid.classList.toggle("single", state.panes.filter(pane => !pane.hidden).length < 2);
     state.panes.forEach((pane, index) => renderPane(index, state, grid));
     page.appendChild(grid);
-    if (mode === "compare" && state.comparison) {
+    if (mode === "compare" && state.comparison && state.resolving) {
       const resolved = WorkbenchCore.resolveText(state.comparison, state.choices);
       const resolution = element("section", undefined, "wb-resolution");
       const remaining = state.comparison.groups.filter(group => !state.choices[group.id]).length;
@@ -465,6 +488,13 @@
       const heading = element("div", undefined, "wb-toolbar");
       heading.append(element("strong", "Resolved result"), copyButton,
         element("span", remaining ? `${remaining} choice${remaining === 1 ? "" : "s"} remaining` : "All differences resolved"));
+      for (const [side, label] of [["left", "A"], ["right", "B"]]) {
+        heading.appendChild(button(`Use all ${label}`, () => {
+          state.selectionAnchor = null;
+          chooseDifference(state, state.comparison.groups.map(group => group.id), side);
+        }));
+      }
+      resolution.appendChild(element("p", "Click a reading to choose it. Shift-click another difference in the same pane to choose the whole range.", "wb-status"));
       resolution.append(heading, element("pre", resolved === null ? "Choose the highlighted reading for each difference. Ignored whitespace is retained from A." : resolved, "wb-resolved-text"));
       page.appendChild(resolution);
     }
