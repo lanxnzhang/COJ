@@ -1418,15 +1418,23 @@ Please revise the **preferred reading / resolved result** workflow.
 
 Please keep the interaction lightweight: normal comparison first, and resolution/merged-output functionality only when explicitly activated by the user.
 
+### After commit 5558e2a
+I have received the Editor-in-Chief's response regarding the tag issue.
+The answer is in "D:\Lanxin\Downloads\tag-questions-for-chief-editor + BF.docx" (the question document is "D:\Lanxin\Downloads\tag-questions-for-chief-editor.docx").
+Chief Editor also replies:
+"There are several issues with the EN and SM mark-up, including tags. NPs can also have a NP head. If you can find more phrase tags beneath word tags, that would be great. There are probably many in EN and SM, but again, we will return to those files later. It is very helpful that you can identify inconsistencies in tags and other mark-up, thank you."
+Please: 
+1. Update the annotation guideline based on this response; note that the Editor-in-Chief has modified the previously discussed KK.30 and MYS.2.150 entries.
+2. Search for and correct additional anomalous data as explained and requested by the Editor-in-Chief. You can output the detailed search results and corrections regarding the raw data to COJ/reports.
 
-
+Please do not record items if they are currently uncertain or subject to further discussion. If you are unsure about anything, please ask me. Keep the content of the guidelines concise and consistent; there is no need to include useless examples of errors—such as those that serve merely as historical data rather than helping to explain the guidelines.
 
 
 ### TBD
 
-2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
+1. Please compile and condense the relevant contextual information from this chat into a single document so that I can take it to a new chat. Put this document in "D:\Lanxin\Desktop\COJ-backup\Context".
 
-3. txt数据在另一个github库的问题
+2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
 合并搜索框
 搜索结果下载
