@@ -58,3 +58,11 @@ Example:
   <IP-MAT>...</IP-MAT>
 </block>
 ```
+
+## Primary TXT repository imports
+
+For explicit, incremental one-way imports from the primary TXT repositories,
+use `import_primary_txt.py --preview --normalize-xml`, then review the plan
+before `--apply`. The preview separates genuine data updates from subsequent
+canonical formatting of all corpus/dictionary XML under `data/xml/`.
+See [the import workflow and safety checks](../../docs/primary-txt-import.md).

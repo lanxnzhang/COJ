@@ -176,7 +176,7 @@
 
 ---------------------------------------------------
 === L000026
-.GLOSS	-
+.GLOSS	stative
 .MEANING	[stative]
 .FORM	ari
 .KANA	アリ
@@ -185,7 +185,7 @@
 
 ---------------------------------------------------
 === L000027
-.GLOSS	-
+.GLOSS	potential
 .MEANING	[potential]
 .CORRESP	51483
 .FORM	e
@@ -676,6 +676,8 @@
 .KANA	ロカモ
 .FORM	rokamu
 .KANA	ロカム
+.FORM	ka
+.KANA	カ
 .POS	final particle
 
 ---------------------------------------------------
@@ -1884,6 +1886,16 @@
 .POS	adverb
 .COMPOUND	ref_target=L051520a	moto
 .COMPOUND	ref_target=L007028	na
+
+---------------------------------------------------
+=== L080723
+.GLOSS	at all
+.MEANING	(not) at all, certainly (not) (followed by a negative verb form)
+.FORM	yoni
+.KANA	ヨニ
+.POS	adverb
+.COMPOUND	ref_target=L050040	yo
+.COMPOUND	ref_target=L000519	na
 
 ---------------------------------------------------
 === L080550
@@ -7315,17 +7327,6 @@
 .TRANSREL	ref_target=L030207a	imase
 
 ---------------------------------------------------
-=== L030206b
-.GLOSS	-
-.MEANING	-
-.FORM	imasi
-.KANA	イマシ
-.FORM	masi
-.KANA	マシ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L030206a	masi
-
----------------------------------------------------
 === L030207a
 .GLOSS	make go (IO-exalting)
 .MEANING[1]	(indirect object-exalting) make go, send
@@ -7595,6 +7596,7 @@
 .TRANSITIVITY	intransitive
 .INTRVCLASS	p
 .DERIVATION	ref_target=F000052	-e-
+.RELATED	ref_target=L030238a	uki
 
 ---------------------------------------------------
 === L030238a
@@ -7889,8 +7891,8 @@
 
 ---------------------------------------------------
 === L030270b
-.GLOSS	-
-.MEANING	-
+.GLOSS	dye
+.MEANING	dye
 .CORRESP	3277
 .FORM	utusi
 .KANA	ウツシ
@@ -8443,8 +8445,8 @@
 
 ---------------------------------------------------
 === L030339b
-.GLOSS	-
-.MEANING	-
+.GLOSS	protective
+.MEANING	protective
 .CORRESP	4886
 .FORM	osape
 .KANA	オサヘ
@@ -8972,7 +8974,7 @@
 
 ---------------------------------------------------
 === L030399b
-.GLOSS	-
+.GLOSS	longing, thinking
 .MEANING[1]	longing
 .MEANING[2] thought	
 .MEANING[3]	regret
@@ -9096,8 +9098,8 @@
 
 ---------------------------------------------------
 === L030414b
-.GLOSS	-
-.MEANING	-
+.GLOSS	descending
+.MEANING	descending
 .CORRESP	5381
 .FORM	orosi
 .KANA	オロシ
@@ -9400,8 +9402,8 @@
 
 ---------------------------------------------------
 === L030443b
-.GLOSS	-
-.MEANING	-
+.GLOSS	speaking
+.MEANING	speaking
 .CORRESP	6258
 .FORM	kake
 .KANA	カケ
@@ -9440,16 +9442,6 @@
 .DERIVATION	ref_target=F000051	-s-
 .TRANSREL	ref_target=L030448a	kakuri
 .TRANSREL	ref_target=L030449a	kakure
-
----------------------------------------------------
-=== L030446b
-.GLOSS	-
-.MEANING	-
-.CORRESP	6161
-.FORM	kakusi
-.KANA	カクシ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L030446a	kakusi
 
 ---------------------------------------------------
 === L030447a
@@ -10108,7 +10100,7 @@
 === L030515a
 .GLOSS	turn; return
 .MEANING[1]	turn
-.MEANING[2]	return t
+.MEANING[2]	return, send back; turn away
 .CORRESP	5967
 .FORM	kapyesi
 .KANA	カヘシ
@@ -10829,6 +10821,7 @@
 .ITYPE	lower_bigrade
 .VCLASS	caused motion
 .DERIVATION	ref_target=F000052	-e-
+.DERIVATION	ref_target=	-(a)se- [causative formant]
 .TRANSREL	ref_target=L030608a	ki
 
 ---------------------------------------------------
@@ -11370,15 +11363,6 @@
 .RELATED	ref_target=L030633a	kudari
 
 ---------------------------------------------------
-=== L030632b
-.GLOSS	-
-.MEANING	-
-.FORM	kutati
-.KANA	クタチ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L030632a	kutati
-
----------------------------------------------------
 === L030633a
 .GLOSS	go down
 .MEANING	go down
@@ -11459,16 +11443,6 @@
 .VCLASS	caused motion
 
 ---------------------------------------------------
-=== L030653b
-.GLOSS	-
-.MEANING	-
-.CORRESP	10354
-.FORM	kumi
-.KANA	クミ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L030653a	kumi
-
----------------------------------------------------
 === L030654a
 .GLOSS	join together
 .MEANING	join together
@@ -11524,16 +11498,6 @@
 .DERIVATION	ref_target=F000050	-r-
 
 ---------------------------------------------------
-=== L030657b
-.GLOSS	-
-.MEANING	-
-.CORRESP	50800
-.FORM	kumori
-.KANA	クモリ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L030657a	kumori
-
----------------------------------------------------
 === L030658a
 .GLOSS	be hidden by clouds
 .MEANING	be hidden by clouds
@@ -11583,8 +11547,8 @@
 
 ---------------------------------------------------
 === L030660b
-.GLOSS	-
-.MEANING	-
+.GLOSS	crumbling
+.MEANING	crumbling, slide
 .FORM	kuye
 .KANA	クエ
 .POS	noun (deverbal)
@@ -11736,8 +11700,8 @@
 
 ---------------------------------------------------
 === L030678b
-.GLOSS	-
-.MEANING	-
+.GLOSS	attire
+.MEANING	attire
 .CORRESP	209088
 .FORM	kyesi
 .KANA	ケシ
@@ -12036,8 +12000,8 @@
 
 ---------------------------------------------------
 === L030707b
-.GLOSS	-
-.MEANING	-
+.GLOSS	passing
+.MEANING	passing
 .FORM	kwosi
 .KANA	コシ
 .POS	noun (deverbal)
@@ -12069,8 +12033,8 @@
 
 ---------------------------------------------------
 === L030711b
-.GLOSS	-
-.MEANING	-
+.GLOSS	reply
+.MEANING	reply
 .CORRESP	12749
 .FORM	kotape
 .KANA	コタヘ
@@ -12405,8 +12369,8 @@
 
 ---------------------------------------------------
 === L030742b
-.GLOSS	-
-.MEANING	-
+.GLOSS	including
+.MEANING	including
 .FORM	kome
 .KANA	コメ
 .POS	noun (deverbal)
@@ -12446,8 +12410,8 @@
 
 ---------------------------------------------------
 === L030744b
-.GLOSS	-
-.MEANING	-
+.GLOSS	enclosed
+.MEANING	enclosed
 .CORRESP	50072
 .FORM	komori
 .KANA	コモリ
@@ -12541,8 +12505,8 @@
 
 ---------------------------------------------------
 === L030751b
-.GLOSS	-
-.MEANING	-
+.GLOSS	frost
+.MEANING	frost
 .FORM	kori
 .KANA	コリ
 .POS	noun (deverbal)
@@ -12660,8 +12624,8 @@
 
 ---------------------------------------------------
 === L030762b
-.GLOSS	-
-.MEANING	-
+.GLOSS	border
+.MEANING	border
 .CORRESP	13879
 .FORM	sakapi
 .KANA	サカヒ
@@ -14383,8 +14347,6 @@
 .KANA	シ
 .FORM	se
 .KANA	セ
-.FORM	si
-.KANA	シ
 .POS	verb
 .ITYPE	S-irregular
 
@@ -14453,7 +14415,7 @@
 === L030926a
 .GLOSS	pass
 .MEANING[1]	pass, pass by
-.MEANING[2]	pass time
+.MEANING[2]	pass (of time)
 .MEANING[3]	pass away, die
 .MEANING[4]	disappear
 .MEANING[5]	stop doing
@@ -16436,6 +16398,15 @@
 .KANA	ツギ
 .POS	noun (deverbal)
 .DERIVATION	ref_target=L031139a	tugi
+
+---------------------------------------------------
+=== L080724
+.GLOSS	again
+.MEANING	again, repeatedly
+.FORM	tugite
+.KANA	ツギテ
+.POS	adverb
+.RELATED	ref_target=L031139a	tugi
 
 ---------------------------------------------------
 === L080666a
@@ -18759,7 +18730,7 @@
 .KANA	ネギ
 .POS	verb
 .ITYPE	upper_bigrade
-.NOTE	"pray" meaning attested in the prose of the Nihon Shoki and early EMJ Ruijū Myōgishō and Kogo Shūi (JDB, NKD); inflection based only on stem negwi (JDB); DVB negwi 'priest' also found (NKD, JDB); negi, seemingly with kō-rui /gi/ and so possibly a QD form, attested in Settsu Fudoki (摂津風土記) according to kobun.weblio.jp; "commend" meaning attested in the prose of the Kojiki in section on Emperor Keikō (景行)) and the Bungo Fudoki (豊後国風土記) among others (JDB)
+.NOTE	"pray" meaning attested in the prose of the Nihon Shoki and early EMJ Ruijū Myōgishō and Kogo Shūi (JDB, NKD); inflection based only on stem negwi (JDB); DVN negwi 'priest' also found (NKD, JDB); negi, seemingly with kō-rui /gi/ and so possibly a QD form, attested in Settsu Fudoki (摂津風土記) according to kobun.weblio.jp; "commend" meaning attested in the prose of the Kojiki in section on Emperor Keikō (景行)) and the Bungo Fudoki (豊後国風土記) among others (JDB)
 .DERIVATION	ref_target=F000053	-i-
 .TRANSREL	ref_target=L031356a	negapi
 
@@ -20937,6 +20908,7 @@
 .POS	verb
 .ITYPE	lower_bigrade
 .DERIVATION	ref_target=F000052	-e-
+.DERIVATION	ref_target=	-(a)se- [causative formant]
 
 ---------------------------------------------------
 === L031610a
@@ -21630,6 +21602,7 @@
 .ITYPE	lower_bigrade
 .DERIVATION	ref_target=F000051	-s-
 .DERIVATION	ref_target=F000052	-e-
+.DERIVATION	ref_target=	-(a)se- [causative formant]
 .TRANSREL	ref_target=L031712a	mi
 
 ---------------------------------------------------
@@ -23892,16 +23865,6 @@
 .TRANSREL	ref_target=L031910a	watari
 
 ---------------------------------------------------
-=== L031908b
-.GLOSS	-
-.MEANING	-
-.CORRESP	41276
-.FORM	watasi
-.KANA	ワタシ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L031908a	watasi
-
----------------------------------------------------
 === L031909a
 .GLOSS	go by crossing
 .MEANING	go by crossing
@@ -23933,8 +23896,8 @@
 
 ---------------------------------------------------
 === L031910b
-.GLOSS	-
-.MEANING	-
+.GLOSS	crossing
+.MEANING	crossing
 .CORRESP	70356
 .FORM	watari
 .KANA	ワタリ
@@ -23963,7 +23926,9 @@
 .ITYPE	upper_bigrade
 .TRANSITIVITY	intransitive subtype=unaccusative
 .INTRVCLASS	s
+.DERIVATION	ref_target=F000053	-i-
 .DERIVATION	ref_target=L007208	wabwisi
+.RELATED	ref_target=L031916a	wabure
 
 ---------------------------------------------------
 === L031915b
@@ -23981,9 +23946,10 @@
 .MEANING	be discouraging
 .FORM	wabure
 .KANA	ワブレ
+.POS	verb
 .ITYPE	lower_bigrade
 .DERIVATION	ref_target=F000052	-e-
-.POS	verb
+.RELATED	ref_target=L031915a	wabwi
 
 ---------------------------------------------------
 === L031918a
@@ -24118,8 +24084,8 @@
 
 ---------------------------------------------------
 === L031931b
-.GLOSS	-
-.MEANING	-
+.GLOSS	smile
+.MEANING	smile, smiling face
 .CORRESP	212929
 .FORM	wemapi
 .KANA	ヱマヒ
@@ -24166,8 +24132,8 @@
 
 ---------------------------------------------------
 === L031934b
-.GLOSS	-
-.MEANING	-
+.GLOSS	smiling
+.MEANING	smiling, smile
 .CORRESP	4036
 .FORM	wemi
 .KANA	ヱミ
@@ -24233,15 +24199,6 @@
 .KANA	ヲシ
 .POS	verb
 .ITYPE	quadrigrade
-
----------------------------------------------------
-=== L031946b
-.GLOSS	-
-.MEANING	-
-.FORM	wosi
-.KANA	ヲシ
-.POS	noun (deverbal)
-.DERIVATION	ref_target=L031946a	wosi
 
 ---------------------------------------------------
 === L031947a
@@ -24448,8 +24405,8 @@
 
 ---------------------------------------------------
 === L031963b
-.GLOSS	-
-.MEANING	-
+.GLOSS	bending
+.MEANING	bending
 .FORM	wowori
 .KANA	ヲヲリ
 .POS	noun (deverbal)
@@ -24694,18 +24651,6 @@
 .KANA	タヅサヘ
 .POS	verb
 .ITYPE	lower_bigrade
-
----------------------------------------------------
-=== L032046a
-.GLOSS	invite
-.MEANING	invite
-.NOTE	not in JDB
-.FORM	atorapi
-.KANA	アトラヒ
-.POS	verb
-.ITYPE	lower_bigrade
-.VCLASS	speech
-.DERIVATION	ref_target=F000052	-e-
 
 ---------------------------------------------------
 === L032047a
@@ -25772,11 +25717,13 @@
 ---------------------------------------------------
 === L042080
 .GLOSS	all
-.MEANING	all
+.MEANING	all, everyone
 .CORRESP	36678
 .FORM	mwina
 .KANA	ミナ
 .POS	noun
+.RELATED	ref_target=L007011	moro
+.RELATED	ref_target=L051506	mone
 
 ---------------------------------------------------
 === L042081
@@ -37472,7 +37419,7 @@
 
 ---------------------------------------------------
 === L050870
-.GLOSS	type of plant used in dyes indigo
+.GLOSS	type of plant used in dyes
 .MEANING	type of plant used in dyes: indigo?
 .FORM	atate
 .KANA	アタテ
@@ -37496,7 +37443,7 @@
 
 ---------------------------------------------------
 === L050875
-.GLOSS	brambling a type of sparrow
+.GLOSS	brambling
 .MEANING	brambling (a type of sparrow)
 .FORM	atori
 .KANA	アトリ
@@ -43997,7 +43944,8 @@
 .FORM	mone
 .KANA	モネ
 .POS	noun
-.NOTE	Vovin suggests it means "everyone" and is a regional form of mwina, which seems likely since it appears as "pito mone" and "pito mwina" is very common, and because mwina comes from a root *mɨr which could easily give /o/ instead of /wi/ in a compound
+.RELATED	ref_target=L042080	mwina
+.NOTE	Vovin and ZdB suggest mone means "everyone" and is a regional form of mwina (ZdB says Kyushu), which seems likely since it appears as "pito mone" and "pito mwina" is frequent among the not so many occurrences of mwina, and because mwina comes from a root *mɨr which could easily give /mo/ with consonant deletion in a compound (*mɨr-C > *mɨ-C > moC), whereas /mwi/ must be contracted (*mɨr > *mɨy > mwi))before composition with na
 
 ---------------------------------------------------
 === L051507
@@ -44991,7 +44939,7 @@
 .FORM	nosaki
 .KANA	ノサキ
 .POS	noun
-.COMPOUND	ref_target=L052548	ni
+.COMPOUND	ref_target=L052548	no
 .COMPOUND	ref_target=L050116	saki
 
 ---------------------------------------------------
@@ -47746,7 +47694,7 @@
 .POS	personal name
 
 ---------------------------------------------------
-=== L080539
+=== L080725
 .GLOSS	Shibi
 .MEANING	Shibi
 .FORM	sibi
@@ -53303,14 +53251,20 @@
 .POS	noun
 
 ---------------------------------------------------
-=== L052548
+=== L052548a
 .GLOSS	baggage
 .MEANING	baggage
 .FORM	ni
 .KANA	ニ
+.POS	noun (exposed)
+
+---------------------------------------------------
+=== L052548b
+.GLOSS	baggage
+.MEANING	baggage
 .FORM	no
 .KANA	ノ
-.POS	noun
+.POS	noun (covert)
 
 ---------------------------------------------------
 === L052551

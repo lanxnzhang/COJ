@@ -15,9 +15,9 @@ entry_from_xml(xml_str)                 → DictEntry
 
 from __future__ import annotations
 
-import io
 import os
 import xml.etree.ElementTree as ET
+from coj.xml_format import element_to_xml
 
 from coj.core.dictionary import DictEntry, Dictionary
 
@@ -160,24 +160,20 @@ def dictionary_to_xml(dictionary: Dictionary) -> str:
     root.set("version", "1.0")
     for entry in dictionary:
         root.append(_entry_to_elem(entry))
-    ET.indent(root, space="  ")
-    buf = io.BytesIO()
-    ET.ElementTree(root).write(buf, encoding="utf-8", xml_declaration=True)
-    return buf.getvalue().decode("utf-8")
+    return element_to_xml(root)
 
 
 def dictionary_to_xml_file(dictionary: Dictionary, path: str) -> None:
     """Write dictionary XML to *path*."""
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(dictionary_to_xml(dictionary))
 
 
 def entry_to_xml(entry: DictEntry) -> str:
     """Serialise a single DictEntry to an XML string."""
     elem = _entry_to_elem(entry)
-    ET.indent(elem, space="  ")
-    return ET.tostring(elem, encoding="unicode")
+    return element_to_xml(elem, declaration=False)
 
 
 # ── Text rendering ─────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <document filename="EN_26.txt">
-  <block id="EN.26.1" header="sumyemima no mikoto no opo mi koto moti te suminoye ni koto wope matu ru sumye gamwi tati no mapye ni mawosi tamapa ku morokwosi ni tukapi tukapa sa mu to suru ni puna suwe na ki ni yori te parima no kuni yori puna noru to si te tukapi pa tukapa sa mu to omoposi myesu ma ni sumye gamwi no mikoto moti te puna suwe pa ware tukura mu to wosipe satosi tama pi ki">
+  <block header="sumyemima no mikoto no opo mi koto moti te suminoye ni koto wope matu ru sumye gamwi tati no mapye ni mawosi tamapa ku morokwosi ni tukapi tukapa sa mu to suru ni puna suwe na ki ni yori te parima no kuni yori puna noru to si te tukapi pa tukapa sa mu to omoposi myesu ma ni sumye gamwi no mikoto moti te puna suwe pa ware tukura mu to wosipe satosi tama pi ki" id="EN.26.1">
     <roundtrip-data format="coj-txt" source-id="1_EN_26">
       <comment position="0" raw="IP-MAT,IP-NMZ-FRM,IP-ADV,NP,PP-GEN,NP,0@皇御孫,*" />
       <comment position="2" raw="IP-MAT,IP-NMZ-FRM,IP-ADV,NP,PP-GEN,NP,1@尊乃御命以弖,*" />
@@ -68,22 +68,22 @@
               <NP>
                 <IP-REL>
                   <NP-PRD>
-                    <N phon="LOG" form="sumyemima" />
+                    <N form="sumyemima" phon="LOG" />
                   </NP-PRD>
-                  <COP-ADI lemma="L031965" phon="LOG" form="no" />
+                  <COP-ADI form="no" lemma="L031965" phon="LOG" />
                 </IP-REL>
-                <N lemma="L080203" phon="LOG" form="mikoto" />
+                <N form="mikoto" lemma="L080203" phon="LOG" />
               </NP>
-              <P-CASE-GEN lemma="L000520" phon="PHON" form="no" />
+              <P-CASE-GEN form="no" lemma="L000520" phon="PHON" />
             </PP-GEN>
             <N>
-              <PFX-HON phon="LOG" form="opo" />
-              <PFX-HON lemma="L000035" phon="LOG" form="mi" />
-              <N phon="LOG" form="koto" />
+              <PFX-HON form="opo" phon="LOG" />
+              <PFX-HON form="mi" lemma="L000035" phon="LOG" />
+              <N form="koto" phon="LOG" />
             </N>
           </NP>
-          <VB-GER phon="LOG" form="moti" />
-          <VB-GER phon="PHON" form="te" />
+          <VB-GER form="moti" phon="LOG" />
+          <VB-GER form="te" phon="PHON" />
         </IP-ADV>
         <PP-DAT>
           <NP>
@@ -92,78 +92,78 @@
                 <IP-REL>
                   <PP-DAT>
                     <NP>
-                      <PLN phon="LOG" form="suminoye" />
+                      <PLN form="suminoye" phon="LOG" />
                     </NP>
-                    <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+                    <P-CASE-DAT form="ni" lemma="L000519" phon="PHON" />
                   </PP-DAT>
                   <IP-ADV>
                     <NP>
-                      <N phon="LOG" form="koto" />
+                      <N form="koto" phon="LOG" />
                     </NP>
                     <VB>
-                      <VB-STM phon="LOG" form="wope" />
+                      <VB-STM form="wope" phon="LOG" />
                     </VB>
-                    <VB-ADC phon="LOG" form="matu" />
-                    <VB-ADC phon="PHON" form="ru" />
+                    <VB-ADC form="matu" phon="LOG" />
+                    <VB-ADC form="ru" phon="PHON" />
                   </IP-ADV>
                 </IP-REL>
                 <N>
-                  <N phon="LOG" form="sumye" index="1" inferred_index="1" />
-                  <N index="2" phon="LOG" form="gamwi" />
-                  <SFX phon="LOG" form="tati" />
+                  <N form="sumye" index="1" inferred_index="1" phon="LOG" />
+                  <N form="gamwi" index="2" phon="LOG" />
+                  <SFX form="tati" phon="LOG" />
                 </N>
               </NP>
-              <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
+              <P-CASE-GEN form="no" lemma="L000520" phon="LOG" />
             </PP-GEN>
-            <N lemma="L050052" phon="LOG" form="mapye" />
+            <N form="mapye" lemma="L050052" phon="LOG" />
           </NP>
-          <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+          <P-CASE-DAT form="ni" lemma="L000519" phon="PHON" />
         </PP-DAT>
         <VB>
-          <VB-STM phon="LOG" form="mawosi" />
-          <VB-NML phon="LOG" form="tamapa" />
-          <VB-NML phon="PHON" form="ku" />
+          <VB-STM form="mawosi" phon="LOG" />
+          <VB-NML form="tamapa" phon="LOG" />
+          <VB-NML form="ku" phon="PHON" />
         </VB>
       </IP-NMZ-FRM>
       <IP-ADV>
         <IP-ADV>
           <PP-DAT>
             <NP>
-              <PLN phon="LOG" form="morokwosi" />
+              <PLN form="morokwosi" phon="LOG" />
             </NP>
-            <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+            <P-CASE-DAT form="ni" lemma="L000519" phon="PHON" />
           </PP-DAT>
           <NP-OB1>
-            <N phon="LOG" form="tukapi" />
+            <N form="tukapi" phon="LOG" />
           </NP-OB1>
           <VB>
-            <VB-STM phon="LOG" form="tukapa" />
-            <VAX-RSP-STM lemma="L000009" phon="PHON" form="sa" />
-            <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
+            <VB-STM form="tukapa" phon="LOG" />
+            <VAX-RSP-STM form="sa" lemma="L000009" phon="PHON" />
+            <VAX-CJR-ADC form="mu" lemma="L000002" phon="PHON" />
           </VB>
         </IP-ADV>
-        <P-COMP lemma="L000530" phon="PHON" form="to" />
-        <VB-ADN phon="LOG" form="suru" />
-        <P-CONN lemma="L000551" phon="PHON" form="ni" />
+        <P-COMP form="to" lemma="L000530" phon="PHON" />
+        <VB-ADN form="suru" phon="LOG" />
+        <P-CONN form="ni" lemma="L000551" phon="PHON" />
       </IP-ADV>
       <IP-ADV>
         <PP-DAT>
           <IP-NMZ>
             <NP-SBJ>
               <N>
-                <N phon="LOG" form="puna" />
-                <DVN phon="LOG" form="suwe" />
+                <N form="puna" phon="LOG" />
+                <DVN form="suwe" phon="LOG" />
               </N>
             </NP-SBJ>
             <ADJ>
-              <ADJ-STM lemma="L007028" phon="LOG" form="na" />
-              <ACP-ADN lemma="L000033" phon="LOG" form="ki" />
+              <ADJ-STM form="na" lemma="L007028" phon="LOG" />
+              <ACP-ADN form="ki" lemma="L000033" phon="LOG" />
             </ADJ>
           </IP-NMZ>
-          <P-CASE-DAT lemma="L000519" phon="LOG" form="ni" />
+          <P-CASE-DAT form="ni" lemma="L000519" phon="LOG" />
         </PP-DAT>
-        <VB-GER phon="LOG" form="yori" />
-        <VB-GER phon="PHON" form="te" />
+        <VB-GER form="yori" phon="LOG" />
+        <VB-GER form="te" phon="PHON" />
       </IP-ADV>
       <PP-DAT>
         <NP>
@@ -175,90 +175,90 @@
                     <NP>
                       <PP-GEN>
                         <NP>
-                          <PLN phon="LOG" form="parima" />
+                          <PLN form="parima" phon="LOG" />
                         </NP>
-                        <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
+                        <P-CASE-GEN form="no" lemma="L000520" phon="LOG" />
                       </PP-GEN>
-                      <N lemma="L051337" phon="LOG" form="kuni" />
+                      <N form="kuni" lemma="L051337" phon="LOG" />
                     </NP>
-                    <P-CASE-ABL lemma="L000540a" phon="PHON" form="yori" />
+                    <P-CASE-ABL form="yori" lemma="L000540a" phon="PHON" />
                   </PP-ABL>
                   <VB>
-                    <N phon="LOG" form="puna" />
-                    <VB-ADC phon="LOG" form="noru" />
+                    <N form="puna" phon="LOG" />
+                    <VB-ADC form="noru" phon="LOG" />
                   </VB>
-                  <P-CONN phon="PHON" form="to" />
+                  <P-CONN form="to" phon="PHON" />
                 </IP-ADV>
-                <VB-GER phon="LOG" form="si" />
-                <VB-GER phon="PHON" form="te" />
+                <VB-GER form="si" phon="LOG" />
+                <VB-GER form="te" phon="PHON" />
               </IP-ADV>
               <PP-OB1>
                 <NP>
-                  <N phon="LOG" form="tukapi" />
+                  <N form="tukapi" phon="LOG" />
                 </NP>
-                <P-TOP lemma="L000522" phon="LOG" form="pa" />
+                <P-TOP form="pa" lemma="L000522" phon="LOG" />
               </PP-OB1>
               <VB>
-                <VB-STM phon="LOG" form="tukapa" />
-                <VAX-RSP-STM lemma="L000009" phon="PHON" form="sa" />
-                <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
+                <VB-STM form="tukapa" phon="LOG" />
+                <VAX-RSP-STM form="sa" lemma="L000009" phon="PHON" />
+                <VAX-CJR-ADC form="mu" lemma="L000002" phon="PHON" />
               </VB>
-              <P-COMP lemma="L000530" phon="PHON" form="to" />
+              <P-COMP form="to" lemma="L000530" phon="PHON" />
             </IP-ARG>
             <VB>
-              <VB-STM phon="LOG" form="omoposi" />
-              <VB-ADC phon="LOG" form="myesu" />
+              <VB-STM form="omoposi" phon="LOG" />
+              <VB-ADC form="myesu" phon="LOG" />
             </VB>
           </IP-EMB>
-          <N phon="LOG" form="ma" />
+          <N form="ma" phon="LOG" />
         </NP>
-        <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+        <P-CASE-DAT form="ni" lemma="L000519" phon="PHON" />
       </PP-DAT>
       <IP-ADV>
         <NP>
           <PP-GEN>
             <NP>
               <N lemma="L050218">
-                <N phon="LOG" form="sumye" index="1" inferred_index="1" />
-                <N index="2" phon="LOG" form="gamwi" />
+                <N form="sumye" index="1" inferred_index="1" phon="LOG" />
+                <N form="gamwi" index="2" phon="LOG" />
               </N>
             </NP>
-            <P-CASE-GEN lemma="L000520" phon="LOG" form="no" />
+            <P-CASE-GEN form="no" lemma="L000520" phon="LOG" />
           </PP-GEN>
-          <N phon="LOG" form="mikoto" />
+          <N form="mikoto" phon="LOG" />
         </NP>
-        <VB-GER phon="LOG" form="moti" />
-        <VB-GER phon="PHON" form="te" />
+        <VB-GER form="moti" phon="LOG" />
+        <VB-GER form="te" phon="PHON" />
       </IP-ADV>
       <IP-ARG>
         <PP-OB1>
           <NP>
             <N>
-              <N phon="LOG" form="puna" />
-              <DVN phon="LOG" form="suwe" />
+              <N form="puna" phon="LOG" />
+              <DVN form="suwe" phon="LOG" />
             </N>
           </NP>
-          <P-TOP lemma="L000522" phon="PHON" form="pa" />
+          <P-TOP form="pa" lemma="L000522" phon="PHON" />
         </PP-OB1>
         <NP-SBJ>
-          <PRO-N phon="LOG" form="ware" />
+          <PRO-N form="ware" phon="LOG" />
         </NP-SBJ>
         <VB>
-          <VB-STM phon="LOG" form="tukura" />
-          <VAX-CJR-ADC lemma="L000002" phon="PHON" form="mu" />
+          <VB-STM form="tukura" phon="LOG" />
+          <VAX-CJR-ADC form="mu" lemma="L000002" phon="PHON" />
         </VB>
-        <P-COMP lemma="L000530" phon="PHON" form="to" />
+        <P-COMP form="to" lemma="L000530" phon="PHON" />
       </IP-ARG>
       <VB>
-        <VB-STM phon="LOG" form="wosipe" index="1" inferred_index="1" />
-        <VB-STM index="2" phon="LOG" form="satosi" />
-        <VB-STM phon="LOG" form="tama" index="1" inferred_index="1" />
-        <VB-STM phon="PHON" form="pi" index="1" inferred_index="1" />
-        <VAX-SPST-CLS lemma="L000015" phon="PHON" form="ki" />
+        <VB-STM form="wosipe" index="1" inferred_index="1" phon="LOG" />
+        <VB-STM form="satosi" index="2" phon="LOG" />
+        <VB-STM form="tama" index="1" inferred_index="1" phon="LOG" />
+        <VB-STM form="pi" index="1" inferred_index="1" phon="PHON" />
+        <VAX-SPST-CLS form="ki" lemma="L000015" phon="PHON" />
       </VB>
     </IP-MAT>
   </block>
-  <block id="EN.26.2" header="wosipe satosi tama pi nagara puna suwe tukuri tama p yereba yoro kobwi yoro si mi wiya ziro no mitegura wo tukasa kurawi nanigasi ni sasage mota sime te tate matura ku to mawosu">
+  <block header="wosipe satosi tama pi nagara puna suwe tukuri tama p yereba yoro kobwi yoro si mi wiya ziro no mitegura wo tukasa kurawi nanigasi ni sasage mota sime te tate matura ku to mawosu" id="EN.26.2">
     <roundtrip-data format="coj-txt" source-id="2_EN_26">
       <comment position="0" raw="IP-MAT,IP-ARG,IP-ADV,0@教悟給比那我良,*" />
       <comment position="5" raw="IP-MAT,IP-ARG,IP-ADV,1@船居作給部禮波悦己比嘉之美,*" />
@@ -293,35 +293,35 @@
         <IP-ADV index="1" inferred_index="1">
           <IP-ADV>
             <VB>
-              <VB-STM phon="LOG" form="wosipe" index="1" inferred_index="1" />
-              <VB-STM index="2" phon="LOG" form="satosi" />
-              <VB-STM phon="LOG" form="tama" index="1" inferred_index="1" />
-              <VB-STM phon="PHON" form="pi" index="1" inferred_index="1" />
-              <SFX phon="PHON" form="nagara" />
+              <VB-STM form="wosipe" index="1" inferred_index="1" phon="LOG" />
+              <VB-STM form="satosi" index="2" phon="LOG" />
+              <VB-STM form="tama" index="1" inferred_index="1" phon="LOG" />
+              <VB-STM form="pi" index="1" inferred_index="1" phon="PHON" />
+              <SFX form="nagara" phon="PHON" />
             </VB>
           </IP-ADV>
           <NP-OB1>
             <N>
-              <N phon="LOG" form="puna" />
-              <DVN phon="LOG" form="suwe" />
+              <N form="puna" phon="LOG" />
+              <DVN form="suwe" phon="LOG" />
             </N>
           </NP-OB1>
           <VB>
-            <VB-STM phon="LOG" form="tukuri" index="1" inferred_index="1" />
-            <VB-STM index="2" phon="LOG" form="tama" />
-            <VB-STM index="2" phon="PHON" form="p" />
-            <VAX-STV-PRV phon="PHON" form="yereba" />
+            <VB-STM form="tukuri" index="1" inferred_index="1" phon="LOG" />
+            <VB-STM form="tama" index="2" phon="LOG" />
+            <VB-STM form="p" index="2" phon="PHON" />
+            <VAX-STV-PRV form="yereba" phon="PHON" />
           </VB>
         </IP-ADV>
         <IP-ADV index="2">
-          <VB-INF phon="LOG" form="yoro" />
-          <VB-INF phon="PHON" form="kobwi" />
+          <VB-INF form="yoro" phon="LOG" />
+          <VB-INF form="kobwi" phon="PHON" />
         </IP-ADV>
         <IP-ADV index="1" inferred_index="1">
           <ADJ>
-            <ADJ-STM phon="LOG" form="yoro" />
-            <ADJ-STM phon="PHON" form="si" />
-            <ACP-INF lemma="L000033" phon="PHON" form="mi" />
+            <ADJ-STM form="yoro" phon="LOG" />
+            <ADJ-STM form="si" phon="PHON" />
+            <ACP-INF form="mi" lemma="L000033" phon="PHON" />
           </ADJ>
         </IP-ADV>
         <IP-ADV index="1" inferred_index="1">
@@ -330,47 +330,47 @@
               <IP-REL>
                 <NP-PRD>
                   <N>
-                    <N phon="LOG" form="wiya" index="1" inferred_index="1" />
-                    <N index="2" phon="LOG" form="ziro" />
+                    <N form="wiya" index="1" inferred_index="1" phon="LOG" />
+                    <N form="ziro" index="2" phon="LOG" />
                   </N>
                 </NP-PRD>
-                <COP-ADI lemma="L031965" phon="PHON" form="no" />
+                <COP-ADI form="no" lemma="L031965" phon="PHON" />
               </IP-REL>
-              <N lemma="L052124" phon="LOG" form="mitegura" />
+              <N form="mitegura" lemma="L052124" phon="LOG" />
             </NP>
-            <P-CASE-ACC lemma="L000534" phon="PHON" form="wo" />
+            <P-CASE-ACC form="wo" lemma="L000534" phon="PHON" />
           </PP-OB1>
           <PP-DAT>
             <NP>
               <N>
                 <COMMENT>
                   <C-N index="1" inferred_index="1">
-                    <N lemma="L050144" phon="LOG" form="tukasa" />
+                    <N form="tukasa" lemma="L050144" phon="LOG" />
                   </C-N>
                   <C-N index="2">
-                    <N phon="LOG" form="kurawi" />
+                    <N form="kurawi" phon="LOG" />
                   </C-N>
                   <C-N index="1" inferred_index="1">
-                    <N phon="LOG" form="nanigasi" />
+                    <N form="nanigasi" phon="LOG" />
                   </C-N>
                 </COMMENT>
               </N>
             </NP>
-            <P-CASE-DAT lemma="L000519" phon="PHON" form="ni" />
+            <P-CASE-DAT form="ni" lemma="L000519" phon="PHON" />
           </PP-DAT>
           <VB>
-            <VB-STM phon="LOG" form="sasage" index="1" inferred_index="1" />
-            <VB-STM index="2" phon="LOG" form="mota" />
-            <VAX-CTV-GER phon="LOG" form="sime" />
-            <VAX-CTV-GER phon="PHON" form="te" />
+            <VB-STM form="sasage" index="1" inferred_index="1" phon="LOG" />
+            <VB-STM form="mota" index="2" phon="LOG" />
+            <VAX-CTV-GER form="sime" phon="LOG" />
+            <VAX-CTV-GER form="te" phon="PHON" />
           </VB>
         </IP-ADV>
-        <VB phon="LOG" form="tate" />
-        <VB-NML phon="LOG" form="matura" />
-        <VB-NML phon="PHON" form="ku" />
-        <P-COMP lemma="L000530" phon="PHON" form="to" />
+        <VB form="tate" phon="LOG" />
+        <VB-NML form="matura" phon="LOG" />
+        <VB-NML form="ku" phon="PHON" />
+        <P-COMP form="to" lemma="L000530" phon="PHON" />
       </IP-ARG>
-      <VB-ADC phon="LOG" form="mawosu" />
+      <VB-ADC form="mawosu" phon="LOG" />
     </IP-MAT>
   </block>
 </document>

@@ -355,7 +355,7 @@ multi-sentence,IP-MAT,PP-OB1,NP,PRO-N,L042029,PHON,ko
 multi-sentence,IP-MAT,PP-OB1,P-CASE-ACC,L000536,PHON,woba
 ID,KK.3
 
-=N(" nubatamano kurwoki mikyesi wo matubusani toriyosopi okitutori munamiru toki patatagi mo kore pa pusapazu pyetunami so ni nukiute swonidori no awoki mikyesi wo matubusani toriyosopi okitutori munamiru toki patatagi mo ko mo pusapazu pyetunami so ni nukiute yamagata ni makisi atate tuki somekwi ga siru ni simekoromo wo matubusani toriyosopi okitutori munamiru toki patatagi mo ko si yorosi itwokwoyano imwo no mikoto muratori no wa ga mureinaba piketori no wa ga pikeinaba nakazi to pa na pa ipu tomo yamato no pitomotosusuki unakabusi na ga nakasamaku cd no kwiri ni tatamu zo wakakusano tuma no mikoto koto no katarigoto mo ko woba ")
+=N(" nubatamano kurwoki mikyesi wo matubusani toriyosopi okitutori munamiru toki patatagi mo kore pa pusapazu pyetunami so ni nukiute swonidori no awoki mikyesi wo matubusani toriyosopi okitutori munamiru toki patatagi mo ko mo pusapazu pyetunami so ni nukiute yamagata ni makisi atate tuki somekwi ga siru ni simekoromo wo matubusani toriyosopi okitutori munamiru toki patatagi mo ko si yorosi itwokwoyano imwo no mikoto muratori no wa ga mureinaba piketori no wa ga pikeinaba nakazi to pa na pa ipu tomo yamato no pitomotosusuki unakabusi na ga nakasamaku asaame no kwiri ni tatamu zo wakakusano tuma no mikoto koto no katarigoto mo ko woba ")
 multi-sentence,IP-MAT,0@奴婆多麻能,*
 multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,NP-SBJ,*T*
 multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-EPT,MK,L091019,N,L090444,PHON,nubatama
@@ -1586,10 +1586,10 @@ multi-sentence,IP-MAT,NP-PRD,N,L051411,PHON,maporoba
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,2@多多那豆久,*
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,IP-EPT,MK,L052111,VB-ADC,L031021a,PHON,tatanaduku
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,3@阿袁加岐,*
-multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,NP,N,L080331,N,L050206,ADJ-STM,L007042,PHON,awo
-multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,NP,N,L080331,N,L050206,N,L050141,PHON,kaki
-multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,NP,N,L080331,4@夜麻碁母禮流,*
-multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,NP,N,L080331,N,L050034,PHON,yama
+multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,N,L050206,ADJ-STM,L007042,PHON,awo
+multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,N,L050206,N,L050141,PHON,kaki
+multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,4@夜麻碁母禮流,*
+multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,N,L050034,PHON,yama
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,VB-ADN,VB-STM,L030744a,PHON,gomor
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,VB-ADN,VAX-STV-ADN,L000024,PHON,eru
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,5@夜麻登志宇流波斯,*

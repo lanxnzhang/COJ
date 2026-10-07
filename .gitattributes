@@ -1,0 +1,2 @@
+# Keep canonical corpus XML in LF form, including Windows checkouts.
+data/xml/**/*.xml text eol=lf

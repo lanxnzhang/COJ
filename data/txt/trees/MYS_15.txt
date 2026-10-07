@@ -279,10 +279,10 @@ CP-FINAL,IP-ADV,IP-NMZ-PRD,VB-NML,VAX-NEG-NML,L000006a,PHON,naku
 CP-FINAL,IP-ADV,COP-INF,L031965,PHON,ni
 ID,MYS.15.3588
 
-=N(" yupu saraba pigurasi kinaku ikwomayama kwoyete so a ga kuru imo ga me wo pori ")
+=N(" yupu sareba pigurasi kinaku ikwomayama kwoyete so a ga kuru imo ga me wo pori ")
 CP-FINAL,IP-SUB,0@由布佐礼婆,*
 CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,IP-ADV,NP-SBJ,N,L050087,PHON,yupu
-CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,IP-ADV,VB-CND,L030841a,PHON,sareba
+CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,IP-ADV,VB-PRV,L030841a,PHON,sareba
 CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,1@比具良之伎奈久,*
 CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,NP-SBJ,N,L051752,PHON,pigurasi
 CP-FINAL,IP-SUB,IP-ADV,NP-OB1-PTH,IP-REL,VB-ADC,L030585a,VB-STM,L030612a,PHON,ki
@@ -1344,7 +1344,7 @@ IP-MAT,VB-CLS,L030919a,PHON,su
 IP-MAT,XTN-IFC,L000804,PHON,nari
 ID,MYS.15.3624
 
-=N(" yupu sareba asibye ni sawaki akekureba oki ni nadusapu kamo sura mo tuma to tagupite wa ga wo ni pa simo na puri so to sirwotapeno pane sasikapete utiparapi sane to pu monowo yuku midu no kapyeranu gotoku puku kaze no miyenu ga gotoku atwo mo naki yo no pito nisite wakarenisi imo ga kisetesi naregoromo swode katasikite pitori ka mo nemu ")
+=N(" yupu sareba asibye ni sawaki akekureba oki ni nadusapu kamo sura mo tuma to tagupite wa ga wo ni pa simo na puri so to sirwotapeno pane sasikapete utiparapi sanu to pu monowo yuku midu no kapyeranu gotoku puku kaze no miyenu ga gotoku atwo mo naki yo no pito nisite wakarenisi imo ga kisetesi naregoromo swode katasikite pitori ka mo nemu ")
 IP-MAT,0@由布左礼婆,*
 IP-MAT,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,NP-SBJ,N,L050087,PHON,yupu
 IP-MAT,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,VB-PRV,L030841a,PHON,sareba
@@ -4752,7 +4752,7 @@ IP-MAT,IP-ADV,NP-PRD,2@和礼由恵爾,*
 IP-MAT,IP-ADV,NP-PRD,PRO-N,L042059,PHON,ware
 IP-MAT,IP-ADV,P-CONN,L000539,PHON,yuweni
 IP-MAT,3@於毛比和夫良牟,*
-IP-MAT,PP-SBJ,NP,IP-REL,VB-CLS,VB-STM,L030399a,PHON,omopi
+IP-MAT,PP-SBJ,NP,IP-REL,VB-INF,L030399a,PHON,omopi
 IP-MAT,PP-SBJ,NP,IP-REL,VB-CLS,VB-CLS,L031915a,PHON,wabu
 IP-MAT,PP-SBJ,NP,IP-REL,XTN-ADC,L000805,PHON,ramu
 IP-MAT,PP-SBJ,NP,4@伊母我可奈思佐,*
@@ -5447,14 +5447,14 @@ ID,MYS.15.3751
 
 =N(" paru no pi no uraganasiki ni okurewite kimi ni kwopwitutu utusikyeme ya mo ")
 IP-MAT,0@波流乃日能,*
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,PP-SBJ,NP,PP,NP,N,L051724,PHON,paru
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,PP-SBJ,NP,PP,P-CASE-GEN,L000520,PHON,no
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,PP-SBJ,NP,N,L050090,LOG,pi
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,PP-SBJ,P-CASE-GEN,L000520,PHON,no
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,1@宇良我奈之伎爾,*
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,ADJ-ADN,ADJ-STM,L080391,N,L050109,PHON,ura
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,ADJ-ADN,ADJ-STM,L080391,ADJ-STM,L007022,PHON,ganasi
-IP-MAT,IP-ADV,IP-ADV,IP-NMZ-PRD,ADJ-ADN,ACP-ADN,L000033,PHON,ki
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,PP-SBJ,NP,PP,NP,N,L051724,PHON,paru
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,PP-SBJ,NP,PP,P-CASE-GEN,L000520,PHON,no
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,PP-SBJ,NP,N,L050090,LOG,pi
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,PP-SBJ,P-CASE-GEN,L000520,PHON,no
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,1@宇良我奈之伎爾,*
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,ADJ-ADN,ADJ-STM,L080391,N,L050109,PHON,ura
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,ADJ-ADN,ADJ-STM,L080391,ADJ-STM,L007022,PHON,ganasi
+IP-MAT,IP-ADV,IP-ADV,IP-NMZ-IHRC-PRD,ADJ-ADN,ACP-ADN,L000033,PHON,ki
 IP-MAT,IP-ADV,IP-ADV,COP-INF,L031965,PHON,ni
 IP-MAT,IP-ADV,2@於久礼為弖,*
 IP-MAT,IP-ADV,VB-GER,VB-STM,L030332a,PHON,okure

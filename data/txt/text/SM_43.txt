@@ -265,7 +265,7 @@ CP-FINAL,IP-ADV,VB,VB-STM,PHON,s
 CP-FINAL,IP-ADV,VB,VAX-STV-CLS,PHON,eri
 ID,3_SM_43
 
-=N(" sikaredo mo ru siya na nyorai saisyou waugyau kwanzeon bosati gopo zenzin bon wau taisyaku si dai ten wau no pukasigiwi zin no tikara kake maku mo kasikwo ki ame tuti pirakete ywori konakata ame no sita sira si myesi si sumyera mikoto no mi tama ame tuti no kamwi tati no mamori tasuke maturi turu tikara ni yori te sore ra ga kitana ku pakari te s e ru mazi waza mina koto goto ku arapare nu ")
+=N(" sikaredo mo ru siya na nyorai saisyou waugyau kwanzeon bosati gopo zenzin bon wau taisyaku si dai ten wau no pukasigiwi zin no tikara kake maku mo kasikwo ki ame tuti pirakete ywori konakata ame no sita sira si myesi si sumyera mikoto no mi tama ame tuti no kamwi tati no mamori tasuke maturi turu tikara ni yori te sore ra ga kitana ku pakari te s e ru mazi waza mwina koto goto ku arapare nu ")
 IP-MAT,0@然母盧舍那如来最勝王経観世音菩薩護法善神梵王帝釈四大天王乃不可思議威神力挂畏,*
 IP-MAT,IP-ADV,VB-CSS,L030848a,LOG,sikaredo
 IP-MAT,IP-ADV,VB-CSS,L030848a,PHON,mo
@@ -345,7 +345,7 @@ IP-MAT,IP-ADV;@3,NP,IP-REL,VB,VAX-STV-ADN,L000024,PHON,ru
 IP-MAT,IP-ADV;@3,NP,6@厭魅事皆悉発覚奴,*
 IP-MAT,IP-ADV;@3,NP,N,N,LOG,mazi
 IP-MAT,IP-ADV;@3,NP,N,N;@2,LOG,waza
-IP-MAT,IP-ADV;@3,NP,N;@4,LOG,mina
+IP-MAT,IP-ADV;@3,NP,N;@4,L042080,LOG,mwina
 IP-MAT,IP-ADV;@3,IP-ADV,ADJ,ADJ,LOG,koto
 IP-MAT,IP-ADV;@3,IP-ADV,ADJ,ADJ;@2,LOG,goto
 IP-MAT,IP-ADV;@3,IP-ADV,ADJ,ACP-INF,L000033,LOG,ku
@@ -353,7 +353,7 @@ IP-MAT,IP-ADV;@3,VB,VB-STM,L030121a,LOG,arapare
 IP-MAT,IP-ADV;@3,VB,MORPHEME,PHON,nu
 ID,4_SM_43
 
-=N(" koko wo motite nori wo kamugapuru ni mina korosu tumi ni ater eri ")
+=N(" koko wo motite nori wo kamugapuru ni mwina korosu tumi ni ater eri ")
 IP-MAT,0@是以撿法尔,*
 IP-MAT,IP-ADV,PP,NP,N,LOG,koko
 IP-MAT,IP-ADV,PP,P-CASE-ACC,L000534,LOG,wo
@@ -363,7 +363,7 @@ IP-MAT,IP-ADV;@3,IP-ADV,PP,P-CASE-ACC,L000534,LOG,wo
 IP-MAT,IP-ADV;@3,IP-ADV,VB-ADN,L030524a,LOG,kamugapuru
 IP-MAT,IP-ADV;@3,IP-ADV,COP-INF,L031965,PHON,ni
 IP-MAT,IP-ADV;@3,1@皆当死刑罪,*
-IP-MAT,IP-ADV;@3,NP,N,LOG,mina
+IP-MAT,IP-ADV;@3,NP,N,L042080,LOG,mwina
 IP-MAT,IP-ADV;@3,PP-DAT,NP,IP-REL,VB-ADC,L030755a,LOG,korosu
 IP-MAT,IP-ADV;@3,PP-DAT,NP,N,LOG,tumi
 IP-MAT,IP-ADV;@3,PP-DAT,P-CASE,L000519,LOG,ni

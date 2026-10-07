@@ -1,6 +1,6 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <document filename="SM_22.txt">
-  <block id="SM.22.1" header="ko no tabi no maturi goto aka ku kiywo ku tukape matu r eru ni yorite wosame tamapu pito mo ari">
+  <block header="ko no tabi no maturi goto aka ku kiywo ku tukape matu r eru ni yorite wosame tamapu pito mo ari" id="SM.22.1">
     <roundtrip-data format="coj-txt" source-id="1_SM_22">
       <comment position="0" raw="IP-MAT,PP-SBJ-TOP,NP,IP-REL,IP-ADV,PP-DAT,NP,0@此遍乃政明浄久仕奉礼留尔依而治賜,*" />
       <comment position="18" raw="IP-MAT,PP-SBJ-TOP,NP,1@人母在,*" />
@@ -26,62 +26,62 @@
                     <NP>
                       <PP-GEN index="1" inferred_index="1">
                         <NP>
-                          <N lemma="L042029" phon="LOG" form="ko" />
+                          <N form="ko" lemma="L042029" phon="LOG" />
                         </NP>
-                        <P-CASE lemma="L000520" phon="LOG" form="no" />
+                        <P-CASE form="no" lemma="L000520" phon="LOG" />
                       </PP-GEN>
                       <PP-GEN index="2">
                         <NP>
-                          <N phon="LOG" form="tabi" />
+                          <N form="tabi" phon="LOG" />
                         </NP>
-                        <P-CASE lemma="L000520" phon="LOG" form="no" />
+                        <P-CASE form="no" lemma="L000520" phon="LOG" />
                       </PP-GEN>
                       <N>
-                        <N phon="LOG" form="maturi" index="1" inferred_index="1" />
-                        <N index="2" phon="LOG" form="goto" />
+                        <N form="maturi" index="1" inferred_index="1" phon="LOG" />
+                        <N form="goto" index="2" phon="LOG" />
                       </N>
                     </NP>
                     <IP-ADV index="1" inferred_index="1">
                       <ADJ>
-                        <ADJ phon="LOG" form="aka" />
-                        <ACP-INF lemma="L000033" phon="LOG" form="ku" />
+                        <ADJ form="aka" phon="LOG" />
+                        <ACP-INF form="ku" lemma="L000033" phon="LOG" />
                       </ADJ>
                     </IP-ADV>
                     <IP-ADV index="3">
                       <ADJ>
-                        <ADJ phon="LOG" form="kiywo" />
-                        <ACP-INF lemma="L000033" phon="PHON" form="ku" />
+                        <ADJ form="kiywo" phon="LOG" />
+                        <ACP-INF form="ku" lemma="L000033" phon="PHON" />
                       </ADJ>
                     </IP-ADV>
                     <VB>
-                      <VB-STM lemma="L031119a" phon="LOG" form="tukape" index="1" inferred_index="1" />
-                      <VB-STM index="2" lemma="L031649a" phon="" form="matur">
+                      <VB-STM form="tukape" index="1" inferred_index="1" lemma="L031119a" phon="LOG" />
+                      <VB-STM form="matur" index="2" lemma="L031649a" phon="">
                         <form-parts>
-                          <part phon="LOG" form="matu" />
-                          <part phon="PHON" form="r" />
+                          <part form="matu" phon="LOG" />
+                          <part form="r" phon="PHON" />
                         </form-parts>
                       </VB-STM>
-                      <VAX-STV-ADN lemma="L000024" phon="PHON" form="eru" />
+                      <VAX-STV-ADN form="eru" lemma="L000024" phon="PHON" />
                     </VB>
                   </IP-REL>
                 </NP>
-                <P-CASE lemma="L000519" phon="PHON" form="ni" />
+                <P-CASE form="ni" lemma="L000519" phon="PHON" />
               </PP-DAT>
-              <VB-GER phon="LOG" form="yorite" />
+              <VB-GER form="yorite" phon="LOG" />
             </IP-ADV>
             <VB>
-              <VB-STM lemma="L031943a" phon="LOG" form="wosame" />
-              <VB-ADC lemma="L031077a" phon="LOG" form="tamapu" />
+              <VB-STM form="wosame" lemma="L031943a" phon="LOG" />
+              <VB-ADC form="tamapu" lemma="L031077a" phon="LOG" />
             </VB>
           </IP-REL>
-          <N phon="LOG" form="pito" />
+          <N form="pito" phon="LOG" />
         </NP>
-        <P-TOP lemma="L000514" phon="PHON" form="mo" />
+        <P-TOP form="mo" lemma="L000514" phon="PHON" />
       </PP-SBJ-TOP>
-      <VB-CLS lemma="L030125a" phon="LOG" form="ari" />
+      <VB-CLS form="ari" lemma="L030125a" phon="LOG" />
     </IP-MAT>
   </block>
-  <block id="SM.22.2" header="mata mede no sakari ni pito ri puta ri domo ni kagapuri kurawi age tamapi wosame tamapa ku to noritamapu">
+  <block header="mata mede no sakari ni pito ri puta ri domo ni kagapuri kurawi age tamapi wosame tamapa ku to noritamapu" id="SM.22.2">
     <roundtrip-data format="coj-txt" source-id="2_SM_22">
       <comment position="0" raw="IP-MAT,0@又愛盛尔一二人等尔冠位上賜,*" />
       <comment position="15" raw="IP-MAT,IP-ADV,1@治賜久止宣,*" />
@@ -98,53 +98,53 @@
     </raw-text>
     <IP-MAT>
       <NP>
-        <N phon="LOG" form="mata" />
+        <N form="mata" phon="LOG" />
       </NP>
       <IP-ADV>
         <IP-ADV>
           <PP-DAT>
             <NP>
-              <N phon="LOG" form="mede" index="1" inferred_index="1" />
-              <N index="2" phon="LOG" form="no" />
-              <N phon="LOG" form="sakari" index="1" inferred_index="1" />
+              <N form="mede" index="1" inferred_index="1" phon="LOG" />
+              <N form="no" index="2" phon="LOG" />
+              <N form="sakari" index="1" inferred_index="1" phon="LOG" />
             </NP>
-            <P-CASE lemma="L000519" phon="PHON" form="ni" />
+            <P-CASE form="ni" lemma="L000519" phon="PHON" />
           </PP-DAT>
           <NP>
             <NUMCLP index="1" inferred_index="1">
-              <NUM lemma="L002001" phon="LOG" form="pito" />
-              <CL lemma="L002016" phon="LOG" form="ri" />
+              <NUM form="pito" lemma="L002001" phon="LOG" />
+              <CL form="ri" lemma="L002016" phon="LOG" />
             </NUMCLP>
             <NUMCLP index="2">
-              <NUM lemma="L002002" phon="LOG" form="puta" />
-              <N phon="LOG" form="ri" />
-              <SFX lemma="L001002" phon="LOG" form="domo" />
+              <NUM form="puta" lemma="L002002" phon="LOG" />
+              <N form="ri" phon="LOG" />
+              <SFX form="domo" lemma="L001002" phon="LOG" />
             </NUMCLP>
-            <COP-INF lemma="L031965" phon="PHON" form="ni" />
+            <COP-INF form="ni" lemma="L031965" phon="PHON" />
           </NP>
           <NP-OB1>
             <N>
-              <DVN lemma="L030423b" phon="LOG" form="kagapuri" />
-              <N phon="LOG" form="kurawi" />
+              <DVN form="kagapuri" lemma="L030423b" phon="LOG" />
+              <N form="kurawi" phon="LOG" />
             </N>
           </NP-OB1>
           <VB>
-            <VB-STM lemma="L030023a" phon="LOG" form="age" />
-            <VB-INF lemma="L031077a" phon="LOG" form="tamapi" />
+            <VB-STM form="age" lemma="L030023a" phon="LOG" />
+            <VB-INF form="tamapi" lemma="L031077a" phon="LOG" />
           </VB>
         </IP-ADV>
         <VB>
-          <VB-STM lemma="L031943a" phon="LOG" form="wosame" />
-          <VB-NML lemma="L031077a" phon="" form="tamapaku">
+          <VB-STM form="wosame" lemma="L031943a" phon="LOG" />
+          <VB-NML form="tamapaku" lemma="L031077a" phon="">
             <form-parts>
-              <part phon="LOG" form="tamapa" />
-              <part phon="PHON" form="ku" />
+              <part form="tamapa" phon="LOG" />
+              <part form="ku" phon="PHON" />
             </form-parts>
           </VB-NML>
         </VB>
-        <P-COMP lemma="L000530" phon="PHON" form="to" />
+        <P-COMP form="to" lemma="L000530" phon="PHON" />
       </IP-ADV>
-      <VB-ADC lemma="L032093a" phon="LOG" form="noritamapu" />
+      <VB-ADC form="noritamapu" lemma="L032093a" phon="LOG" />
     </IP-MAT>
   </block>
 </document>

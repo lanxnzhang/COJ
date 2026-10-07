@@ -1737,7 +1737,7 @@ multi-sentence,IP-MAT;@2,ADJ-INF,ACP-INF,L000034,PHON,mi
 multi-sentence,IP-MAT;@2,P-FNL-MPH,L000507,PHON,kamo
 ID,MYS.18.4093
 
-=N(" asipara no midupo no kuni wo amakudari sirasimyesikyeru sumyeroki no kamwi no mikoto no miyo kasane ama no pitugi to sirasikuru kimi no miyomiyo sikimaseru yomo no kuni ni pa yamakapa wo piromi atumito tatematuru mitukwitakara pa kazwopeezu tukusi mo kanetu sikaredomo wa go opokimi no moropito wo izanapitamapi yoki koto wo pazimetamapite kugane ka mo tasikeku aramu to omoposite sita nayamasu ni tori ga naku aduma no kuni no mitinoku no woda n aru yama ni kugane ari to mausitamapyere mikokoro wo akirametamapi ametuti no kamwi apiudunapi sumyeroki no mitama tasukete topoki yo ni kakarisi koto wo wa ga miyo ni arapasite areba wosu kuni pa sakayemu mono to kamunagara omoposimyesite mononopuno yaswotomonowo wo maturope no muke no manima ni oipito mo wominawarapa mo si ga negapu kokorodarapi ni nadetamapi wosametamapeba koko wo si mo ayani taputwomi uresikyeku iyoyo omopite opotomo no topotu kamuoya no so no na woba opokumenusi to opimotite tukapesi tukasa umi yukaba miduku kabane yama yukaba kusa musu kabane opokimi no pye ni koso siname kapyerimi pa sezi to kotodate masurawo no kiywoki so no na wo inisipye ywo ima no wotutu ni nagasapyeru oya no kwodomo so opotomo to sapano udi pa pito no oya no taturu kotodate pito no kwo pa oya no na tatazu opokimi ni maturwopu mono to ipitugyeru koto no tukasa so adusayumi te ni torimotite turugitati kosi ni toripaki asa mamori yupu no mamori ni opokimi no mikadwo no mamori ware wo okite pito pa arazi to iyatate omopi si masaru opokimi no mikoto no saki no kikeba taputwomi ")
+=N(" asipara no midupo no kuni wo amakudari sirasimyesikyeru sumyeroki no kamwi no mikoto no miyo kasane ama no pitugi to sirasikuru kimi no miyomiyo sikimaseru yomo no kuni ni pa yamakapa wo piromi atumito tatematuru mitukwitakara pa kazwopeezu tukusi mo kanetu sikaredomo wa go opokimi no moropito wo izanapitamapi yoki koto wo pazimetamapite kugane ka mo tasikeku aramu to omoposite sita nayamasu ni toriganaku aduma no kuni no mitinoku no woda n aru yama ni kugane ari to mausitamapyere mikokoro wo akirametamapi ametuti no kamwi apiudunapi sumyeroki no mitama tasukete topoki yo ni kakarisi koto wo wa ga miyo ni arapasite areba wosu kuni pa sakayemu mono to kamunagara omoposimyesite mononopuno yaswotomonowo wo maturope no muke no manima ni oipito mo wominawarapa mo si ga negapu kokorodarapi ni nadetamapi wosametamapeba koko wo si mo ayani taputwomi uresikyeku iyoyo omopite opotomo no topotu kamuoya no so no na woba opokumenusi to opimotite tukapesi tukasa umi yukaba miduku kabane yama yukaba kusa musu kabane opokimi no pye ni koso siname kapyerimi pa sezi to kotodate masurawo no kiywoki so no na wo inisipye ywo ima no wotutu ni nagasapyeru oya no kwodomo so opotomo to sapano udi pa pito no oya no taturu kotodate pito no kwo pa oya no na tatazu opokimi ni maturwopu mono to ipitugyeru koto no tukasa so adusayumi te ni torimotite turugitati kosi ni toripaki asa mamori yupu no mamori ni opokimi no mikadwo no mamori ware wo okite pito pa arazi to iyatate omopi si masaru opokimi no mikoto no saki no kikeba taputwomi ")
 multi-sentence,IP-MAT,0@葦原能,*
 multi-sentence,IP-MAT,PP,NP,IP-REL,PP-SBJ,NP,IP-REL,PP-OB1,NP,PP,NP,N,L050405,N,L052471,LOG,asi
 multi-sentence,IP-MAT,PP,NP,IP-REL,PP-SBJ,NP,IP-REL,PP-OB1,NP,PP,NP,N,L050405,N;@2,L051723,LOG,para
@@ -2775,8 +2775,9 @@ multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,NP-OB1,PP,NP,N,L050001a,LOG
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,NP-OB1,PP,P-CASE-GEN,L000520,NLOG,no
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,NP-OB1,N,L050026,LOG,sita
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,3@志良之賣師家類,*
-multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VB-STM,L030908a,PHON,sirasi
-multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VB-STM;@2,L031751a,PHON,myesi
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VB-STM,L030913a,PHON,sira
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VAX-RSP-STM,L000009,PHON,si
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VB-STM,L031751a,PHON,myesi
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,VB-ADN,VAX-MPST-ADN,L000016,PHON,kyeru
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,4@須賣呂伎乃,*
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,PP-SBJ,NP,IP-REL,NP-PRD,N,L052029,PHON,sumyeroki
@@ -4753,11 +4754,11 @@ IP-MAT,VB-IFC,VB-STM,L031194a,PHON,togame
 IP-MAT,VB-IFC,VAX-NEG-IFC,L000006a,PHON,zu
 ID,MYS.18.4130
 
-=N(" tori ga naku aduma wo sasite pusape si ni yukamu to omopedo yosi mo sane nasi ")
+=N(" toriganaku aduma wo sasite pusape si ni yukamu to omopedo yosi mo sane nasi ")
 IP-MAT,0@等里我奈久,*
-IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,PP-SBJ,NP,N,L050970,PHON,tori
-IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,PP-SBJ,P-CASE-GEN,L000503,PHON,ga
-IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,VB-ADC,L031267a,PHON,naku
+IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-EPT,MK,L090468,N,L050970,PHON,tori
+IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-EPT,MK,L090468,P-CASE-GEN,L000503,PHON,ga
+IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,IP-EPT,MK,L090468,VB-ADC,L031267a,PHON,naku
 IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,1@安豆麻乎佐之天,*
 IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,NP,N,L050785,PHON,aduma
 IP-MAT,IP-ADV,IP-ARG,IP-ADV,PP-OB1,P-CASE-ACC,L000534,PHON,wo
@@ -4824,9 +4825,10 @@ multi-sentence,IP-MAT;@2,IP-ADV,NP-OB1,N,L050508,N,L051825,PHON,bukurwo
 multi-sentence,IP-MAT;@2,IP-ADV,3@伊麻波衣天之可,*
 multi-sentence,IP-MAT;@2,IP-ADV,PP-ADV,NP,N,L004025,PHON,ima
 multi-sentence,IP-MAT;@2,IP-ADV,PP-ADV,P-TOP,L000522,PHON,pa
-multi-sentence,IP-MAT;@2,IP-ADV,VB-EXC,VB-STM,L030228a,PHON,e
-multi-sentence,IP-MAT;@2,IP-ADV,VB-EXC,VAX-PRF-STM,L000023,PHON,te
-multi-sentence,IP-MAT;@2,IP-ADV,VB-EXC,VAX-SPST-EXC,L000015,PHON,sika
+multi-sentence,IP-MAT;@2,IP-ADV,VB-ADN,VB-STM,L030228a,PHON,e
+multi-sentence,IP-MAT;@2,IP-ADV,VB-ADN,VAX-PRF-STM,L000023,PHON,te
+multi-sentence,IP-MAT;@2,IP-ADV,VB-ADN,VAX-SPST-ADN,L000015,PHON,si
+multi-sentence,IP-MAT;@2,P-FNL-MPH,L000507,PHON,ka
 multi-sentence,IP-MAT;@2,4@於吉奈佐備勢牟,*
 multi-sentence,IP-MAT;@2,VB-INF,L030325a,PHON,okinasabwi
 multi-sentence,IP-MAT;@2,VB-ADC,VB-STM,L030919a,PHON,se

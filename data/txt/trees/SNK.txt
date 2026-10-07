@@ -146,9 +146,9 @@ multi-sentence,IP-MAT;@2,PP-SBJ,NP,PP,P-CASE-GEN,L000520,PHON,no
 multi-sentence,IP-MAT;@2,PP-SBJ,NP,N,L050129,PHON,miyakwo
 multi-sentence,IP-MAT;@2,PP-SBJ,P-TOP,L000522,PHON,pa
 multi-sentence,IP-MAT;@2,4@与呂豆与乃美夜,*
-multi-sentence,IP-MAT;@2,NP-PRD,IP-REL,NP-PRD,N,NUM,L002014,PHON,yorodu
-multi-sentence,IP-MAT;@2,NP-PRD,IP-REL,NP-PRD,N,N,L050040,PHON,yo
-multi-sentence,IP-MAT;@2,NP-PRD,IP-REL,COP-ADI,L031965,PHON,no
+multi-sentence,IP-MAT;@2,NP-PRD,PP,NP,N,NUM,L002014,PHON,yorodu
+multi-sentence,IP-MAT;@2,NP-PRD,PP,NP,N,N,L050040,PHON,yo
+multi-sentence,IP-MAT;@2,NP-PRD,PP,P-CASE-GEN,L000520,PHON,no
 multi-sentence,IP-MAT;@2,NP-PRD,N,L050018,PHON,miya
 ID,SNK.6
 
@@ -225,7 +225,7 @@ multi-sentence,IP-MAT;@6,NP,NP,INTJ,L052232,PHON,twositodwo
 multi-sentence,IP-MAT,11@然為波,*
 multi-sentence,IP-MAT,IP-ADV,NP-ADV,PRO-ADV,L042047,LOG,sika
 multi-sentence,IP-MAT,IP-ADV,VB-CND,VB-STM,L030919a,LOG,si
-multi-sentence,IP-MAT,IP-ADV,VB-CND,VAX-PRF-CND,L000023,LOG,te
+multi-sentence,IP-MAT,IP-ADV,VB-CND,VAX-PRF-CND,L000023,NLOG,te
 multi-sentence,IP-MAT,IP-ADV,VB-CND,VAX-PRF-CND,L000023,PHON,ba
 multi-sentence,IP-MAT,12@國曾昌由流也,*
 multi-sentence,IP-MAT,PP-SBJ,NP,N,L051337,LOG,kuni

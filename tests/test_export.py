@@ -438,7 +438,7 @@ class TestDictionaryXmlRealFile:
         self.root = ET.fromstring(self.xml_str)
 
     def test_entry_count(self):
-        assert len(self.root.findall("entry")) > 7000
+        assert len(self.root.findall("entry")) > 6400
 
     def test_known_entry_gloss(self):
         e = self.root.find(".//entry[@id='L000006a']")

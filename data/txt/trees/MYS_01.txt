@@ -250,7 +250,7 @@ CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,PP-SBJ,NP,N,L050450,N;@2,L050090,
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,PP-SBJ,P-CASE-GEN,L000520,PHON,no
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,2@晩家流,*
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,VB-ADN,VB-STM,L030668a,LOG,kure
-CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,VB-ADN,VAX-PRF-STM,L000018,LOG,ni
+CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,VB-ADN,VAX-PRF-STM,L000018,NLOG,ni
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,VB-ADN,VAX-MPST-ADN,L000016,PHON,kyeru
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,3@和豆肝之良受,*
 CP-FINAL,IP-SUB,IP-ADV,IP-ADV,PP-OB1,NP,N,L052301,PHON,waduki
@@ -526,7 +526,8 @@ multi-sentence,IP-MAT,VB-ADC,VAX-RSP-ADC,L000009,PHON,su
 multi-sentence,IP-MAT;@2,2@草無者,*
 multi-sentence,IP-MAT;@2,IP-ADV,NP-SBJ,N,L051252,LOG,kaya
 multi-sentence,IP-MAT;@2,IP-ADV,ADJ-CND,ADJ-STM,L007028,LOG,na
-multi-sentence,IP-MAT;@2,IP-ADV,ADJ-CND,ACP-CND,L000033,LOG,kupa
+multi-sentence,IP-MAT;@2,IP-ADV,ADJ-CND,ACP-CND,L000033,NLOG,ku
+multi-sentence,IP-MAT;@2,IP-ADV,ADJ-CND,ACP-CND,L000033,LOG,pa
 multi-sentence,IP-MAT;@2,3@小松下乃,*
 multi-sentence,IP-MAT;@2,PP-OB1,NP,PP,NP,PP,NP,N,L080719,PFX,L000063,LOG,kwo
 multi-sentence,IP-MAT;@2,PP-OB1,NP,PP,NP,PP,NP,N,L080719,N,L050158,LOG,matu
@@ -578,7 +579,7 @@ IP-MAT,IP-ADV,PP-OB1,NP,1@子嶋羽見遠,*
 IP-MAT,IP-ADV,PP-OB1,NP,PLN,L060232,PLOG,kwosima
 IP-MAT,IP-ADV,PP-OB1,P-TOP,L000522,PHON,pa
 IP-MAT,IP-ADV,VB-ADN,VB-STM,L031712a,LOG,mi
-IP-MAT,IP-ADV,VB-ADN,VAX-SPST-ADN,L000015,LOG,si
+IP-MAT,IP-ADV,VB-ADN,VAX-SPST-ADN,L000015,NLOG,si
 IP-MAT,IP-ADV,P-CONN,L000552,PHON,wo
 IP-MAT,2@底深伎,*
 IP-MAT,PP-OB1,NP,PP,NP,IP-EMB,NP-SBJ,N,L051985,LOG,soko
@@ -1100,7 +1101,7 @@ multi-sentence,CP-FINAL,IP-SUB,11@念乍叙来,*
 multi-sentence,CP-FINAL,IP-SUB,IP-ADV,VB-CTT,L030399a,LOG,omopitutu
 multi-sentence,CP-FINAL,IP-SUB,IP-ADV,P-FOC,L000527,PHON,so
 multi-sentence,CP-FINAL,IP-SUB,VB-ADN,VB-STM,L030612a,LOG,ko
-multi-sentence,CP-FINAL,IP-SUB,VB-ADN,VAX-SPST-ADN,L000015,LOG,si
+multi-sentence,CP-FINAL,IP-SUB,VB-ADN,VAX-SPST-ADN,L000015,NLOG,si
 multi-sentence,CP-FINAL,12@其山道乎,*
 multi-sentence,CP-FINAL,PP-OB1,NP,PP,NP,PRO-N,L042040,LOG,so
 multi-sentence,CP-FINAL,PP-OB1,NP,PP,P-CASE-GEN,L000520,LOG,no
@@ -1240,18 +1241,18 @@ ID,MYS.1.28
 
 =N(" tamatasuki unebwinoyama no kasipara no piziri no miyo yu aremasisi kamwi no kotogoto tuganokwino iya tugitugini ame no sita sirasimyesisi wo sworanimitu yamato wo okite awoniyosi narayama wo kwoye ikasamani omoposimyese ka amazakaru pina ni pa aredo ipabasiru apuminokuni no sasanami no opotu no miya ni ame no sita sirasimyesikyemu sumyeroki no kamwi no mikoto no opomiya pa koko to kikedomo opotono pa koko to ipedomo parukusa no sigeku opwitaru kasumi tati parupi no kwireru momosikwino opomiyatokoro mireba kanasi mo ")
 multi-sentence,IP-MAT,0@玉手次,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N,L052078,LOG,tama
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,LOG,ta
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,PHON-KUN,suki
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,1@畝火之山乃,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,PLN,L080092,PLOG,unebwi
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,P-CASE-GEN,L000520,PHON-ON,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,N,L050034,LOG,yama
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,2@橿原乃,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060052,PLOG,kasipara
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,3@日知之御世従,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N,L052078,LOG,tama
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,LOG,ta
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,PHON-KUN,suki
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,1@畝火之山乃,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,PLN,L080092,PLOG,unebwi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,P-CASE-GEN,L000520,PHON-ON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,N,L050034,LOG,yama
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,2@橿原乃,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PLN,L060052,PLOG,kasipara
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,3@日知之御世従,*
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,N,L051798,PHON-KUN,piziri
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,LOG,no
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,N,L080633,PFX-HON,L000035,LOG,mi
@@ -1404,18 +1405,18 @@ ID,MYS.1.29a
 
 =N(" tamatasuki unebwinoyama no kasipara no piziri no miya yu aremasisi kamwi no kotogoto tuganokwino iya tugitugini ame no sita sirasimyesikyeru sworamitu yamato wo oki awoniyosi narayama kwoyete ikasamani omoposikyeme ka amazakaru pina ni pa aredo ipabasiru apuminokuni no sasanami no opotu no miya ni ame no sita sirasimyesikyemu sumyeroki no kamwi no mikoto no opomiya pa koko to kikedomo opotono pa koko to ipedomo kasumi tati parupi ka kwireru natukusa ka sigeku narinuru momosikwino opomiyatokoro mireba sabusi mo ")
 multi-sentence,IP-MAT,0@玉手次,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N,L052078,LOG,tama
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,LOG,ta
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,PHON-KUN,suki
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,1@畝火之山乃,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,PLN,L080092,PLOG,unebwi
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,P-CASE-GEN,L000520,LOG,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060041,N,L050034,LOG,yama
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,2@橿原乃,*
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PLN,L060052,PLOG,kasipara
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,3@日知之自宮,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N,L052078,LOG,tama
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,LOG,ta
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,IP-EPT,MK,L091055,N;@2,L050583,PHON-KUN,suki
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,1@畝火之山乃,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,PLN,L080092,PLOG,unebwi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,P-CASE-GEN,L000520,LOG,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,NP,PLN,L060041,N,L050034,LOG,yama
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,2@橿原乃,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,NP,PLN,L060052,PLOG,kasipara
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,3@日知之自宮,*
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,NP,N,L051798,PHON-KUN,piziri
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,LOG,no
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,IP-REL,PP,NP,N,L050018,LOG,miya
@@ -1665,9 +1666,9 @@ ID,MYS.1.32
 
 =N(" sasanami no kuni tu mikamwi no urasabwite aretaru miyakwo mireba kanasi mo ")
 IP-MAT,0@樂浪乃,*
-IP-MAT,IP-ADV,PP-SBJ,NP,PP,NP,PLN,L090172,PHON-KUN,sasanami
-IP-MAT,IP-ADV,PP-SBJ,NP,PP,P-CASE-GEN,L000520,PHON,no
-IP-MAT,IP-ADV,PP-SBJ,NP,1@國都美神乃,*
+IP-MAT,IP-ADV,PP-SBJ,NP,PP,NP,PP,NP,PLN,L090172,PHON-KUN,sasanami
+IP-MAT,IP-ADV,PP-SBJ,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+IP-MAT,IP-ADV,PP-SBJ,NP,PP,NP,1@國都美神乃,*
 IP-MAT,IP-ADV,PP-SBJ,NP,PP,NP,N,L051337,LOG,kuni
 IP-MAT,IP-ADV,PP-SBJ,NP,PP,P-CASE-GEN,L000532,PHON,tu
 IP-MAT,IP-ADV,PP-SBJ,NP,N,PFX-HON,L000035,PHON,mi
@@ -2480,7 +2481,7 @@ IP-MAT,IP-ADV,NP-PRD,IP-REL,IP-ADV,COP-ADI,L031965,NLOG,no
 IP-MAT,IP-ADV,NP-PRD,IP-REL,3@過去君之,*
 IP-MAT,IP-ADV,NP-PRD,IP-REL,VB-ADN,VB-STM,L030926a,LOG,sugwi
 IP-MAT,IP-ADV,NP-PRD,IP-REL,VB-ADN,VAX-PRF-STM,L000018,PHON-KUN,ni
-IP-MAT,IP-ADV,NP-PRD,IP-REL,VB-ADN,VAX-SPST-ADN,L000015,LOG,si
+IP-MAT,IP-ADV,NP-PRD,IP-REL,VB-ADN,VAX-SPST-ADN,L000015,NLOG,si
 IP-MAT,IP-ADV,NP-PRD,PP,NP,N,L004266,LOG,kimi
 IP-MAT,IP-ADV,NP-PRD,PP,P-CASE-GEN,L000503,LOG,ga
 IP-MAT,IP-ADV,NP-PRD,4@形見跡曽来師,*
@@ -2511,7 +2512,7 @@ IP-MAT,IP-ADV,VB-PRV,L030919a,LOG,sureba
 IP-MAT,4@月西渡,*
 IP-MAT,NP-SBJ,N,L050004a,LOG,tukwi
 IP-MAT,VB-CLS,VB-STM,L030480a,LOG,katabuki
-IP-MAT,VB-CLS,VAX-PRF-CLS,L000018,LOG,nu
+IP-MAT,VB-CLS,VAX-PRF-CLS,L000018,NLOG,nu
 ID,MYS.1.48
 
 =N(" pinamisi no mikwo no mikoto no uma namete mikari tatasisi toki pa kimukapu ")
@@ -2541,27 +2542,27 @@ IP-MAT,VB-ADC,L030595a,VB-ADC,L031721a,LOG,mukapu
 ID,MYS.1.49
 
 =N(" yasumisisi wa go opokimi takaterasu pinomikwo aratape no pudipara ga upe ni wosu kuni wo myesitamapamu to miaraka pa takasirasamu to kamunagara omoposu nabeni ametuti mo yorite are koso ipabasiru apuminokuni no koromode no tanakamiyama no makwisaku pi no tumade wo mononopuno yaswoudikapa ni tamamo nasu ukabenagasere so wo toru to sawaku mitami mo ipye wasure mwi mo tanasirazu kamozimono midu ni ukiwite wa ga tukuru pinomikadwo ni siranu kuni yosi kosedi ywori wa ga kuni pa tokoyo ni naramu pumi opyeru ayasiki kame mo aratayo to iduminokapa ni motikwoseru makwi no tumade wo momotarazu ikada ni tukuri nobosu ramu iswopaku mireba kamunagara na rasi ")
-multi-sentence,IP-MAT,0@八隅知之,*
-multi-sentence,IP-MAT,NP,CONJP,NP,IP-EPT,MK,L091002,PHON,yasumisisi
-multi-sentence,IP-MAT,NP,CONJP,NP,1@吾大王,*
-multi-sentence,IP-MAT,NP,CONJP,NP,PP,NP,PRO-N,L042057,LOG,wa
-multi-sentence,IP-MAT,NP,CONJP,NP,PP,P-CASE-GEN,L000503,LOG,go
-multi-sentence,IP-MAT,NP,CONJP,NP,N,L050267,ADJ-STM,L007009a,LOG,opo
-multi-sentence,IP-MAT,NP,CONJP,NP,N,L050267,N,L004266,LOG,kimi
-multi-sentence,IP-MAT,NP,2@高照,*
-multi-sentence,IP-MAT,NP,NP,IP-EPT,MK,L091051,ADJ-STM,L007005,LOG,taka
-multi-sentence,IP-MAT,NP,NP,IP-EPT,MK,L091051,VB-STM,L031193a,LOG,tera
-multi-sentence,IP-MAT,NP,NP,IP-EPT,MK,L091051,VAX-RSP-ADC,L000009,NLOG,su
-multi-sentence,IP-MAT,NP,NP,3@日乃皇子,*
-multi-sentence,IP-MAT,NP,NP,N,L090735,N,L050090,LOG,pi
-multi-sentence,IP-MAT,NP,NP,N,L090735,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,NP,NP,N,L090735,N,L051453,PFX-HON,L000035,LOG,mi
-multi-sentence,IP-MAT,NP,NP,N,L090735,N,L051453,N,L050028,LOG,kwo
-multi-sentence,IP-MAT,4@荒妙乃,*
-multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,N,L050618,ADJ-STM,L007034,LOG,ara
-multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,N,L050618,N,L052528,PHON-KUN,tape
-multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,5@藤原我宇倍爾,*
+multi-sentence,IP-MAT,IP-ADV,0@八隅知之,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,IP-EPT,MK,L091002,PHON,yasumisisi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,1@吾大王,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,PP,NP,PRO-N,L042057,LOG,wa
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,PP,P-CASE-GEN,L000503,LOG,go
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,N,L050267,ADJ-STM,L007009a,LOG,opo
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP,N,L050267,N,L004266,LOG,kimi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,2@高照,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,IP-EPT,MK,L091051,ADJ-STM,L007005,LOG,taka
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,IP-EPT,MK,L091051,VB-STM,L031193a,LOG,tera
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,IP-EPT,MK,L091051,VAX-RSP-ADC,L000009,NLOG,su
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,3@日乃皇子,*
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,N,L090735,N,L050090,LOG,pi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,N,L090735,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,N,L090735,N,L051453,PFX-HON,L000035,LOG,mi
+multi-sentence,IP-MAT,IP-ADV,NP-SBJ,NP-APP;@2,N,L090735,N,L051453,N,L050028,LOG,kwo
+multi-sentence,IP-MAT,IP-ADV,4@荒妙乃,*
+multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,PP,NP,N,L050618,ADJ-STM,L007034,LOG,ara
+multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,PP,NP,N,L050618,N,L052528,PHON-KUN,tape
+multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,5@藤原我宇倍爾,*
 multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,NP,PLN,L051821,PLOG,pudipara
 multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,PP,P-CASE-GEN,L000503,PHON,ga
 multi-sentence,IP-MAT,IP-ADV,IP-ARG,CONJP,IP-ARG,PP-OB1,NP,IP-REL,PP,NP,N,L050029a,PHON,upe
@@ -2754,6 +2755,7 @@ ID,MYS.1.50
 
 =N(" unemye no swode pukikapyesu asukakaze miyakwo wo topomi itadurani puku ")
 IP-MAT,0@婇女乃,*
+IP-MAT,NP-SBJ,IP-REL,NP-SBJ,*T*
 IP-MAT,NP-SBJ,IP-REL,NP-OB1,PP,NP,N,L052260,N,L080341,LOG,une
 IP-MAT,NP-SBJ,IP-REL,NP-OB1,PP,NP,N,L052260,N;@2,L050132,LOG,mye
 IP-MAT,NP-SBJ,IP-REL,NP-OB1,PP,P-CASE-GEN,L000520,PHON,no
@@ -2852,10 +2854,10 @@ multi-sentence,IP-MAT;@2,18@畝火乃,*
 multi-sentence,IP-MAT;@2,PP,NP,PP,NP,PLN,L080092,PLOG,unebwi
 multi-sentence,IP-MAT;@2,PP,NP,PP,P-CASE-GEN,L000520,PHON,no
 multi-sentence,IP-MAT;@2,PP,NP,19@此美豆山者,*
-multi-sentence,IP-MAT;@2,PP,NP,PP,NP,PRO-N,L042029,LOG,ko
-multi-sentence,IP-MAT;@2,PP,NP,PP,P-CASE-GEN,L000520,NLOG,no
-multi-sentence,IP-MAT;@2,PP,NP,N,ADJ-STM,L080205,PHON,midu
-multi-sentence,IP-MAT;@2,PP,NP,N,N,L050034,LOG,yama
+multi-sentence,IP-MAT;@2,PP,NP,NP,PP,NP,PRO-N,L042029,LOG,ko
+multi-sentence,IP-MAT;@2,PP,NP,NP,PP,P-CASE-GEN,L000520,NLOG,no
+multi-sentence,IP-MAT;@2,PP,NP,NP,N,ADJ-STM,L080205,PHON,midu
+multi-sentence,IP-MAT;@2,PP,NP,NP,N,N,L050034,LOG,yama
 multi-sentence,IP-MAT;@2,PP,P-TOP,L000522,LOG,pa
 multi-sentence,IP-MAT;@2,20@日緯能,*
 multi-sentence,IP-MAT;@2,PP,NP,IP-REL,NP-PRD,N,L090754,N,L050090,LOG,pi
@@ -3510,7 +3512,7 @@ IP-MAT,IP-ADV,IP-NMZ-PRD,PP-SBJ,NP,N,L080154,PHON,arasi
 IP-MAT,IP-ADV,IP-NMZ-PRD,PP-SBJ,P-CASE-GEN,L000520,LOG,no
 IP-MAT,IP-ADV,IP-NMZ-PRD,2@寒久爾,*
 IP-MAT,IP-ADV,IP-NMZ-PRD,ADJ-NML,ADJ-STM,L007159,LOG,samu
-IP-MAT,IP-ADV,IP-NMZ-PRD,ADJ-NML,ACP-NML,L000033,LOG,kye
+IP-MAT,IP-ADV,IP-NMZ-PRD,ADJ-NML,ACP-NML,L000033,NLOG,kye
 IP-MAT,IP-ADV,IP-NMZ-PRD,ADJ-NML,ACP-NML,L000033,PHON,ku
 IP-MAT,IP-ADV,COP-INF,L031965,PHON,ni
 IP-MAT,3@為當也今夜毛,*
@@ -3602,7 +3604,7 @@ multi-sentence,IP-MAT;@2,IP-NMZ-PRD,NP-SBJ,IP-REL,VB-ADN,VAX-STV-ADN,L000024,PHO
 multi-sentence,IP-MAT;@2,IP-NMZ-PRD,NP-SBJ,4@吾莫勿久爾,*
 multi-sentence,IP-MAT;@2,IP-NMZ-PRD,NP-SBJ,PRO-N,L042059,LOG,ware
 multi-sentence,IP-MAT;@2,IP-NMZ-PRD,ADJ-NML,ADJ-STM,L007028,LOG,na
-multi-sentence,IP-MAT;@2,IP-NMZ-PRD,ADJ-NML,ACP-STM,L000033,LOG,kye
+multi-sentence,IP-MAT;@2,IP-NMZ-PRD,ADJ-NML,ACP-STM,L000033,NLOG,kye
 multi-sentence,IP-MAT;@2,IP-NMZ-PRD,ADJ-NML,VAX-NEG-NML,L000006a,LOG,na
 multi-sentence,IP-MAT;@2,IP-NMZ-PRD,ADJ-NML,VAX-NEG-NML,L000006a,PHON,ku
 multi-sentence,IP-MAT;@2,COP-INF,L031965,PHON,ni

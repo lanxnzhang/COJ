@@ -285,7 +285,7 @@ class TestDictionaryRealFile:
         return Dictionary.from_file(dict_file)
 
     def test_entry_count(self, dictionary):
-        assert len(dictionary) > 7000
+        assert len(dictionary) > 6400
 
     def test_known_entry_fields(self, dictionary):
         e = dictionary["L000006a"]

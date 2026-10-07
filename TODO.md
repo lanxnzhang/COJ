@@ -1420,6 +1420,8 @@ Please keep the interaction lightweight: normal comparison first, and resolution
 
 
 
+
+
 ### TBD
 
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.

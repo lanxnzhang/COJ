@@ -56,7 +56,8 @@ def inspect_settings(path: Path) -> list[dict]:
             continue
         if isinstance(value, (str, int, float, bool)):
             choices = None
-            if target.id == "AUTO_MATCH_MODE": choices = ["strict", "loose"]
+            if target.id == "AUTO_MATCH_MODE":
+                choices = ["strict", "loose"]
             result.append({"name": target.id, "value": value,
                            "type": type(value).__name__, "choices": choices,
                            "advanced": target.id in ADVANCED,

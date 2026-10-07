@@ -18,8 +18,8 @@ utterance_from_xml(xml_str)     → Utterance
 
 from __future__ import annotations
 
-import io
 import xml.etree.ElementTree as ET
+from coj.xml_format import element_to_xml
 
 from coj.core.corpus import (
     CorpusDocument,
@@ -35,10 +35,7 @@ from coj.core.corpus import (
 def corpus_to_xml(doc: CorpusDocument) -> str:
     """Serialise a CorpusDocument to an XML string."""
     root = doc._get_doc_elem()
-    ET.indent(root, space="  ")
-    buf = io.BytesIO()
-    ET.ElementTree(root).write(buf, encoding="utf-8", xml_declaration=True)
-    return buf.getvalue().decode("utf-8")
+    return element_to_xml(root)
 
 
 def corpus_to_xml_file(doc: CorpusDocument, path: str) -> None:
@@ -49,8 +46,7 @@ def corpus_to_xml_file(doc: CorpusDocument, path: str) -> None:
 def utterance_to_xml(utt: Utterance) -> str:
     """Serialise a single Utterance to an XML string."""
     elem = _utterance_to_elem(utt)
-    ET.indent(elem, space="  ")
-    return ET.tostring(elem, encoding="unicode")
+    return element_to_xml(elem, declaration=False)
 
 
 def corpus_from_xml(xml_str: str) -> CorpusDocument:

@@ -23,7 +23,6 @@ CorpusDocument — a whole corpus file
 
 from __future__ import annotations
 
-import io
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -31,6 +30,7 @@ from typing import Iterator, TypeAlias
 
 from coj.core.lemma_id import LemmaID
 from coj.core.tags import PHON_TAGS, strip_disambig
+from coj.xml_format import element_to_xml
 
 # ── regexes ───────────────────────────────────────────────────────────────────
 
@@ -1158,11 +1158,8 @@ class CorpusDocument:
         ext = os.path.splitext(path)[1].lower()
         if ext == ".xml":
             root = self._get_doc_elem()
-            ET.indent(root, space="  ")
-            buf = io.BytesIO()
-            ET.ElementTree(root).write(buf, encoding="utf-8", xml_declaration=True)
-            with open(path, "w", encoding="utf-8") as fh:
-                fh.write(buf.getvalue().decode("utf-8"))
+            with open(path, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(element_to_xml(root))
         else:
             with open(path, "w", encoding="utf-8") as fh:
                 fh.write(self.to_text())
