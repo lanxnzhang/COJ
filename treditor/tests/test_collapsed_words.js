@@ -5,6 +5,7 @@ const path = require("node:path");
 
 const source = fs.readFileSync(path.join(__dirname, "../static/app.js"), "utf8");
 const context = vm.createContext({
+  COJSegmentation: require("../static/segmentation.js"),
   collapsedNodeIds: new Set(["phrase"]),
   CHARACTER_WIDTH: 7.4,
   treeTagNames: JSON.parse(fs.readFileSync(path.join(__dirname, "../tag_names.json"), "utf8")),

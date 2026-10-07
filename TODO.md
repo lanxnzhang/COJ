@@ -1446,6 +1446,38 @@ Do not preserve obsolete information merely as historical notes; the audit repor
 Do not turn tentative or medium-confidence audit proposals into established rules.
 The result should be a concise current specification that a future developer can use without needing the investigation history.
 
+### After commit 5a86357
+Please change the transcription display in the COJ UI text box to word-level segmentation in Document Section. For the text displayed after the syntax tree is collapsed, users should be able to choose between three segmentation options, with word-level segmentation set as the default.
+On the search results page, users should also be able to select different segmentation methods; word-level segmentation is the default. Note that this is a display-related setting rather than an advanced search option. Place it after "Sentence numbers" and avoid cluttering the interface—for example, by displaying the options only when the user selects the checkbox to change segmentation methods.
+Do not modify the source data files.
+If anything is unclear, please ask me rather than making assumptions.
+
+#### After commit 5a86357 (2)
+1. **Hyphens:** Yes. The intended hyphenated word-level output in a case such as KK.30 is `awo-kaki-yama-gomor-eru`.
+
+   If by “keeping multipart writing-mode components joined” you mean that multiple form parts belonging to the same terminal are separated only because of writing-mode annotation (e.g. LOG/PHON), then yes: keep those parts joined. A writing-mode boundary alone should not introduce a hyphen.
+
+2. **Words spanning rows:** Whether merging across rows is allowed depends on whether the display needs to preserve alignment with row-level/source-level data.
+
+   **Do not merge across rows** in displays where each displayed segment must correspond to a particular source row, sentence, or associated metadata. This includes:
+   - text boxes whose text corresponds to individual rows;
+   - other displays requiring row-by-row or sentence-by-sentence correspondence;
+   - search results when sentence/text numbers are displayed and must remain aligned with their corresponding content.
+
+   However, **cross-row merging is allowed when that correspondence is not required**. In particular, when collapsing the syntactic tree, if a collapsed constituent spans multiple source rows, its material may be merged according to the segmentation rule.
+
+   So the general UI principle is:
+
+   **Preserve row boundaries when they are needed to maintain alignment between displayed text and row-/sentence-level data; otherwise, segmentation may merge across those boundaries.**
+
+   The underlying source rows and annotations should not be modified merely because the display merges their material.
+
+3. **Unresolved annotations:** Yes. For unclassified EN/SM annotations, NULL/ILL material, and other unresolved cases, retain the existing display behavior rather than inferring new segmentation rules.
+
+Please apply these as display rules only. Do not modify corpus annotations as part of this UI task.
+
+
+
 
 ### TBD
 

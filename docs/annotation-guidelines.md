@@ -55,7 +55,7 @@ Internal children do not by themselves prevent a structure from being a word or 
 
 ### WORD-02 — Phrase heads and higher structures
 
-An `NP` can have an `N` head or an `NP` head. Do not require an extra word-level `N` merely to provide an `N` head.
+An `NP` can have an `N` head or an `NP` head.
 
 Do not determine the word status of an exceptional higher structure solely from its Words-category tag or topology. Regardless of word status, segmentation must preserve any phrase-level or higher boundaries inside it.
 

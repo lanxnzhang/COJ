@@ -275,6 +275,14 @@
                   <span class="toolbar-label">Layout</span>
                   <label class="toggle"><input type="checkbox" id="tog-null" checked> Null nodes</label>
                   <label class="toggle"><input type="checkbox" id="tog-bottomup"> Align leaves</label>
+                  <label class="select-control">
+                    <span>Collapsed text</span>
+                    <select id="tree-segmentation" aria-label="Collapsed tree segmentation">
+                      <option value="word" selected>Word-level</option>
+                      <option value="terminal">Tree-terminal</option>
+                      <option value="hyphenated">Hyphenated word-level</option>
+                    </select>
+                  </label>
                   <label class="spacing-control">
                     <span>Rows</span>
                     <input type="range" id="slider-rowh" min="32" max="120" value="52" step="4">
@@ -357,6 +365,12 @@
               <legend class="sr-only">Search result display</legend>
               <label><input type="checkbox" id="search-show-kanji"> Kanji</label>
               <label><input type="checkbox" id="search-show-sentence-numbers"> Sentence numbers</label>
+              <label><input type="checkbox" id="search-change-segmentation" aria-controls="search-segmentation"> Change segmentation</label>
+              <select id="search-segmentation" class="hidden" aria-label="Search result segmentation" disabled>
+                <option value="word" selected>Word-level</option>
+                <option value="terminal">Tree-terminal</option>
+                <option value="hyphenated">Hyphenated word-level</option>
+              </select>
             </fieldset>
           </div>
         </header>
@@ -462,6 +476,7 @@
   </main>
 
   <script id="tree-tag-names" type="application/json">{{ tag_names|tojson }}</script>
+  <script src="/static/segmentation.js"></script>
   <script src="/static/app.js"></script>
   <script src="/static/workbench-core.js"></script>
   <script src="/static/workbench.js"></script>

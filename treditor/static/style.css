@@ -2046,6 +2046,7 @@ button {
   margin: 0;
   padding: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   border: 0;
   color: #4f5d74;
@@ -2061,6 +2062,16 @@ button {
 
 .search-display-options input {
   margin: 0;
+}
+
+.search-display-options select {
+  max-width: 14rem;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
 }
 
 .search-result-count {

@@ -513,6 +513,9 @@ function searchCountSummary(payload) {
 }
 
 function updateSearchResultDisplay() {
+  const changeSegmentation = $("search-change-segmentation").checked;
+  $("search-segmentation").classList.toggle("hidden", !changeSegmentation);
+  $("search-segmentation").disabled = !changeSegmentation;
   const container = $("search-results");
   container.classList.toggle(
     "show-kanji",
@@ -525,7 +528,8 @@ function updateSearchResultDisplay() {
   if (currentSearchPayload) renderCorpusSearchResults(currentSearchPayload);
 }
 
-["search-show-kanji", "search-show-sentence-numbers"].forEach(id => {
+["search-show-kanji", "search-show-sentence-numbers", "search-change-segmentation",
+  "search-segmentation"].forEach(id => {
   $(id).addEventListener("change", updateSearchResultDisplay);
 });
 updateSearchResultDisplay();
@@ -577,7 +581,7 @@ function appendSvgHighlightedText(container, text, ranges) {
   container.appendChild(document.createTextNode(text.slice(cursor)));
 }
 
-function appendSearchResultText(container, segments, field, fallback, ranges) {
+function appendSearchResultText(container, segments, field, fallback, ranges, roots = []) {
   const available = (segments || [])
     .map((segment, index) => ({segment, index}))
     .filter(item => item.segment[field]);
@@ -585,6 +589,25 @@ function appendSearchResultText(container, segments, field, fallback, ranges) {
     if (!available.length) {
       appendRangedText(target, fallback, []);
       return;
+    }
+    if (field === "transcription") {
+      const mode = $("search-change-segmentation").checked
+        ? $("search-segmentation").value : "word";
+      const formatted = COJSegmentation.format(roots, segments || [], mode,
+        showNumbers, treeTagNames);
+      if (formatted) {
+        formatted.filter(row => row.text).forEach((row, index) => {
+          if (index) target.append(" ");
+          if (showNumbers) {
+            const number = document.createElement("span");
+            number.className = "search-segment-number";
+            number.textContent = `[${row.number}] `;
+            target.appendChild(number);
+          }
+          appendRangedText(target, row.text, COJSegmentation.ranges(row, ranges || []));
+        });
+        return;
+      }
     }
     available.forEach((item, position) => {
       if (position) target.append(" ");
@@ -653,6 +676,7 @@ function renderCorpusSearchResults(payload) {
       "transcription",
       result.transcription || result.preview || result.header || "No transcription",
       transcriptionHighlights,
+      result.display_roots || [],
     );
     const kanji = document.createElement("span");
     kanji.className = "corpus-search-kanji";
@@ -1037,7 +1061,9 @@ function renderRawText(sentences) {
     return;
   }
   $("raw-text-lines").innerHTML = "";
-  sentences.forEach(sentence => {
+  const formatted = COJSegmentation.format(currentTreeData?.roots || [], sentences,
+    "word", true, treeTagNames);
+  sentences.forEach((sentence, sentenceIndex) => {
     const line = document.createElement("div");
     line.className = "raw-text-line";
     const number = document.createElement("span");
@@ -1048,14 +1074,21 @@ function renderRawText(sentences) {
     kanji.textContent = sentence.kanji || "—";
     const transcription = document.createElement("p");
     transcription.className = "raw-transcription";
-    const tokens = sentence.tokens?.length
+    const tokens = formatted?.[sentenceIndex].tokens || (sentence.tokens?.length
       ? sentence.tokens
-      : sentence.transcription.split().map(text => ({text, phon: ""}));
+      : sentence.transcription.split(/\s+/).filter(Boolean).map(text => ({text, phon: ""})));
     tokens.forEach((token, index) => {
       if (index) transcription.append(" ");
       const word = document.createElement("span");
       word.className = `transcription-word ${scriptStyleClass(token.phon)}`;
-      word.textContent = token.text;
+      if (token.parts?.length) {
+        token.parts.forEach(part => {
+          const span = document.createElement("span");
+          span.className = scriptStyleClass(part.phon);
+          span.textContent = part.form;
+          word.appendChild(span);
+        });
+      } else word.textContent = token.text;
       if (token.phon) word.title = token.phon;
       transcription.appendChild(word);
     });
@@ -1113,6 +1146,7 @@ function treeOptions() {
     treeKanji: $("tog-tree-kanji").checked || Boolean(searchContext.show_kanji),
     nullNodes: $("tog-null").checked || Boolean(searchContext.show_null),
     bottomUp: $("tog-bottomup").checked,
+    segmentation: $("tree-segmentation").value,
     lemmaPosition: $("lemma-position").value,
     highlightedNodeIds: new Set(searchContext.node_ids || []),
     highlightedPartIndexes: new Map(
@@ -1216,6 +1250,10 @@ function svgElement(tag, attributes = {}, text = null) {
   return element;
 }
 
+$("tree-segmentation").addEventListener("change", () => {
+  if (currentTreeData) renderSvgTree(currentTreeData);
+});
+
 function isNullNode(node) {
   return node.form !== undefined && node.form === "" && node.phon === "";
 }
@@ -1232,15 +1270,7 @@ function buildDisplayNode(node, options) {
   if (!node.children) return {...node};
   const leaves = descendantLeaves(node, options);
   if (collapsedNodeIds.has(node._nodeId)) {
-    const collapsedTokens = leaves
-      .filter(leaf => leaf.form)
-      .map(leaf => ({
-        text: leaf.form,
-        phon: leaf.phon || "",
-        lemma: leaf.lemma || "",
-        gloss: leaf.gloss || "",
-        parts: leaf.parts?.map(part => ({...part})) || [],
-      }));
+    const collapsedTokens = COJSegmentation.tokens([node], options.segmentation || "word", treeTagNames);
     return {
       ...node,
       children: undefined,

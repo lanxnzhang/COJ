@@ -981,6 +981,27 @@ def _elem_to_node(
     return node
 
 
+def _display_roots(roots: list[dict]) -> list[dict]:
+    """Small, read-only tree projection for search-result segmentation."""
+    def project(node: dict) -> dict:
+        result = {"tag": node["tag"]}
+        if node.get("children"):
+            result["children"] = [project(child) for child in node["children"]]
+        else:
+            result.update({key: node[key] for key in ("form", "phon", "parts")
+                           if key in node})
+        return result
+
+    return [project(node) for node in roots]
+
+
+def _search_page_hits(hits: list[dict], start: int, per_page: int) -> list[dict]:
+    page = hits[start:start + per_page]
+    for hit in page:
+        hit["display_roots"] = _display_roots(hit["display_roots"])
+    return page
+
+
 def _tree_stats(roots: list[dict]) -> dict[str, int]:
     nodes = leaves = 0
 
@@ -1594,6 +1615,7 @@ def search_corpus():
             query,
         )
         hit["text_segments"] = passage["_text_segments"]
+        hit["display_roots"] = passage["_roots"]
         hit["highlights"], hit["tree_context"] = _ordinary_search_highlights(
             passage,
             matching_fields,
@@ -1628,7 +1650,7 @@ def search_corpus():
             if lemma_id
             else None
         ),
-        "results": hits[start:start + per_page],
+        "results": _search_page_hits(hits, start, per_page),
     })
 
 
@@ -1722,6 +1744,7 @@ def search_syntax_trees():
                 query,
             ),
             "text_segments": passage["_text_segments"],
+            "display_roots": passage["_roots"],
             "highlights": {
                 "transcription": _merge_highlight_ranges([
                     *_word_span_highlights(
@@ -1784,7 +1807,7 @@ def search_syntax_trees():
         "page": page,
         "per_page": per_page,
         "pages": pages,
-        "results": hits[start:start + per_page],
+        "results": _search_page_hits(hits, start, per_page),
     })
 
 

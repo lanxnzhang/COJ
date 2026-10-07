@@ -50,6 +50,33 @@ def test_documents_are_grouped_by_current_data_source(client):
     assert en["utterance_count"] > 0
 
 
+def test_segmentation_controls_are_display_only_and_default_to_words(client):
+    html = client.get("/").get_data(as_text=True)
+    assert html.index('id="search-show-sentence-numbers"') < html.index('id="search-change-segmentation"')
+    assert 'id="search-segmentation" class="hidden"' in html
+    assert html.index('/static/segmentation.js') < html.index('/static/app.js')
+    for control in ("tree-segmentation", "search-segmentation"):
+        select = re.search(rf'<select id="{control}".*?</select>', html, re.S).group()
+        assert 'value="word" selected' in select
+        assert 'value="terminal"' in select
+        assert 'value="hyphenated"' in select
+
+
+@pytest.mark.parametrize("url", [
+    "/api/search?q=mi%20ato&scope=trees&fields=transcription",
+    "/api/tgrep?q=lemma=L050402&scope=trees",
+])
+def test_search_results_include_compact_display_trees_without_changing_sources(client, url):
+    result = client.get(url).get_json()
+    assert result["results"]
+    for hit in result["results"]:
+        assert hit["display_roots"]
+        assert hit["text_segments"]
+        for node in walk(hit["display_roots"]):
+            assert set(node) <= {"tag", "children", "form", "phon", "parts"}
+    assert all("display_roots" not in passage for passage in tree_editor._searchable_passages())
+
+
 def test_document_index_uses_canonical_passage_ids(client):
     response = client.get("/api/documents/text/EN_01")
 
