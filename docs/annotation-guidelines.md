@@ -1,127 +1,102 @@
 # COJ annotation guidelines
 
-Working reference for annotation-related development. Confirmed rules below derive from project-author decisions, the authoritative abbreviation reference, and explicitly confirmed corpus examples. Unresolved rules are marked **TBD — requires author/editorial confirmation**. This document does not authorize changes to annotations, reference tables, or application behavior.
+Current specification for annotation-related development. Confirmed rules and acceptance cases are stated below; unresolved decisions are listed separately in section 6. This document does not authorize corpus corrections.
 
 ## 1. Authority and terminology
 
 ### AUTH-01 — Sources of authority
 
-Use the project author's explicit decisions and the designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx` for linguistic categories. [tag_names.json](../treditor/tag_names.json) supplies corresponding display expansions; it is not a complete classification registry.
+Linguistic rules come from project-author decisions, the designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx`, and confirmed Editor-in-Chief guidance. [tag_names.json](../treditor/tag_names.json) supplies display expansions, not a complete classification registry.
 
-Application code, variable names, historical processors, tests, and inferred corpus patterns are not independent sources of linguistic authority.
+The confirmed editorial guidance is documented in [the annotation audit](../reports/annotation-audit-5558e2a.md). Code descriptions and inferred corpus patterns are not independent linguistic authority.
 
 ### TERM-01 — Separate the concepts
 
-Keep these dimensions distinct:
-
-| Concept | Meaning in this guideline |
+| Concept | Meaning |
 | --- | --- |
-| Tag category | A category documented in the authoritative abbreviation reference. |
-| Lexical or grammatical item | The item's classification under the confirmed annotation principles. |
-| Word status | Whether a structure constitutes a word; exceptional higher structures require the narrower treatment in WORD-02. |
-| Segmentation unit | A group produced by a specified segmentation procedure; not an automatic judgment of lexical-item or dictionary-entry status. |
-| Tree terminal | One of the smallest units actually represented in the existing syntax tree. |
-| Dictionary-entry status | Association with an independent dictionary entry, represented by a lemma ID. |
+| Tag category | An authoritatively defined annotation category. |
+| Lexical or grammatical item | The item's classification under the confirmed principles. |
+| Word status | Whether a structure constitutes a word. |
+| Segmentation unit | A group produced by the specified segmentation procedure. |
+| Tree terminal | A smallest unit represented in the existing tree, not necessarily a complete word or analyzed morpheme. |
+| Dictionary-entry status | Association with an independent entry through a lemma ID. |
 
-Syntactic decomposition and word segmentation are not equivalent. A word can contain separately annotated lexical and grammatical components. A terminal need not be a complete word or a fully analyzed morpheme.
+Syntactic decomposition, word segmentation, lexical classification and dictionary-entry status are distinct. A word may contain separately annotated lexical and grammatical components.
 
-Use **text** for an identified corpus unit such as `BS.1`; the final scholarly terminology remains provisional. Existing Python names and XML tags are not renamed by this guideline. See [glossary.md](glossary.md) for other project terminology.
+Use **text** for an identified unit such as `BS.1`; final scholarly terminology remains provisional. See [the glossary](glossary.md).
 
-## 2. Categories and word status
+## 2. Categories and word structure
 
-### CAT-01 — Authoritative category lists
+### CAT-01 — Category lists
 
-The reference lists these base categories under **Parts of speech: Words**:
+**Parts of speech: Words**
 
 `VB`, `ADJ`, `WH-ADJ`, `COP`, `N`, `DVN`, `PEN`, `PLN`, `PRO-N`, `WH-N`, `ADV`, `PRO-ADV`, `WH-ADV`, `INTJ`, `NUM`, `WH-NUM`, `P`, `XTN`, `MK`, `WORD`.
 
-It lists these under **Parts of speech: Bound morphemes**:
+**Parts of speech: Bound morphemes**
 
 `ACP`, `VAX`, `PFX`, `SFX`, `CL`.
 
-Items belonging to Parts of speech: Words are lexical items. Items belonging to Parts of speech: Bound morphemes are grammatical items.
+Items in the Words category are lexical items; items in the Bound morphemes category are grammatical items.
 
-Do not classify unlisted or undocumented tags by analogy; leave them unresolved pending authoritative confirmation.
+### CAT-02 — Confirmed labels and usage
 
-### WORD-01 — Lower-level internally structured words
+- `NP-APP` labels an appositional noun phrase.
+- `WH-ADV` is the wh-adverb label.
+- `NLOG` is the accepted writing-mode spelling.
+- `FRM` means **frame**. It introduces complement clauses and accompanies a nominal form. Both `IP-NMZ-FRM` and `PP-FRM` are acceptable; no standardization between them is specified.
+- `multi-clause` is not an accepted grouping label. Its replacement requires editorial confirmation.
 
-Lower-level cases are comparatively well-defined by existing categories and confirmed annotation rules. Internal children do not by themselves prevent a structure from being a word or lexical item.
+EN and SM legacy markup is deferred for editorial review. Do not normalize its unconfirmed categories by analogy with uploaded trees. Do not assign meanings or classifications to undocumented tags by analogy.
 
-**Confirmed example — BS.1:**
+### WORD-01 — Internally structured words
 
-```text
-NP-OB1
-└── N                  miato
-    ├── PFX-HON        mi
-    └── N              ato
-```
+Internal children do not by themselves prevent a structure from being a word or lexical item. In BS.1, `N miato` contains grammatical `PFX-HON mi` and lexical `N ato`; the combined noun is also lexical. Its components retain their own classifications.
 
-`mi` is a grammatical item; `ato` is a lexical item; the combined noun `miato` is also a lexical item. The inner lexical status of `ato` is not removed by its occurrence inside `miato`.
+### WORD-02 — Phrase heads and higher structures
 
-### WORD-02 — Exceptional higher structures
+An `NP` can have an `N` head or an `NP` head. Do not require an extra word-level `N` merely to provide an `N` head.
 
-Do not determine whether an exceptional higher structure constitutes a word solely from its Words-category tag or tree topology. This restriction does not make word status generally uncertain at all levels.
+Do not determine the word status of an exceptional higher structure solely from its Words-category tag or topology. Regardless of word status, segmentation must preserve any phrase-level or higher boundaries inside it.
 
-**Confirmed examples:**
+## 3. Segmentation
 
-- In KK.30, the outer `VB-ADN`, which contains an `NP` and another verbal structure, can be regarded as a word.
-- In MYS.2.150, the higher `N` containing appositional phrases is an annotation convention, not evidence that its entire yield is one word.
+### SEG-01 — Three representations
 
-The corpus requires headed phrase structure: for example, an `NP` must have an `N` head. A high-level Words-category node can therefore serve structural uniformity without making all its descendants one word.
-
-The program need not distinguish these exceptional cases automatically at this stage. Do not introduce a mechanical word-status classifier from these examples.
-
-## 3. Segmentation specification
-
-### SEG-01 — Three distinct representations
-
-| Representation | Rule | BS.1 example |
-| --- | --- | --- |
-| Tree-terminal segmentation | Expose the existing terminal units; perform no new morphological analysis. | `mi ato tukuru` |
-| Word-level segmentation | Merge upward from smaller units; stop at any phrase-level or higher constituent boundary. | `miato tukuru` |
-| Hyphenated word-level segmentation | Keep exactly the same word-level boundaries; expose annotated internal morpheme boundaries with hyphens. | `mi-ato tukuru` |
+| Representation | Rule |
+| --- | --- |
+| Tree-terminal segmentation | Expose existing terminals without new morphological analysis. |
+| Word-level segmentation | Merge upward from smaller units; stop at phrase-level or higher boundaries. |
+| Hyphenated word-level segmentation | Keep the same word-level boundaries; show annotated internal morpheme boundaries with hyphens. |
 
 Use **tree-terminal segmentation**, not “morpheme-level segmentation,” for the existing tree's finest represented units.
 
 ### SEG-02 — Input and order
 
-Use the existing ordered syntax structure and its represented forms. Preserve their sequence and spelling; segmentation changes boundaries, not the forms' content or the corpus tree.
+Use the existing ordered tree and its forms. Preserve their sequence and spelling: segmentation changes boundaries, not textual content or annotations.
 
-Do not substitute the manually segmented header for the tree or infer missing morphological decomposition from a dictionary entry. A lemma ID is not an instruction to merge or split forms.
+Do not substitute the manually segmented header for the tree. A lemma ID does not instruct segmentation to merge, split or infer missing decomposition.
 
-### SEG-03 — Merge upward and stop at phrase-level or higher boundaries
+### SEG-03 — Merge upward and preserve stopping boundaries
 
-The operational rule is:
+1. Begin with ordered terminal material.
+2. Recombine smaller components within internal structures until reaching a phrase-level or higher constituent.
+3. Keep that constituent's word-level groups separate.
+4. Preserve the boundary when processing higher ancestors; a Words-tagged ancestor cannot erase it.
 
-> Start from smaller represented units and merge upward. Stop merging at any phrase-level or higher constituent boundary.
+A phrase with one word-bearing child still prevents that child's material from subsequently merging with material outside the phrase. Clauses follow the same rule.
 
-This includes clauses and higher syntactic groupings; clause boundaries do not require a separate special-case rule.
+### SEG-04 — Confirmed stopping boundaries
 
-For implementation purposes:
-
-1. Begin with the tree's ordered terminal material.
-2. Recombine smaller components within the relevant internal structure until a phrase-level or higher constituent boundary is reached.
-3. Keep the groups separated at that boundary. Do not concatenate the yields of separate children of a phrase-level or higher constituent into a single group.
-4. Preserve the stopping boundary when processing higher ancestors. A Words-tagged ancestor does not permit merging across a phrase-level or higher constituent boundary already encountered inside it.
-
-A phrase-level or higher constituent with a single word-bearing child still provides a stopping boundary: that child's material must not subsequently be merged with neighboring material outside the constituent merely because a higher ancestor is word-tagged. This is illustrated by KK.30 in SEG-06.
-
-Thus, the rule is not “concatenate all descendants of every Words-tagged node.” Nor is it “put a space between every terminal.” It is independent of whether an exceptional higher structure is editorially regarded as a word.
-
-### SEG-04 — Recognizing phrase-level or higher boundaries
-
-The general stopping rule in SEG-03 is confirmed. Classification of a particular label determines whether that rule applies to it; it does not change the rule itself.
-
-Confirmed stopping boundaries are:
-
-- `NP`, `PP`, `IP`, and `CP`, including their documented subtypes. The authoritative reference identifies these as phrases, with `IP` including clauses.
-- `CONJP`, explicitly identified in the authoritative reference as a coordinated phrase.
+- `NP`, `PP`, `IP` and `CP`, including documented subtypes; `IP` includes clauses.
+- `CONJP`, a coordinated phrase.
 - `multi-sentence`, a sentence-level grouping.
-- `multi-clause`, already established in the corpus investigation as a clause-level grouping.
 
-**TBD — requires author/editorial confirmation (TBD-01):** Whether unresolved structural labels, such as the `C-` and `APP-` families, `FRAG`, and other unclassified grouping labels, are phrase-level or higher. Once a label is established as phrase-level or higher, SEG-03 requires merging to stop there; that consequence is not a separate open question. Do not infer an unresolved label's structural level from its spelling alone.
+Once a label is established as phrase-level or higher, SEG-03 applies. Classification of unresolved labels remains under TBD-01.
 
-### SEG-05 — Confirmed BS.1 output
+### SEG-05 — BS.1 acceptance case
+
+Relevant structure:
 
 ```text
 IP-REL
@@ -132,7 +107,7 @@ IP-REL
 └── VB-ADC             tukuru
 ```
 
-Required outputs for this portion:
+Required outputs:
 
 ```text
 tree-terminal:          mi ato tukuru
@@ -140,29 +115,26 @@ word-level:             miato tukuru
 hyphenated word-level:  mi-ato tukuru
 ```
 
-`mi` and `ato` merge below `NP-OB1`. Merging stops at that phrase boundary; `tukuru` remains a separate group.
+The components `mi` and `ato` merge below `NP-OB1`; the phrase boundary keeps `tukuru` separate.
 
-### SEG-06 — Confirmed exceptional-structure outputs
+### SEG-06 — KK.30 and MYS.2.150 acceptance cases
 
-**KK.30 — simplified relevant structure:**
+**KK.30 — relevant structure**
 
 ```text
 VB-ADN
-├── NP
-│   └── N              awokakiyama
+├── N                  awokakiyama
 └── VB-ADN
     ├── VB-STM         gomor
     └── VAX-STV-ADN    eru
 ```
 
-Required word-level output: **`awokakiyama gomoreru`**.
+Author-confirmed word-level output: **`awokakiyamagomoreru`**. No internal phrase boundary separates the noun and verbal material.
 
-Do not produce `awokakiyamagomoreru` merely because the outer `VB-ADN` can be regarded as a word. The internal `NP` boundary stops the merger.
-
-**MYS.2.150 — relevant appositional portion:**
+**MYS.2.150 — relevant appositional portion**
 
 ```text
-N                     higher structural head
+NP
 └── NP-APP
     ├── IP-REL
     │   ├── IP-ADV
@@ -172,64 +144,43 @@ N                     higher structural head
     └── N (kimi)
 ```
 
-Required word-level output for this portion: **`sakariwite asa nageku kimi`**.
-
-The higher `N` does not erase internal phrase boundaries. This example specifies the displayed portion, not the entire text's transcription.
+Required word-level output for this portion: **`sakariwite asa nageku kimi`**. The phrase boundaries remain distinct. The illustration covers one appositional portion, not the entire text.
 
 ### SEG-07 — No inferred terminal decomposition
 
-If the existing tree has a single terminal `VB-CND saraba`, tree-terminal segmentation retains **`saraba`**. Do not infer an additional stem/ending boundary or split it automatically.
+A single terminal `VB-CND saraba` remains **`saraba`** in tree-terminal segmentation. Do not invent a stem/ending boundary in an unanalyzed terminal.
 
-The same principle applies to any terminal not further decomposed in the annotation. “Terminal” describes what the tree represents, not proof that no further linguistic analysis is possible.
+### SEG-08 — Hyphenation
 
-### SEG-08 — Hyphenation preserves word boundaries
+Hyphens expose represented internal morpheme boundaries without changing word-level groups or phrase-boundary spaces. They do not establish new lexical items or dictionary entries.
 
-Hyphenated word-level segmentation uses SEG-03 without changing its word-level groups. Hyphens expose internal morpheme boundaries only where the annotation represents them. They must not create new spaces, remove spaces at phrase-level or higher boundaries, or imply new lexical items or dictionary entries.
+`mi-ato tukuru` is confirmed. A writing-mode change alone is not an approved reason to introduce a hyphen; other boundary-selection details remain under TBD-02.
 
-`mi-ato tukuru` is explicitly confirmed. Do not infer hyphens inside an unanalyzed terminal such as `saraba`.
+### SEG-09 — Display independence
 
-**TBD — requires author/editorial confirmation (TBD-02):** Exact recognition and selection of annotated morpheme boundaries for other constructions, nested internal structures, and multipart writing-mode components. A writing-mode change alone is not an approved rule for introducing a hyphen.
-
-### SEG-09 — Keep linguistic segmentation separate from UI state
-
-Phrase-level-or-higher boundary decisions come from the annotated structure, not the accidental visibility of nodes, presence of lemma IDs, or layout depth. Collapsing a subtree does not remove these boundaries inside it or establish that its entire yield is one word.
-
-This is a segmentation invariant, not approval for a particular tree-control redesign. The next UI investigation must determine where and how to apply these representations.
-
-**TBD — requires author/editorial confirmation (TBD-03):** Output treatment of traces, `NULL`, empty terminals, special `ILL` forms, malformed/unclassified labels, and unavailable form data. These cases must not acquire silent linguistic interpretations through display fallbacks.
-
-**TBD — requires author/editorial confirmation (TBD-04):** Exact formatting at multiple-root/text-segment boundaries and handling of whitespace inside unusual forms. The examples specify ordinary spaces between word-level groups, not a complete serialization or line-break policy.
+Segmentation boundaries come from the annotated structure, not node visibility, lemma display or layout depth. Collapsing a subtree does not remove its internal phrase boundaries.
 
 ## 4. Lexical combinations and dictionary entries
 
-### LEX-01 — General combination principles
+### LEX-01 — Combination principles
 
-- Lexical item + lexical item **may** create a new lexical item; this is not an automatic conclusion from adjacency.
-- Lexical item + grammatical item normally does **not** create a new lexical item. Productive grammatical combinations do not normally require separate lexical-entry treatment merely because they occur.
-- Combinations involving `PFX`, `SFX`, or `CL` may be exceptions. Their treatment as new lexical items is currently determined by editorial judgment, not an automatic procedure.
+- Lexical + lexical **may** create a new lexical item; adjacency alone does not establish this.
+- Lexical + grammatical normally does **not** create a new lexical item.
+- Combinations involving `PFX`, `SFX` or `CL` may be exceptions, determined by editorial judgment.
 
-Word-level recombination does not by itself decide new lexical-item status.
+Word-level recombination does not itself decide lexical-item or dictionary-entry status.
 
-### LEX-02 — Do not extrapolate beyond the confirmed scope
+### LEM-01 — Independent entry criterion
 
-**TBD — requires author/editorial confirmation (TBD-05):** Grammatical item + grammatical item combinations and expressions spanning phrase nodes, unless a confirmed existing rule already determines the particular case. Ask for a decision rather than generalizing the lexical-combination rules.
+In principle, assign a lemma ID to a form or expression a reader would reasonably expect to find as a dictionary entry. It may be lexical, grammatical or another expression warranting independent treatment.
 
-Do not treat adjacent noun children, an inserted grouping node, or the presence of a lemma as automatic evidence that a new lexical item has been formed. `NP_EXPANSION` and the historical compound-processing heuristics are experimental tools, not annotation rules.
-
-### LEM-01 — Independent dictionary-entry criterion
-
-In principle, assign a lemma ID to a form or expression that a reader would reasonably expect to find as a dictionary entry. Such an entry may represent a lexical item, a grammatical item, or another expression warranting independent treatment.
-
-Do not use lemma presence as a lexical-item test, and do not restrict dictionary entries to Words-category items.
+Lemma presence is not a lexical-item test; dictionary entries are not restricted to Words-category items.
 
 ### LEM-02 — Parent and component IDs
 
-When a combination warrants its own dictionary entry, the general annotation pattern is:
+When a combination warrants its own entry, assign its lemma ID to the parent and retain component IDs where applicable.
 
-- the parent receives the lemma ID for the complete combination;
-- children retain their own lemma IDs where applicable.
-
-**Confirmed example — BS.1:**
+BS.1 illustrates this:
 
 ```text
 N                     titipapa   L050402
@@ -237,61 +188,37 @@ N                     titipapa   L050402
 └── N;@2              papa       L051720
 ```
 
-The parent's dictionary-entry status and the components' identities coexist. Do not replace or discard component IDs merely because the parent has an entry.
-
-The “reasonably expected dictionary entry” criterion is an editorial principle, not a completed automatic entry-creation algorithm.
-
 ## 5. Structural and representation safeguards
 
 ### STRUCT-01 — Preserve genuine distinctions
 
-Preserve child order, internal annotations, and structurally distinct nodes when generating segmentation. `;@N` labels distinguish occurrences; their numbers are distinction labels, not necessarily ordinals. Do not renumber or correct them without editorial approval.
+Preserve child order, internal annotations and distinct nodes. `;@N` numbers are distinction labels, not necessarily ordinals; do not renumber them without editorial approval.
 
-Numbered `,*` markers carry source/original-text information and can encode real structural boundaries. Do not merge distinct constituents merely because their tags or path spellings otherwise look identical. Deriving a display string does not authorize changing the annotation tree.
+Numbered `,*` markers carry source/original-text information and can encode structural boundaries. Equal tag/path spellings do not justify merging constituents separated by such boundaries.
 
-### REP-01 — Do not conflate textual layers
+### REP-01 — Textual layers
 
-The header is a manually supplied first-stage word-segmented transcription, not a text title. Header segmentation need not match tree-terminal segmentation. Both the header and tree-level forms are meaningful; neither silently replaces the other. Underlying content should not normally differ, even when segmentation does.
+The **header** is a manually supplied first-stage word-segmented transcription, not a text title. Both it and tree-level forms are meaningful. Segmentation may differ, but underlying content should not normally differ; neither layer silently replaces the other.
 
-`<raw-text>` is derived processing information, not an independently edited authority. The current converter's space-joined output must not determine the segmentation specification in this document.
+`<raw-text>` is derived processing information, not an independently edited authority or a definition of word segmentation.
 
-### REP-02 — Multipart words are not TXT row counts
+### REP-02 — Multipart words
 
-Consecutive TXT rows with the same complete path and lemma, differing only in writing-mode tag, are components of one word under the confirmed historical convention. Genuinely separate siblings require `;@N` where the convention calls for a distinction.
+Consecutive TXT rows with the same complete path and lemma, differing only in writing-mode tag, are components of one word under the confirmed convention. Separate siblings require `;@N` where that convention calls for distinction.
 
-The current XML representation stores such a multipart word as one terminal with ordered form parts. Therefore, one row is not necessarily one tree terminal. Writing-mode decomposition and morphological decomposition are distinct; hyphenation beyond confirmed examples remains under TBD-02.
+XML stores a multipart word as one terminal with ordered form parts. Writing-mode decomposition is not morphological decomposition.
 
-See [txt-xml-roundtrip.md](txt-xml-roundtrip.md) for representation mechanisms and limitations. This guideline does not change conversion behavior or declare all current parser outputs linguistically correct.
+Representation details are in [TXT/XML round-trip rules](txt-xml-roundtrip.md).
 
-### REP-03 — Undocumented tags remain unresolved
+## 6. Unresolved decisions
 
-**TBD — requires author/editorial confirmation (TBD-06):** Authoritative meanings, classifications, accepted aliases, and permitted combinations for the unlisted or unclear annotations in [tag-investigation-report.md](tag-investigation-report.md) and [tag-questions-for-chief-editor.md](tag-questions-for-chief-editor.md).
-
-Do not promote code descriptions or apparent spelling corrections into rules. XML-generated names, lemma-like fields, free-text path fields, and misparsed ILL forms must not be silently treated as new linguistic categories.
-
-## 6. Future tooling requirements
-
-### FUT-01 — Locate terminals needing further analysis
-
-The system should eventually support searching for and locating terminal forms that have not been further morphologically analyzed, so the author can inspect them or request operations on them. The precise detection criterion and interface are not specified here. Do not infer or perform the missing analysis automatically.
-
-### FUT-02 — Identify editorial candidates
-
-A future tool may identify candidate combinations involving `PFX`, `SFX`, or `CL` for editorial inspection. Candidate detection is not an automatic decision that a new lexical item or dictionary entry exists. No detection algorithm is specified here.
-
-These are future requirements, not active implementation instructions.
-
-## 7. Open decisions for review
-
-All entries below have status **TBD — requires author/editorial confirmation**:
+These decisions still require author/editorial confirmation. Do not fill them from apparent spelling corrections, UI behavior or processing heuristics.
 
 | ID | Decision still needed |
 | --- | --- |
-| TBD-01 | Whether unresolved labels, including `C-`, `APP-`, and `FRAG`, are phrase-level or higher. The stopping rule itself is confirmed. |
-| TBD-02 | Recognition/selection of internal morpheme boundaries for hyphenation beyond confirmed examples, including nested and multipart structures. |
-| TBD-03 | Treatment of traces, null/empty terminals, ILL special forms, malformed/unclassified labels, and missing forms in segmentation output. |
-| TBD-04 | Multiple-root/segment formatting and whitespace handling outside the confirmed ordinary examples. |
-| TBD-05 | Unspecified grammatical+grammatical and phrase-spanning combination cases. |
-| TBD-06 | Formal definitions and classifications of unlisted labels, aliases, and undocumented combinations. |
-
-These are local guideline references, not new entries or resolutions in the existing PAQ/CEQ ledgers. They must remain explicit until an authoritative decision is supplied. Confirmed examples in SEG-05–SEG-07 are implementation acceptance cases; unresolved cases must not be filled from current UI behavior or experimental processor heuristics.
+| TBD-01 | Structural levels of unresolved `C-`, deferred legacy `APP-` labels, `FRAG` and other unclassified groupings. Confirmed `NP-APP` is a phrase, not an unresolved label. |
+| TBD-02 | Internal morpheme-boundary selection for hyphenation beyond confirmed examples, including nested and multipart structures. |
+| TBD-03 | Segmentation treatment of traces, null/empty terminals, special ILL forms, malformed labels and missing forms. |
+| TBD-04 | Multiple-root/segment formatting and unusual whitespace; acceptance cases specify ordinary spaces between groups. |
+| TBD-05 | Unspecified grammatical + grammatical and phrase-spanning combination cases. |
+| TBD-06 | Meanings, classifications, aliases and permitted combinations of remaining unconfirmed annotations. Confirmed usage in CAT-02 is excluded. |

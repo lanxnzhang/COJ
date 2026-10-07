@@ -1429,6 +1429,23 @@ Please:
 
 Please do not record items if they are currently uncertain or subject to further discussion. If you are unsure about anything, please ask me. Keep the content of the guidelines concise and consistent; there is no need to include useless examples of errors—such as those that serve merely as historical data rather than helping to explain the guidelines.
 
+### After commit 88f3e30
+Please update and prune `docs/annotation-guidelines.md` based on the **confirmed** findings in `reports/annotation-audit-5558e2a.md`.
+I also confirm that the intended word-level segmentation for the revised KK.30 structure is:
+`awokakiyamagomoreru`
+Treat this as an author-confirmed acceptance case.
+Apply the confirmed guideline updates concerning NP heads, KK.30, MYS.2.150, `multi-clause`, `NP-APP`, `WH-ADV`, `NLOG`, `FRM`, and the deferred EN/SM legacy markup.
+At the same time, simplify the guideline. It should describe the **current rules**, not the history of how we reached them. Remove material that is:
+- obsolete or superseded;
+- based on outdated tree structures;
+- redundant with a clearer rule elsewhere;
+- investigative/audit history rather than a rule;
+- an unnecessary example or implementation-specific warning;
+- or a `TBD` that has now been resolved.
+Do not preserve obsolete information merely as historical notes; the audit report already serves that purpose.
+Do not turn tentative or medium-confidence audit proposals into established rules.
+The result should be a concise current specification that a future developer can use without needing the investigation history.
+
 
 ### TBD
 
