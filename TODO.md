@@ -1476,12 +1476,34 @@ If anything is unclear, please ask me rather than making assumptions.
 
 Please apply these as display rules only. Do not modify corpus annotations as part of this UI task.
 
+### After commit ac9b3fa
+Good work. Currently, glosses and script tags disappear after collapsing syntax tree constituents; please try to fix this issue. Do not alter or break any existing functionality. If you are unsure about anything, ask me—do not make changes based on assumptions.
+
 
 
 
 ### TBD
 
+1. One correction: the Editor-in-Chief has now confirmed that **`multi-clause` should be `multi-sentence`**.
+The latest source data containing this correction will be synchronized later. Please treat `multi-sentence` as the authoritative label from now on and update any outdated documentation, guidelines, assumptions, or current UI work that still treats `multi-clause` as unresolved or potentially valid.
+Do not modify the corpus data itself; the corrected source data will be synchronized separately.
+
 1. Please compile and condense the relevant contextual information from this chat into a single document so that I can take it to a new chat. Put this document in "D:\Lanxin\Desktop\COJ-backup\Context".
+
+1. Please recheck the issues recorded in the audit report ("D:\Lanxin\Desktop\COJ\reports\annotation-audit-5558e2a.md""D:\Lanxin\Desktop\COJ\reports\label-proposals-5558e2a.json""D:\Lanxin\Desktop\COJ\reports\phrase-under-word-5558e2a.json") against the **current source TXT databases**("D:\Lanxin\Desktop\ONCOJ\oncoj_source\trees").
+1. If an issue has already been corrected in the current source TXT, report that fact to me, but do not edit the report yet.
+2. If an issue still exists, you may correct it in the **source TXT only** if it is:
+   - an error explicitly confirmed by the Editor-in-Chief; or
+   - a high-confidence spelling/label typo whose intended correction is clear and consistent with the guideline ("D:\Lanxin\Desktop\COJ\docs\annotation-guidelines.md").
+3. **Do not make corrections that require changing, removing, adding, or reparenting outer tree structure.** Leave those cases unchanged.
+4. **Do not modify EN or SM data.**
+5. Do not apply speculative structural proposals or unresolved editorial judgments.
+6. Do not modify the audit report or remove resolved entries from it yet.
+After making the permitted source-TXT corrections, give me a **brief summary in chat** of:
+- issues that were already fixed in the source;
+- issues you corrected in this task; and
+- issues you deliberately left unchanged.
+I will review the source-TXT diff myself. **Only after I confirm the changes will I ask you to remove the corresponding resolved issues from the report.**
 
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

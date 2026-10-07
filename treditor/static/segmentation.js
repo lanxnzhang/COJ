@@ -23,7 +23,10 @@
       return node.form ? [{text: node.form, phon: node.phon || "", lemma: node.lemma || "",
         gloss: node.gloss || "", parts: (node.parts?.length ? node.parts :
           [{form: node.form, phon: node.phon || ""}]).map(part => ({...part})),
-        atoms: [node]}] : [];
+        atoms: [node], annotations: [{start: 0, end: node.form.length,
+          gloss: node.gloss || "", phon: node.parts?.length
+            ? node.parts.map(part => part.phon).filter(Boolean).join(" + ")
+            : node.phon || "", source: node}]}] : [];
     }
     function visit(node) {
       const kind = category(node.tag, reference);
@@ -37,12 +40,27 @@
       const stop = kind === "phrase" || children.some(child => child.stop);
       if (stop || !units.length) return {tokens: units, stop};
       const parts = [];
+      const annotations = [];
+      let position = 0;
       units.forEach((unit, index) => {
-        if (index && mode === "hyphenated") parts.push({form: "-", phon: "", separator: true});
+        if (index && mode === "hyphenated") {
+          parts.push({form: "-", phon: "", separator: true});
+          position += 1;
+        }
+        annotations.push(...unit.annotations.map(annotation => ({...annotation,
+          start: annotation.start + position, end: annotation.end + position})));
         parts.push(...unit.parts);
+        position += unit.text.length;
       });
+      if (node.gloss) {
+        // A represented parent gloss replaces descendant display glosses;
+        // original node annotations and writing-mode parts remain untouched.
+        annotations.forEach(annotation => { annotation.gloss = ""; });
+        annotations.push({start: 0, end: position,
+          gloss: node.gloss, phon: "", source: node});
+      }
       return {stop: false, tokens: [{text: parts.map(part => part.form).join(""),
-        phon: "", lemma: node.lemma || "", gloss: node.gloss || "", parts,
+        phon: "", lemma: node.lemma || "", gloss: node.gloss || "", parts, annotations,
         atoms: units.flatMap(unit => unit.atoms)}]};
     }
     return roots.flatMap(node => visit(node).tokens);

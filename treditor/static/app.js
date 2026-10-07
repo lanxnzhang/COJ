@@ -1270,7 +1270,9 @@ function buildDisplayNode(node, options) {
   if (!node.children) return {...node};
   const leaves = descendantLeaves(node, options);
   if (collapsedNodeIds.has(node._nodeId)) {
-    const collapsedTokens = COJSegmentation.tokens([node], options.segmentation || "word", treeTagNames);
+    const collapsedTokens = COJSegmentation.tokens([node], options.segmentation || "word", treeTagNames)
+      .map(token => ({...token, annotations: token.annotations.map(annotation =>
+        node.gloss || annotation.source === node ? {...annotation, gloss: ""} : annotation)}));
     return {
       ...node,
       children: undefined,
@@ -1300,10 +1302,42 @@ function buildDisplayNode(node, options) {
   };
 }
 
+// Gloss selection follows the represented tree hierarchy. Writing modes instead
+// form ordered runs, consolidated only within this displayed word.
+function collapsedTokenAnnotations(token, options) {
+  const annotations = token.annotations || [{start: 0, end: token.text.length,
+    gloss: token.gloss, phon: token.phon}];
+  const fields = [["gloss", options.gloss], ["phon", options.phon]]
+    .filter(([, enabled]) => enabled).map(([field]) => field);
+  const scriptTags = [];
+  const parts = token.parts?.length ? token.parts : [{phon: token.phon}];
+  parts.forEach(part => {
+    if (part.phon && scriptTags.at(-1) !== part.phon) scriptTags.push(part.phon);
+  });
+  const gap = 6;
+  const labels = [];
+  fields.forEach((field, row) => {
+    const texts = field === "gloss" ? annotations.map(annotation => annotation.gloss).filter(Boolean)
+      : scriptTags;
+    const widths = texts.map(text => text.length * (field === "gloss" ? 6 : 6.2));
+    const width = widths.reduce((total, value) => total + value, 0)
+      + Math.max(0, texts.length - 1) * gap;
+    let left = -width / 2;
+    texts.forEach((text, index) => {
+      const labelWidth = widths[index];
+      labels.push({text, field, x: left + labelWidth / 2, left,
+        right: left + labelWidth, row});
+      left += labelWidth + gap;
+    });
+  });
+  return {labels, rows: labels.length ? fields.length : 0};
+}
+
 function collapsedTokenWidth(token, options) {
   return Math.max(
     token.text.length * CHARACTER_WIDTH,
-    options.gloss ? token.gloss.length * 6 : 0,
+    ...collapsedTokenAnnotations(token, options).labels.map(label =>
+      2 * Math.max(Math.abs(label.left), Math.abs(label.right))),
   ) + 8;
 }
 
@@ -1588,14 +1622,14 @@ function renderNode(node, svg, columnWidth, maxRow, topPadding, options) {
         formLabel.textContent = token.text;
       }
       svg.appendChild(formLabel);
-      if (options.gloss && token.gloss) {
+      collapsedTokenAnnotations(token, options).labels.forEach(label => {
         svg.appendChild(svgElement("text", {
-          x: tokenX,
-          y: offset + 17,
-          class: "gloss-label",
+          x: tokenX + label.x,
+          y: offset + 17 * (label.row + 1),
+          class: `${label.field === "gloss" ? "gloss" : "phon"}-label`,
           "text-anchor": "middle",
-        }, token.gloss));
-      }
+        }, label.text));
+      });
       tokenLeft += tokenWidth + 12;
     });
   } else if (node.form) {
@@ -1660,9 +1694,9 @@ function visibleLeafUnits(node) {
 }
 
 function lowerAnnotationRows(options) {
-  return Number(options.gloss)
+  return Math.max(options.collapsedAnnotationRows || 0, Number(options.gloss)
     + Number(options.lemma && options.lemmaPosition === "form")
-    + Number(options.phon);
+    + Number(options.phon));
 }
 
 function tagLemmaClearance(options) {
@@ -1770,6 +1804,14 @@ function renderSvgTree(data) {
         ],
       };
   assignCollapsedKanjiWidths(data, tree);
+  options.collapsedAnnotationRows = Math.max(0, ...visibleLeafUnits(tree).flatMap(node => {
+    const tagRows = Number(options.gloss && Boolean(node.gloss))
+      + Number(options.lemma && Boolean(node.lemma));
+    const clearance = tagRows
+      ? Math.max(0, 9 + (tagRows - 1) * 15 - tagLemmaClearance(options)) : 0;
+    return (node._collapsedTokens || []).map(token =>
+      collapsedTokenAnnotations(token, options).rows + Math.ceil(clearance / 17));
+  }));
   const columnWidth = columnSpacing();
   measureSubtreeWidth(tree, options);
   const counter = {value: 0};
