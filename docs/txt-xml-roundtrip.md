@@ -81,6 +81,8 @@ The fields before the final annotations describe an ordered root-to-leaf path. A
 
 When a source tag cannot be used literally as an XML element name, it is sanitized and the original is stored as `raw_tag`. XML → TXT prefers `raw_tag`.
 
+The parser preserves legacy `multi-clause` input without automatically renaming it to `multi-sentence`.
+
 ### `;@N` distinction labels
 
 Example:

@@ -45,7 +45,7 @@ Items in the Words category are lexical items; items in the Bound morphemes cate
 - `WH-ADV` is the wh-adverb label.
 - `NLOG` is the accepted writing-mode spelling.
 - `FRM` means **frame**. It introduces complement clauses and accompanies a nominal form. Both `IP-NMZ-FRM` and `PP-FRM` are acceptable; no standardization between them is specified.
-- `multi-clause` is not an accepted grouping label. Its replacement requires editorial confirmation.
+- Use `multi-sentence` for sentence-level grouping. `multi-clause` is deprecated and should not be used in annotation.
 
 EN and SM legacy markup is deferred for editorial review. Do not normalize its unconfirmed categories by analogy with uploaded trees. Do not assign meanings or classifications to undocumented tags by analogy.
 

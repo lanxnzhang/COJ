@@ -46,7 +46,6 @@ Software calls `NUMCL` “numeral classifier,” but the example is a parent gro
 - **`MORPHEME`:** When is this used instead of a specific category? SM.2.2 contains `VB → MORPHEME mi`.
 - **`COMMENT`:** What is the annotation function of this wrapper? EN.2.1 places annotated `sore no …` and further syntax beneath `COMMENT`.
 - **`W`:** Is this a genuine label? EN.10.6 annotates `pe` under `N → W`, with writing mode `ORDLOG`.
-- **`multi-clause`:** How does this root label differ from `multi-sentence`? It occurs in KH.27 and KK.91.
 
 ### 5. Unlisted extensions
 
@@ -93,4 +92,16 @@ Are these accepted extensions, and what do they mean in these contexts?
 
 Are `IP-EMP` (“empty clause”), `PFX-PHB` (“prohibitive prefix”), and `VB-DVB` (“verb deverbal”) recognized historical or reserved annotations? If so, please supply their definitions; software descriptions alone have not been treated as authority.
 
-All questions remain unanswered. XML-generated names, misparsed special word forms, and free-text/lemma-like element names are retained in the author's detailed report rather than proposed as linguistic abbreviations here.
+Remaining questions above are retained for consultation. XML-generated names, misparsed special word forms, and free-text/lemma-like element names are retained in the author's detailed report rather than proposed as linguistic abbreviations here.
+
+## Resolved / answered questions
+
+### Root grouping label: `multi-clause`
+
+**Question:** How does this root label differ from `multi-sentence`? It occurs in KH.27 and KK.91.
+
+**Answer:** Use `multi-sentence` for sentence-level grouping. `multi-clause` is deprecated.
+
+**Authority:** Editor-in-Chief; recorded 8 October 2026.
+
+**Status:** Resolved.

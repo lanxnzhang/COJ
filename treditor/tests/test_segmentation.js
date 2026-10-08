@@ -17,6 +17,7 @@ const kk = [branch("VB-ADN", branch("N", branch("N", leaf("ADJ-STM", "awo"),
 assert.equal(text(kk, "word"), "awokakiyamagomoreru");
 assert.equal(text(kk, "hyphenated"), "awo-kaki-yama-gomor-eru");
 assert.equal(text([branch("N", branch("NP", leaf("N", "a")), leaf("N", "b"))], "word"), "a b");
+assert.equal(text([branch("N", branch("multi-sentence", leaf("N", "a")), leaf("N", "b"))], "word"), "a b");
 assert.equal(text([leaf("VB-CND", "saraba")], "hyphenated"), "saraba");
 const multipart = {tag: "VB", form: "ipaku", phon: "", parts: [
   {form: "ipa", phon: "LOG"}, {form: "ku", phon: "PHON"}]};

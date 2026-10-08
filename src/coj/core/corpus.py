@@ -36,7 +36,8 @@ from coj.xml_format import element_to_xml
 
 _LEMMA_RE    = re.compile(r'^[A-Za-z]\d+[a-z]*$')
 _SYNCTAG_RE  = re.compile(r'^[A-Z][A-Z0-9\-]*(?:;@\d+)?$')   # e.g. NP, VB-STM, N;@2
-# Root-level node names that begin with lowercase (multi-sentence, multi-clause)
+# Lowercase roots: multi-sentence is authoritative. Preserve historical spellings
+# such as multi-clause for loss-preserving import; this is not label validation.
 _MULTIROOT_RE = re.compile(r'^multi-\w+')
 _WORDFORM_RE = re.compile(r'^[A-Za-z]+$')
 

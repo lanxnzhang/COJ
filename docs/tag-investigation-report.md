@@ -4,6 +4,8 @@ This report records the tag investigation requested in `TODO.md`, “After commi
 
 Investigated on 4 October 2026, against repository commit `e15ad3843971af93fc3c7755d39ab4b1727051ca` and the project author's subsequent clarifications. All unresolved interpretations below remain open.
 
+**Resolved label:** The Editor-in-Chief confirmed `multi-clause` → `multi-sentence` on 8 October 2026. Counts and excerpts retain the investigated spelling. See [CAT-02 and SEG-04](annotation-guidelines.md).
+
 The shorter [questions for the chief editor](tag-questions-for-chief-editor.md) selects the items most useful for editorial consultation. Existing question ledgers and issue records have not been changed.
 
 ## Authority and scope
@@ -115,9 +117,9 @@ IP-MAT,IP-ARG,C-NP;@5,N,N;@2,LOG,ra
 | `PFX-RCP` | 24 | SM_04, SM.4.42 | Prefix-position component `api` under `VB`. |
 | `PFX-UKN` | 1 | EN_01, EN.1.9 | Component `sa`, lemma `L000040`, under `VB`. |
 | `W` | 1 | EN_10, EN.10.6 | Extra node beneath `N`, form `pe`, writing mode `ORDLOG`. |
-| `multi-clause` | 2 | KH.27; KK.91 | Root wrapper containing clauses. |
+| `multi-clause` (deprecated) | 2 | KH.27; KK.91 | Use `multi-sentence`. |
 
-**Implementation descriptions:** `tags.py` explains `FRM` in `IP-NMZ-FRM` as “formal/nominal,” `PRB` as “probabilitive,” and `RCP` as “reciprocal.” Converter comments and [test_export.py](../tests/test_export.py) explicitly support `multi-clause` roots. No sufficiently explicit definitions were found for the remaining labels.
+**Implementation descriptions:** `tags.py` explains `FRM` in `IP-NMZ-FRM` as “formal/nominal,” `PRB` as “probabilitive,” and `RCP` as “reciprocal.” No sufficiently explicit definitions were found for the remaining labels at the time of investigation. Parser compatibility is documented in [TXT/XML round-trip rules](txt-xml-roundtrip.md).
 
 **Tentative interpretations:** `ADV-WH` may be related to `WH-ADV`; `APP-` and `FRM` may encode distinct annotation conventions rather than new lexical categories. `UKN` may be an unspecified-prefix designation. `W` might be a generic word label, but its unusual surrounding annotation makes this uncertain.
 
@@ -314,7 +316,7 @@ The reference is not a complete formal grammar of every allowable combination. T
 - [Corpus parser and serializer](../src/coj/core/corpus.py): lemma recognition, path handling, XML-name sanitization, and round-trip metadata behavior.
 - [Scripteditor POS mapping](../scripteditor/scripts/lemma_forgui.py): dictionary-candidate preferences for `N-DVB`, `N-COMP`, `N-PRD`, and `NUMCL`.
 - [Tag tests](../tests/test_tags.py) and [corpus tests](../tests/test_corpus.py): recognized writing modes and tag preservation. Passing tests establish supported behavior, not linguistic meaning.
-- [Export tests](../tests/test_export.py): explicit preservation of `multi-clause` roots and internal lemma annotations.
+- [Export tests](../tests/test_export.py): lowercase-root preservation and internal lemma annotations.
 - [Marker-boundary migration report](../reports/kanji_marker_boundaries.md) and [multipart-word report](../reports/multipart_words.md): source examples and structural changes, generally not definitions of unlisted labels.
 - [Compound processor notebook](../notebooks/compound_lemma_processor.ipynb): experimental grouping heuristics, expressly not annotation policy under the project author's clarification.
 - Git history: initial `src/oncoj/tags.py` already includes explanations such as “compound,” “back-phonographic,” and “ordinal logographic.” Later renaming to `coj` and addition of the browser abbreviation mapping do not supply independent confirmation of those definitions.

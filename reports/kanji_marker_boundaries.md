@@ -2,6 +2,8 @@
 
 This report records repeated child constituents that were merged when kanji marker lines were removed from the XML syntax hierarchy.
 
+Historical excerpts retain `multi-clause`; current annotation uses `multi-sentence`.
+
 - Restored constituent boundaries: **4,020**
 - Modified original TXT annotation lines: **26,105**
 - Text passages containing modifications: **1,818**

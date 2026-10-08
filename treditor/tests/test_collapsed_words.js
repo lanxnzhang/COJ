@@ -28,6 +28,8 @@ assert.equal(context.displayTag("VAX-NEG-ADN", {fullTags: true}),
 assert.equal(context.displayTag("NP;@5", {fullTags: true}), "Noun phrase;@5");
 assert.equal(context.displayTag("NP-UNKNOWN", {fullTags: true}), "NP-UNKNOWN");
 assert.equal(context.displayTag("NP", {fullTags: false}), "NP");
+assert.equal(context.displayTag("multi-sentence", {fullTags: true}), "Multiple sentences in series");
+assert.ok(!Object.hasOwn(context.treeTagNames.labels, "multi-clause"));
 const original = {
   _nodeId: "phrase",
   tag: "PP-OB1",

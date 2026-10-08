@@ -1,6 +1,6 @@
 """Tests for coj.export — XML and text-tree serialisation."""
 # Hurdles fixed and covered below:
-#   1. multi-sentence / multi-clause root nodes: lines starting with a
+#   1. multi-sentence and legacy lowercase root spellings: lines starting with a
 #      lowercase token were silently classified as comments and lost from
 #      the tree.  Fixed in _is_corpus_line; tested in TestMultiRoot.
 #   2. index="1" inference for internal nodes: disambiguation suffix @N on
@@ -499,7 +499,7 @@ class TestEntryStr:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  Hurdle 1 — multi-sentence / multi-clause root nodes
+#  Hurdle 1 — multi-sentence and legacy lowercase root preservation
 #
 #  Before the fix, lines starting with a lowercase token (e.g. "multi-sentence,")
 #  were classified as CommentLines and silently omitted from the XML tree.
@@ -550,7 +550,9 @@ class TestMultiRoot:
         assert "kamu" in forms
         assert "nusi" in forms
 
-    def test_multi_clause_produces_element(self):
+    def test_legacy_multi_clause_is_preserved_without_approving_the_label(self):
+        # multi-sentence is the confirmed label. Importing old source data must
+        # not silently rename or discard it while source synchronization is pending.
         doc = CorpusDocument.from_text(_MULTI_CLAUSE_DOC)
         xml_str = corpus_to_xml(doc)
         root = ET.fromstring(xml_str)

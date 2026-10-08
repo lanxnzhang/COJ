@@ -2,9 +2,11 @@
 
 Audited on 7 October 2026 against commit `5558e2a18a4b6d5b96bf166d9c8f279319f1c1fc`.
 
-**Report only. No corrections are approved or applied.** The project author's clarification superseded the original request to correct corpus data and update the guideline. The existing guideline, corpus, dictionary, application code and TODO are left unchanged.
+**Current source review:** rechecked on 8 October 2026 against `D:\Lanxin\Desktop\ONCOJ\oncoj_source\trees\`. Resolved findings and proposals have been removed following the author's confirmation. This report update changes no source data or annotation guidelines; unresolved findings and deferred EN/SM records retain their existing IDs and content.
 
 ## Evidence and scope
+
+**Confirmed label decision — 8 October 2026:** The project author relayed the Editor-in-Chief's confirmation of `multi-clause` → `multi-sentence` in TODO, “After commit 227e971.” The replacement is no longer unresolved. Corrected COJ source data will be synchronized separately; this follow-up authorizes no local corpus edits or additional restructuring. Removed resolved proposals remain part of repository history, not active correction requests.
 
 The audit uses:
 
@@ -18,7 +20,7 @@ The scan covers 27 uploaded-tree documents and 88 EN/SM documents, with their 11
 
 ## How to use the accompanying files
 
-[Label proposals](label-proposals-5558e2a.json) contains 21 text-specific records: 19 spelling/label proposals and two substantive root-label proposals. Each record supplies exact current and proposed TXT lines, surrounding context, XML locations, annotation paths, confidence and remaining uncertainty. MYS.6.996 has two apposition nodes but one text-specific label record.
+[Label proposals](label-proposals-5558e2a.json) contains five remaining text-specific spelling/label proposals, LC-001 through LC-005, all in deferred EN data. Each record supplies exact current and proposed TXT lines, surrounding context, XML locations, annotation paths, confidence and remaining uncertainty.
 
 [Phrase-under-word findings](phrase-under-word-5558e2a.json) contains all 310 structural findings, including the EN/SM cases deferred for later review. It supplies the text ID, source ID line, TXT and XML file paths, source excerpts, word/phrase tags, form yields and individual XML addresses.
 
@@ -30,31 +32,15 @@ The primary authoring files live outside COJ: uploaded-tree TXT corresponds to `
 
 ## High-confidence spelling and label corrections
 
-These are separate from changes to constituent structure. None has been applied.
+The remaining spelling candidates are separate from changes to constituent structure. All uploaded-tree label proposals have been resolved in the current source TXT.
 
 ### Explicitly confirmed by the Editor-in-Chief
 
-- `ADV-WH → WH-ADV`: nine nodes in nine texts; 27 TXT rows. The response states that WH-ADV is correct and ADV-WH is wrong.
-- `NLPOG → NLOG`: one writing-mode attribute in MYS.6.1047; one TXT row. The response explicitly identifies the misspelling.
-- `APP-NP → NP-APP`: two nodes in MYS.6.996; three TXT rows. The response identifies NP-APP as correct. This label change alone does **not** resolve the incorrect enclosing N; see AS-001.
-
-| Proposal | Text | Current → proposed | TXT location |
-| --- | --- | --- | --- |
-| LC-008 | MYS.1.29a | `ADV-WH → WH-ADV` | data/txt/trees/MYS_01.txt:1307, 1308, 1309 |
-| LC-009 | MYS.1.29b | `ADV-WH → WH-ADV` | data/txt/trees/MYS_01.txt:1467, 1468, 1469 |
-| LC-010 | MYS.2.162 | `ADV-WH → WH-ADV` | data/txt/trees/MYS_02.txt:3210, 3211, 3212 |
-| LC-011 | MYS.2.167a | `ADV-WH → WH-ADV` | data/txt/trees/MYS_02.txt:3593, 3594, 3595 |
-| LC-012 | MYS.2.167b | `ADV-WH → WH-ADV` | data/txt/trees/MYS_02.txt:3874, 3875, 3876 |
-| LC-013 | MYS.2.217 | `ADV-WH → WH-ADV` | data/txt/trees/MYS_02.txt:8619, 8620, 8621 |
-| LC-014 | MYS.3.443 | `ADV-WH → WH-ADV` | data/txt/trees/MYS_03.txt:7371, 7372, 7373 |
-| LC-015 | MYS.3.460 | `ADV-WH → WH-ADV` | data/txt/trees/MYS_03.txt:7934, 7935, 7936 |
-| LC-016 | MYS.6.996 | `APP-NP → NP-APP` | data/txt/trees/MYS_06.txt:3448, 3449, 3450 |
-| LC-017 | MYS.6.1047 | `NLPOG → NLOG` | data/txt/trees/MYS_06.txt:5099 |
-| LC-019 | MYS.13.3326 | `ADV-WH → WH-ADV` | data/txt/trees/MYS_13.txt:6887, 6888, 6889 |
+No unresolved confirmed label corrections remain in the uploaded-tree source TXT.
 
 ### Additional high-confidence spelling candidates
 
-The following eight single-node cases use case, letter-order or abbreviation variants of documented labels. These are spelling inferences, **not explicit Editor-in-Chief approvals**. Five are in EN and remain deferred. Their full source context and proposed lines are in the label-proposal file.
+The following five single-node cases use case, letter-order or abbreviation variants of documented labels. These are spelling inferences, **not explicit Editor-in-Chief approvals**. All five are in EN and remain deferred. Their full source context and proposed lines are in the label-proposal file.
 
 | Proposal | Text | Current → proposed | TXT location | Basis |
 | --- | --- | --- | --- | --- |
@@ -63,81 +49,12 @@ The following eight single-node cases use case, letter-order or abbreviation var
 | LC-003 | EN.6.1 | `ADJ-STN → ADJ-STM` | data/txt/text/EN_06.txt:134 | Final-letter candidate for documented stem STM |
 | LC-004 | EN.8.1 | `VB-STN → VB-STM` | data/txt/text/EN_08.txt:442 | Final-letter candidate for documented stem STM |
 | LC-005 | EN.27.7 | `VB-sTM → VB-STM` | data/txt/text/EN_27.txt:858 | Case-only variant of VB-STM |
-| LC-018 | MYS.8.1518a | `IP_ADV → IP-ADV` | data/txt/trees/MYS_08.txt:2882, 2883 | Underscore instead of the documented hyphen |
-| LC-020 | MYS.20.4360 | `ADJ-STEM → ADJ-STM` | data/txt/trees/MYS_20.txt:2118 | Expanded STEM instead of documented STM |
-| LC-021 | NSK.26 | `mulit-sentence → multi-sentence` | data/txt/trees/NSK.txt:833, 834, 835, 836, 837, 838, 839, 840, 841, 842, 843, 844, 845, 846, 847, 848, 849 | Transposed letters in multi |
 
 The list is deliberately narrow. Other unusual labels are not silently treated as typographical errors. Approval should specify the proposed replacement, especially for non-case-only variants.
 
 ## Substantive annotation issues
 
-### AS-001 MYS.6.996 apposition and enclosing noun
-
-**Status:** open; label spelling is confirmed, full tree replacement needs confirmation.
-
-Source: `data/txt/trees/MYS_06.txt:3448–3450`. XML: `data/xml/trees/MYS_06.xml:11334–11344`, inside `CP-FINAL/IP-SUB/NP-SBJ/IP-EMB/NP-SBJ`. Label proposal: LC-016.
-
-Current relevant tree:
-
-```text
-NP-SBJ
-└── N
-    ├── APP-NP
-    │   └── N (PFX-HON mi + N tami)
-    └── APP-NP;@2
-        └── PRO-N ware
-```
-
-The Editor-in-Chief explicitly says NP-APP is correct and the N above the apposition is wrong. The additional reply confirms that an NP can have an NP head. Revised MYS.2.150 also provides a current example without a word-level N enclosing the appositional phrases.
-
-**Recommended proposal, medium confidence:** rename APP-NP to NP-APP and replace the enclosing N with NP:
-
-```text
-NP-SBJ
-└── NP
-    ├── NP-APP
-    │   └── N (PFX-HON mi + N tami)
-    └── NP-APP;@2
-        └── PRO-N ware
-```
-
-**Alternative requiring confirmation:** remove the enclosing N and attach the two NP-APP constituents directly to NP-SBJ. The response does not choose between replacement and removal. Retain child order, component forms, lemma IDs and the existing distinction label in either approved solution.
-
-### AS-002 KH.27 root label
-
-**Status:** confirmed incorrect label; replacement proposed, not confirmed. Proposal LC-006.
-
-TXT: `data/txt/trees/KH.txt:590–612`. These are all 23 root-prefixed source rows; the proposal file lists each exact row and replacement.
-
-Current structure:
-
-```text
-multi-clause
-├── IP-MAT (nezumi no ipye ... piki kiri idasu)
-└── CP-FINAL (yotu to ipu ka swore)
-```
-
-The response explicitly calls multi-clause a mistake. **Recommended replacement, medium confidence:** multi-sentence, preserving the two ordered children and all annotations. It is an established grouping label in the corpus, unlike the rejected label. The response does not explicitly name the replacement or exclude a more substantial restructuring; confirm before implementation.
-
-### AS-003 KK.91 root label
-
-**Status:** confirmed incorrect label; replacement proposed, not confirmed. Proposal LC-007.
-
-TXT: `data/txt/trees/KK.txt:3780–3863`. These are all 84 root-prefixed rows.
-
-Current structure:
-
-```text
-multi-clause
-├── IP-MAT                    kusakabye ... pabirokumakasi
-├── IP-MAT;@2                 moto ni pa ... ikumi pa nezu
-├── IP-MAT                    tasimidake ... winezu
-└── CP-FINAL                  noti mo ... apare
-```
-
-**Recommended replacement, medium confidence:** multi-sentence, preserving the ordered children and all existing distinction labels. The same evidence and uncertainty as AS-002 apply.
-
-Two separate IP-MAT nodes have the same displayed index in current XML. They must not be merged during a future label correction: marker-derived boundaries and document order remain meaningful.
+No unresolved entries remain in this section after the current source-TXT review.
 
 ## Phrase tags beneath word tags
 
@@ -145,7 +62,7 @@ Two separate IP-MAT nodes have the same displayed index in current XML. They mus
 
 The scan starts with documented word-category bases and searches downward for the first NP, PP, IP, CP or CONJP boundary. Documented-style hyphen suffixes are included as a search heuristic, not a declaration that every suffix combination is approved. Unclassified intermediate wrappers are traversed without assigning them a meaning.
 
-CP-N is excluded because its classification is unresolved. APP-NP is not silently reclassified as NP-APP; its MYS.6.996 issue is documented separately above. Other unknown aliases may therefore need a later, editorially expanded scan.
+CP-N is excluded because its classification is unresolved. Other unknown aliases may need a later, editorially expanded scan.
 
 A phrase nested beneath an already reported phrase is not counted again unless another word-category ancestor intervenes. This keeps the result focused on where word/phrase structure first crosses the boundary.
 
@@ -415,7 +332,7 @@ These are proposed documentation changes only; [annotation-guidelines.md](../doc
 2. **SEG-06, KK.30:** the imported structure is now `VB-ADN → N awokakiyama + VB-ADN gomoreru`, not `VB-ADN → NP + VB-ADN`. Applying the existing phrase-boundary rule to this revised subtree yields `awokakiyamagomoreru`. This is a consequence of the existing procedure, not a new independently supplied segmentation decision.
 3. **SEG-06, MYS.2.150:** remove the old enclosing N from the illustration; NP directly contains the appositional NPs. The displayed portion remains `sakariwite asa nageku kimi`.
 4. **SEG-03:** remove the reference to KK.30 as a current example of an internal NP stopping boundary; that boundary no longer exists there. The general stopping rule remains unchanged.
-5. **SEG-04:** remove multi-clause from the accepted grouping list. The Editor-in-Chief identifies it as a mistake; no unconfirmed replacement should become a guideline rule.
+5. **SEG-04:** remove multi-clause from the accepted grouping list. **Follow-up, 8 October 2026:** `multi-sentence` is now the explicitly confirmed replacement and authoritative grouping label; CAT-02 records the decision. The audit's earlier replacement uncertainty is superseded.
 6. Add the confirmed acceptance of NP-APP, WH-ADV and NLOG without adding historical error examples to the guideline.
 7. Add the confirmed meaning of FRM: frame, used in introducing complement clauses with a nominal form; both IP-NMZ-FRM and PP-FRM are acceptable. Do not prescribe a normalization between them while their usage remains under discussion.
 8. State that EN/SM legacy markup is deferred. The response recognizes BPHON as important there but does not supply a complete definition; no new definition is invented.
@@ -428,8 +345,8 @@ Approval should identify the proposal/case ID and the precise replacement, inclu
 
 Before implementation, recheck the source version and the recorded context. Preserve forms, lemma IDs, child order, multipart components, distinction labels and marker boundaries. Update TXT and XML consistently, including any affected round-trip marker paths. Do not merge equally labelled nodes while renaming a root.
 
-The proposal JSON gives only label-level TXT substitutions. It does not encode the complete AS-001 structural alternatives, or any automatic PW correction. No importer, parser, processor or application changes are part of this audit.
+The remaining proposal JSON gives only label-level TXT substitutions for deferred EN records. It does not encode any automatic PW correction. No importer, parser, processor or application changes are part of this audit.
 
 ## Verification
 
-The report's line references, TXT excerpts, XML addresses and label proposals are checked against the unchanged working-tree corpus. The JSON files are valid and their counts agree with the summary. Git checks confirm no source, corpus, dictionary or guideline changes remain from this task; the author's pre-existing TODO changes are preserved. No application tests are needed for a report-only change.
+The resolved uploaded-tree proposals were checked against the current external source TXT before removal. Five deferred EN label proposals and all 310 phrase-under-word findings remain with their original IDs and content. The phrase-under-word JSON is unchanged. JSON validity, preserved surviving entries and the report diff were checked; only this Markdown report and the label-proposal JSON changed. Source data and annotation guidelines were not modified, and pre-existing working-tree changes were preserved.

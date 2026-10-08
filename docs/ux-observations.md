@@ -6,6 +6,21 @@ This file records behavior noticed during actual use. It is not a feature roadma
 2. Document里文本打开的框显示的内容太多了，很冗余，至少header和token数量什么的不需要。之后可能考虑显示标题/作者/时代/体裁并做成可选框。
 3. 不同的功能和页面框可以自由拖动。
 
+4. 折叠之后汉字文本发生碰撞重叠。
+There is a display issue in BS.2: after I collapse the first IP-REL, the two text rows containing 弥蘇知阿麻利 and 布多都乃加多知 overlap visually.
+For now, do not modify any files.
+Please investigate the cause and report:
+a. why collapsing this IP-REL causes these two rows to overlap;
+b. which part of the current layout/rendering logic is responsible;
+c. whether this is specific to this tree or reflects a more general collapsed-tree layout problem;
+d. what change you would recommend to fix it; and
+e. whether that fix could negatively affect any existing behavior or visual layout, especially row alignment, tree positioning, source-text alignment, collapsed annotations, dynamic height calculation, or other trees that currently display correctly.
+Please distinguish between the underlying cause and any secondary symptoms/workarounds.
+I want to understand the cause, proposed fix, and regression risk before approving any modification. Do not implement the fix yet.
+
+Codex认为这是因为一个 collapsed node 横跨多个 source rows，而且只吃掉了最后一行的一部分。
+目前不是很好修复，之后再说吧。
+
 ## Small and local usability observations
 
 ### UX-001 — Inconsistent terminology
