@@ -6,9 +6,9 @@ Current specification for annotation-related development. Confirmed rules and ac
 
 ### AUTH-01 — Sources of authority
 
-Linguistic rules come from project-author decisions, the designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx`, and confirmed Editor-in-Chief guidance. [tag_names.json](../treditor/tag_names.json) supplies display expansions, not a complete classification registry.
+Linguistic rules come from project-author decisions, the designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx`, and confirmed Editor-in-Chief guidance. [tag_names.json](../../treditor/tag_names.json) supplies display expansions, not a complete classification registry.
 
-The confirmed editorial guidance is documented in [the annotation audit](../reports/annotation-audit-5558e2a.md). Code descriptions and inferred corpus patterns are not independent linguistic authority.
+The confirmed editorial guidance is documented in [the annotation audit](../../reports/annotation-audit-5558e2a.md). Code descriptions and inferred corpus patterns are not independent linguistic authority.
 
 ### TERM-01 — Separate the concepts
 

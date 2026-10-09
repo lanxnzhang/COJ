@@ -2,6 +2,11 @@
 
 This file records behavior noticed during actual use. It is not a feature roadmap, and an observation is not automatically a decision or active task.
 
+## Author notes and deferred ideas
+
+The following notes retain the author's wording and recorded investigation
+request. They are deferred observations, not new implementation instructions.
+
 1. 侧边栏看上去不是很被需要，而且词典和搜索的侧边栏很冗余，不知道要不要把侧边栏删了，或者做成暂时弹出，用户需要的时候再固定。
 2. Document里文本打开的框显示的内容太多了，很冗余，至少header和token数量什么的不需要。之后可能考虑显示标题/作者/时代/体裁并做成可选框。
 3. 不同的功能和页面框可以自由拖动。
@@ -32,7 +37,7 @@ controls similar to VS Code for increasing or decreasing the number of panes.
 
 **Observation:** The same identified unit can appear as *text*, *passage*, *sentence*, *utterance*, or *poem*. “Header” looks like a title even though it is a manually segmented transcription, and “kanji” can include placeholders.
 
-**Current behavior:** These terms occur in code, API routes, and interface labels. The project-facing terminology remains partly provisional; see [glossary.md](glossary.md).
+**Current behavior:** These terms occur in code, API routes, and interface labels. The project-facing terminology remains partly provisional; see [glossary.md](../reference/glossary.md).
 
 **Status:** Current.
 

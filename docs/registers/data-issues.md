@@ -2,6 +2,10 @@
 
 This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
+Counts and example locations describe the recorded audits. Revalidate them
+against current source files before making a correction; this register is not
+a continuously refreshed corpus scan.
+
 ## Confirmed data errors
 
 ### DI-001 — Duplicate text ID `1_SM_15`

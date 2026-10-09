@@ -103,7 +103,7 @@ recommended way to convert romanized input.
 
 ### Rule authority and uncertainty
 
-The rule registry is [conversion_rules.json](../treditor/conversion_rules.json).
+The rule registry is [conversion_rules.json](../../treditor/conversion_rules.json).
 Rule origin and approval status appear under **Conversion rule origins** and
 when inspecting a marked result.
 
@@ -153,7 +153,7 @@ and attribute order; it is not a separate semantic-difference report. Metadata
 differences can also trigger that indicator.
 
 Generated representations use the existing shared TXT/XML conversion behavior
-and inherit its limitations; see [TXT–XML round trip](txt-xml-roundtrip.md).
+and inherit its limitations; see [TXT–XML round trip](../reference/txt-xml-roundtrip.md).
 The original input is retained in memory and is not overwritten by parsing.
 Stored XML is displayed as the serialized block read from the stored document,
 not as an exact byte-for-byte excerpt of the full file.
@@ -169,9 +169,10 @@ reuse existing tag descriptions; selecting a lemma opens the existing Dictionary
 popup. The Workbench tree has no editing, collapsing, or draft controls and
 does not use or alter the main graphical tree renderer.
 
-The proposed future text-like structured editor is analyzed separately in
-[the tree-editing design report](workbench-tree-editing-design.md). It is not
-implemented in this version.
+The proposed future authoring workflow is analyzed separately in the
+[current design](../design/authoring/syntax-tree-authoring-design.md) and
+[compact syntax comparison](../design/authoring/syn-prototype-comparison.md).
+Neither a structured Workbench editor nor a `.syn` parser is implemented.
 
 ## Implementation and checks
 

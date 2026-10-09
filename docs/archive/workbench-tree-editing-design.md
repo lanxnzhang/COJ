@@ -1,5 +1,10 @@
 # Workbench structured tree editing: design analysis
 
+**Archived / superseded.** The [current authoring design](../design/authoring/syntax-tree-authoring-design.md)
+and [compact syntax comparison](../design/authoring/syn-prototype-comparison.md)
+replace this proposal. The analysis below is retained as design history, not
+an implemented editor or the current implementation recommendation.
+
 This is a proposal, not an implemented editor. The current iteration only makes
 **Parse Tree** prominent; the Workbench viewer/comparison remains read-only.
 The original graphical tree renderer is outside this proposal.
@@ -151,7 +156,7 @@ route also inherits the converter's documented limitations.
 The non-ASCII final forms following ILL, unresolved NULL semantics, unknown
 formal XML extensions, unsupported annotations, and unusual source conventions
 must not be silently normalized by an editor. See
-[data issues](data-issues.md) and [round-trip specification](txt-xml-roundtrip.md).
+[data issues](../registers/data-issues.md) and [round-trip specification](../reference/txt-xml-roundtrip.md).
 
 Empty draft nodes are another risk: the current serializers are not a complete
 grammar for editing placeholders. A visibly empty node must be distinguished

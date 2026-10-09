@@ -182,7 +182,7 @@ reported as warnings rather than silently presented as losslessness guarantees.
 These checks **do not prove linguistic correctness, structural equivalence of
 every source annotation, or complete semantic losslessness**. Conversion uses
 the current parser/serializers without changing their historical behavior. See
-[round-trip limitations](txt-xml-roundtrip.md) and [data issues](data-issues.md).
+[round-trip limitations](../reference/txt-xml-roundtrip.md) and [data issues](../registers/data-issues.md).
 Existing dictionary field limitations and unusual corpus annotations remain
 possible; review warnings and the first generated outputs before applying.
 

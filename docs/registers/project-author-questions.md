@@ -6,7 +6,13 @@ This is the default question ledger. The project author may answer an entry here
 
 - **Question:** Given that TXT is the current human authoring representation and XML the computational representation, which direction is the normal checked-in editing workflow today, and what event makes the other representation current?
 - **Context:** `README.md` currently calls XML “canonical (primary)” and TXT “derived,” while the clarified conceptual model deliberately avoids treating either serialization as the semantic model.
-- **Current implementation:** applications/processors normally read XML; both repository-wide conversion scripts overwrite their destination trees.
+- **Current implementation:** applications/processors normally read XML. The
+  [primary TXT importer](../guides/primary-txt-import.md) now supplies the normal
+  one-way workflow from committed external TXT to COJ TXT/XML, with source
+  provenance and overwrite safeguards. Dictionary Save still writes COJ XML
+  directly; it does not update the authoring TXT. Both general conversion
+  scripts can overwrite their destination trees. This operational evidence does
+  not settle the policy for reconciling direct XML edits with authoring sources.
 - **Project-author notes:**
 - **Answer:**
 - **Status:** Open

@@ -1,0 +1,19 @@
+syn A 0
+fragment KK.30
+context multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL
+tree
+  VB-ADN
+    N L080331
+      N L050206
+        ADJ-STM awo L007042 PHON #t1
+        N kaki L050141 PHON #t2
+      N yama L050034 PHON #t3
+    VB-ADN
+      VB-STM gomor L030744a PHON #t4
+      VAX-STV-ADN eru L000024 PHON #t5
+source
+  #s3 3 阿袁加岐 #t1 #t2
+  #s4 4 夜麻碁母禮流 #t3 #t4 #t5
+preserve
+  marker #s3 6 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,3@阿袁加岐,*
+  marker #s4 8 multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,4@夜麻碁母禮流,*

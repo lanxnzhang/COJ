@@ -1,0 +1,37 @@
+syn B 0
+text KK.67
+header takayukuya payabusawake no miosupigane
+terminals
+  #t1 taka L007005 PHON
+  #t2 yuku L031840a PHON
+  #t3 ya L000537 PHON
+  #t4 payabusawake L080089 PHON
+  #t5 no L000520 PHON
+  #t6 mi L000035 PHON
+  #t7 osupi L051688 PHON
+  #t8 gane L000504b PHON
+tree
+  IP-MAT
+    NP
+      PP
+        NP
+          IP-EPT
+            MK L091050
+              VB-ADC L030996a
+                ADJ-STM #t1
+                VB-ADC #t2
+              P-FOC #t3
+          PEN #t4
+        P-CASE-GEN #t5
+      N
+        PFX-HON #t6
+        N #t7
+        SFX #t8
+source
+  #s0 0 多迦由久夜 #t1 #t2 #t3
+  #s1 1 波夜夫佐和気能 #t4 #t5
+  #s2 2 美淤須比賀泥 #t6 #t7 #t8
+preserve
+  marker #s0 0 IP-MAT,0@多迦由久夜,*
+  marker #s1 3 IP-MAT,NP,PP,NP,1@波夜夫佐和気能,*
+  marker #s2 5 IP-MAT,NP,2@美淤須比賀泥,*

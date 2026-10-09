@@ -15,7 +15,7 @@ This glossary uses project-facing language wherever possible. Names such as `Utt
 | Human-facing authoring representation | Currently TXT |
 | Machine-facing computational representation | Currently XML |
 
-The preferred name for a unit such as `MYS.1.1` is not final. The project author currently prefers **text**; see CEQ-001 in [chief-editor-questions.md](chief-editor-questions.md).
+The preferred name for a unit such as `MYS.1.1` is not final. The project author currently prefers **text**; see CEQ-001 in [chief-editor-questions.md](../registers/chief-editor-questions.md).
 
 ## Corpus units
 
@@ -131,7 +131,7 @@ A `;@N` distinction instead indicates a separate sibling.
 
 ### Word form
 
-The form attached to a leaf or multipart component. The current TXT parser recognizes ordinary forms using an ASCII-only rule; special non-ASCII `ILL` forms expose a known limitation (DI-004 in [data-issues.md](data-issues.md)).
+The form attached to a leaf or multipart component. The current TXT parser recognizes ordinary forms using an ASCII-only rule; special non-ASCII `ILL` forms expose a known limitation (DI-004 in [data-issues.md](../registers/data-issues.md)).
 
 ### Writing-mode/script tag
 

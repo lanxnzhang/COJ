@@ -2,7 +2,7 @@
 
 This document follows what the current applications actually do: what they load, where changes are held, and what is written to disk.
 
-For repository structure, see [architecture.md](architecture.md). For the underlying corpus concepts, see [data-model.md](data-model.md).
+For repository structure, see [architecture.md](../reference/architecture.md). For the underlying corpus concepts, see [data-model.md](../reference/data-model.md).
 
 ## Opening a text in `treditor`: `BS.1`
 
@@ -66,6 +66,30 @@ Text search currently covers transcription, source text (`kanji` in implementati
 TGrep2 is a project-specific subset implemented by `_parse_tgrep_query()` and the `_tgrep_*` functions in `treditor/app.py`. It is not an external TGrep2 engine. It supports the relations and selectors documented in `treditor/README.md`, including bracketed same-node attributes such as `[form=no & phon=PHON]`.
 
 The Flask process caches loaded documents and indexes. The cache is not a database and is cleared on restart. Repository files changed outside the process may require restart or cache-refresh behavior before every view reflects them.
+
+Display segmentation can switch between word-level (default), terminal and
+hyphenated forms. Source rows remain separate wherever their correspondence
+is needed. This changes presentation, not the query or source annotations;
+the structural rules are in the [annotation guidelines](../reference/annotation-guidelines.md).
+
+## Temporary analysis in Workbench
+
+Open Workbench below Dictionary. Text Compare, Convert and Syntax Trees retain
+separate browser-memory state; reload/close clears it. Syntax Trees accepts
+one TXT/XML text or a corpus ID and offers retained/generated representations,
+read-only parsing/comparison and dictionary lookup. None of these actions saves
+corpus or dictionary changes. Detailed controls and limits are in the
+[Workbench guide](workbench.md).
+
+## Importing primary authoring TXT
+
+The primary TXT sources are committed files in the external `oncoj_source`
+and `senmyo_norito_project` repositories. The manual importer previews changes,
+then applies a reviewed plan to COJ TXT/XML and its provenance manifest.
+Conflicts and deletions block replacement; there is no background pull or
+source-repository write. Follow the [primary TXT import guide](primary-txt-import.md)
+for commands, safeguards and recovery. Direct Dictionary Save does not update
+those authoring sources.
 
 ## Dictionary workflows in `treditor`
 
@@ -221,7 +245,11 @@ There is no cleanup, retention period, archive, deduplication, or UI delete func
 - standalone processors operate on configured TXT paths and can overwrite sources if `OVERWRITE_SOURCE=True`; otherwise they produce separate outputs/reports.
 - migration scripts can apply repository-wide XML changes when invoked with `--apply`; their reports preserve audit examples, not a general undo log.
 
-No script implements transactional repository-wide rollback. Reversibility currently relies on separate outputs, retained run inputs, reports, or Git—not a shared project revision model.
+The primary importer attempts to restore backups after ordinary detected apply
+failures, but its multi-file update is not one filesystem transaction. See the
+[import recovery limits](primary-txt-import.md#apply-failure-and-local-storage).
+The other utilities do not provide a shared repository-wide rollback mechanism;
+recovery relies on separate outputs, retained run inputs, reports or Git.
 
 ## Current approach comparison
 

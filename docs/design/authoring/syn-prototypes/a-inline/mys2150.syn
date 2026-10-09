@@ -1,0 +1,36 @@
+syn A 0
+fragment MYS.2.150
+context IP-MAT,PP-SBJ,NP
+tree
+  NP-APP
+    IP-REL
+      IP-ADV
+        VB-GER
+          VB-STM sakari L030770a LOG #t1
+          VB-GER wite L031926a LOG #t2
+      NP-ADV
+        N asa L050139 LOG #t3
+      VB-ADC nageku L031276a LOG #t4
+    N kimi L004266 LOG #t5
+  NP-APP;@2
+    IP-REL
+      IP-ADV
+        VB-GER
+          VB-STM sakari L030770a LOG #t6
+          VB-GER wite L031926a LOG #t7
+      PP-SBJ
+        NP
+          PRO-N wa L042057 LOG #t8
+        P-CASE-GEN ga L000503 NLOG #t9
+      VB-ADN kwopuru L030731a LOG #t10
+    N kimi L004266 LOG #t11
+source
+  #s2 2 離居而 #t1 #t2
+  #s3 3 朝嘆君 #t3 #t4 #t5
+  #s4 4 放居而 #t6 #t7
+  #s5 5 吾戀君 #t8 #t9 #t10 #t11
+preserve
+  marker #s2 6 IP-MAT,2@離居而,*
+  marker #s3 8 IP-MAT,PP-SBJ,NP,NP-APP,IP-REL,3@朝嘆君,*
+  marker #s4 11 IP-MAT,PP-SBJ,NP,NP-APP;@2,4@放居而,*
+  marker #s5 13 IP-MAT,PP-SBJ,NP,NP-APP;@2,IP-REL,5@吾戀君,*

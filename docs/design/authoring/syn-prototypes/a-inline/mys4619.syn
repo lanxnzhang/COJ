@@ -1,0 +1,8 @@
+syn A 0
+fragment MYS.4.619
+context multi-sentence,IP-MAT;@4,IP-ADV,PP-ARG,IP-NMZ
+tree
+  VB-NML L030199a
+    parts
+      ipa LOG
+      ku PHON

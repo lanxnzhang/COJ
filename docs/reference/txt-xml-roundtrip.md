@@ -2,7 +2,7 @@
 
 This is the detailed working specification of current conversion behavior. TXT is the current provisional authoring representation; XML is the current computational representation.
 
-Use [glossary.md](glossary.md) for short definitions, [data-model.md](data-model.md) for the conceptual model, and [data-issues.md](data-issues.md) for concrete anomalies. This file concentrates on syntax, mappings, preservation, and known conversion limits.
+Use [glossary.md](glossary.md) for short definitions, [data-model.md](data-model.md) for the conceptual model, and [data-issues.md](../registers/data-issues.md) for concrete anomalies. This file concentrates on syntax, mappings, preservation, and known conversion limits.
 
 ## Evidence categories
 
@@ -275,7 +275,10 @@ These are observed serializer behaviors, not all final policy decisions.
 
 ### Corpus
 
-- UTF-8 XML declaration and two-space ElementTree indentation.
+- XML uses the shared `src/coj/xml_format.py` formatter, with UTF-8/LF,
+  sorted attributes and two-space element-only indentation while preserving
+  meaningful text and child order. The complete formatting policy is in
+  [canonical XML formatting](../guides/primary-txt-import.md#canonical-xml-formatting).
 - One blank line between TXT texts and a final newline.
 - Canonical header wrapper `=N(" words ")`.
 - Legacy EN/SM ID canonicalization in `block@id`, with exact source ID retained separately.
@@ -312,13 +315,20 @@ They do **not** provide an unconditional semantic-lossless guarantee over all cu
 
 ### B. Structural losslessness
 
-For the current interpreted corpus schema, an audit of all 115 current corpus XML files found stable syntax/annotation signatures after XML → TXT → XML; the current dictionary XML was likewise stable under the supported model. This is strong evidence that current XML is structurally stable under its own interpretation.
+For the interpreted corpus schema at the recorded audit snapshot, all 115
+corpus XML files had stable syntax/annotation signatures after XML → TXT → XML;
+the dictionary XML was likewise stable under the supported model. These are
+historical validation results, not fresh checks of the current checkout.
 
 It is not proof that the interpretation is editorially correct. ILL and NULL show that a structurally stable round trip can preserve the wrong or incomplete model.
 
 ### C. Exact textual/formatting identity
 
-Not guaranteed. An audit found 88 of 115 corpus files textually identical after newline normalization, while 27 differed only in terminal blank-line treatment. More generally, serializers normalize header wrapping, blank lines, XML indentation, dictionary repeated/indexed syntax, XML field order, and some ID/derived numbering. Line endings can also differ by platform/Git settings.
+Not guaranteed. The recorded audit found 88 of 115 corpus files textually
+identical after newline normalization, while 27 differed only in terminal
+blank-line treatment. Those counts describe that snapshot. More generally,
+serializers normalize header wrapping, blank lines, XML indentation, dictionary
+repeated/indexed syntax, XML field order, and some ID/derived numbering.
 
 Formatting identity should not be used as the sole semantic test. Conversely, semantic equivalence should not excuse unstable output; deterministic canonicalization remains important for useful diffs.
 

@@ -60,7 +60,7 @@ The class represents one block. Its important accessors are:
 - `corpus_lines()`: word/tree-path records;
 - `comment_lines()`: round-trip marker/comment records.
 
-Implementation names do not determine the project-facing scholarly term; see [CEQ-001](chief-editor-questions.md#ceq-001-project-facing-term-for-a-unit-such-as-mys11).
+Implementation names do not determine the project-facing scholarly term; see [CEQ-001](../registers/chief-editor-questions.md#ceq-001--project-facing-term-for-an-identified-unit).
 
 ## `CorpusLine`
 

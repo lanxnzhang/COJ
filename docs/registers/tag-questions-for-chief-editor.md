@@ -4,7 +4,7 @@ Several annotations in the current corpus are absent from, or insufficiently exp
 
 For each genuine category, please provide its expansion, annotation function, relationship to similar labels, and appropriate reference section. Where applicable, please specify **Parts of speech: Words**, **Parts of speech: Bound morphemes**, or another category. Existing explanations in software are provisional, not assumed to be authoritative.
 
-EN/SM identifiers use dotted spelling: `EN.1.1` corresponds to source ID `1_EN_01`. The [detailed investigation](tag-investigation-report.md) contains counts and further evidence; this shorter document omits parser and XML-name artifacts.
+EN/SM identifiers use dotted spelling: `EN.1.1` corresponds to source ID `1_EN_01`. The [detailed investigation](../archive/tag-investigation-report.md) contains counts and further evidence; this shorter document omits parser and XML-name artifacts.
 
 ## Main questions
 
@@ -51,7 +51,6 @@ Software calls `NUMCL` “numeral classifier,” but the example is a parent gro
 
 Please confirm the expansion and function of:
 
-- **`FRM`** in `IP-NMZ-FRM` (EN.1.2) and `PP-FRM` (MYS.20.4473). Is its function the same in both?
 - **`PRB`** in `P-FNL-PRB`, applied to `na` in SM.7.13.
 - **`RCP`** in `PFX-RCP`, applied to `api` in SM.4.42. Software describes it as “reciprocal.”
 - **`UKN`** in `PFX-UKN`, applied to `sa` in EN.1.9.
@@ -103,5 +102,19 @@ Remaining questions above are retained for consultation. XML-generated names, mi
 **Answer:** Use `multi-sentence` for sentence-level grouping. `multi-clause` is deprecated.
 
 **Authority:** Editor-in-Chief; recorded 8 October 2026.
+
+**Status:** Resolved.
+
+### Frame extension: `FRM`
+
+**Question:** What does `FRM` mean in `IP-NMZ-FRM` (EN.1.2) and `PP-FRM`
+(MYS.20.4473), and is its function the same in both?
+
+**Answer:** `FRM` means **frame**. It introduces complement clauses and
+accompanies a nominal form. Both `IP-NMZ-FRM` and `PP-FRM` are acceptable;
+no standardization between them is specified.
+
+**Authority:** Confirmed Editor-in-Chief guidance recorded in
+[CAT-02](../reference/annotation-guidelines.md#cat-02--confirmed-labels-and-usage).
 
 **Status:** Resolved.

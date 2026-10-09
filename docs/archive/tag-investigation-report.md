@@ -1,16 +1,24 @@
 # Investigation of unlisted annotation tags
 
+**Archived investigation.** Counts, examples and tentative interpretations below
+belong to the investigated snapshot. For confirmed rules use the
+[annotation guidelines](../reference/annotation-guidelines.md); for remaining
+consultation topics use the [tag questions](../registers/tag-questions-for-chief-editor.md).
+In particular, the later confirmed meaning of `FRM` is **frame**, superseding
+the provisional “formal/nominal” interpretation recorded below. Other unresolved
+labels remain unresolved; archival status does not answer them.
+
 This report records the tag investigation requested in `TODO.md`, “After commit e15ad38 (3)–(5).” It distinguishes potentially meaningful annotation categories from spelling anomalies, source-format conventions, and strings that became XML element names through parsing or serialization. It does not establish new linguistic definitions or authorize changes to the data.
 
 Investigated on 4 October 2026, against repository commit `e15ad3843971af93fc3c7755d39ab4b1727051ca` and the project author's subsequent clarifications. All unresolved interpretations below remain open.
 
-**Resolved label:** The Editor-in-Chief confirmed `multi-clause` → `multi-sentence` on 8 October 2026. Counts and excerpts retain the investigated spelling. See [CAT-02 and SEG-04](annotation-guidelines.md).
+**Resolved label:** The Editor-in-Chief confirmed `multi-clause` → `multi-sentence` on 8 October 2026. Counts and excerpts retain the investigated spelling. See [CAT-02 and SEG-04](../reference/annotation-guidelines.md).
 
-The shorter [questions for the chief editor](tag-questions-for-chief-editor.md) selects the items most useful for editorial consultation. Existing question ledgers and issue records have not been changed.
+The shorter [questions for the chief editor](../registers/tag-questions-for-chief-editor.md) selects the items most useful for editorial consultation. Existing question ledgers and issue records have not been changed.
 
 ## Authority and scope
 
-The authoritative abbreviation reference is the project-author-designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx`, whose contents were inspected during the preceding investigation. [treditor/tag_names.json](../treditor/tag_names.json) supplies the corresponding browser expansions, but does not itself encode the Words/Bound morphemes grouping. Descriptions in Python constants are evidence of implementation usage, not authoritative linguistic definitions.
+The authoritative abbreviation reference is the project-author-designated `D:\Lanxin\Desktop\ONCOJ Abbr List.docx`, whose contents were inspected during the preceding investigation. [treditor/tag_names.json](../../treditor/tag_names.json) supplies the corresponding browser expansions, but does not itself encode the Words/Bound morphemes grouping. Descriptions in Python constants are evidence of implementation usage, not authoritative linguistic definitions.
 
 The investigation covered:
 
@@ -60,7 +68,7 @@ Locations below use the current XML text IDs. For EN and SM, `EN.1.2` correspond
 | `C-PP` | 6 | EN_01, EN.1.3 | Under `PP-OB1`; contains a relative clause and nominal structure. |
 | `C-IP` | 2 | EN_12, EN.12.3 | Under `IP-ARG`; contains clause-level material including `PP-SBJ`. |
 
-Representative source lines from [EN_01.txt](../data/txt/text/EN_01.txt):
+Representative source lines from [EN_01.txt](../../data/txt/text/EN_01.txt):
 
 ```txt
 IP-MAT,IP-ARG,C-NP,N,N,LOG,kamu
@@ -69,7 +77,7 @@ IP-MAT,IP-ARG,C-NP;@5,N,N,LOG,papuri
 IP-MAT,IP-ARG,C-NP;@5,N,N;@2,LOG,ra
 ```
 
-**Implementation description:** [tags.py](../src/coj/core/tags.py) describes `C-N`, `C-NP`, `C-ADV`, and `C-PP` as compound noun, compound noun phrase, compound adverb, and compound postpositional phrase. It does not define `C-IP`. Migration reports preserve actual `C-` structures but do not provide an authoritative explanation of their meaning.
+**Implementation description:** [tags.py](../../src/coj/core/tags.py) describes `C-N`, `C-NP`, `C-ADV`, and `C-PP` as compound noun, compound noun phrase, compound adverb, and compound postpositional phrase. It does not define `C-IP`. Migration reports preserve actual `C-` structures but do not provide an authoritative explanation of their meaning.
 
 **Tentative interpretation:** the family groups syntactic material of several types. Indexed parallel occurrences and substantial internal phrase structure make it unsafe to equate every occurrence with one lexical compound. The prefix might have a different or more specific annotation meaning than the code descriptions suggest.
 
@@ -84,7 +92,7 @@ IP-MAT,IP-ARG,C-NP;@5,N,N;@2,LOG,ra
 | `CP-N` | 2 | EN_03, EN.3.2 | `NP-PRD → N → CP-N → N(ADJ-STM nigi, N sine)`. |
 | `N-DVB` | 9 | EN_10, EN.10.5 | Form-bearing node `twopa` beneath `N`. |
 
-**Implementation description:** `tags.py` calls `CP-N` a “noun complementizer phrase” and `N-DVB` a “deverbal noun.” [lemma_forgui.py](../scripteditor/scripts/lemma_forgui.py) maps `N-DVB` to dictionary noun/deverbal-noun POS values. No explicit definition of `APP-N` or `APP-NP` was found.
+**Implementation description:** `tags.py` calls `CP-N` a “noun complementizer phrase” and `N-DVB` a “deverbal noun.” [lemma_forgui.py](../../scripteditor/scripts/lemma_forgui.py) maps `N-DVB` to dictionary noun/deverbal-noun POS values. No explicit definition of `APP-N` or `APP-NP` was found.
 
 **Tentative interpretation:** `APP-` may identify appositional structures. That does not establish equivalence with documented `NP-APP`. `N-DVB` resembles a deverbal-noun label, but its relationship to documented `DVN` is unresolved. The `CP-N` example alone does not validate the code's expansion.
 
@@ -119,7 +127,7 @@ IP-MAT,IP-ARG,C-NP;@5,N,N;@2,LOG,ra
 | `W` | 1 | EN_10, EN.10.6 | Extra node beneath `N`, form `pe`, writing mode `ORDLOG`. |
 | `multi-clause` (deprecated) | 2 | KH.27; KK.91 | Use `multi-sentence`. |
 
-**Implementation descriptions:** `tags.py` explains `FRM` in `IP-NMZ-FRM` as “formal/nominal,” `PRB` as “probabilitive,” and `RCP` as “reciprocal.” No sufficiently explicit definitions were found for the remaining labels at the time of investigation. Parser compatibility is documented in [TXT/XML round-trip rules](txt-xml-roundtrip.md).
+**Implementation descriptions:** `tags.py` explains `FRM` in `IP-NMZ-FRM` as “formal/nominal,” `PRB` as “probabilitive,” and `RCP` as “reciprocal.” No sufficiently explicit definitions were found for the remaining labels at the time of investigation. Parser compatibility is documented in [TXT/XML round-trip rules](../reference/txt-xml-roundtrip.md).
 
 **Tentative interpretations:** `ADV-WH` may be related to `WH-ADV`; `APP-` and `FRM` may encode distinct annotation conventions rather than new lexical categories. `UKN` may be an unspecified-prefix designation. `W` might be a generic word label, but its unusual surrounding annotation makes this uncertain.
 
@@ -188,19 +196,19 @@ The proposed comparisons below are hypotheses, not corrections. All original spe
 | `VP-ADC` | 1 | EN.1.7, `myesu` | Possibly `VB-ADC`; a distinct `VP` convention cannot be excluded. |
 | `mulit-sentence` | 1 | NSK.26 | Likely transposition of `multi-sentence`. |
 
-The `ADC-CLS` line is [EN_05.txt:335](../data/txt/text/EN_05.txt):
+The `ADC-CLS` line is [EN_05.txt:335](../../data/txt/text/EN_05.txt):
 
 ```txt
 IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,PP-GEN,NP,IP-REL,ADJ,ADC-CLS,NULL,*
 ```
 
-It survives in XML as a positioned `roundtrip-data/comment@raw` value, not an `ADC-CLS` syntax element. It was therefore included through the TXT cross-check rather than the syntactic-element count. This is separate from the unresolved semantics of `NULL,*` in [CEQ-005](chief-editor-questions.md#ceq-005--meaning-of-null).
+It survives in XML as a positioned `roundtrip-data/comment@raw` value, not an `ADC-CLS` syntax element. It was therefore included through the TXT cross-check rather than the syntactic-element count. This is separate from the unresolved semantics of `NULL,*` in [CEQ-005](../registers/chief-editor-questions.md#ceq-005--meaning-of-null).
 
 **Open questions:** Which spellings are accepted conventions, and which are editorially approved correction candidates? In particular, do `OBJ` and `PRED` represent historical categories rather than typos? No normalization has been applied.
 
 ## 4. XML names generated from unusual source syntax
 
-[corpus.py](../src/coj/core/corpus.py), `_sanitize_xml_name()`, replaces characters outside its accepted XML-name repertoire with underscores. The converter retains an original spelling in `raw_tag` where necessary. The XML name and its source spelling must therefore be considered together.
+[corpus.py](../../src/coj/core/corpus.py), `_sanitize_xml_name()`, replaces characters outside its accepted XML-name repertoire with underscores. The converter retains an original spelling in `raw_tag` where necessary. The XML name and its source spelling must therefore be considered together.
 
 | XML name | Original source spelling | Count | Representative text |
 | --- | --- | ---: | --- |
@@ -217,7 +225,7 @@ It survives in XML as a positioned `roundtrip-data/comment@raw` value, not an `A
 
 **Tentative interpretation:** `*T*` conventionally suggests a trace; the evidence here does not establish its complete formal model. `N;2`/`N;4` may be historical distinction syntax, but that cannot be inferred merely from their similarity to `;@N`. The meanings of `_que_` and `ST&M` remain unresolved.
 
-**Technical concern:** adding the sanitized XML spellings to a linguistic abbreviation table would confuse a serialization mechanism with the source annotation. The original spellings, where meaningful, are the editorial questions. [PAQ-007](project-author-questions.md#paq-007--formal-status-of-t) already records the unresolved formal status of `*T*`.
+**Technical concern:** adding the sanitized XML spellings to a linguistic abbreviation table would confuse a serialization mechanism with the source annotation. The original spellings, where meaningful, are the editorial questions. [PAQ-007](../registers/project-author-questions.md#paq-007--formal-status-of-t) already records the unresolved formal status of `*T*`.
 
 ## 5. Special ILL word forms represented as XML names
 
@@ -231,7 +239,7 @@ It survives in XML as a positioned `roundtrip-data/comment@raw` value, not an `A
 
 These underscore-only names are not linguistic tags. The project author has identified the final field after `ILL` as a special word form. The current ASCII-oriented form recognition instead treats the non-ASCII strings as path material, then sanitizes them into XML names with `raw_tag` holding the source value.
 
-The 15 occurrences belong to the parser/model limitation already recorded in [DI-004](data-issues.md#di-004--ill-special-word-forms). That issue contains the complete ILL example list. Its formal linguistic interpretation remains in [CEQ-004](chief-editor-questions.md#ceq-004--formal-meaning-of-ill-and-its-word-form). This report does not reopen the strings as candidate POS abbreviations or change the parser.
+The 15 occurrences belong to the parser/model limitation already recorded in [DI-004](../registers/data-issues.md#di-004--ill-special-word-forms). That issue contains the complete ILL example list. Its formal linguistic interpretation remains in [CEQ-004](../registers/chief-editor-questions.md#ceq-004--formal-meaning-of-ill-and-its-word-form). This report does not reopen the strings as candidate POS abbreviations or change the parser.
 
 ## 6. Lemma-like and free-text fields represented as elements
 
@@ -282,7 +290,7 @@ These are authoring/parser questions rather than obvious additions to the abbrev
 
 Definitions alone are insufficient grounds to add these labels to the formal linguistic model.
 
-`NP-UNKNOWN` occurs in [test_collapsed_words.js](../treditor/tests/test_collapsed_words.js) as an intentionally unfamiliar label testing display fallback. It is not a corpus category. Generic placeholders such as `<SEMANTIC>`, `<INFLECTION>`, `<ID>`, and `<PREFIX>` are likewise not annotation tags.
+`NP-UNKNOWN` occurs in [test_collapsed_words.js](../../treditor/tests/test_collapsed_words.js) as an intentionally unfamiliar label testing display fallback. It is not a corpus category. Generic placeholders such as `<SEMANTIC>`, `<INFLECTION>`, `<ID>`, and `<PREFIX>` are likewise not annotation tags.
 
 ## 8. Documented abbreviations in undocumented combinations
 
@@ -311,14 +319,14 @@ The reference is not a complete formal grammar of every allowable combination. T
 
 ## Evidence sources and limitations
 
-- [Authoritative display expansions](../treditor/tag_names.json): base labels and suffix explanations; not an explicit category-membership registry.
-- [Python tag reference](../src/coj/core/tags.py): descriptions for `C-` labels, several extensions, and writing modes. Its header combines corpus mining and external sources rather than documenting each definition's editorial authority.
-- [Corpus parser and serializer](../src/coj/core/corpus.py): lemma recognition, path handling, XML-name sanitization, and round-trip metadata behavior.
-- [Scripteditor POS mapping](../scripteditor/scripts/lemma_forgui.py): dictionary-candidate preferences for `N-DVB`, `N-COMP`, `N-PRD`, and `NUMCL`.
-- [Tag tests](../tests/test_tags.py) and [corpus tests](../tests/test_corpus.py): recognized writing modes and tag preservation. Passing tests establish supported behavior, not linguistic meaning.
-- [Export tests](../tests/test_export.py): lowercase-root preservation and internal lemma annotations.
-- [Marker-boundary migration report](../reports/kanji_marker_boundaries.md) and [multipart-word report](../reports/multipart_words.md): source examples and structural changes, generally not definitions of unlisted labels.
-- [Compound processor notebook](../notebooks/compound_lemma_processor.ipynb): experimental grouping heuristics, expressly not annotation policy under the project author's clarification.
+- [Authoritative display expansions](../../treditor/tag_names.json): base labels and suffix explanations; not an explicit category-membership registry.
+- [Python tag reference](../../src/coj/core/tags.py): descriptions for `C-` labels, several extensions, and writing modes. Its header combines corpus mining and external sources rather than documenting each definition's editorial authority.
+- [Corpus parser and serializer](../../src/coj/core/corpus.py): lemma recognition, path handling, XML-name sanitization, and round-trip metadata behavior.
+- [Scripteditor POS mapping](../../scripteditor/scripts/lemma_forgui.py): dictionary-candidate preferences for `N-DVB`, `N-COMP`, `N-PRD`, and `NUMCL`.
+- [Tag tests](../../tests/test_tags.py) and [corpus tests](../../tests/test_corpus.py): recognized writing modes and tag preservation. Passing tests establish supported behavior, not linguistic meaning.
+- [Export tests](../../tests/test_export.py): lowercase-root preservation and internal lemma annotations.
+- [Marker-boundary migration report](../../reports/kanji_marker_boundaries.md) and [multipart-word report](../../reports/multipart_words.md): source examples and structural changes, generally not definitions of unlisted labels.
+- [Compound processor notebook](../../notebooks/compound_lemma_processor.ipynb): experimental grouping heuristics, expressly not annotation policy under the project author's clarification.
 - Git history: initial `src/oncoj/tags.py` already includes explanations such as “compound,” “back-phonographic,” and “ordinal logographic.” Later renaming to `coj` and addition of the browser abbreviation mapping do not supply independent confirmation of those definitions.
 
 Counts and examples describe the investigated snapshot. Occurrence counts do not resolve meaning; similar spellings do not establish aliases; topology does not automatically establish exceptional higher-level word status. Absence from current data does not prove that a historical category never existed.

@@ -1487,7 +1487,72 @@ Do not modify the corpus data itself; the corrected source data will be synchron
 ### After commit b47e48c
 1. Please compile and condense the relevant contextual information from this chat into a single document so that I can take it to a new chat. Put this document in "D:\Lanxin\Desktop\COJ-backup\Context".
 
+### After commit 0679d7d
+Please re-evaluate the structured syntax-tree editing design based on the CURRENT repository.
+The repository and corpus handling have changed since the previous design analysis. Treat the old analysis as historical context only. Inspect the current parser, data model, TXT/XML conversion, Workbench, dictionary integration, source markers, multipart words, tests, and real corpus examples before proposing a design.
+Do not implement anything yet.
+The main goal is a low-friction authoring workflow for linguists. The current legacy TXT format repeats full tree paths and mixes syntax with lexical and textual metadata, making structural editing cumbersome.
+Please reconsider whether we should use:
+1. the existing structured Workbench editor;
+2. a new UTF-8 plain-text authoring format/DSL (possibly `.syn`);
+3. or a combination of both.
+A possible architecture is:
 
+    human authoring source
+            ↓
+    canonical data model
+       ↙     ↓      ↘
+     TXT    XML    tree viewer
+
+Do not assume this architecture is correct; evaluate it.
+Important corpus constraints:
+- surface form and lexicon ID are not uniquely mapped;
+- syntax structure, transcription/tokenization, original kanji segmentation, and header/text segmentation are distinct layers;
+- their boundaries do not always coincide;
+- a transcription word may cross a kanji/source-text segment boundary;
+- source markers, comments, multipart words, distinction labels (`;@N`), lexical annotations, and document IDs must not be silently lost.
+If proposing a new authoring format, it should minimize repetitive manual input and work well in VS Code with future autocomplete, dictionary lookup, diagnostics, folding, tree preview, and TXT/XML export.
+Please produce a concise new design document covering:
+- the current architecture and what has changed since the previous analysis;
+- the independent data/annotation layers;
+- the recommended canonical model;
+- how mismatched segmentation and stable identities should work;
+- whether a `.syn`-like authoring format is worthwhile;
+- 2–3 short syntax examples if it is;
+- semantic round-trip risks for TXT/XML;
+- how structured editing, synchronization, validation, and undo should work;
+- a staged implementation recommendation.
+Use actual repository/corpus evidence where possible. If the semantics of something are unclear, mark it unresolved instead of inventing an interpretation.
+Do not implement the editor or modify the graphical tree renderer yet.
+
+#### After commit 0679d7d (2)
+Continue from the current `syntax-tree-authoring-design.md`.
+I prefer the authoring syntax to minimize punctuation and redundant field names. For normal lexical terminals, I strongly prefer something like:
+    N titi L050641 PHON
+over:
+    N "titi" lemma=L050641 script=PHON
+The format should optimize for frequent human editing. Use positional fields where their meaning is reliably determined by context, and reserve explicit syntax/field names for exceptional or ambiguous cases.
+Stable internal IDs may be necessary, but they should create as little visual and typing burden as possible. Consider whether tools can generate, maintain, or visually hide/dim them rather than requiring the linguist to type them routinely.
+Please now create a small `.syn` authoring-format prototype comparison. Do not modify the existing corpus or implement the full editor yet.
+Using real examples already identified in the repository, including:
+- an ordinary syntax tree;
+- KK.30 cross-source-segment word grouping;
+- MYS.4.619 multipart `ipa + ku → ipaku`;
+- MYS.2.150 / repeated structures and `;@N`;
+propose 2 alternative compact `.syn` syntaxes.
+For each, show complete enough examples to judge what everyday editing would actually feel like.
+Prioritize:
+- minimal punctuation;
+- minimal repeated metadata;
+- easy indentation-based subtree editing;
+- readable Git diffs;
+- dictionary IDs that remain explicit when selected;
+- correct preservation of script type;
+- source/transcription segmentation independent of syntax;
+- multipart terminals;
+- stable identity where genuinely required.
+Then recommend one syntax for a small parser/serializer pilot.
+Do not implement the VS Code extension yet. The purpose of this step is to settle the human-facing authoring syntax before building tooling.
 
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.

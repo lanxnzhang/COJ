@@ -12,7 +12,7 @@ The audit uses:
 
 - The original questions in `D:\Lanxin\Downloads\tag-questions-for-chief-editor.docx` and the response in `D:\Lanxin\Downloads\tag-questions-for-chief-editor + BF.docx`.
 - The accompanying Editor-in-Chief reply in TODO's “After commit 5558e2a”: an NP can have an NP head; find further phrase tags beneath word tags; defer EN and SM correction.
-- The current [annotation guideline](../docs/annotation-guidelines.md), its documented category lists, and the TXT/XML structures already imported at the audited commit.
+- The current [annotation guideline](../docs/reference/annotation-guidelines.md), its documented category lists, and the TXT/XML structures already imported at the audited commit.
 
 Both DOCX documents were inspected structurally, including their paragraphs and tracked-change/comment parts. Neither contains tracked insertions/deletions or a comments part. The audit uses extracted document text and XML structure, not rendered pages; no page numbers or visual-layout claims are used.
 
@@ -28,7 +28,7 @@ Locations refer to this snapshot. Lines are numbered from 1. An XML child addres
 
 TXT context ranges are context spans, not instructions to replace every line in the span. Matching context ignores distinction labels, so repeated sibling paths may share a context span. The exact XML address and annotation path distinguish those cases. Concatenated form yields are locator strings, not approved segmentation outputs.
 
-The primary authoring files live outside COJ: uploaded-tree TXT corresponds to `D:\Lanxin\Desktop\ONCOJ\oncoj_source\trees\`; EN/SM TXT corresponds to `D:\Lanxin\Desktop\ONCOJ\senmyo_norito_project\EN_SM_trees_table\`. Verify the external source version before using COJ line numbers there. See [the existing import workflow](../docs/primary-txt-import.md).
+The primary authoring files live outside COJ: uploaded-tree TXT corresponds to `D:\Lanxin\Desktop\ONCOJ\oncoj_source\trees\`; EN/SM TXT corresponds to `D:\Lanxin\Desktop\ONCOJ\senmyo_norito_project\EN_SM_trees_table\`. Verify the external source version before using COJ line numbers there. See [the existing import workflow](../docs/guides/primary-txt-import.md).
 
 ## High-confidence spelling and label corrections
 
@@ -326,7 +326,7 @@ All 298 cases, PW-001 through PW-298, remain deferred. Their JSON records give e
 
 ## Confirmed guideline updates for later approval
 
-These are proposed documentation changes only; [annotation-guidelines.md](../docs/annotation-guidelines.md) has not been changed in this report-only task.
+These are proposed documentation changes only; [annotation-guidelines.md](../docs/reference/annotation-guidelines.md) has not been changed in this report-only task.
 
 1. **WORD-02:** replace “an NP must have an N head” with the confirmed allowance for either an N head or an NP head. Do not retain the superseded MYS.2.150 enclosing-N example as a current rule.
 2. **SEG-06, KK.30:** the imported structure is now `VB-ADN → N awokakiyama + VB-ADN gomoreru`, not `VB-ADN → NP + VB-ADN`. Applying the existing phrase-boundary rule to this revised subtree yields `awokakiyamagomoreru`. This is a consequence of the existing procedure, not a new independently supplied segmentation decision.
