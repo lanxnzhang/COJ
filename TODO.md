@@ -1484,12 +1484,12 @@ Good work. Currently, glosses and script tags disappear after collapsing syntax 
 The latest source data containing this correction will be synchronized later. Please treat `multi-sentence` as the authoritative label from now on and update any outdated documentation, guidelines, assumptions, or current UI work that still treats `multi-clause` as unresolved or potentially valid.
 Do not modify the corpus data itself; the corrected source data will be synchronized separately.
 
+### After commit b47e48c
+1. Please compile and condense the relevant contextual information from this chat into a single document so that I can take it to a new chat. Put this document in "D:\Lanxin\Desktop\COJ-backup\Context".
+
 
 
 ### TBD
-
-1. Please compile and condense the relevant contextual information from this chat into a single document so that I can take it to a new chat. Put this document in "D:\Lanxin\Desktop\COJ-backup\Context".
-
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
 合并搜索框

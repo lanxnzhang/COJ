@@ -21,6 +21,11 @@ I want to understand the cause, proposed fix, and regression risk before approvi
 Codex认为这是因为一个 collapsed node 横跨多个 source rows，而且只吃掉了最后一行的一部分。
 目前不是很好修复，之后再说吧。
 
+5. Future pane improvements
+Later, I may want to improve the Workbench pane system with features such as:
+dragging the divider to resize pane proportions;
+controls similar to VS Code for increasing or decreasing the number of panes.
+
 ## Small and local usability observations
 
 ### UX-001 — Inconsistent terminology
