@@ -1,9 +1,29 @@
 # Compact `.syn` prototype comparison
 
+**Status: earlier alternatives, not a final syntax choice.** The 10 October
+2026 [source-first design revision](syntax-tree-authoring-design.md) replaces
+this document's recommendation to choose A. Normal authoring now starts with
+source segments and lexical components. The follow-up revision inserts those
+same occurrences directly into the tree editor: source and tree views edit one
+lexical record, while category and hierarchy belong to syntax. Annotation is
+assisted; recursive composition is tool-maintained and optionally inspected,
+with no required manual composition section. Occurrence IDs/bindings remain
+hidden in normal views and explicit in portable persistence. Neither A nor B
+below implements that workflow. Normal tree building now uses **Wrap in Parent**
+over selected adjacent terminals/subtrees, with parent-category autocomplete.
+The editor generates layout and indentation; the indented examples below are
+serialized sketches, not a requirement to maintain whitespace while editing.
+
+The eight example files are retained unchanged as evidence for comparison.
+Their visible IDs and literal preservation blocks are not requirements for
+the revised human-facing input. No parser or editor has been implemented.
+
+## Earlier comparison — 9 October 2026
+
 Proposal at `0679d7d`, 9 October 2026, continuing
 [the authoring design](syntax-tree-authoring-design.md). These are static UTF-8
-examples, not an implemented grammar, converter or editor. Recommend **A: inline
-terminals** for the first parser/serializer pilot.
+examples, not an implemented grammar, converter or editor. The recommendation
+at that stage was **A: inline terminals**; it is superseded by the revision above.
 
 ## Two alternatives
 

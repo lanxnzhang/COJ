@@ -1554,6 +1554,138 @@ Prioritize:
 Then recommend one syntax for a small parser/serializer pilot.
 Do not implement the VS Code extension yet. The purpose of this step is to settle the human-facing authoring syntax before building tooling.
 
+### After commit ab78d4e
+Continue from `syn-prototype-comparison.md`, but do not assume A or B is the final design. I want to revise the model based on the actual annotation workflow before implementing anything.
+The normal workflow is:
+1. enter the original kanji text sentence/segment by sentence;
+2. segment it into lexical components;
+3. assign each component its lemma ID and script type;
+4. construct the syntax tree afterward.
+A preferred human-facing form is roughly:
+    source
+      1 | 多迦由久夜
+        | taka L007005 PHON
+        | yuku L031840a PHON
+        | ya   L000537 PHON
+    tree
+      IP-MAT
+        | ...
+          | ADJ-STM taka
+          | VB-ADC yuku
+Whitespace indentation should encode hierarchy. `|` should only be an automatically maintained visual guide.
+Do not require annotators to type IDs such as `#t1` or `1.1`. Components may have hidden hierarchical addresses (`1.1`, `1.2`, `1.1.1`, etc.) and persistent internal identities, but the normal authoring view should show forms such as `taka`. Repeated forms can later be disambiguated through tooling.
+Also model **lexical composition separately from syntax**. For example:
+    takayuku L030996a
+      ├─ taka L007005
+      └─ yuku L031840a
+The compound structure may align with a syntax node, but should not depend on it. Higher compound lemma IDs may optionally be displayed on the syntax tree, but that is a presentation choice.
+The program should eventually be able to infer likely compound lemmas from component lemma structures and fill them automatically for later review. Not every compound has or needs a lemma ID; absence of one is valid, and dictionary entries should only be created when the user chooses.
+Design lexical composition recursively so it can support future finer morphological analysis. Compound occurrences may eventually use a separate identity namespace such as `C...`, but do not commit to that syntax yet.
+This should also support collecting attested forms under existing dictionary lemma IDs without creating new lemma IDs.
+Avoid manually authored legacy bookkeeping where possible. In particular, TXT marker paths/preservation data should be reconstructed algorithmically from the semantic model whenever deterministically possible; only genuinely non-derivable information should require preservation.
+The model must remain compatible with source segmentation, multipart forms, headers, script types, `;@N`, TXT/XML conversion, and future annotation types.
+Please revise the `.syn` design accordingly and show 1–2 concise real-corpus examples. Focus on the distinction between:
+- source/text segmentation;
+- lexical components;
+- recursive lexical/compound structure;
+- syntax structure;
+- hidden identity;
+- display choices.
+Keep human-facing input as minimal as possible.
+Do not implement anything yet.
+
+#### After commit ab78d4e (2)
+Please revise the current authoring design around the following workflow. Keep source, lexical occurrences, lexical composition, syntax, and display separate in the semantic model, but do not make every layer a manually edited section.
+1. Source entry
+The user should manually enter only source-text segmentation and transcription components:
+
+    source
+      1 多迦由久夜
+        taka
+        yuku
+        ya
+Each component creates a persistent lexical occurrence.
+2. Lexical annotation and tree editing
+Those same occurrences should be inserted directly into the tree editor; the user should not retype the terminals.
+The `taka` in `source` and `ADJ-STM taka` in the tree must be **the same underlying occurrence**, not two strings matched by spelling. Repeated identical forms must remain distinguishable through hidden persistent identity.
+The editing view may show:
+    ADJ-STM taka L007005 PHON
+    VB-ADC  yuku L031840a PHON
+    P-FOC   ya   L000537 PHON
+but semantically:
+- form/lemma/script belong to the lexical occurrence;
+- category and hierarchy belong to syntax.
+Editing lexical information through either view updates the same occurrence.
+3. Reduce manual annotation
+Use existing dictionary/corpus evidence to assist input:
+- search/autocomplete lemma IDs;
+- suggest/rank terminal categories from previous attestations of the same form/lemma and relevant morphological patterns;
+- autocomplete the small controlled set of script tags;
+- support batch assignment of common tags such as PHON/LOG, with unusual cases edited individually.
+The program should pre-fill what can be safely inferred so the user mainly reviews and corrects exceptions.
+4. Tree construction
+The main manual task should be arranging existing terminals into the syntactic hierarchy and adding branches.
+Whitespace encodes hierarchy. `|` may be an automatically generated visual depth guide.
+5. Lexical composition
+Keep recursive lexical composition as a separate semantic structure, but do not require users to manually maintain a visible `composition` section.
+Where possible, derive compound structure and existing compound lemma associations from component lemma structure and dictionary evidence. These can be reviewed separately or optionally displayed on the syntax tree.
+A compound may legitimately have no lemma ID. Do not require confirmation or creation of a dictionary entry.
+The model should remain extensible to finer future morphological analysis and collection of attested forms under existing lemma IDs.
+6. Display and persistence
+Lemma IDs, glosses, script tags, compound lemmas, etc. should be independently showable/hideable without changing the underlying data.
+Technical occurrence IDs, alignment data, and reconstructible legacy marker bookkeeping should normally remain hidden and tool-maintained. Moving syntax must not change lexical occurrence identity.
+Please make the shared-occurrence relationship explicit in both the semantic model and persistence/encoding design.
+Update the design and show one concise KK.67 example of the actual user workflow. Do not implement anything yet.
+
+#### After commit ab78d4e (3)
+Please revise the design of the **tree-building interaction**. Keep the current semantic model and source-first workflow; the main issue is that users should not have to build trees by manually maintaining indentation.
+The serialized tree may still use whitespace indentation, but **storage syntax and editing interaction should be separate**.
+After source entry and assisted lexical annotation, the editor may start with terminals such as:
+    ADJ-STM taka L007005 PHON
+    VB-ADC  yuku L031840a PHON
+    P-FOC   ya   L000537 PHON
+These are the existing lexical occurrences from the source view, not retyped copies.
+The primary tree-building operation should be something like **Wrap in Parent**:
+1. select one or more adjacent terminals/subtrees;
+2. invoke a lightweight command/shortcut;
+3. type or autocomplete the parent category;
+4. the editor creates the parent and handles indentation automatically.
+For example:
+    ADJ-STM taka
+    VB-ADC yuku
+→ Wrap in `VB-ADC` →
+    VB-ADC
+      ADJ-STM taka
+      VB-ADC yuku
+Then selecting that subtree together with `P-FOC ya` and wrapping in `MK` produces:
+    MK
+      VB-ADC
+        ADJ-STM taka
+        VB-ADC yuku
+      P-FOC ya
+Category entry should support autocomplete and ideally rank likely categories using existing corpus structures. Tab/Shift+Tab, Enter, cut/paste and subtree movement can remain useful secondary operations for adjustment.
+The user should not need to manually add indentation or `|` guides when building normal trees. `|` remains generated visual guidance only.
+Please update the design with a concise KK.67 interaction example and clearly distinguish:
+- serialized tree representation;
+- visible tree/editor representation;
+- structural editing operations.
+Do not implement anything yet.
+
+#### After commit ab78d4e (4)
+Please inspect the current application and propose an implementation plan for the authoring workflow we have now designed.
+I am comfortable making the existing editor app the primary authoring interface. Users should normally work through the structured UI rather than manually editing raw `.syn` text.
+The saved authoring data should still be human-readable, deterministic, Git-friendly text so that Git diff/history remains useful. VS Code can initially serve mainly for file storage, inspection and version control; a full VS Code editing extension is not a priority.
+Please inspect the current code and determine:
+- which existing Workbench/editor components can be reused;
+- which parser/tree/dictionary/TXT/XML/segmentation functionality can be reused;
+- what needs to be extended for source entry, shared lexical occurrences, terminal generation, lemma/category suggestions, batch script tagging, and **Wrap in Parent** tree construction;
+- what genuinely needs to be built from scratch;
+- how the new complete authoring model should fit into the current architecture without duplicating existing functionality;
+- how a deterministic Git-friendly `.syn` or equivalent persisted representation should fit into this workflow.
+Prefer incremental extension of the existing application over a rewrite.
+Give me a concise staged implementation plan and identify major technical risks or architectural blockers.
+Do not implement anything yet.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

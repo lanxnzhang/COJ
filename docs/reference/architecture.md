@@ -177,7 +177,7 @@ Browser ──HTTP──> scripteditor/app.py ──subprocess──> worker + G
 
 ## Application status
 
-- **Project-author decision:** `treditor` is the current main browsing/research application; its editing mechanism is provisional/legacy and should not be extended now.
+- **Project-author decision (10 October 2026):** extend `treditor` incrementally as the primary structured authoring interface. Its existing editing mechanism remains provisional; the complete model, durable authoring files and Wrap in Parent interaction are proposed in the [implementation plan](../design/authoring/syntax-tree-authoring-design.md#implementation-plan-for-the-existing-application), not implemented. This supersedes the earlier instruction not to extend its editing interface. VS Code initially supports file inspection and Git history; a full editing extension is deferred.
 - **Project-author decision:** `scripteditor` is an experimental automated-editing and proposal-review tool with a limited pipeline.
 - **Project-author decision:** `compreditor` is abandoned.
 - **Project-author decision:** `editor` is legacy/historical.
