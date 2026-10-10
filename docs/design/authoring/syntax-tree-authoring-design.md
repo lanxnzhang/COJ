@@ -1,7 +1,12 @@
 # Syntax-tree authoring: source-first workflow
 
-Revised for checkout `ab78d4e`, 10 October 2026. **Design only:** no grammar,
-parser, editor, migration or renderer is implemented. This revision follows
+Design developed at checkout `ab78d4e`, 10 October 2026. **Implementation status
+after `22b35b4`:** the first Editing prototype implements the complete draft
+model/validation, deterministic `.syn.json` persistence, source entry and shared
+terminal records. Tree construction, suggestions, composition inference,
+legacy publishing and migration remain unimplemented. See the
+[try-it workflow](../../guides/current-workflows.md#source-first-drafts-in-editing).
+The remaining interaction/adapter descriptions are design proposals. This revision follows
 the author's annotation workflow and replaces the earlier recommendation to
 choose A. The [A/B comparison](syn-prototype-comparison.md) and its eight static
 files remain historical alternatives, not the settled authoring format.
@@ -428,7 +433,16 @@ not silent omission or interpretation by visual similarity.
 
 ## Implementation plan for the existing application
 
-Inspected the current code at checkout `ab78d4e`; everything below is proposed.
+Inspected the application at checkout `ab78d4e`. Stage 1 and minimal Stage 2
+are now implemented in focused modules following `22b35b4`; the reuse map below
+describes the original starting point and the remaining extensions. The initial
+store uses a flat `data/authoring/` layout rather than collection directories.
+The JSON codec sorts object keys, preserves ordered arrays and records stable
+references. Schema version 1 includes optional explicit coverage, writing-mode
+parts, recursive groups, group realizations and non-owning syntax/composition
+links, plus extensible annotations and compatibility data. These structures
+are preserved/validated; specialized editing is deferred. Validation distinguishes
+incomplete linguistic analysis from invalid references or duplicate syntax yield.
 Extend `treditor` incrementally, using its existing editor shell and graphical
 tree as the primary authoring surface. Workbench remains available for comparison
 and conversion. Do not revive the abandoned editors or introduce a second

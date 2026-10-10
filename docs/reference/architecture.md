@@ -9,9 +9,11 @@ For the conceptual corpus model, see [data-model.md](data-model.md). For step-by
 | Path | Current responsibility | Status |
 |---|---|---|
 | `src/coj/core/` | Shared Python corpus, dictionary, lemma-ID, kana, and tag models. | Active shared library |
+| `src/coj/authoring/` | Complete source/occurrence/syntax/composition draft model, validation, deterministic JSON codec and atomic revision-checked storage. | First authoring prototype |
 | `src/coj/xml/` | XML serialization/deserialization facades and dictionary field mappings. | Active shared library |
 | `src/coj/visual/` | Text-mode syntax-tree rendering. | Active utility |
 | `data/xml/` | Current machine-facing corpus and dictionary representation used by the applications and package processors. | Active data |
+| `data/authoring/` | Complete `.syn.json` drafts, created on explicit Editing Save; initially one flat file per text. | Independent authoring storage; no corpus migration |
 | `data/txt/` | Current human/editor-oriented authoring representation. Conversion code maps it to and from XML. | Active but provisional format |
 | `treditor/` | Main corpus browsing/research application, with provisional lightweight tree editing and direct dictionary editing. | Active main application |
 | `scripteditor/` | Experimental GUI for running selected processors on copies, reviewing proposals, and creating separate final output. | Active experiment |
@@ -74,7 +76,9 @@ Workbench has separate browser modules (`workbench.js`, `workbench-core.js`,
 `workbench.css`) and Flask modules (`workbench.py`, `workbench_conversion.py`).
 It provides temporary Text Compare, Convert and read-only Syntax Trees modes;
 see the [Workbench guide](../guides/workbench.md). The structured authoring
-editor and `.syn` format remain [design proposals](../design/authoring/syntax-tree-authoring-design.md).
+workflow is specified in the [authoring design](../design/authoring/syntax-tree-authoring-design.md).
+The separate Editing page now provides source entry/shared terminals and
+complete `.syn.json` saves; structural tree construction remains proposed.
 
 `treditor/app.py` is the Flask server. It loads XML files through `src/coj`, maintains process-memory caches, builds search indexes, executes text and structural searches, returns tree payloads, and reads or writes the XML dictionary.
 
@@ -105,6 +109,10 @@ editor and `.syn` format remain [design proposals](../design/authoring/syntax-tr
 - Browser-memory variables hold the open documents, tabs, active text, search settings/results, tree display settings, dictionary selection, and cached passage data.
 - Flask process-memory globals cache loaded documents, dictionary data, search indexes, passage indexes, and lemma frequencies. Restarting the server clears these caches.
 - Only provisional tree drafts use browser `localStorage`.
+- Editing maintains a separate complete document in browser memory and saves it
+  explicitly to `data/authoring/*.syn.json`. Its state and API modules are
+  independent of provisional graphical-tree drafts. Stable IDs live in the
+  saved file; source and terminal views refer to one lexical-occurrence table.
 - Workbench state is browser-memory only and clears on reload/close.
 - Dictionary saves write directly and atomically to `data/xml/dict/dictionary.xml` using a temporary file followed by replacement.
 - There is no database-backed session, user identity, shared draft store, revision history, approval state, or publishing state.
@@ -177,7 +185,7 @@ Browser ──HTTP──> scripteditor/app.py ──subprocess──> worker + G
 
 ## Application status
 
-- **Project-author decision (10 October 2026):** extend `treditor` incrementally as the primary structured authoring interface. Its existing editing mechanism remains provisional; the complete model, durable authoring files and Wrap in Parent interaction are proposed in the [implementation plan](../design/authoring/syntax-tree-authoring-design.md#implementation-plan-for-the-existing-application), not implemented. This supersedes the earlier instruction not to extend its editing interface. VS Code initially supports file inspection and Git history; a full editing extension is deferred.
+- **Project-author decision (10 October 2026):** extend `treditor` incrementally as the primary structured authoring interface. The separate Editing module implements the complete draft model, source entry, shared terminals and durable `.syn.json` files; Wrap in Parent and later features remain in the [implementation plan](../design/authoring/syntax-tree-authoring-design.md#implementation-plan-for-the-existing-application). This supersedes the earlier instruction not to extend its editing interface. VS Code initially supports file inspection and Git history; a full editing extension is deferred.
 - **Project-author decision:** `scripteditor` is an experimental automated-editing and proposal-review tool with a limited pipeline.
 - **Project-author decision:** `compreditor` is abandoned.
 - **Project-author decision:** `editor` is legacy/historical.

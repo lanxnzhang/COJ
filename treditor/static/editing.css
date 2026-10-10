@@ -1,0 +1,13 @@
+.editing-page { padding: 20px; overflow: auto; }
+.editing-page fieldset { border: 0; padding: 0; min-width: 0; }
+.editing-toolbar, .editing-lexical-row { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin: 12px 0; }
+.editing-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
+.editing-page input, .editing-page textarea, .editing-page select { width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; }
+.editing-toolbar select, .editing-toolbar input[type=file] { width: auto; max-width: 240px; }
+.editing-page textarea { min-height: 65px; resize: vertical; }
+.editing-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.editing-columns > section { min-width: 0; }
+.editing-segment { border: 1px solid #cbd5e1; border-radius: 5px; padding: 12px; margin: 12px 0; }
+.editing-segment h3 { margin: 0 0 10px; font-size: 14px; }
+.editing-status { min-height: 24px; }
+@media (max-width: 1000px) { .editing-columns { grid-template-columns: 1fr; } }

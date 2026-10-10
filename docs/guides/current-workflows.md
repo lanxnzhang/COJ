@@ -81,6 +81,55 @@ read-only parsing/comparison and dictionary lookup. None of these actions saves
 corpus or dictionary changes. Detailed controls and limits are in the
 [Workbench guide](workbench.md).
 
+## Source-first drafts in Editing
+
+Start the existing app with `python treditor/app.py`, then open **Editing**
+directly below **Workbench**. This is the first authoring prototype; it does
+not modify corpus TXT/XML or dictionary data.
+
+1. Select **Add segment** and enter the original source text.
+2. Enter transcription components, one per line, and select **Add components**.
+   For KK.67, enter `多迦由久夜`, then `taka`, `yuku`, `ya` on separate lines.
+   Save also records any pending component lines. Empty segments/components and
+   unresolved lemma, script or category values are valid drafts.
+3. The same occurrences appear under **Terminals (tree workspace)**. Change a
+   form, optional lemma or script in either view; the other view updates the
+   shared record. Technical identities stay hidden in normal use.
+4. Choose a filename such as `KK.67.syn.json` and select **Save .syn.json**.
+   Files are saved under `data/authoring/` in this checkout, independently of
+   corpus files. They are readable UTF-8 JSON with deterministic formatting and
+   persistent identities; Git can track them. No Git commit is made by the app.
+5. Close/reopen the Editing tab, or reload the page, choose the saved draft and
+   select **Open**. The tab retains unsaved state while the page remains open;
+   only saved files survive a page reload/server restart. **New draft** and
+   opening another file warn before discarding unsaved changes.
+
+**Refresh files** discovers files saved outside this browser session.
+The file chooser can open a complete `.syn.json` from the computer; it validates
+the document and opens it as an unsaved copy. Use a new filename when saving that
+copy if the target already exists. Stale saves are rejected: reopen the saved
+revision or choose another filename rather than overwrite a newer file.
+
+The current storage layout is deliberately flat for this prototype. Collection
+folders, component deletion, full tree construction/Wrap in Parent, suggestions,
+composition inference and legacy publishing are deferred. The terminal pane is
+an editable shared-record tray, not the completed graphical tree editor.
+Multipart/composition/compatibility records can be retained in complete files,
+but their specialized editing controls are not supplied yet.
+
+The backend validates schema version, references, forest structure, cycles,
+duplicate yield, parts and explicit coverage. Missing analysis is allowed;
+dictionary membership and linguistic correctness are not inferred by validation.
+Fine source coverage uses Unicode code-point ranges and remains optional; entry
+does not pretend to infer character alignment from row positions.
+
+Implementation: `src/coj/authoring/` holds the model, codec and atomic store;
+`treditor/authoring.py` exposes its APIs; `editing-state.js` and `editing.js`
+hold commands/state and UI independently of the existing browsing renderer.
+Validation/save conflicts retain the current draft. Save checks use a lock for
+this local server process plus a disk fingerprint; simultaneous independent
+server processes are not a supported collaboration mode.
+
 ## Importing primary authoring TXT
 
 The primary TXT sources are committed files in the external `oncoj_source`

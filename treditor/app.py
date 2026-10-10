@@ -1986,6 +1986,10 @@ def _workbench_roots(block):
 
 app.register_blueprint(create_blueprint(_workbench_resolve, _workbench_roots, ROOT / "data"))
 
+from treditor.authoring import create_blueprint as create_authoring_blueprint
+
+app.register_blueprint(create_authoring_blueprint(ROOT / "data" / "authoring"))
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5002)

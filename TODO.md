@@ -1686,6 +1686,33 @@ Prefer incremental extension of the existing application over a rewrite.
 Give me a concise staged implementation plan and identify major technical risks or architectural blockers.
 Do not implement anything yet.
 
+### After commit 22b35b4
+Proceed with the first implementation milestone inside the existing `treditor` application.
+Do **not** create a separate app and do not rewrite the existing editor. Keep the new editing functionality modular so that it does not destabilize existing Syntax Trees, Workbench, Dictionary, or browsing behavior.
+For the temporary UI, add **Editing** directly below **Workbench** in the existing navigation. Give it a simple small icon matching the style of the existing navigation items. Do not redesign the overall UI yet.
+Implement the first usable prototype covering **Stage 1 + minimal Stage 2** from the current authoring design:
+- define the complete authoring model and validation;
+- implement deterministic, Git-friendly `.syn.json` load/save;
+- keep technical occurrence IDs hidden from the normal UI;
+- add source-text segmentation and transcription-component entry;
+- creating a component should create one persistent lexical occurrence;
+- automatically make those same occurrences available as terminals for later tree construction;
+- source and tree views must reference the same occurrence, never duplicate lexical data;
+- support partial/incomplete drafts;
+- save, close, reopen, and preserve identities and data correctly.
+Use the existing `treditor` shell and reuse existing infrastructure where appropriate. Put new authoring model, persistence, commands/state, and Editing UI logic into focused modules rather than continuing to accumulate unrelated logic in `app.js` or `app.py`.
+Do **not** implement yet:
+- full tree construction / Wrap in Parent;
+- advanced lemma/category suggestions;
+- composition inference;
+- legacy TXT/XML publishing;
+- VS Code extension;
+- final UI styling/navigation redesign;
+- corpus migration.
+Do not modify existing corpus data.
+The goal is a small prototype I can actually try: open **Editing**, enter source text and transcription components, save them as a complete `.syn.json`, reload them, and verify that the same lexical occurrences and identities survive.
+Run relevant existing tests and add focused tests for the new model and save/load behavior. After implementation, give me a concise summary of what was added, how to try it, and any design problems discovered.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

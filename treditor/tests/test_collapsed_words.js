@@ -104,7 +104,7 @@ assert.equal(context.collapsedTokenAnnotations(joined._collapsedTokens[0],
   {...options, gloss: false, phon: true}).rows, 1);
 const multipartLayout = context.collapsedTokenAnnotations(collapsed._collapsedTokens[2],
   {...options, phon: true});
-assert.deepEqual(multipartLayout.labels.filter(label => label.field === "phon").map(label => label.text),
+assert.deepEqual(Array.from(multipartLayout.labels.filter(label => label.field === "phon"), label => label.text),
   ["LOG", "PHON"]);
 const miswoti = {_nodeId: "number", tag: "N", children: [
   {tag: "NUM", gloss: "thirty", children: [
@@ -116,16 +116,16 @@ context.collapsedNodeIds.add("number");
 for (const segmentation of ["word", "hyphenated"]) {
   const number = context.buildDisplayNode(miswoti, {...options, segmentation});
   const labels = context.collapsedTokenAnnotations(number._collapsedTokens[0], {...options, phon: true});
-  assert.deepEqual(labels.labels.filter(label => label.field === "gloss").map(label => label.text),
+  assert.deepEqual(Array.from(labels.labels.filter(label => label.field === "gloss"), label => label.text),
     ["thirty", "CL"]);
-  assert.deepEqual(labels.labels.filter(label => label.field === "phon").map(label => label.text),
+  assert.deepEqual(Array.from(labels.labels.filter(label => label.field === "phon"), label => label.text),
     ["PHON"]);
 }
 const mixed = {...joined._collapsedTokens[0], parts: [
   {form: "a", phon: "PHON"}, {form: "b", phon: "PHON"},
   {form: "c", phon: "LOG"}, {form: "d", phon: "LOG"}, {form: "e", phon: "PHON"},
 ]};
-assert.deepEqual(context.collapsedTokenAnnotations(mixed, {...options, phon: true}).labels
-  .filter(label => label.field === "phon").map(label => label.text), ["PHON", "LOG", "PHON"]);
+assert.deepEqual(Array.from(context.collapsedTokenAnnotations(mixed, {...options, phon: true}).labels
+  .filter(label => label.field === "phon"), label => label.text), ["PHON", "LOG", "PHON"]);
 assert.equal(JSON.stringify(miato), miatoBefore);
 console.log("Collapsed word segmentation, glosses, multipart forms, sizing, and expansion passed.");

@@ -6,6 +6,7 @@
   <title>COJ Tree Editor</title>
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="/static/workbench.css">
+  <link rel="stylesheet" href="/static/editing.css">
 </head>
 <body>
   <header class="app-header">
@@ -43,6 +44,10 @@
       <button type="button" id="activity-workbench" class="activity-button" data-sidebar-view="workbench" data-open-editor="workbench" aria-label="Workbench" title="Workbench" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM12 5v14M6 9h3M15 9h3M6 13h3M15 13h3"/></svg>
         <span class="sr-only">Workbench</span>
+      </button>
+      <button type="button" id="activity-editing" class="activity-button" data-sidebar-view="editing" data-open-editor="editing" aria-label="Editing" title="Editing" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 11-11 3 3-11 11-4 1zM14 7l3 3M4 22h16"/></svg>
+        <span class="sr-only">Editing</span>
       </button>
     </nav>
 
@@ -181,10 +186,18 @@
         </div>
         <p class="search-message">Work stays in this browser session. Closing a pane hides it; restore it to continue.</p>
       </section>
+      <section id="sidebar-editing" class="sidebar-view hidden" aria-label="Editing">
+        <div class="pane-heading"><h1>Editing</h1><p>Enter source text and transcription components, then save a draft.</p></div>
+        <p class="search-message">Saved drafts live in data/authoring/. Source and terminals share lexical records. Corpus and dictionary files are unchanged.</p>
+      </section>
     </aside>
 
     <section class="detail-pane">
       <nav id="editor-tabs" class="editor-tabs hidden" aria-label="Open editors">
+        <div id="editor-tab-editing" class="editor-tab hidden" data-editor-tab="editing">
+          <button type="button" class="editor-tab-label" data-editor-page="editing"><span class="editor-tab-icon" aria-hidden="true">✎</span>Editing</button>
+          <button type="button" class="editor-tab-close" data-close-editor="editing" aria-label="Close Editing">×</button>
+        </div>
         <div id="editor-tab-workbench" class="editor-tab hidden" data-editor-tab="workbench">
           <button type="button" class="editor-tab-label" data-editor-page="workbench"><span class="editor-tab-icon" aria-hidden="true">◫</span>Workbench</button>
           <button type="button" class="editor-tab-close" data-close-editor="workbench" aria-label="Close Workbench">×</button>
@@ -480,5 +493,7 @@
   <script src="/static/app.js"></script>
   <script src="/static/workbench-core.js"></script>
   <script src="/static/workbench.js"></script>
+  <script src="/static/editing-state.js"></script>
+  <script src="/static/editing.js"></script>
 </body>
 </html>
