@@ -38,3 +38,14 @@ assert.deepEqual(parsePairs("1 多迦由久夜\n taka yuku ya\n\n2 波夜夫佐�
   [{original: "多迦由久夜", transcription: "taka yuku ya"}, {original: "波夜夫佐和気能", transcription: "payabusawake no"}]);
 for (const bad of ["1 original", "2 original\ntranscription", "1 original\ntranscription\noriginal\ntranscription"]) assert.throws(() => parsePairs(bad));
 console.log("Document state, input boundaries, identities, permissive reconciliation, orphan preservation and bulk pairing passed.");
+
+// Insertion shifts display positions, never existing identities or link evidence.
+state.selectText(first);
+const before = state.text.passage_order.slice(), oldNodes = JSON.stringify(state.text.nodes), oldLinks = JSON.stringify(state.text.links);
+const middle = state.addPassage("middle", "mid dle", 0);
+assert.deepEqual(state.text.passage_order, [middle, ...before]);
+assert.equal(JSON.stringify(state.text.nodes), oldNodes); assert.equal(JSON.stringify(state.text.links), oldLinks);
+assert.throws(() => state.addPassage("", "", -1));
+assert.throws(() => state.addPassage("", "", 99));
+state.removePassage(middle); assert.deepEqual(state.text.passage_order, before);
+state.undoRemoval(); assert.equal(state.text.passage_order[0], middle);

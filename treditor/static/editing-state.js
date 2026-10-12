@@ -72,10 +72,11 @@
       this.document.text_order.push(id); this.activeText = id; this.markDirty(); return id;
     }
     selectText(id) { if (!this.document.texts[id]) throw new Error("Text not found."); this.activeText = id; }
-    addPassage(original = "", transcription = "") {
+    addPassage(original = "", transcription = "", position = this.text?.passage_order.length) {
       if (!this.text) throw new Error("Create or choose a Text first.");
+      if (!Number.isInteger(position) || position < 0 || position > this.text.passage_order.length) throw new Error("Invalid insertion position.");
       const id = this.makeId(); this.text.passages[id] = newPassage(original, transcription);
-      this.text.passage_order.push(id); this.markDirty(); return id;
+      this.text.passage_order.splice(position, 0, id); this.markDirty(); return id;
     }
     editPassage(id, field, value) {
       if (!["original", "transcription"].includes(field) || !this.text?.passages[id]) throw new Error("Passage not found.");

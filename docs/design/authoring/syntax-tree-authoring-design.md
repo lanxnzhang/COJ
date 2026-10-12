@@ -1,6 +1,7 @@
 # Syntax-tree authoring: source-first workflow
 
-Revised 11 October 2026 following **After commit 023a10c (2)?(9)** and the
+Revised 12 October 2026 following **After commit 023a10c (2)–(9)**
+and the **After commit 7d5fb6f** Stage 2 usability corrections and the
 author's header, synchronization, unified-hierarchy and permissive source-edit
 clarifications. The Stage 1 + Stage 2 milestone now implements version-2
 multi-Text Documents, paired source entry, read-only corpus opening and
@@ -938,17 +939,25 @@ XML/TXT or write to external source repositories.
   Unicode code-point initial ranges. Display numbering follows passage order
   from 1. These ranges are input boundaries, not inferred terminal boundaries.
   Source-only drafts create no analysis nodes.
-- Editing provides New Document/New Text, saved/corpus Document opening, Text
-  selection, paired fields, Enter to continue, removal/undo, paired bulk paste
-  preview and complete-Document Save/Reopen. Switching Texts retains other
-  Texts' drafts. Pending paste must be added or cleared before Save/switching.
+- Editing provides sidebar New Document/New Text/Open Text actions. New Document
+  creates only an empty container; New Text requires an explicit existing parent
+  choice and starts with primary bulk entry, not a placeholder source row. A
+  compact grouped Document/Text browser supports Text-ID/name search and
+  on-demand expansion. Numbered Text/Transcription pairs support insertion
+  between existing pairs, Enter to continue and removal/undo. Bulk Preview
+  precedes Apply; complete-Document Save/Reopen retains existing persistence.
+  Switching Texts retains other
+  Texts' drafts. Pending paste must be applied or cleared before Save/switching.
 - The corpus adapter explicitly reads complete XML Documents and preserves
   original XML/TXT snapshots, block records, historical headers, attributes,
   markers and writing-mode parts. It maps only exact ordered compacted yields;
   mismatches retain scope-level unresolved links instead of guessed alignment.
   Nodes spanning passages and multipart nodes remain one hierarchy. Imported
   numbering is retained separately from display numbering. Original corpus
-  files remain untouched. A read-only analysis inspector shows retained nodes.
+  files remain untouched. A read-only analysis inspector shows retained nodes
+  with generated tree
+  guides rather than nested bullets. Fixed workspace width and a stable
+  scrollbar gutter prevent section expansion from resizing the editor.
 - Stable corpus-copy identities derive from file content and record addresses;
   new draft identities are generated once and retained on Save/Reopen. The
   codec uses sorted keys, ordered arrays, UTF-8, indentation and a final LF.

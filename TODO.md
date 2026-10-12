@@ -1973,6 +1973,60 @@ The acceptance goal is that I can open Editing, create or open a Text, naturally
 Follow the current design document rather than the obsolete prototype behavior. If implementation requires a semantic/workflow decision that the design or repository does not determine, stop and ask me instead of guessing.
 After implementation, give me a concise summary of what changed, how to test the workflow, and any unresolved issues. Do not migrate the corpus.
 
+### After commit 7d5fb6f
+Please improve the current Stage 1+2 Editing UI/workflow before proceeding to Stage 3. Keep the implemented data model and persistence behavior unless a change is required by the workflow below.
+1. Move document/text actions into the sidebar
+Move New Text, Open Text, and New Document into the Editing sidebar as three equal-level actions. They should not dominate the main editing workspace.
+Their behavior should be clearly separated:
+- New Text: create a Text and let the user choose which existing Document it belongs to, rather than implicitly creating/using a new Document.
+- New Document: create an empty Document/container. Do not automatically create a Text inside it.
+- Open Text: browse/search existing Texts.
+Keep the central area focused on the currently edited Text.
+2. Simplify Document browsing
+Do not render every corpus Document as a large button grid.
+Use a compact hierarchical browser in the sidebar. Group related Documents, for example:
+MYS
+  MYS_01
+  MYS_02
+  ...
+
+and expand a Document only when the user wants to see/select its Texts. Use the existing treditor visual language where appropriate.
+Remove redundant instructional copy such as:
+Choose a Document and Text, enter original text with spaced transcription, then Save.
+and similar explanations that the interface itself can make obvious.
+3. Make bulk entry the primary workflow for a new Text
+The preferred input format is alternating source/transcription lines:
+美阿止都久留
+mi ato tukuru
+伊志乃比鼻伎波
+isi no pibiki pa
+阿米爾伊多利
+ame ni itari
+
+Provide a compact bulk-entry area with Preview before applying it. Show the parsed numbered pairs so the user can verify that pairing/numbering is correct, then add/apply them to the Text. Afterward they remain individually editable.
+Individual row creation should remain available as a lightweight secondary action, not the primary new-Text workflow.
+4. Make source editing compact
+Do not use a large card headed Passage 1, Passage 2, etc.
+The ordinary editor should be visually closer to:
+1  Text           [美阿止都久留]
+   Transcription  [mi ato tukuru]
+
+2  Text           [伊志乃比鼻伎波]
+   Transcription  [isi no pibiki pa]
+
+Show only the visible numbers 1, 2, 3...; do not repeat Passage, Line, or another unit name on every row.
+Check the repository/guidelines for the established internal term for these source units rather than inventing terminology, but keep that technical term out of the repetitive normal UI.
+Inputs should size compactly to their content and grow when genuinely needed. Avoid large fixed-height textareas and verbose labels such as Spaced transcription for passage 6; Text and Transcription are sufficient.
+Allow insertion between existing rows, not only at the end. A lightweight + between rows is sufficient. Inserting between 2 and 3 should make the visible numbering become 1, 2, 3, 4... while preserving persistent identities underneath. Use similarly unobtrusive controls for removal.
+5. Improve hierarchy readability
+The current preserved-analysis display uses nested bullet points, which makes tree structure difficult to read. Replace bullets with generated tree/indentation guides: vertical connector lines and/or clear same-level indentation similar to the intended structured-tree editor.
+Do not require users to maintain connector characters manually.
+6. Fix layout instability
+Expanding/collapsing paired-source or related sections must not unexpectedly change the width of the main editing area. Keep the workspace dimensions/layout stable.
+This is still not a final visual redesign. Keep the existing COJ/treditor style, but make the Stage 2 workflow compact and practical for long texts.
+Do not start Stage 3 assisted analysis or Stage 4 tree editing yet.
+If any requested behavior conflicts with the current Document/Text model or repository evidence, ask me rather than guessing. Otherwise implement these usability corrections and briefly tell me how to test them.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

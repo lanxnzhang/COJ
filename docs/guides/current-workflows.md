@@ -87,29 +87,47 @@ Start the existing app with `python treditor/app.py`, then open **Editing**
 below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
 `data/authoring/`; it does not modify corpus TXT/XML or dictionary data.
 
-1. Choose **New Text**. Give the **Document name** a storage name, such as
-   `My-draft`, and enter a scholarly **Text ID**, such as `KK.67`.
-2. In **1 Original text**, enter `?????`. In its paired transcription
-   field, enter `taka yuku ya`. Spaces preserve initial input boundaries;
-   they do not create a final linguistic analysis.
-3. Press Enter in transcription or choose **Add passage** for the next pair.
-   **Remove passage** offers **Undo removal**. For bulk entry, expand **Paste
-   paired passages**, paste alternating original/transcription lines, then
-   **Preview passages** and **Add previewed passages**. Optional original-line
-   numbers must start at 1 and continue in order. The preview shows the added
-   pairs' actual destination numbering. Unaccepted paste prevents Save.
-4. **New Text** adds another Text to this Document. **Text in this Document**
-   switches among its Texts while retaining all drafts. **New Document** starts
-   a separate file and warns before discarding unsaved changes.
-5. **Save** writes `data/authoring/My-draft.syn.json`. It saves every Text in
-   the Document, including unresolved drafts. Changing Text ID or a saved
-   Document's display name keeps its filename. **Save a copy** selects a fresh
-   Document storage name. The app does not commit files to Git.
-6. Reload the page, choose **Open Text**, select the saved Document, then choose
-   its Text. **Corpus Documents** opens complete existing Documents as draft
-   copies in the same paired representation. **Preserved analysis (read only)**
-   retains their annotated hierarchy and historical header. Save creates a
-   `.syn.json` copy, leaving corpus files unchanged.
+1. In the Editing sidebar, **New Document** creates an empty container. Enter
+   its **Document name** (under **Document**) and Save it if desired. No Text is
+   created automatically.
+2. **New Text** asks you to choose its existing Document: the current container,
+   a saved Document, or a corpus Document opened as a draft copy. Choosing the
+   parent creates an empty Text with no placeholder source row. Enter **Text ID**.
+3. **Bulk entry** is initially expanded for an empty Text. Paste alternating
+   original/transcription lines, for example:
+
+   ```text
+   美阿止都久留
+   mi ato tukuru
+   伊志乃比鼻伎波
+   isi no pibiki pa
+   ```
+
+   Select **Preview**, verify the numbered pairs, then **Apply**. Preview changes
+   no authored data. Apply appends the reviewed pairs, which remain individually
+   editable. Editing the paste invalidates its preview. Optional original-line
+   numbers must start at 1 and continue in order; blank separators are accepted.
+4. **Source** shows compact numbered **Text** and **Transcription** pairs.
+   Inputs grow to fit their content. The small **+** controls insert before a
+   pair or append at the end; **×** removes a pair and offers **Undo removal**.
+   Display numbers update, while existing source/node identities and alignment
+   evidence remain unchanged. Enter in transcription continues to the next pair.
+5. **Save** writes the complete Document in `data/authoring/`, including all its
+   Texts and unresolved drafts. Text ID/display-name edits retain a saved file's
+   path. **Document → Save a copy** chooses a fresh destination. No Git commit
+   is made automatically.
+6. **Open Text** browses/searches Texts in the sidebar. Related corpus Documents
+   are grouped (for example MYS → MYS_01, MYS_02). Expand a Document to select
+   its Texts, or search by Text ID/Document name. Saved Document contents are
+   read for expansion/search; browsing does not replace the active draft.
+   Selecting a Text in the current Document retains other Texts' edits; opening
+   another Document warns before discarding unsaved changes. Corpus selections
+   open draft copies without writing to TXT/XML.
+
+**Preserved analysis (read only)** displays the retained hierarchy with generated
+indentation/connector guides, plus its historical header. No connector characters
+are authored and no hierarchy editing is enabled. Expanding sections retains the
+workspace width; source fields resize when the available width changes.
 
 Drafts are not saved automatically. Hiding/reopening the Editing tab retains
 state while the page remains loaded. Refresh/page close warns about unsaved

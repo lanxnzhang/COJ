@@ -50,6 +50,8 @@ def test_existing_shell_includes_editing_after_workbench():
     for name in ("sidebar-editing", "editor-tab-editing"):
         assert f'id="{name}"' in html
     assert '/static/editing-state.js' in html and '/static/editing.js' in html
+    assert 'id="editing-sidebar-controls"' in html
+    assert 'Add source segments, enter transcription components' not in html
 
 
 
