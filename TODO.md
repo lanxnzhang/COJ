@@ -1713,6 +1713,32 @@ Do not modify existing corpus data.
 The goal is a small prototype I can actually try: open **Editing**, enter source text and transcription components, save them as a complete `.syn.json`, reload them, and verify that the same lexical occurrences and identities survive.
 Run relevant existing tests and add focused tests for the new model and save/load behavior. After implementation, give me a concise summary of what was added, how to try it, and any design problems discovered.
 
+### After commit 023a10c
+Before adding more Editing features, please improve the usability of the current prototype.
+After trying the current UI, it is not clear what I should do first or how the basic workflow is supposed to work. Please adjust the Editing prototype so that, on opening the page, it is immediately obvious how to start and continue editing.
+In particular:
+- Make **New text** and **Open existing text** clear and easy to understand.
+- It should also be obvious how to edit an already opened text and save the changes.
+- **Text ID** should be more important than Filename.
+- Generate the `.syn.json` filename/path automatically from the Text ID; users normally should not need to manage filenames manually.
+- Save/Open/Refresh/upload and other file-management controls should not dominate the first visual layer.
+- **Add segment** should be an obvious primary action for an empty text.
+- After adding a segment, focus directly on source-text entry.
+- Make entering and editing the source text and its transcription components natural and require as little clicking as possible.
+- Existing segments and components should be clearly editable, addable, and removable.
+- The currently non-functional Tree workspace should not occupy half the page. Hide, collapse, or simplify it until tree editing is actually useful.
+- Remove developer-oriented text such as explanations about “shared lexical records” or “categories may remain unresolved”.
+A new user should be able to understand this basic workflow from the interface itself:
+    New/Open text
+        → enter or edit source segments
+        → enter or edit transcription components
+        → save
+        → reopen and continue later
+Preserve the current shared-occurrence model and `.syn.json` persistence underneath. This is a usability/workflow improvement, not a data-model redesign.
+Keep the existing COJ/treditor visual style. This does not need to be the final polished UI; the immediate goal is simply to make the current prototype intuitive enough to test properly.
+Do not add lemma autocomplete, category suggestions, Wrap in Parent, composition inference, or other later-stage features yet.
+
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
