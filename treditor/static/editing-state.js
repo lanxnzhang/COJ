@@ -1,118 +1,117 @@
-/* Shared occurrence records; syntax contains references, never lexical copies. */
+/* Document state and entered input. Source edits never regenerate analysis. */
 (function (root) {
   "use strict";
-  function newDocument() {
-    return {schema_version: 1, text_id: "", header: "", segments: {}, segment_order: [],
-      occurrences: {}, syntax_nodes: {}, syntax_roots: [], composition_groups: {},
-      coverage: [], compatibility: {}, annotations: {}};
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const white = /[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]/u;
+  const compact = value => Array.from(value).filter(c => !white.test(c)).join("");
+  function units(value) {
+    const result = []; let start = null;
+    Array.from(value).forEach((c, i) => {
+      if (white.test(c)) { if (start !== null) result.push({start, end: i}); start = null; }
+      else if (start === null) start = i;
+    });
+    if (start !== null) result.push({start, end: Array.from(value).length});
+    return result;
   }
-  function filenameForText(textId) {
-    const id = textId.trim();
-    if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,100}$/.test(id)
-      || /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)/i.test(id)) {
-      throw new Error("Enter a Text ID using letters, numbers, dots, underscores or hyphens, such as KK.67.");
+  function newDocument(makeId = () => root.crypto.randomUUID()) {
+    return {schema_version: 2, id: makeId(), name: "", texts: {}, text_order: [], compatibility: {}, annotations: {}};
+  }
+  function newText(textId = "") {
+    return {text_id: textId, passages: {}, passage_order: [], nodes: {}, roots: [], links: {},
+      historical_header: null, compatibility: {}, annotations: {}};
+  }
+  function newPassage(original = "", transcription = "") {
+    return {original, transcription, units: units(transcription), annotations: {}};
+  }
+  function filenameForDocument(name) {
+    const value = name.trim();
+    if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,100}$/.test(value)
+      || /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)/i.test(value)) {
+      throw new Error("Use a Document storage name with letters, numbers, dots, underscores or hyphens.");
     }
-    return `${id}.syn.json`;
+    return `${value}.syn.json`;
+  }
+  function reconcile(text) {
+    Object.values(text.links).forEach(link => {
+      const passage = text.passages[link.passage], evidence = link.evidence;
+      let reason = "";
+      if (!passage) reason = "Source passage removed; analysis retained.";
+      else if (passage.original !== evidence.original) reason = "Original text changed; alignment needs review.";
+      else if (compact(passage.transcription) !== compact(evidence.transcription)) reason = "Transcription changed; analysis needs review.";
+      link.status = reason ? "unresolved" : evidence.status;
+      link.reason = reason || evidence.reason;
+    });
+  }
+  function parsePairs(value) {
+    const lines = value.replace(/\r/g, "").split("\n").filter(line => line.trim());
+    if (!lines.length || lines.length % 2) throw new Error("Paste pairs: original text, then transcription on the next line.");
+    const pairs = []; let numbered = null;
+    for (let i = 0; i < lines.length; i += 2) {
+      const match = lines[i].match(/^\s*(\d+)[ \t]+(.+)$/u);
+      if (numbered === null) numbered = !!match;
+      if (numbered !== !!match) throw new Error("Use numbering consistently for all pasted passages.");
+      if (match && Number(match[1]) !== pairs.length + 1) throw new Error("Pasted passage numbers must start at 1 and continue in order.");
+      pairs.push({original: match ? match[2] : lines[i].trim(), transcription: lines[i + 1].trim()});
+    }
+    return pairs;
   }
   class State {
-    constructor(makeId = () => root.crypto.randomUUID()) {
-      this.makeId = makeId;
-      this.reset();
-    }
+    constructor(makeId = () => root.crypto.randomUUID()) { this.makeId = makeId; this.reset(); }
     reset() {
-      this.document = newDocument(); this.filename = "draft.syn.json";
-      this.savedFilename = null; this.revision = null; this.dirty = false;
-      this.removal = null;
+      this.document = newDocument(this.makeId); this.activeText = null; this.filename = null;
+      this.savedFilename = null; this.revision = null; this.dirty = false; this.removal = null;
     }
-    open(document, filename, revision = null) {
-      this.document = JSON.parse(JSON.stringify(document)); this.filename = filename;
-      this.savedFilename = revision === null ? null : filename;
-      this.revision = revision; this.dirty = revision === null;
-      this.removal = null;
+    open(document, filename = null, revision = null) {
+      this.document = clone(document); this.filename = filename; this.savedFilename = revision ? filename : null;
+      this.revision = revision; this.activeText = document.text_order[0] || null; this.dirty = !revision; this.removal = null;
     }
+    get text() { return this.document.texts[this.activeText] || null; }
     markDirty() { this.dirty = true; this.removal = null; }
-    addSegment() {
-      const id = this.makeId();
-      this.document.segments[id] = {text: "", occurrences: [], annotations: {}};
-      this.document.segment_order.push(id); this.markDirty();
-      return id;
+    addText(textId = "") {
+      const id = this.makeId(); this.document.texts[id] = newText(textId);
+      this.document.text_order.push(id); this.activeText = id; this.markDirty(); return id;
     }
-    addComponent(segmentId, form = "") {
-      const segment = this.document.segments[segmentId];
-      if (!segment) throw new Error("Select a source segment first.");
-      const occurrence = this.makeId(), node = this.makeId();
-      this.document.occurrences[occurrence] = {form, lemma: null, script: null, parts: [], annotations: {}};
-      segment.occurrences.push(occurrence);
-      this.document.syntax_nodes[node] = {category: null, occurrence, annotations: {}};
-      this.document.syntax_roots.push(node); this.markDirty();
-      return occurrence;
+    selectText(id) { if (!this.document.texts[id]) throw new Error("Text not found."); this.activeText = id; }
+    addPassage(original = "", transcription = "") {
+      if (!this.text) throw new Error("Create or choose a Text first.");
+      const id = this.makeId(); this.text.passages[id] = newPassage(original, transcription);
+      this.text.passage_order.push(id); this.markDirty(); return id;
     }
-    editOccurrence(id, field, value) {
-      const occurrence = this.document.occurrences[id];
-      if (!occurrence || !["form", "lemma", "script"].includes(field)) throw new Error("Invalid lexical edit.");
-      if (occurrence.parts.length && ["form", "script"].includes(field)) throw new Error("Multipart form/script editing is not available in this prototype.");
-      occurrence[field] = field === "form" ? value : (value || null); this.markDirty();
+    editPassage(id, field, value) {
+      if (!["original", "transcription"].includes(field) || !this.text?.passages[id]) throw new Error("Passage not found.");
+      const passage = this.text.passages[id]; passage[field] = value;
+      passage.units = units(passage.transcription); reconcile(this.text); this.markDirty();
     }
-    checkRemoval(segmentId, refs) {
-      for (const ref of refs) {
-        const elsewhere = Object.entries(this.document.segments).some(([id, segment]) => id !== segmentId && segment.occurrences.includes(ref));
-        if (!elsewhere && Object.values(this.document.composition_groups).some(group =>
-          group.children.some(child => child.kind === "occurrence" && child.id === ref))) {
-          throw new Error("This component is used in a lexical analysis. Its links must be reviewed before removal.");
-        }
-      }
-    }
-    detach(segmentId, refs) {
-      const segment = this.document.segments[segmentId];
-      segment.occurrences = segment.occurrences.filter(ref => !refs.includes(ref));
-      this.document.coverage = this.document.coverage.filter(item => item.segment !== segmentId || !refs.includes(item.occurrence));
-      for (const ref of refs) {
-        if (Object.values(this.document.segments).some(other => other.occurrences.includes(ref))) continue;
-        const removedNodes = Object.entries(this.document.syntax_nodes)
-          .filter(([, node]) => node.occurrence === ref).map(([id]) => id);
-        removedNodes.forEach(id => delete this.document.syntax_nodes[id]);
-        this.document.syntax_roots = this.document.syntax_roots.filter(id => !removedNodes.includes(id));
-        Object.values(this.document.syntax_nodes).forEach(node => {
-          if (node.children) node.children = node.children.filter(id => !removedNodes.includes(id));
-        });
-        delete this.document.occurrences[ref];
-        this.document.coverage = this.document.coverage.filter(item => item.occurrence !== ref);
-      }
-    }
-    removeComponent(segmentId, ref) {
-      if (!this.document.segments[segmentId]?.occurrences.includes(ref)) throw new Error("Component not found.");
-      this.checkRemoval(segmentId, [ref]);
-      this.removal = JSON.parse(JSON.stringify(this.document));
-      this.detach(segmentId, [ref]); this.dirty = true;
-    }
-    removeSegment(segmentId) {
-      const segment = this.document.segments[segmentId];
-      if (!segment) throw new Error("Segment not found.");
-      this.checkRemoval(segmentId, segment.occurrences);
-      this.removal = JSON.parse(JSON.stringify(this.document));
-      this.detach(segmentId, [...segment.occurrences]);
-      delete this.document.segments[segmentId];
-      this.document.segment_order = this.document.segment_order.filter(id => id !== segmentId);
-      this.dirty = true;
+    removePassage(id) {
+      if (!this.text?.passages[id]) throw new Error("Passage not found.");
+      this.removal = {document: clone(this.document), activeText: this.activeText};
+      delete this.text.passages[id]; this.text.passage_order = this.text.passage_order.filter(key => key !== id);
+      reconcile(this.text); this.dirty = true;
     }
     undoRemoval() {
-      if (this.removal) { this.document = this.removal; this.removal = null; this.dirty = true; }
+      if (!this.removal) return;
+      this.document = this.removal.document; this.activeText = this.removal.activeText;
+      this.removal = null; this.dirty = true;
     }
-    terminals() {
-      // Source order is display order, not identity. Include unplaced records.
-      const ids = [...new Set([...this.document.segment_order.flatMap(id =>
-        this.document.segments[id].occurrences), ...Object.keys(this.document.occurrences)])];
-      const nodes = new Map(Object.entries(this.document.syntax_nodes)
-        .filter(([, node]) => node.occurrence).map(([id, node]) => [node.occurrence, {id, node}]));
-      return ids.map(id => ({id, occurrence: this.document.occurrences[id], syntax: nodes.get(id) || null}));
+    appendPairs(pairs) { pairs.forEach(pair => this.addPassage(pair.original, pair.transcription)); }
+    unresolved() {
+      if (!this.text) return [];
+      const output = [];
+      const grouped = new Set();
+      Object.values(this.text.links).filter(link => link.status === "unresolved").forEach(link => {
+        const index = this.text.passage_order.indexOf(link.passage);
+        const label = index < 0 ? "Removed passage" : `Passage ${index + 1}`;
+        const key = `${label}: ${link.reason}`;
+        if (!grouped.has(key)) output.push(key);
+        grouped.add(key);
+      });
+      output.push(...(this.text.compatibility.issues || []));
+      return output;
     }
-    saved(filename, revision) {
-      this.filename = filename; this.savedFilename = filename;
-      this.revision = revision; this.dirty = false;
-    }
+    saved(filename, revision) { this.filename = filename; this.savedFilename = filename; this.revision = revision; this.dirty = false; }
     expectedRevision() { return this.filename === this.savedFilename ? this.revision : null; }
   }
-  const api = {State, newDocument, filenameForText};
+  const api = {State, newDocument, newText, newPassage, filenameForDocument, parsePairs, units, compact, reconcile};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
-  else root.COJEditing = api;
-})(globalThis);
+  root.COJEditing = api;
+})(typeof window !== "undefined" ? window : globalThis);

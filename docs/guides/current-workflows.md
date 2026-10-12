@@ -84,51 +84,65 @@ corpus or dictionary changes. Detailed controls and limits are in the
 ## Source-first drafts in Editing
 
 Start the existing app with `python treditor/app.py`, then open **Editing**
-directly below **Workbench**. This is the first authoring prototype; it does
-not modify corpus TXT/XML or dictionary data.
+below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
+`data/authoring/`; it does not modify corpus TXT/XML or dictionary data.
 
-1. Select **Add segment** and enter the original source text.
-2. Enter transcription components, one per line, and select **Add components**.
-   For KK.67, enter `多迦由久夜`, then `taka`, `yuku`, `ya` on separate lines.
-   Save also records any pending component lines. Empty segments/components and
-   unresolved lemma, script or category values are valid drafts.
-3. The same occurrences appear under **Terminals (tree workspace)**. Change a
-   form, optional lemma or script in either view; the other view updates the
-   shared record. Technical identities stay hidden in normal use.
-4. Choose a filename such as `KK.67.syn.json` and select **Save .syn.json**.
-   Files are saved under `data/authoring/` in this checkout, independently of
-   corpus files. They are readable UTF-8 JSON with deterministic formatting and
-   persistent identities; Git can track them. No Git commit is made by the app.
-5. Close/reopen the Editing tab, or reload the page, choose the saved draft and
-   select **Open**. The tab retains unsaved state while the page remains open;
-   only saved files survive a page reload/server restart. **New draft** and
-   opening another file warn before discarding unsaved changes.
+1. Choose **New Text**. Give the **Document name** a storage name, such as
+   `My-draft`, and enter a scholarly **Text ID**, such as `KK.67`.
+2. In **1 Original text**, enter `?????`. In its paired transcription
+   field, enter `taka yuku ya`. Spaces preserve initial input boundaries;
+   they do not create a final linguistic analysis.
+3. Press Enter in transcription or choose **Add passage** for the next pair.
+   **Remove passage** offers **Undo removal**. For bulk entry, expand **Paste
+   paired passages**, paste alternating original/transcription lines, then
+   **Preview passages** and **Add previewed passages**. Optional original-line
+   numbers must start at 1 and continue in order. The preview shows the added
+   pairs' actual destination numbering. Unaccepted paste prevents Save.
+4. **New Text** adds another Text to this Document. **Text in this Document**
+   switches among its Texts while retaining all drafts. **New Document** starts
+   a separate file and warns before discarding unsaved changes.
+5. **Save** writes `data/authoring/My-draft.syn.json`. It saves every Text in
+   the Document, including unresolved drafts. Changing Text ID or a saved
+   Document's display name keeps its filename. **Save a copy** selects a fresh
+   Document storage name. The app does not commit files to Git.
+6. Reload the page, choose **Open Text**, select the saved Document, then choose
+   its Text. **Corpus Documents** opens complete existing Documents as draft
+   copies in the same paired representation. **Preserved analysis (read only)**
+   retains their annotated hierarchy and historical header. Save creates a
+   `.syn.json` copy, leaving corpus files unchanged.
 
-**Refresh files** discovers files saved outside this browser session.
-The file chooser can open a complete `.syn.json` from the computer; it validates
-the document and opens it as an unsaved copy. Use a new filename when saving that
-copy if the target already exists. Stale saves are rejected: reopen the saved
-revision or choose another filename rather than overwrite a newer file.
+Drafts are not saved automatically. Hiding/reopening the Editing tab retains
+state while the page remains loaded. Refresh/page close warns about unsaved
+changes, but leaving loses them; there is no browser recovery store. Opening a
+different Document also warns before discarding unsaved changes. Saved/unsaved
+status is visible above the fields.
 
-The current storage layout is deliberately flat for this prototype. Collection
-folders, component deletion, full tree construction/Wrap in Parent, suggestions,
-composition inference and legacy publishing are deferred. The terminal pane is
-an editable shared-record tray, not the completed graphical tree editor.
-Multipart/composition/compatibility records can be retained in complete files,
-but their specialized editing controls are not supplied yet.
+Editing imported source content never rewrites or deletes its hierarchy.
+Whitespace-only transcription changes with unchanged original text retain
+supported alignment. Uncertain content changes mark the passage's relationships
+unresolved and preserve their original evidence. Removing a passage retains
+orphaned analysis. Warnings identify affected passages; draft Save remains
+available. No automatic re-analysis or TXT/XML synchronization occurs. Reviewed
+export/write-back and editable analysis are later stages.
 
-The backend validates schema version, references, forest structure, cycles,
-duplicate yield, parts and explicit coverage. Missing analysis is allowed;
-dictionary membership and linguistic correctness are not inferred by validation.
-Fine source coverage uses Unicode code-point ranges and remains optional; entry
-does not pretend to infer character alignment from row positions.
+Storage names use letters, numbers, dots, underscores or hyphens; reserved
+Windows device names are rejected. Text IDs are scholarly metadata rather than
+paths. Existing destinations and stale revisions cannot be silently overwritten.
+A failed Save retains the draft. File import validates version-2 `.syn.json`
+and opens an unsaved copy. Version-1 prototype files require reviewed conversion
+and are rejected; conversion controls are not implemented in this milestone.
 
-Implementation: `src/coj/authoring/` holds the model, codec and atomic store;
-`treditor/authoring.py` exposes its APIs; `editing-state.js` and `editing.js`
-hold commands/state and UI independently of the existing browsing renderer.
-Validation/save conflicts retain the current draft. Save checks use a lock for
-this local server process plus a disk fingerprint; simultaneous independent
-server processes are not a supported collaboration mode.
+The backend checks ordered membership, hierarchy references/cycles, writing
+parts, initial boundaries and evidence-linked alignment status. Incomplete
+analysis and unresolved relationships are valid drafts. The deterministic UTF-8
+codec and atomic store support complete Documents up to 32 MB. Saves use a local
+server lock plus disk fingerprints; simultaneous independent server processes
+are not a supported collaboration mode.
+
+Implementation remains modular in `src/coj/authoring/`, `treditor/authoring.py`,
+`editing-state.js` and `editing.js`. Existing browsing and Workbench remain
+separate. Stage 3+ suggestions, morphology, full hierarchy editing and reviewed
+TXT/XML export are deferred; the corpus has not been migrated.
 
 ## Importing primary authoring TXT
 

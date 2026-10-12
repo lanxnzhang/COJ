@@ -1,86 +1,85 @@
 import copy
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import pytest
 
-from coj.authoring import AuthoringStore, Conflict, dumps, loads, new_document, validate
+from coj.authoring import AuthoringStore, Conflict, dumps, loads, new_document, new_passage, new_text, validate
+from coj.authoring.legacy import LegacyCorpus, make_link
+from coj.authoring.model import reconcile_links
 
 
 def sample():
-    doc = new_document()
-    doc["text_id"] = "KK.67"
-    doc["segments"]["segment-a"] = {"text": "多迦由久夜", "occurrences": ["occ-a", "occ-b"], "annotations": {}}
-    doc["segment_order"] = ["segment-a"]
-    for key in ("a", "b"):
-        doc["occurrences"][f"occ-{key}"] = {"form": "taka", "lemma": "L007005", "script": "PHON", "parts": [], "annotations": {}}
-        doc["syntax_nodes"][f"node-{key}"] = {"category": None, "occurrence": f"occ-{key}", "annotations": {}}
-    doc["syntax_roots"] = ["node-a", "node-b"]
-    doc["compatibility"] = {"legacy": {"comment": "retained", "phon_index": "2"}}
+    doc = new_document("KK", "document-a")
+    text = new_text("KK.67")
+    doc["texts"]["text-a"] = text
+    doc["text_order"] = ["text-a"]
+    text["passages"]["passage-a"] = new_passage("多迦由久夜", "taka yuku ya")
+    text["passage_order"] = ["passage-a"]
+    text["nodes"]["node-a"] = {"category": "VB-ADC", "lemma": "L030996a", "children": [],
+        "form": "takayukuya", "script": None, "parts": [], "annotations": {}}
+    text["roots"] = ["node-a"]
+    text["links"]["link-a"] = make_link("passage-a", "node-a", None, text["passages"]["passage-a"], 0, 10)
     return doc
 
 
-def test_draft_roundtrip_and_deterministic_order():
-    assert loads(dumps(new_document())) == new_document()
+def test_ordered_multitext_deterministic_roundtrip():
     doc = sample()
+    doc["texts"]["text-b"] = new_text("KK.67")  # Scholarly IDs may repeat.
+    doc["text_order"].append("text-b")
     content = dumps(doc)
     assert loads(content) == doc
     assert dumps(loads(content)) == content
     assert b"\\u" not in content and b"\r\n" not in content and content.endswith(b"\n")
     reversed_keys = dict(reversed(list(doc.items())))
-    reversed_keys["occurrences"] = dict(reversed(list(doc["occurrences"].items())))
+    reversed_keys["texts"] = dict(reversed(list(doc["texts"].items())))
     assert dumps(reversed_keys) == content
-    reversed_keys["syntax_roots"] = list(reversed(doc["syntax_roots"]))
+    reversed_keys["text_order"] = list(reversed(doc["text_order"]))
     assert dumps(reversed_keys) != content
 
 
-def test_identity_survives_lexical_edit_and_wrapping():
+def test_source_only_draft_and_refinement_keeps_identity():
     doc = sample()
-    doc["occurrences"]["occ-a"]["form"] = "edited"
-    doc["syntax_nodes"]["branch"] = {"category": "VB-ADC", "children": ["node-a", "node-b"], "annotations": {}}
-    doc["syntax_roots"] = ["branch"]
-    restored = loads(dumps(doc))
-    assert restored["segments"]["segment-a"]["occurrences"] == ["occ-a", "occ-b"]
-    assert restored["syntax_nodes"]["node-a"]["occurrence"] == "occ-a"
-    assert restored["occurrences"]["occ-a"]["form"] == "edited"
-    assert restored["occurrences"]["occ-b"]["form"] == "taka"
-    assert "form" not in restored["syntax_nodes"]["node-a"]
-
-
-def test_unplaced_occurrence_and_source_only_draft():
-    doc = sample()
-    doc["syntax_nodes"] = {}
-    doc["syntax_roots"] = []
-    doc["occurrences"]["occ-a"].update(form="", lemma=None, script=None)
+    text = doc["texts"]["text-a"]
+    text["nodes"]["child"] = {"category": None, "lemma": None, "children": [], "form": "takayukuya",
+        "script": None, "parts": [], "annotations": {}}
+    text["nodes"]["node-a"].update(children=["child"], form=None)
+    assert loads(dumps(doc))["texts"]["text-a"]["roots"] == ["node-a"]
+    text.update(nodes={}, roots=[], links={})
     assert loads(dumps(doc)) == doc
 
 
-def test_recursive_composition_parts_and_coverage_preserved():
+def test_source_edits_preserve_analysis_evidence_and_orphans():
     doc = sample()
-    doc["occurrences"]["occ-a"]["parts"] = [
-        {"id": "part-a", "form": "ta", "script": "LOG", "annotations": {"phon_index": "2"}},
-        {"id": "part-b", "form": "ka", "script": "PHON", "annotations": {}},
-    ]
-    doc["composition_groups"] = {
-        "inner": {"children": [{"kind": "occurrence", "id": "occ-a"}], "lemma": None, "realization": {"rule": "concatenate"}, "annotations": {}},
-        "outer": {"children": [{"kind": "group", "id": "inner"}, {"kind": "occurrence", "id": "occ-b"}], "lemma": None, "realization": {}, "annotations": {"review": "suggested"}},
-    }
-    doc["coverage"] = [{"segment": "segment-a", "occurrence": "occ-a", "part": "part-a", "source_start": 0, "source_end": 1, "annotations": {}}]
+    text = doc["texts"]["text-a"]
+    nodes, evidence = copy.deepcopy(text["nodes"]), copy.deepcopy(text["links"]["link-a"]["evidence"])
+    text["passages"]["passage-a"] = new_passage("多迦由久夜", "taka  yukuya")
+    reconcile_links(text)
+    assert text["links"]["link-a"]["status"] == "valid"
+    text["passages"]["passage-a"] = new_passage("多迦由久夜", "taka changed ya")
+    reconcile_links(text)
+    assert text["links"]["link-a"]["status"] == "unresolved"
+    assert loads(dumps(doc)) == doc
+    del text["passages"]["passage-a"]
+    text["passage_order"] = []
+    reconcile_links(text)
+    assert "removed" in text["links"]["link-a"]["reason"]
+    assert text["nodes"] == nodes and text["links"]["link-a"]["evidence"] == evidence
     assert loads(dumps(doc)) == doc
 
 
 @pytest.mark.parametrize("damage", [
-    lambda d: d.update(schema_version=2),
+    lambda d: d.update(schema_version=1),
     lambda d: d.update(schema_version=True),
-    lambda d: d["segment_order"].append("missing"),
-    lambda d: d["segments"]["segment-a"]["occurrences"].append("occ-a"),
-    lambda d: d["syntax_nodes"]["node-a"].update(occurrence="missing"),
-    lambda d: d["syntax_nodes"]["node-b"].update(occurrence="occ-a"),
-    lambda d: d["syntax_nodes"]["node-a"].update(form="duplicated"),
-    lambda d: d["syntax_nodes"].update(cycle={"category": None, "children": ["cycle"], "annotations": {}}),
-    lambda d: d["composition_groups"].update(cycle={"children": [{"kind": "group", "id": "cycle"}], "lemma": None, "realization": {}, "annotations": {}}),
+    lambda d: d["text_order"].append("missing"),
+    lambda d: d["texts"]["text-a"]["passage_order"].append("passage-a"),
+    lambda d: d["texts"]["text-a"]["nodes"]["node-a"].update(children=["node-a"], form=None),
+    lambda d: d["texts"]["text-a"]["links"]["link-a"].update(node="missing"),
+    lambda d: d["texts"]["text-a"]["links"]["link-a"].update(end=999),
+    lambda d: d["texts"]["text-a"]["passages"]["passage-a"].update(transcription="edited"),
     lambda d: d["annotations"].update(value=float("nan")),
 ])
-def test_reject_invalid_structural_drafts(damage):
+def test_reject_invalid_drafts(damage):
     doc = sample()
     damage(doc)
     with pytest.raises(ValueError):
@@ -96,30 +95,27 @@ def test_atomic_store_noop_stale_write_and_new_file_conflict(tmp_path):
     store = AuthoringStore(tmp_path / "authoring")
     assert store.list_files() == [] and not store.root.exists()
     doc = sample()
-    first = store.save("KK.67.syn.json", doc, None)
-    opened = store.load("KK.67.syn.json")
+    first = store.save("KK.syn.json", doc, None)
+    opened = store.load("KK.syn.json")
     assert opened["document"] == doc and first["revision"] == opened["revision"]
-    before = (store.root / first["filename"]).read_bytes()
     assert store.save(first["filename"], doc, first["revision"]) == first
     edited = copy.deepcopy(doc)
-    edited["header"] = "new header"
+    edited["name"] = "new display name"
     store.save(first["filename"], edited, first["revision"])
     with pytest.raises(Conflict):
         store.save(first["filename"], doc, first["revision"])
     with pytest.raises(Conflict):
         store.save(first["filename"], doc, None)
     assert store.load(first["filename"])["document"] == edited
-    assert before != (store.root / first["filename"]).read_bytes()
-    assert store.list_files() == ["KK.67.syn.json"]
     assert not list(store.root.glob(".authoring-*"))
 
 
 def test_two_simultaneous_saves_only_one_wins(tmp_path):
     store = AuthoringStore(tmp_path)
     revision = store.save("draft.syn.json", sample(), None)["revision"]
-    def save(header):
+    def save(name):
         doc = sample()
-        doc["header"] = header
+        doc["name"] = name
         try:
             store.save("draft.syn.json", doc, revision)
             return True
@@ -143,25 +139,30 @@ def test_failed_replace_preserves_previous_file(tmp_path, monkeypatch):
         raise OSError("simulated failure")
     monkeypatch.setattr("coj.authoring.persistence.os.replace", fail)
     doc = sample()
-    doc["header"] = "edit"
+    doc["name"] = "edit"
     with pytest.raises(OSError):
         store.save("draft.syn.json", doc, saved["revision"])
     assert (tmp_path / "draft.syn.json").read_bytes() == before
     assert not list(tmp_path.glob(".authoring-*"))
 
 
-def test_group_realization_and_branch_link_do_not_duplicate_yield():
-    doc = sample()
-    doc["composition_groups"]["compound"] = {"children": [{"kind": "occurrence", "id": "occ-a"}, {"kind": "occurrence", "id": "occ-b"}], "lemma": None, "realization": {}, "annotations": {}}
-    doc["syntax_nodes"] = {"composed": {"category": "N", "group": "compound", "annotations": {}}}
-    doc["syntax_roots"] = ["composed"]
+@pytest.mark.parametrize("key", ["trees:BS", "trees:KK", "trees:MYS_04", "text:SM_15"])
+def test_real_corpus_complete_readonly_adapter(key):
+    root = Path(__file__).resolve().parents[1] / "data"
+    corpus = LegacyCorpus(root)
+    before = {path: path.read_bytes() for path in corpus.paths().values() if path.stem == key.split(":")[1]}
+    doc = corpus.open(key)
+    assert doc == corpus.open(key)
     assert loads(dumps(doc)) == doc
-    doc["syntax_nodes"]["duplicate"] = {"category": None, "occurrence": "occ-a", "annotations": {}}
-    doc["syntax_roots"].append("duplicate")
-    with pytest.raises(ValueError, match="Duplicate lexical occurrence"):
-        validate(doc)
-    doc = sample()
-    doc["composition_groups"]["compound"] = {"children": [{"kind": "occurrence", "id": "occ-a"}], "lemma": None, "realization": {}, "annotations": {}}
-    doc["syntax_nodes"]["branch"] = {"category": "MK", "children": doc["syntax_roots"], "composition": "compound", "annotations": {}}
-    doc["syntax_roots"] = ["branch"]
-    assert loads(dumps(doc)) == doc
+    assert len(doc["texts"]) > 1
+    for text in doc["texts"].values():
+        assert text["compatibility"]["original_block_xml"]
+        for link in text["links"].values():
+            assert link["node"] in text["nodes"]
+    assert all(path.read_bytes() == content for path, content in before.items())
+    if key == "trees:MYS_04":
+        text = next(t for t in doc["texts"].values() if t["text_id"] == "MYS.4.619")
+        node = next(n for n in text["nodes"].values() if n["form"] == "ipaku")
+        assert [(p["form"], p["script"]) for p in node["parts"]] == [("ipa", "LOG"), ("ku", "PHON")]
+    if key == "text:SM_15":
+        assert [t["text_id"] for t in doc["texts"].values()].count("SM.15.1") == 2

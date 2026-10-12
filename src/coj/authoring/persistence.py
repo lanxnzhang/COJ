@@ -10,7 +10,7 @@ import threading
 
 from .model import validate
 
-MAX_BYTES = 2_000_000
+MAX_BYTES = 32_000_000
 
 
 class Conflict(ValueError):
@@ -33,7 +33,7 @@ def loads(content):
     else:
         require_size = len(content.encode("utf-8"))
     if require_size > MAX_BYTES:
-        raise ValueError("Authoring files are limited to 2 MB.")
+        raise ValueError("Authoring Documents are limited to 32 MB.")
     try:
         document = json.loads(content, object_pairs_hook=_object,
                               parse_constant=lambda value: (_ for _ in ()).throw(ValueError("Non-finite JSON value.")))
@@ -47,7 +47,7 @@ def dumps(document):
     result = (json.dumps(document, ensure_ascii=False, sort_keys=True,
                          indent=2, allow_nan=False) + "\n").encode("utf-8")
     if len(result) > MAX_BYTES:
-        raise ValueError("Authoring files are limited to 2 MB.")
+        raise ValueError("Authoring Documents are limited to 32 MB.")
     return result
 
 

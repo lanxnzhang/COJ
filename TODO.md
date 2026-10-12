@@ -1738,6 +1738,240 @@ Preserve the current shared-occurrence model and `.syn.json` persistence underne
 Keep the existing COJ/treditor visual style. This does not need to be the final polished UI; the immediate goal is simply to make the current prototype intuitive enough to test properly.
 Do not add lemma autocomplete, category suggestions, Wrap in Parent, composition inference, or other later-stage features yet.
 
+#### After commit 023a10c (2)
+Please pause further implementation and re-evaluate the Editing data model and workflow. Do not change code yet.
+The current prototype was based on an incorrect simplification. Please inspect the existing corpus structure and current TXT/XML data before proposing changes.
+The important distinctions are:
+1. Document and Text are different levels
+- A Document is a storage/container unit and may contain many texts.
+- A Text is the normal scholarly editing unit, e.g. BS.1 or MYS.4.619.
+- Do not assume Text ID = filename or one text = one .syn.json file.
+- New texts must eventually be assigned to an appropriate authoring document/location, separate from existing corpus source files.
+2. Text entry has three distinct layers
+The normal annotation workflow is:
+original/source text:  多迦由久夜
+transcription:         takayukuya
+lexical components:    taka | yuku | ya
+The user first enters the original text and its transcription, then segments/analyses that transcription into lexical components.
+The overall transcription is related to the existing header, but source-text boundaries, transcription boundaries and lexical/word boundaries do not always coincide. Cross-boundary words must remain representable.
+Do not expose an abstract model term such as Segment as the primary user concept unless the existing corpus workflow genuinely requires it. The UI should reflect what the linguist actually enters and edits.
+3. Existing and new texts
+Open existing text should mean existing scholarly texts, including texts already in the corpus as well as texts previously created through Editing. It should not mean only saved .syn.json drafts.
+Opening an existing legacy corpus text may require importing it into the new authoring model, but this must not modify the original corpus data.
+4. Preserve the parts of the previous design that are still valid
+- lexical occurrences have persistent hidden identity;
+- source/transcription and tree views reference the same occurrences rather than duplicate strings;
+- lemma/script annotation belongs to the occurrence;
+- syntax is a separate structure;
+- lexical composition is separate and normally tool-derived/optional to inspect;
+- tree construction will later use structural operations such as Wrap in Parent;
+- technical IDs and legacy bookkeeping should not clutter normal editing.
+Please inspect the real repository/data and propose:
+1. the corrected Document → Text → original text / transcription → lexical components model;
+2. how this relates to the existing header and source markers, including mismatched boundaries;
+3. how existing corpus texts and newly authored texts should be opened and stored;
+4. a simple UI/workflow mockup showing what the linguist actually sees and enters;
+5. what needs to change in the prototype already implemented.
+Keep the proposal concise and based on actual corpus evidence. Do not implement anything yet.
+
+#### After commit 023a10c (3)
+Please pause implementation and revise the Editing design again based on the actual annotation workflow. Do not change code yet.
+First inspect the current repository thoroughly: existing corpus data, annotation guidelines, documented data issues/questions, morphology/compound handling, TXT/XML conversion, and relevant tests. Do not invent new annotation rules where existing project evidence already exists.
+The intended workflow is:
+1. Text structure: a Document contains many scholarly Texts. Existing mappings such as BS.* → BS and MYS.4.* → MYS_04 are established. Eventually the corpus documents should be migrated as complete .syn.json documents; Editing should not use one file per Text.
+2. Source entry: within each Text, the user enters numbered source lines/passages starting from 1, for example:
+   1 多迦由久夜
+     taka yuku ya
+   
+   The source text must remain visibly associated with its number so numbering/segmentation errors can be noticed.
+   Support both line-by-line entry and efficient bulk paste/import. Existing corpus texts and newly created texts should ultimately appear in the same Editing representation.
+3. Transcription and initial segmentation: taka yuku ya is both the transcription and its initial space-delimited component segmentation. Do not require the user to enter an additional takayukuya transcription and segment it again.
+   These source-line boundaries must not be treated as word boundaries: words may cross them. The Text-level header must be represented consistently with this fact.
+4. Further lexical/morphological analysis: the initial space segmentation is not necessarily the final terminal segmentation. Existing annotation rules may require further analysis. For example, an input such as paruyama may need to be analysed into paru + yama; compounds may need their components identified while also retaining/proposing the compound lexical structure and existing compound lemma where supported.
+   Writing-mode parts, morphological segmentation, lexical composition, and syntax terminals must remain distinguishable.
+5. Assisted annotation: after source/transcription entry, analyse existing corpus annotations and dictionary evidence sufficiently to pre-fill, where well supported:
+   - lemma IDs;
+   - terminal categories such as ADJ-STM;
+   - further segmentation/morphological structure;
+   - compound structure/lemma associations.
+   The intended interaction is pre-fill → user reviews → user changes exceptions, not repeated confirmation dialogs. Users must also be able to select another candidate or manually enter a new annotation.
+   Script tags can initially be assigned manually, preferably with multi-selection/batch PHON/LOG assignment; unusual cases can be edited individually. Future reliable script suggestions may be added later.
+6. Syntax construction: analysed terminals are the same underlying occurrences created from the source/transcription analysis, not retyped copies. The user then builds the syntax tree from those terminals using structural operations such as Wrap in Parent.
+7. Storage: ultimately, all existing corpus documents should be equivalently migrated to .syn.json as the Editing source of truth. Editing changes are saved there. TXT/XML should be generated only through an explicit reviewed export process. Do not perform that corpus migration yet.
+Please revise the model and Editing workflow accordingly, using real repository examples where possible, and identify what is wrong with the current prototype.
+Do not implement anything yet. Most importantly, do not guess unresolved corpus semantics or workflow requirements. If the repository evidence and the requirements above are insufficient to determine something, ask me before choosing a design.
+
+#### After commit 023a10c (4)
+Please now revise the Editing/authoring design document based on all of the requirements and clarifications we have just established.
+In particular, make sure the revised design correctly reflects:
+- Document ≠ Text: one document contains many scholarly Texts, following the existing repository’s document/text organization.
+- Source lines/passages are numbered from 1, with the original text visibly associated with each number.
+- Users enter original text plus spaced transcription such as taka yuku ya; the spaces provide the initial component segmentation.
+- Support both line-by-line entry and efficient bulk paste/import. Existing and newly authored Texts should ultimately use the same Editing representation.
+- Initial transcription segmentation is not necessarily final lexical/morphological or syntax-terminal segmentation. Existing repository rules and annotations should guide further splitting, morphology and compound analysis.
+- Lemma IDs and terminal categories should be pre-filled as far as well-supported corpus/dictionary evidence allows, then reviewed and corrected by the user rather than requiring repeated confirmation.
+- Script tags can initially be assigned manually, including batch PHON/LOG assignment.
+- Source/transcription occurrences and syntax terminals must remain linked through shared underlying identity rather than duplicated strings.
+- Lexical composition remains separate from syntax and may be inferred/reviewed without requiring every compound to have a lemma.
+- Syntax is built afterward from the analysed terminals using structural operations such as Wrap in Parent.
+- Header-like word segmentation for new Texts should be derived from underlying annotation using the repository’s documented segmentation rules, not routinely entered as a separate field. Imported historical headers are preserved for compatibility/discrepancy checking.
+- Eventually the existing corpus should be migrated by document into complete .syn.json authoring data. Do not perform that migration yet.
+- TXT/XML ↔ .syn synchronization/export is explicit and user-controlled. Temporary divergence is allowed. Unresolved representation discrepancies may be saved in .syn but must block reviewed .syn → TXT/XML write-back.
+Use the actual repository documentation, annotation rules, existing data and tests to resolve details rather than inventing new corpus semantics.
+Update the design document and clearly identify what is wrong or obsolete in the currently implemented Editing prototype and what would need to change next.
+Do not implement anything yet. Do not make assumptions where the requirements or repository evidence are insufficient; ask me before deciding.
+
+#### After commit 023a10c (5)
+Before implementation, please explain the unresolved split/merge identity problem in practical terms and propose 2–3 possible designs. Do not choose or implement one yet.
+Use real corpus-style examples, especially cases like:
+entered transcription:
+paruyama
+
+analysed structure:
+paru + yama
+
+where the initial transcription unit is later analysed into finer lexical/morphological components.
+Please explain:
+- what identities need to exist before and after the split;
+- whether the original paruyama remains a persistent object representing the entered transcription material, while paru and yama become separate analysed occurrences;
+- how syntax, lexical composition, source alignment, undo/redo, and later re-merging would behave under each design;
+- what happens when existing imported corpus data already contains the finer analysis;
+- which approach produces the clearest Git history and least fragile references.
+Distinguish entered transcription units, analysed lexical/morphological occurrences, and syntax terminals rather than assuming they are the same object.
+Give me 2–3 concrete alternatives with a small diagram/example and the practical advantages/disadvantages of each.
+Do not make a design decision for me. If repository semantics needed to compare the options are unclear, ask me rather than assuming them. Do not change any code or documentation yet.
+
+#### After commit 023a10c (6)
+The Alternative 1/2 comparison helped clarify the issue, but I think the model should be reconsidered in light of the existing corpus structure.
+I do not want finer analysis to replace and discard the higher analysed structure. The analysis itself should be preserved as a recursively refinable annotated hierarchy.
+For example:
+N L090723
+  N paru L051724
+  N yama L050034
+
+paru and yama have their own tags and lemma IDs, while the higher paruyama unit also has its own tag and may have lemma L090723. If further supported analysis is added later, it should extend the hierarchy downward rather than erase the existing higher relationship.
+This resembles structures already present in the corpus, such as:
+N L050402
+  N titi L050641
+  N papa L051720
+
+The higher form (titipapa, paruyama, etc.) is normally derivable from its children and should not need to be redundantly stored or manually maintained. It may be displayed when useful. At still higher levels (NP, PP, IP, CP, etc.), the structure becomes primarily syntactic and a lexical form is generally not meaningful or necessary.
+Therefore, please reconsider whether we need a special W1 whole-analysis container at all. A more natural model may be a single recursively annotated hierarchical tree, where relevant nodes can carry:
+- category/tag;
+- optional lemma;
+- children;
+- other lexical/morphological annotations where applicable;
+while higher nodes increasingly represent syntactic structure. I do not think we need to impose a fixed boundary where “lexical tree” ends and “syntax tree” begins.
+Source/transcription remains a separate entered layer and must be linked/aligned to this analysed tree through persistent identity. Initial transcription segmentation, derived word/header segmentation, and the terminal/analysis hierarchy remain distinct and must not be assumed to coincide.
+An important future use is evidence-based reuse: if the corpus repeatedly attests the same lemma with a similar internal tagged structure, that entire analysis pattern should be usable as evidence for pre-filling a new occurrence, while still allowing exceptions.
+Please inspect the current XML/corpus model and real examples and evaluate whether this unified recursive annotated-tree model fits the existing data better than Alternatives 1 and 2. Explain any cases it cannot represent cleanly or any identity problems it still leaves unresolved.
+Do not implement or change documentation yet. Do not invent missing linguistic semantics. If the repository evidence and the requirements above are insufficient, ask me before deciding.
+
+#### After commit 023a10c (7)
+Please update the current authoring/Editing design document to incorporate the clarification we just reached.
+The target model should use a single recursively annotated hierarchy, not separate syntax and lexical-composition trees.
+For example:
+N L090723
+  N paru L051724
+  N yama L050034
+
+Relevant nodes may carry their own category/tag, optional lemma and other annotations. Higher lexical forms such as paruyama are normally derivable from their children and should not be redundantly authored. Further supported analysis extends the hierarchy downward; higher levels gradually become primarily syntactic (NP, PP, IP, CP, etc.) without requiring a fixed lexical/syntax boundary.
+Composition is therefore a view/interpretation of this same hierarchy, not an independently editable grouping. Nested compounds are represented recursively in the hierarchy. We do not currently need competing analyses of the same occurrence.
+Source passages and entered transcription remain a separate input layer aligned to the annotated hierarchy. Initial transcription segmentation, derived word/header segmentation, and the annotated hierarchy must remain distinct.
+Please revise the existing design consistently, especially any sections that still assume:
+- separate composition groups/graphs;
+- separate lexical and syntax trees;
+- split analysis replacing and discarding higher analysed nodes;
+- syntax terminals as duplicated lexical records.
+Re-evaluate the current prototype assessment and staged implementation plan accordingly.
+Do not implement anything yet. If this clarification creates a conflict with real repository data or leaves an implementation-critical semantic question unresolved, show me the concrete case and ask me rather than choosing a behavior yourself.
+
+#### After commit 023a10c (8)
+Please make the following final corrections to the current Editing design. Do not implement anything yet.
+1. Remove the terminal-tray concept.
+Assisted analysis and tree construction operate on the same recursive annotated hierarchy. After source/transcription entry and analysis, the resulting nodes appear directly in the hierarchy/tree workspace:
+ADJ-STM taka
+VB-ADC  yuku
+P-FOC   ya
+
+These are already the persistent annotated nodes. The user reviews/corrects them, refines them downward where necessary, and builds upward from them. There is no separate step of moving/copying analysed units from an Analysis view or terminal tray into a Tree.
+Analysis and Tree may have different display modes, but they edit the same hierarchy.
+2. Keep ordinary editing text-like; use structural commands when they save substantial work.
+Small/local edits should feel close to normal text editing:
+- Enter to create a new line/node where appropriate;
+- Tab / Shift+Tab for local indent/outdent or reparenting;
+- direct typing/editing of node contents;
+- normal selection, cut/copy/paste where structurally valid;
+- straightforward child creation for downward refinement.
+For example, refining:
+N paruyama L090723
+
+downward into:
+N paruyama L090723
+  N paru L051724
+  N yama L050034
+
+should be possible through direct child/text-like editing without unnecessary dialogs.
+Wrap in Parent is primarily useful when several existing adjacent nodes/subtrees need to be grouped upward, because manually reindenting all descendants would be inefficient:
+ADJ-STM taka
+VB-ADC yuku
+
+→ Wrap in VB-ADC →
+VB-ADC
+  ADJ-STM taka
+  VB-ADC yuku
+
+Do not make menu/command-driven structural editing the primary interaction for every small edit. The editor should maintain structural validity and generated indentation/guides underneath these text-like interactions.
+3. Keep the tree display lightweight but make lemma information easy to understand.
+Lemma IDs, script tags and glosses can be optional overlays. Since an ID such as L007005 is not informative by itself, reuse the existing treditor dictionary infrastructure where possible: hovering should make the lemma/gloss easy to identify, and clicking a lemma should open the existing dictionary popup/entry view.
+4. Update the multipart-refinement decision.
+Writing-mode segmentation does not itself license morphological analysis. However, if independently supported finer analysis has the same boundaries as existing writing-mode parts, reuse those nodes rather than creating a redundant layer:
+VB-NML ipaku L030199a
+  TAG1 ipa Lxxxxx LOG
+  TAG2 ku  Lyyyyy PHON
+
+The same node may carry form, category, lemma and script annotations. No current corpus case requires representation of crossing writing/morphological boundaries, so do not design hypothetical machinery for that now. If a real case is later found, ask me before extending the model.
+Update the design document consistently, including the workflow, UI mockup, editing interaction, open decisions and implementation stages. Remove obsolete references to a terminal tray or unresolved multipart behavior.
+Do not implement anything yet. Do not infer additional workflow or linguistic semantics; if anything required remains unclear, ask me before deciding.
+
+#### After commit 023a10c (9)
+Proceed with the first implementation milestone: Stage 1 + Stage 2 only from the current syntax-tree-authoring-design.md.
+Implement this incrementally inside the existing treditor; do not create a new app or rewrite unrelated existing functionality. Keep the new Editing logic modular and avoid adding more unrelated responsibilities to app.js/app.py.
+Stage 1 — Correct the authoring model
+Replace the obsolete single-Text prototype model with the current target:
+- one .syn.json Document containing multiple ordered Texts;
+- Text identity independent of filename/storage identity;
+- numbered source passages starting from 1;
+- entered spaced transcription and its initial boundaries;
+- one persistent recursive annotated-node hierarchy;
+- explicit input-to-node/alignment relationships;
+- historical/legacy compatibility data where required;
+- deterministic, Git-friendly serialization with stable identities, atomic saves and stale-save protection.
+Preserve useful infrastructure from the existing prototype, but do not retain the obsolete separate occurrence/syntax/composition model merely for implementation convenience.
+Stage 2 — Make the basic Editing workflow genuinely usable
+Implement the actual source-entry workflow:
+1  多迦由久夜
+   taka yuku ya
+
+2  波夜夫佐和気能
+   payabusawake no
+
+The source number and original text must remain visibly associated. Spaces in the transcription provide the initial segmentation, but do not imply final terminal or word boundaries.
+Support:
+- New Text and Open Text within Documents;
+- clear Document/Text selection;
+- line-by-line source + transcription entry;
+- efficient bulk paste/import of paired passages, with parsed numbering/pairing shown for review;
+- editing, adding and removing passages;
+- clear saved/unsaved state;
+- Save and Reopen of complete multi-Text Documents;
+- representative existing corpus Texts opened through a legacy adapter into the same Editing representation as newly authored Texts, without modifying the original corpus.
+Keep the UI focused on this workflow. Do not expose implementation concepts such as technical IDs or obsolete “Segment”/terminal-tray mechanics as primary user concepts.
+Do not implement Stage 3+ yet: no evidence-based lemma/category/subtree pre-fill, advanced morphological analysis, full hierarchy/tree editing, Wrap in Parent, reviewed TXT/XML export, or corpus migration.
+Reuse existing treditor infrastructure where appropriate and run/add focused tests for the revised model, multi-Text persistence, source/transcription entry, legacy opening, and save/reopen behavior.
+The acceptance goal is that I can open Editing, create or open a Text, naturally enter/revise numbered original text and spaced transcription, save it inside the correct Document, reopen it, and understand the workflow without instructions.
+Follow the current design document rather than the obsolete prototype behavior. If implementation requires a semantic/workflow decision that the design or repository does not determine, stop and ask me instead of guessing.
+After implementation, give me a concise summary of what changed, how to test the workflow, and any unresolved issues. Do not migrate the corpus.
 
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.

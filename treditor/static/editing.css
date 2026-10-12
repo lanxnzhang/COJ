@@ -1,6 +1,6 @@
 .editing-page { padding: 20px; overflow: auto; }
 .editing-page fieldset { border: 0; padding: 0; min-width: 0; }
-.editing-toolbar, .editing-lexical-row { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin: 12px 0; }
+.editing-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin: 12px 0; }
 .editing-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
 .editing-page input, .editing-page textarea, .editing-page select { width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; }
 .editing-toolbar select, .editing-toolbar input[type=file] { width: auto; max-width: 240px; }
@@ -11,13 +11,14 @@
 .editing-text-heading .editing-field { max-width: 340px; }
 .editing-welcome { padding: 24px; margin: 20px 0; background: var(--blue-wash); border: 1px solid var(--line); border-radius: 6px; }
 .editing-hint { color: var(--muted); font-size: 13px; }
-.editing-component { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 10px 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-.editing-component .editing-field { max-width: 420px; }
-.editing-component details { width: 100%; }
 .editing-page details { margin: 14px 0; }
 .editing-page summary { cursor: pointer; color: var(--blue-dark); }
 .editing-page details .editing-field { margin-top: 10px; }
 .editing-file-tools { border-top: 1px solid var(--line); padding-top: 14px; }
-.editing-segment { border: 1px solid #cbd5e1; border-radius: 5px; padding: 12px; margin: 12px 0; }
-.editing-segment h3 { margin: 0 0 10px; font-size: 14px; }
+.editing-passage { border: 1px solid #cbd5e1; border-radius: 5px; padding: 12px; margin: 12px 0; }
+.editing-passage h3 { margin: 0 0 10px; font-size: 14px; }
 .editing-status { min-height: 24px; }
+
+.editing-passage > .editing-field { margin: 10px 0; }
+.editing-warnings:not(:empty) { border-left: 3px solid #b7791f; padding: 8px 12px; background: var(--blue-wash); }
+.editing-paste-preview { border: 1px solid var(--line); padding: 10px; margin: 10px 0; }
