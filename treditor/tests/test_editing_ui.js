@@ -2,6 +2,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs"), path = require("node:path"), vm = require("node:vm");
 const editing = require("../static/editing-state.js");
+const analysis = require("../static/editing-analysis.js");
 class Element {
   constructor(tag) { this.tag = tag; this.children = []; this.events = {}; this.attributes = {}; this.value = ""; this.ownText = ""; this.tagName = tag.toUpperCase(); this.style = {}; this.scrollHeight = 28; this.isConnected = true; }
   set textContent(value) { this.ownText = value; this.children = []; }
@@ -25,6 +26,24 @@ imported.text.nodes.root = {...imported.text.nodes.n, category: "IP-MAT", form: 
 imported.text.links.l = {node: "n", passage: p, part: null, start: 0, end: 10, status: "valid", reason: "",
   evidence: {original: "多迦由久夜", transcription: "taka yuku ya", status: "valid", reason: ""}};
 async function apiFetch(url, options = {}) {
+  if (url === "/api/authoring/analyse") {
+    const data = JSON.parse(options.body), text = data.document.texts[data.text_key];
+    const pattern = {category: "N", lemma: "L090723", form: null, annotations: {}, children: [
+      {category: "N", lemma: "L051724", form: "paru", children: [], annotations: {}},
+      {category: "N", lemma: "L050034", form: "yama", children: [], annotations: {}}]};
+    const candidate = {id: "paruyama", pattern, eligible: true, default: true, count: 8, texts: 8, support: 1,
+      domains: {ordinary: 8, "EN/SM": 0}, evidence: [{text_id: "MYS.8.1421", source: "xml/trees/MYS_08.xml", ordinal: 0, address: "0", domain: "ordinary", revision: "evidence-revision"}]};
+    const units = text.passage_order.flatMap(passage => {
+      let offset = 0;
+      return text.passages[passage].units.map(u => {
+        const form = text.passages[passage].transcription.slice(u.start, u.end), start = offset; offset += form.length;
+        return {form, passage, start, end: offset};
+      });
+    });
+    return {revision: "evidence-revision", domain: "ordinary", units,
+      spans: units.map((u, i) => ({first: i, last: i + 1, form: u.form, candidates: u.form === "paruyama" ? [candidate] : []})),
+      nodes: {}, scripts: ["LOG", "PHON", "NLOG"]};
+  }
   if (url === "/api/authoring/files") return [...disk.keys()];
   if (url === "/api/authoring/corpus") return [{key: "trees:KK", name: "KK", texts: [{key: "0", text_id: "KK.67"}]}, {key: "trees:MYS_01", name: "MYS_01", texts: [{key: "0", text_id: "MYS.1.1"}]}, {key: "trees:MYS_02", name: "MYS_02", texts: [{key: "0", text_id: "MYS.2.1"}]}];
   if (url.startsWith("/api/authoring/corpus/")) return {document: clone(imported.document)};
@@ -42,7 +61,7 @@ async function session(options = {}) {
   const detail = new Element("div"), sidebar = new Element("div"), events = {};
   const context = vm.createContext({document: {createElement: tag => new Element(tag), querySelector: selector => selector === ".detail-pane" ? detail : sidebar},
     window: {addEventListener: (name, action) => { events[name] = action; }, confirm: options.confirm || (() => true), prompt: () => "copy"},
-    requestAnimationFrame: action => action(), COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
+    requestAnimationFrame: action => action(), COJAnalysis: analysis, COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../static/editing.js"), "utf8"), context);
   const page = detail.children[0];
   const root = new Element("div"); root.append(page, sidebar);
@@ -187,5 +206,31 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.equal(ui.input("Text ID").value, "attached-direct"); assert.equal(ui.input("Text Input").value, "原文\nnew input");
   assert.deepEqual(disk.get("Bundle.syn.json").document, beforeCopy);
   assert.deepEqual(disk.get("Bundle-copy.syn.json").document.text_order, beforeCopy.text_order);
-  console.log("Immediate session drafts, manual placement/saves, master-detail browsing, independent scratch, reviewed Source replacement and stale merge preservation passed.");
+  // Stage 3 uses Source explicitly and retains complete accepted data through Save/open.
+  disk.clear(); ui = await session(); await ui.button("New Text").dispatch("click");
+  await type(ui.input("Text Input"), "春山\nparuyama");
+  await ui.button("Preview").dispatch("click"); await ui.button("Add to Source").dispatch("click");
+  assert.equal(disk.size, 0); await ui.button("Analyse").dispatch("click");
+  assert.ok(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.value === "L090723").length);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
+  await ui.button("Accept this candidate").dispatch("click");
+  const lemmaInput = all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.value === "L051724")[0];
+  await type(lemmaInput, "L999"); await ui.button("Undo analysis edit").dispatch("click");
+  assert.ok(all(ui.page, n => n.value === "L051724").length);
+  await ui.button("Apply script batch").dispatch("click");
+  await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Stage3-check"); await ui.button("Confirm Save").dispatch("click");
+  const savedAnalysis = clone(disk.get("Stage3-check.syn.json").document), savedText = Object.values(savedAnalysis.texts)[0];
+  assert.equal(Object.keys(savedText.nodes).length, 3); assert.equal(savedText.nodes[savedText.roots[0]].form, null);
+  assert.equal(savedText.nodes[savedText.roots[0]].annotations.suggestion.status, "accepted");
+  assert.ok(Object.values(savedText.nodes).filter(n => !n.children.length).every(n => n.script === "PHON"));
+  ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Stage3-check (saved)").dispatch("click");
+  await ui.label("Open Untitled Text 1 in Stage3-check, 1").dispatch("click");
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
+  assert.ok(ui.button("Undo analysis edit").disabled); // History is never saved.
+  await ui.button("Analyse").dispatch("click");
+  await type(ui.input("Transcription 1"), "paruyamaX");
+  assert.ok(all(ui.page, n => n.textContent.includes("Analyse again to refresh candidates")).length);
+  assert.ok(ui.button("Accept this candidate").disabled);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
+  console.log("Stage 1–3 UI flows, explicit Analyse/correction, script batches, saved identities and stale-source preservation passed.");
 })().catch(error => { console.error(error); process.exitCode = 1; });

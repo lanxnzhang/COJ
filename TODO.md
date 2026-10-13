@@ -2174,6 +2174,36 @@ Update any earlier Stage 3 proposals that conflict with these findings, includin
 Then give me a concise assessment of whether any implementation-critical semantic or workflow decisions still remain unresolved before Stage 3 can begin. Distinguish genuine blockers from questions that can safely remain deferred to later stages.
 Do not implement anything yet. Do not guess unresolved behavior. If a decision is genuinely required and neither the repository nor these requirements determines it, ask me.
 
+### After commit 43d15e6
+Proceed with Stage 3: assisted recursive analysis and refinement, following the current syntax-tree-authoring-design.md and all decisions recorded there.
+Implement Stage 3 incrementally inside the existing Editing feature. Do not begin Stage 4 tree construction or Stage 5 export work.
+The main workflow should be:
+Source
+  → Analyse
+  → evidence-based pre-fill / candidates
+  → user reviews and corrects exceptions
+  → optional downward refinement
+  → batch script annotation
+
+Implement:
+- an attestation/evidence index using corpus and dictionary evidence for surface forms, lemma/category combinations and recursive tagged subtree patterns;
+- lemma and category suggestions with provenance/evidence available for inspection;
+- the configurable initial dominant-evidence gate of ≥95% across at least 3 distinct Texts;
+- dominant candidates as editable defaults while keeping all attested alternatives directly accessible;
+- the established EN/SM evidence-domain policy;
+- supported recursive subtree suggestions/refinement, including compound structures and eligible MK structures according to the documented repository rules;
+- fresh persistent identities when a suggested subtree is instantiated for a new occurrence;
+- efficient inline correction of lemma/category/candidate structure without repeated confirmation dialogs;
+- dictionary/gloss access using the existing treditor infrastructure;
+- scope-based batch script annotation over applicable terminals/writing parts, filling empty values by default and preserving existing non-empty script annotations unless explicitly overridden;
+- clear handling of incomplete/unsupported analysis as a valid draft.
+Analyse must remain an explicit user action. Source edits must not trigger re-analysis. Existing imported/authored hierarchy must never be silently overwritten; proposed changes to existing analysis require review/acceptance.
+Automatic construction should remain within the Stage 3 word-level/eligible lexical analysis scope defined in the design. Do not start ordinary phrase-level or higher syntax construction that belongs to Stage 4.
+Do not implement general whole-refinement withdrawal or automatic parent reconstruction; that behavior is explicitly deferred. Ordinary session undo/redo is sufficient for recent operations.
+Preserve the Stage 1+2 workflow and persistence behavior. Do not migrate the corpus, modify dictionary entries automatically, or write back to TXT/XML.
+Add focused tests using the established cases such as taka, yuku, paruyama, titipapa, takayuku, eligible MK variants and multipart ipaku. Verify that suggestions never mutate corpus/dictionary source data and that save/reopen preserves accepted analysis and identities.
+After implementation, give me a concise summary of what changed and a practical workflow for testing Stage 3 in the UI.
+If implementation requires any linguistic/workflow behavior not determined by the current design or repository evidence, stop and ask me before deciding. Do not guess or silently introduce a new annotation rule.
 
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.

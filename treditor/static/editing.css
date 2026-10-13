@@ -33,6 +33,16 @@
 .editing-warnings:not(:empty) { border-left: 3px solid #b7791f; padding: 8px 12px; margin-top: 10px; background: var(--blue-wash); font-size: 12px; }
 .editing-analysis-tree { overflow: auto; max-width: 100%; padding: 8px 0; font-size: 13px; }
 .editing-analysis-label { position: relative; padding: 3px 0; white-space: nowrap; }
+.editing-analysis-label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; white-space: normal; }
+.editing-analysis-label > span { font-family: var(--font-mono); }
+.editing-analysis-label .editing-field { display: flex; gap: 5px; align-items: center; margin: 0; }
+.editing-analysis-label .editing-field input { width: 115px; padding: 3px 5px; }
+.editing-candidate { padding: 8px 12px; margin: 6px 0; border: 1px solid var(--line); border-radius: 4px; }
+.editing-candidate p { margin: 4px 0; }
+.editing-candidate pre { white-space: pre-wrap; margin: 4px 0; font: 12px/1.5 var(--font-mono); }
+.editing-candidate button { margin-right: 6px; }
+.editing-script-preview { max-height: 180px; overflow: auto; margin: 8px 0; font-size: 12px; }
+.editing-page select { padding: 5px; margin: 4px 8px 4px 0; max-width: 100%; }
 .editing-analysis-children { border-left: 1px solid #b4c3d8; margin-left: 7px; padding-left: 14px; }
 .editing-analysis-children > .editing-analysis-node > .editing-analysis-label::before { content: ""; position: absolute; left: -14px; top: 50%; width: 10px; border-top: 1px solid #b4c3d8; }
 #editing-sidebar-controls { display: flex; flex: 1; flex-direction: column; min-height: 0; }

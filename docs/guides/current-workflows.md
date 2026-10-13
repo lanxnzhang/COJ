@@ -141,17 +141,48 @@ below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
    an already open Document uses its retained session draft. Corpus opening
    creates a draft copy without modifying the original TXT/XML.
 
-**Preserved analysis (read only)** displays retained nodes with generated tree
-indentation/connector guides and its historical header. The workspace width and
-scrollbar gutter remain stable when sections expand/collapse. No analysis or
-hierarchy editing has been added in this milestone.
+**Analysis** now provides explicit Stage 3 assistance. Enter paired Source and
+press **Analyse**; scratch Text Input is not analysed until added to Source.
+For a new unanalysed Text, eligible dominant candidates are pre-filled and
+unsupported/non-dominant units remain editable incomplete drafts. Inspect
+**Candidates** for complete recursive patterns, counts, glosses, source addresses
+and revisions, then select **Accept this candidate** to switch directly.
+**Source span candidates** offers supported lexical combinations across initial
+space units; accepting one changes that span in the same hierarchy. Existing
+imported/authored hierarchy remains unchanged by Analyse until a candidate is
+explicitly accepted. Category and lemma fields support inline correction;
+**Dictionary** opens the existing quick-reference popup.
+
+**Suggestion settings** defaults to 95% support and three distinct Text records.
+Changing settings takes effect on the next Analyse. Ordinary and unnamed Texts
+exclude EN/SM evidence; explicitly identified EN/SM Text IDs may use both domains.
+MK internal PP/IP templates are eligible, with structural alternatives preserved.
+Ordinary phrase/higher syntax construction is not part of Stage 3.
+
+For supported **downward refinement**, accept a recursive candidate on its
+current node: the higher identity is retained and children get fresh identities.
+Writing parts can become matching finer nodes only with independently attested
+analysis. Unknown annotation transfers, unmatched alignments or crossing existing
+writing boundaries are rejected with the current analysis preserved; no script
+redistribution is guessed. General whole-refinement withdrawal is deferred.
+**Undo analysis edit / Redo analysis edit** are session-only and preserve generated
+identities. Source edits clear this analysis history to prevent undo from
+unexpectedly reverting subsequently edited Source.
+
+**Batch script annotation** supports the Text, selected subtrees/writing parts,
+or a Source line with demonstrable coverage. Check node/part selection boxes,
+choose a scope and script, inspect the target preview, then apply. Default batches
+fill empty applicable values and preserve existing values. **Explicitly override
+existing values** authorizes replacement. Multipart parent fields are not targets;
+traces/special malformed units are excluded. Unresolved/cross-line scope coverage
+is excluded and reported. Script changes have session undo/redo.
 
 Changing imported source content never rewrites/deletes its hierarchy.
 Whitespace-only transcription changes with unchanged original text retain
 supported alignment. Uncertain content changes mark that Source row's links
 unresolved and preserve original evidence. Removal/replacement retains orphaned
-analysis; unresolved drafts can still be saved. Re-analysis and TXT/XML
-synchronization remain explicit later operations, not effects of typing or Save.
+analysis; unresolved drafts can still be saved. Re-analysis requires an explicit Analyse action and reviewed candidate acceptance.
+TXT/XML synchronization remains deferred; typing and Save trigger neither operation.
 
 Storage names use letters, numbers, dots, underscores or hyphens; reserved
 Windows device names are rejected. Text IDs remain scholarly metadata, not
@@ -163,8 +194,10 @@ The version-2 schema, deterministic UTF-8 codec, atomic file store and 32 MB
 limit are unchanged. Saves use a local server lock and disk fingerprints;
 simultaneous independent server processes are not a supported collaboration
 mode. Session navigation/scratch input are client-only state in
-`editing-state.js`; `editing.js` controls the UI. Stage 3/4 analysis/tree editing,
-reviewed TXT/XML export and corpus migration remain deferred.
+`editing-state.js`; `editing-analysis.js` supplies Stage 3 commands and transient
+undo/redo; `editing.js` controls the UI. Save persists accepted annotations,
+identities and provenance in the existing version-2 Document. Stage 4 tree
+construction, reviewed TXT/XML export and corpus migration remain deferred.
 
 ## Importing primary authoring TXT
 

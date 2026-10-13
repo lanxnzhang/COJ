@@ -58,15 +58,17 @@
   class State {
     constructor(makeId = () => root.crypto.randomUUID()) { this.makeId = makeId; this.reset(); }
     reset() {
+      root.COJAnalysis?.clearHistory(this);
       this.document = newDocument(this.makeId); this.activeText = null; this.filename = null;
       this.savedFilename = null; this.revision = null; this.dirty = false; this.removal = null;
     }
     open(document, filename = null, revision = null) {
+      root.COJAnalysis?.clearHistory(this);
       this.document = clone(document); this.filename = filename; this.savedFilename = revision ? filename : null;
       this.revision = revision; this.activeText = document.text_order[0] || null; this.dirty = !revision; this.removal = null;
     }
     get text() { return this.document.texts[this.activeText] || null; }
-    markDirty() { this.dirty = true; this.removal = null; }
+    markDirty() { this.dirty = true; this.removal = null; root.COJAnalysis?.clearHistory(this); }
     addText(textId = "") {
       const id = this.makeId(); this.document.texts[id] = newText(textId);
       this.document.text_order.push(id); this.activeText = id; this.markDirty(); return id;
@@ -85,12 +87,14 @@
     }
     removePassage(id) {
       if (!this.text?.passages[id]) throw new Error("Passage not found.");
+      root.COJAnalysis?.clearHistory(this);
       this.removal = {document: clone(this.document), activeText: this.activeText};
       delete this.text.passages[id]; this.text.passage_order = this.text.passage_order.filter(key => key !== id);
       reconcile(this.text); this.dirty = true;
     }
     undoRemoval() {
       if (!this.removal) return;
+      root.COJAnalysis?.clearHistory(this);
       this.document = this.removal.document; this.activeText = this.removal.activeText;
       this.removal = null; this.dirty = true;
     }

@@ -2,25 +2,26 @@
 
 Revised 13 October 2026 following **After commit 023a10c (2)–(9)**,
 the **After commit 7d5fb6f / 8c3dfc5** Stage 2 usability corrections and
-**After commit d6edd91 (2)–(3)** Stage 3 review and confirmed decisions. This
+**After commit d6edd91 (2)–(3)** Stage 3 review and confirmed decisions, followed
+by **After commit 43d15e6** Stage 3 implementation. This
 incorporates the author's header, synchronization, unified-hierarchy and
 permissive source-edit clarifications. The Stage 1 + Stage 2 milestone now implements version-2
 multi-Text Documents, paired source entry, read-only corpus opening and
-revision-checked `.syn.json` saves inside the existing Editing tab. Analysis,
-full hierarchy editing and reviewed TXT/XML export remain later stages. No
+revision-checked `.syn.json` saves inside the existing Editing tab. Stage 3 assistance is implemented as described below;
+full hierarchy construction and reviewed TXT/XML export remain later stages. No
 corpus migration has been performed. See [current milestone](#current-stage-1--stage-2-milestone)
 for the implemented behavior and limits.
 The earlier separate syntax/composition model and split/replacement alternatives
 are superseded: the target is one recursively annotated hierarchy, with
 composition as a view of that hierarchy and refinement preserving higher nodes.
-Stage 3 remains unimplemented; the accepted policies and repository findings
-below must not be read as an implementation report.
+After commit 43d15e6 adds bounded Stage 3 assistance. Accepted policy and corpus
+findings below are followed by the implemented behavior and remaining limits.
 
 The [A/B comparison](syn-prototype-comparison.md) and its eight static files
 remain historical alternatives, not the settled authoring format. The
 [current workflow guide](../../guides/current-workflows.md#source-first-drafts-in-editing)
-describes the implemented Stage 1 + Stage 2 workflow; later annotation stages
-below remain the target design.
+describes the implemented Stage 1–3 workflow; general structural editing and
+export below remain the target design.
 
 ## Authority and repository evidence
 
@@ -202,15 +203,16 @@ The existing `treditor` application is the proposed primary authoring interface.
 Users normally work through its structured UI. VS Code initially supports file
 storage, inspection and Git history; a full editing extension is deferred.
 Paired entry and the revised container/hierarchy schema are implemented in
-Stage 1 + Stage 2; assisted analysis and editable hierarchy views remain deferred.
+Stage 1 + Stage 2; bounded Stage 3 assisted analysis and inline annotation
+correction are implemented, while general structural editing remains deferred.
 
 ## Stage 3 decisions and verified feasibility
 
 This section incorporates **After commit d6edd91 (2)–(3)** and the author
 responses to the repository review. The threshold, domain policy, MK eligibility
-and scope-based script interaction are accepted decisions. This revision updates
-the design only; no Stage 3 code, corpus correction or new runtime validation is
-authorized. Remaining questions are identified by the operations they affect.
+and scope-based script interaction are accepted decisions. That review updated
+the design only; the subsequent After commit 43d15e6 implementation is reported
+separately below. Remaining questions are identified by their affected operations.
 
 ### Evidence domains and editable defaults — accepted
 
@@ -1304,6 +1306,39 @@ files exist in the current `data/authoring/` inventory. This milestone therefore
 rejects version-1 opening with an explicit conversion-required message; a
 conversion UI is deferred until an actual draft can be reviewed. The active
 version-2 schema contains none of the obsolete occurrence/syntax/group tables.
+
+### Current Stage 3 implementation
+
+The existing Editing tab now has explicit Analyse, a read-only corpus/dictionary
+attestation index, configurable dominant defaults, direct candidate selection,
+inline lemma/category correction, dictionary access, supported recursive
+refinement, and scope-based script batches. Index entries retain source revisions,
+block ordinals, node addresses and permitted-domain evidence counts. Cache
+invalidation includes both corpus and dictionary files. Dictionary associations
+alone do not create categories, morphology or corpus votes.
+
+New Source analysis may pre-fill eligible dominant spans or retain unclassified
+initial units as incomplete drafts. Existing analysis receives proposals only;
+acceptance is an explicit candidate action. Refined nodes retain whole identity;
+new descendants receive fresh identities. Known alignment links are retained or
+retargeted only with matching material. Coincident writing parts can become finer
+nodes with retained script evidence; crossing script boundaries, unknown annotation
+transfers and unsafe link retargeting preserve the current model and report the
+unsupported operation. General whole-refinement withdrawal is absent.
+
+Script scopes cover the Text, selected subtrees/parts, and Source lines with
+provable coverage. Default assignment preserves all nonempty values; explicit
+override permits replacement. Unresolved/cross-line coverage is excluded from
+line batches. Script values live on applicable terminal/part units. Session
+undo/redo is not serialized, and Save/reopen uses existing version-2 persistence.
+Source edits invalidate suggestions and clear analysis undo history without
+changing annotated nodes. Full tree construction, reviewed export, automatic
+synchronization, dictionary mutation and corpus migration remain outside Stage 3.
+
+See the [current workflow guide](../../guides/current-workflows.md#source-first-drafts-in-editing)
+for the UI sequence. Acceptance tests cover attested lexical/MK alternatives,
+domain exclusion, no evidence-source mutation, refinement identities, scripts,
+undo/redo and draft persistence.
 
 ### Staged delivery and acceptance
 
