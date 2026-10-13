@@ -417,8 +417,8 @@
       </VB-ADC>
     </IP-MAT>
   </block>
-  <block header="midorikwo no wakigwogami ni pa taratisi papa ni mudakaye pimutuki no papukwogami ni pa yupukataginu pitura ni nupiki unatuki no warapagami ni pa yupipata no swodetukegoromo kisi ware wo nipopiyoru kwora ga yoti ni pa minanowata kagurwosi kami wo makusi moti koko ni kakitare toritukane agete mo maki mi tokimidari warapa ni nasi mi sanitukapu iro natukasiki murasaki no opoaya no kinu suminoye no toposatwowonwo no mapari moti nipoposi kinu ni komanisiki pimo ni nupituke 刺部重部 namikasanekite utiswoyasi womi no kwora arikinuno takara no kwora ga ututape pa pete oru nunwo pizarasi no asatedukuri wo 信巾裳成 者之寸丹取爲支 屋所經 inakiwotomye ga tumadopu to ware ni zo okosesi wotikata no putaayasitagutu tobutorino asukawotokwo ga nagame imi nupisi kurwogutu sasipakite nipa ni tatazumye makari na tati to sapuru wotomye ga ponokikite ware ni okosesi mipanada no kinu no obi wo pikiobi nasu karaobi ni torase watatumi no tono no iraka ni tobikakeru sugaru no gotoki kosiboso ni torikazarapi maswokagami torinamekakete ono ga kapo kapyerapi mitutu paru sarite nwopye wo megureba omosirwomi ware wo omope ka sanwotutori kinakikakerapu aki sarite yamapye wo yukeba natukasi to ware wo omope ka amakumo mo yukitanabikinu kapyeritati miti wo kureba utipisasu miyawomina sasutakeno toneriwotokwo mo sinoburapi kapyerapi mitutu ta ga kwo so to ya omopayete aru 如是 所爲故爲 inisipye sasakisi ware ya pasikiyasi kyepu ya mo kwora ni isa ni to ya omopayete aru 如是 所爲故爲 inisipye no sakasiki pito mo noti no yo no kagami ni semu to oipito wo okurisi kuruma motikapyerikyeri motikapyerikyeri" id="MYS.16.3791">
-    <roundtrip-data format="coj-txt" source-id="MYS.16.3791">
+  <block header="midorikwo no wakigwogami ni pa taratisi papa ni mudakaye pimutuki no papukwogami ni pa yupukataginu pitura ni nupiki unatuki no warapagami ni pa yupipata no swodetukegoromo kisi ware wo nipopiyoru kwora ga yoti ni pa minanowata kagurwosi kami wo makusi moti koko ni kakitare toritukane agete mo maki mi tokimidari warapa ni nasi mi sanitukapu iro natukasiki murasaki no opoaya no kinu suminoye no toposatwowonwo no mapari moti nipoposi kinu ni komanisiki pimo ni nupituke 刺部重部 namikasanekite utiswoyasi womi no kwora arikinuno takara no kwora ga ututape pa pete oru nunwo pizarasi no asatedukuri wo 信巾裳成 者之寸丹取爲支 屋所經 inakiwotomye ga tumadopu to ware ni zo okosesi wotikata no putaayasitagutu tobutorino asukawotokwo ga nagame imi nupisi kurwogutu sasipakite nipa ni tatazumye makari na tati to sapuru wotomye ga ponokikite ware ni okosesi mipanada no kinu no obi wo pikiobi nasu karaobi ni torase watatumi no tono no iraka ni tobikakeru sugaru no gotoki kosiboso ni torikazarapi maswokagami torinamekakete ono ga kapo kapyerapi mitutu paru sarite nwopye wo megureba omosirwomi ware wo omope ka sanwotutori kinakikakerapu aki sarite yamapye wo yukeba natukasi to ware wo omope ka amakumo mo yukitanabikinu kapyeritati miti wo kureba utipisasu miyawomina sasutakeno toneriwotokwo mo sinoburapi kapyerapi mitutu ta ga kwo so to ya omopayete aru 如是 所爲故爲 inisipye sasakisi ware ya pasikiyasi kyepu ya mo kwora ni isa ni to ya omopayete aru 如是 所爲故爲 inisipye no sakasiki pito mo noti no yo no kagami ni semu to oipito wo okurisi kuruma motikapyerikyeri motikapyerikyeri">
+    <roundtrip-data format="coj-txt">
       <comment position="0" raw="multi-sentence,IP-MAT,0@緑子之,*" />
       <comment position="2" raw="multi-sentence,IP-MAT,PP,IP-ADV,PP,NP,1@若子蚊見庭,*" />
       <comment position="8" raw="multi-sentence,IP-MAT,PP,IP-ADV,2@垂乳為,*" />
@@ -462,79 +462,6 @@
       <comment position="136" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,40@経而織布,*" />
       <comment position="139" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,41@日曝之,*" />
       <comment position="142" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,NP,42@朝手作尾,*" />
-      <comment position="146" raw="multi-sentence,IP-MAT;@2,IP-ADV,43@信巾裳成,*" />
-      <comment position="147" raw="multi-sentence,IP-MAT;@2,IP-ADV,44@者之寸丹取為支,*" />
-      <comment position="148" raw="multi-sentence,IP-MAT;@2,IP-ADV,45@屋所経,*" />
-      <comment position="149" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,PP-SBJ,NP,46@稲寸丁女蚊,*" />
-      <comment position="152" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,47@妻問迹,*" />
-      <comment position="155" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,48@我丹所来為,*" />
-      <comment position="159" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,49@彼方之,*" />
-      <comment position="161" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,NP,50@二綾裏沓,*" />
-      <comment position="165" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,51@飛鳥,*" />
-      <comment position="168" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,PP-SBJ,NP,52@飛鳥壮蚊,*" />
-      <comment position="171" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,53@霖禁,*" />
-      <comment position="174" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,54@縫為黒沓,*" />
-      <comment position="178" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,55@刺佩而,*" />
-      <comment position="180" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,56@庭立住,*" />
-      <comment position="183" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,57@退莫立,*" />
-      <comment position="187" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,58@禁尾迹女蚊,*" />
-      <comment position="190" raw="multi-sentence,IP-MAT;@2,IP-ADV,59@髣髴聞而,*" />
-      <comment position="192" raw="multi-sentence,IP-MAT;@2,IP-ADV,60@我丹所来為,*" />
-      <comment position="196" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,61@水縹,*" />
-      <comment position="198" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,62@絹帶尾,*" />
-      <comment position="202" raw="multi-sentence,IP-MAT;@2,IP-ADV,63@引帶成,*" />
-      <comment position="205" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,NP-PRD,64@韓帶丹取為,*" />
-      <comment position="210" raw="multi-sentence,IP-MAT;@2,65@海神之,*" />
-      <comment position="212" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,IP-REL,PP,NP,66@殿蓋丹,*" />
-      <comment position="216" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,IP-REL,67@飛翔,*" />
-      <comment position="218" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,68@為軽如来,*" />
-      <comment position="222" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,69@腰細丹,*" />
-      <comment position="225" raw="multi-sentence,IP-MAT;@2,IP-ADV,70@取餝氷,*" />
-      <comment position="228" raw="multi-sentence,IP-MAT;@2,71@真十鏡,*" />
-      <comment position="230" raw="multi-sentence,IP-MAT;@2,IP-ADV,72@取雙懸而,*" />
-      <comment position="233" raw="multi-sentence,IP-MAT;@2,73@己蚊果,*" />
-      <comment position="236" raw="multi-sentence,IP-MAT;@2,74@還氷見乍,*" />
-      <comment position="238" raw="multi-sentence,IP-MAT,75@春避而,*" />
-      <comment position="240" raw="multi-sentence,IP-MAT,IP-ADV,76@野邊尾廻者,*" />
-      <comment position="244" raw="multi-sentence,IP-MAT,77@面白見,*" />
-      <comment position="246" raw="multi-sentence,IP-MAT,IP-ADV,78@我矣思経蚊,*" />
-      <comment position="251" raw="multi-sentence,IP-MAT,79@狭野津鳥,*" />
-      <comment position="255" raw="multi-sentence,IP-MAT,80@来鳴翔経,*" />
-      <comment position="259" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,NP-SBJ,81@秋僻而,*" />
-      <comment position="261" raw="multi-sentence,IP-MAT;@2,IP-ADV,82@山邊尾徃者,*" />
-      <comment position="265" raw="multi-sentence,IP-MAT;@2,83@名津蚊為迹,*" />
-      <comment position="266" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ARG,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="267" raw="multi-sentence,IP-MAT;@2,IP-ADV,84@我矣思経蚊,*" />
-      <comment position="272" raw="multi-sentence,IP-MAT;@2,85@天雲裳,*" />
-      <comment position="275" raw="multi-sentence,IP-MAT;@2,86@行田菜引,*" />
-      <comment position="278" raw="multi-sentence,IP-MAT;@3,IP-ADV,87@還立,*" />
-      <comment position="280" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-ADV-PTH,NP,N,88@路尾所来者,*" />
-      <comment position="283" raw="multi-sentence,IP-MAT;@3,89@打氷刺,*" />
-      <comment position="285" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,CONJP,NP,90@宮尾見名,*" />
-      <comment position="287" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,91@刺竹之,*" />
-      <comment position="289" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,NP,92@舎人壮裳,*" />
-      <comment position="292" raw="multi-sentence,IP-MAT;@3,IP-ADV,93@忍経等氷,*" />
-      <comment position="294" raw="multi-sentence,IP-MAT;@3,IP-ADV,94@還等氷見乍,*" />
-      <comment position="297" raw="multi-sentence,IP-MAT;@3,95@誰子其迹哉,*" />
-      <comment position="303" raw="multi-sentence,IP-MAT;@3,96@所思而在,*" />
-      <comment position="306" raw="multi-sentence,IP-MAT,97@如是,*" />
-      <comment position="307" raw="multi-sentence,IP-MAT,98@所為故為,*" />
-      <comment position="308" raw="multi-sentence,IP-MAT,99@古部,*" />
-      <comment position="309" raw="multi-sentence,IP-MAT,PP-SBJ,NP,IP-REL,100@狭々寸為我哉,*" />
-      <comment position="313" raw="multi-sentence,IP-MAT,101@端寸八為,*" />
-      <comment position="314" raw="multi-sentence,IP-MAT,102@今日八方子等丹,*" />
-      <comment position="320" raw="multi-sentence,IP-MAT,103@五十狭邇迹哉,*" />
-      <comment position="324" raw="multi-sentence,IP-MAT,104@所思而在,*" />
-      <comment position="327" raw="multi-sentence,IP-MAT;@4,105@如是,*" />
-      <comment position="328" raw="multi-sentence,IP-MAT;@4,106@所為故為,*" />
-      <comment position="329" raw="multi-sentence,IP-MAT;@4,107@古部之,*" />
-      <comment position="331" raw="multi-sentence,IP-MAT;@4,PP-SBJ,NP,108@賢人藻,*" />
-      <comment position="335" raw="multi-sentence,IP-MAT;@4,109@後之世之,*" />
-      <comment position="339" raw="multi-sentence,IP-MAT;@4,IP-ADV,IP-ARG,NP-PRD,110@堅監将為迹,*" />
-      <comment position="344" raw="multi-sentence,IP-MAT;@4,111@老人矣,*" />
-      <comment position="347" raw="multi-sentence,IP-MAT;@4,NP-OB1,IP-REL,112@送為車,*" />
-      <comment position="350" raw="multi-sentence,IP-MAT;@4,113@持還来,*" />
-      <comment position="354" raw="multi-sentence,IP-MAT,114@持還来,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -708,294 +635,6 @@
       <sentence n="43">
         <kanji>朝手作尾</kanji>
         <transcription>asa te dukuri wo</transcription>
-      </sentence>
-      <sentence n="44">
-        <kanji>信巾裳成</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="45">
-        <kanji>者之寸丹取為支</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="46">
-        <kanji>屋所経</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="47">
-        <kanji>稲寸丁女蚊</kanji>
-        <transcription>inaki wotomye ga</transcription>
-      </sentence>
-      <sentence n="48">
-        <kanji>妻問迹</kanji>
-        <transcription>tuma dopu to</transcription>
-      </sentence>
-      <sentence n="49">
-        <kanji>我丹所来為</kanji>
-        <transcription>ware ni okose si</transcription>
-      </sentence>
-      <sentence n="50">
-        <kanji>彼方之</kanji>
-        <transcription>wotikata no</transcription>
-      </sentence>
-      <sentence n="51">
-        <kanji>二綾裏沓</kanji>
-        <transcription>puta aya sita gutu</transcription>
-      </sentence>
-      <sentence n="52">
-        <kanji>飛鳥</kanji>
-        <transcription>tobu tori no</transcription>
-      </sentence>
-      <sentence n="53">
-        <kanji>飛鳥壮蚊</kanji>
-        <transcription>asuka wotokwo ga</transcription>
-      </sentence>
-      <sentence n="54">
-        <kanji>霖禁</kanji>
-        <transcription>nag ame imi</transcription>
-      </sentence>
-      <sentence n="55">
-        <kanji>縫為黒沓</kanji>
-        <transcription>nupi si kurwo gutu</transcription>
-      </sentence>
-      <sentence n="56">
-        <kanji>刺佩而</kanji>
-        <transcription>sasi pakite</transcription>
-      </sentence>
-      <sentence n="57">
-        <kanji>庭立住</kanji>
-        <transcription>nipa ni tatazume</transcription>
-      </sentence>
-      <sentence n="58">
-        <kanji>退莫立</kanji>
-        <transcription>makari na tati to</transcription>
-      </sentence>
-      <sentence n="59">
-        <kanji>禁尾迹女蚊</kanji>
-        <transcription>sapuru wotomye ga</transcription>
-      </sentence>
-      <sentence n="60">
-        <kanji>髣髴聞而</kanji>
-        <transcription>pono kikite</transcription>
-      </sentence>
-      <sentence n="61">
-        <kanji>我丹所来為</kanji>
-        <transcription>ware ni okose si</transcription>
-      </sentence>
-      <sentence n="62">
-        <kanji>水縹</kanji>
-        <transcription>mipanada no</transcription>
-      </sentence>
-      <sentence n="63">
-        <kanji>絹帶尾</kanji>
-        <transcription>kinu no obi wo</transcription>
-      </sentence>
-      <sentence n="64">
-        <kanji>引帶成</kanji>
-        <transcription>piki obi nasu</transcription>
-      </sentence>
-      <sentence n="65">
-        <kanji>韓帶丹取為</kanji>
-        <transcription>kara obi ni tora se</transcription>
-      </sentence>
-      <sentence n="66">
-        <kanji>海神之</kanji>
-        <transcription>watatumi no</transcription>
-      </sentence>
-      <sentence n="67">
-        <kanji>殿蓋丹</kanji>
-        <transcription>tono no iraka ni</transcription>
-      </sentence>
-      <sentence n="68">
-        <kanji>飛翔</kanji>
-        <transcription>tobi kakeru</transcription>
-      </sentence>
-      <sentence n="69">
-        <kanji>為軽如来</kanji>
-        <transcription>sugaru no goto ki</transcription>
-      </sentence>
-      <sentence n="70">
-        <kanji>腰細丹</kanji>
-        <transcription>kosi boso ni</transcription>
-      </sentence>
-      <sentence n="71">
-        <kanji>取餝氷</kanji>
-        <transcription>tori kazara pi</transcription>
-      </sentence>
-      <sentence n="72">
-        <kanji>真十鏡</kanji>
-        <transcription>maswo kagami</transcription>
-      </sentence>
-      <sentence n="73">
-        <kanji>取雙懸而</kanji>
-        <transcription>tori name kakete</transcription>
-      </sentence>
-      <sentence n="74">
-        <kanji>己蚊果</kanji>
-        <transcription>ono ga kapo</transcription>
-      </sentence>
-      <sentence n="75">
-        <kanji>還氷見乍</kanji>
-        <transcription>kapyerapi mitutu</transcription>
-      </sentence>
-      <sentence n="76">
-        <kanji>春避而</kanji>
-        <transcription>paru sarite</transcription>
-      </sentence>
-      <sentence n="77">
-        <kanji>野邊尾廻者</kanji>
-        <transcription>nwo pye wo megureba</transcription>
-      </sentence>
-      <sentence n="78">
-        <kanji>面白見</kanji>
-        <transcription>omosirwo mi</transcription>
-      </sentence>
-      <sentence n="79">
-        <kanji>我矣思経蚊</kanji>
-        <transcription>ware wo omo pe ka</transcription>
-      </sentence>
-      <sentence n="80">
-        <kanji>狭野津鳥</kanji>
-        <transcription>sa nwo tu tori</transcription>
-      </sentence>
-      <sentence n="81">
-        <kanji>来鳴翔経</kanji>
-        <transcription>ki naki kakera pu</transcription>
-      </sentence>
-      <sentence n="82">
-        <kanji>秋僻而</kanji>
-        <transcription>aki sarite</transcription>
-      </sentence>
-      <sentence n="83">
-        <kanji>山邊尾徃者</kanji>
-        <transcription>yama pye wo yukeba</transcription>
-      </sentence>
-      <sentence n="84">
-        <kanji>名津蚊為迹</kanji>
-        <transcription>natukasi to</transcription>
-      </sentence>
-      <sentence n="85">
-        <kanji>我矣思経蚊</kanji>
-        <transcription>ware wo omo pe ka</transcription>
-      </sentence>
-      <sentence n="86">
-        <kanji>天雲裳</kanji>
-        <transcription>ama kumo mo</transcription>
-      </sentence>
-      <sentence n="87">
-        <kanji>行田菜引</kanji>
-        <transcription>yuki tanabiki nu</transcription>
-      </sentence>
-      <sentence n="88">
-        <kanji>還立</kanji>
-        <transcription>kapyeri tati</transcription>
-      </sentence>
-      <sentence n="89">
-        <kanji>路尾所来者</kanji>
-        <transcription>miti wo kureba</transcription>
-      </sentence>
-      <sentence n="90">
-        <kanji>打氷刺</kanji>
-        <transcription>utipi sasu</transcription>
-      </sentence>
-      <sentence n="91">
-        <kanji>宮尾見名</kanji>
-        <transcription>miya womina</transcription>
-      </sentence>
-      <sentence n="92">
-        <kanji>刺竹之</kanji>
-        <transcription>sasutake no</transcription>
-      </sentence>
-      <sentence n="93">
-        <kanji>舎人壮裳</kanji>
-        <transcription>toneri wotokwo mo</transcription>
-      </sentence>
-      <sentence n="94">
-        <kanji>忍経等氷</kanji>
-        <transcription>sino burapi</transcription>
-      </sentence>
-      <sentence n="95">
-        <kanji>還等氷見乍</kanji>
-        <transcription>kapye rapi mitutu</transcription>
-      </sentence>
-      <sentence n="96">
-        <kanji>誰子其迹哉</kanji>
-        <transcription>ta ga kwo so to ya</transcription>
-      </sentence>
-      <sentence n="97">
-        <kanji>所思而在</kanji>
-        <transcription>omopa yete aru</transcription>
-      </sentence>
-      <sentence n="98">
-        <kanji>如是</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="99">
-        <kanji>所為故為</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="100">
-        <kanji>古部</kanji>
-        <transcription>inisipye</transcription>
-      </sentence>
-      <sentence n="101">
-        <kanji>狭々寸為我哉</kanji>
-        <transcription>sasaki si ware ya</transcription>
-      </sentence>
-      <sentence n="102">
-        <kanji>端寸八為</kanji>
-        <transcription>pasikiyasi</transcription>
-      </sentence>
-      <sentence n="103">
-        <kanji>今日八方子等丹</kanji>
-        <transcription>kyepu ya mo kwo ra ni</transcription>
-      </sentence>
-      <sentence n="104">
-        <kanji>五十狭邇迹哉</kanji>
-        <transcription>isa ni to ya</transcription>
-      </sentence>
-      <sentence n="105">
-        <kanji>所思而在</kanji>
-        <transcription>omopa yete aru</transcription>
-      </sentence>
-      <sentence n="106">
-        <kanji>如是</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="107">
-        <kanji>所為故為</kanji>
-        <transcription />
-      </sentence>
-      <sentence n="108">
-        <kanji>古部之</kanji>
-        <transcription>inisipye no</transcription>
-      </sentence>
-      <sentence n="109">
-        <kanji>賢人藻</kanji>
-        <transcription>sakasi ki pito mo</transcription>
-      </sentence>
-      <sentence n="110">
-        <kanji>後之世之</kanji>
-        <transcription>noti no yo no</transcription>
-      </sentence>
-      <sentence n="111">
-        <kanji>堅監将為迹</kanji>
-        <transcription>kagami ni se mu to</transcription>
-      </sentence>
-      <sentence n="112">
-        <kanji>老人矣</kanji>
-        <transcription>oi pito wo</transcription>
-      </sentence>
-      <sentence n="113">
-        <kanji>送為車</kanji>
-        <transcription>okuri si kuruma</transcription>
-      </sentence>
-      <sentence n="114">
-        <kanji>持還来</kanji>
-        <transcription>moti kapyeri k yeri</transcription>
-      </sentence>
-      <sentence n="115">
-        <kanji>持還来</kanji>
-        <transcription>moti kapyeri k yeri</transcription>
       </sentence>
     </raw-text>
     <multi-sentence>
@@ -1439,6 +1078,379 @@
             </NP>
             <P-CASE-ACC form="wo" lemma="L000534" phon="PHON" />
           </PP-OB1>
+        </IP-ADV>
+      </IP-MAT>
+    </multi-sentence>
+  </block>
+  <block id="MYS.16.3791">
+    <roundtrip-data format="coj-txt" source-id="MYS.16.3791">
+      <comment position="0" raw="multi-sentence,IP-MAT;@2,IP-ADV,43@信巾裳成,*" />
+      <comment position="1" raw="multi-sentence,IP-MAT;@2,IP-ADV,44@者之寸丹取為支,*" />
+      <comment position="2" raw="multi-sentence,IP-MAT;@2,IP-ADV,45@屋所経,*" />
+      <comment position="3" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,PP-SBJ,NP,46@稲寸丁女蚊,*" />
+      <comment position="6" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,47@妻問迹,*" />
+      <comment position="9" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,IP-REL,48@我丹所来為,*" />
+      <comment position="13" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,49@彼方之,*" />
+      <comment position="15" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,CONJP,NP,NP,50@二綾裏沓,*" />
+      <comment position="19" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,51@飛鳥,*" />
+      <comment position="22" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,PP-SBJ,NP,52@飛鳥壮蚊,*" />
+      <comment position="25" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,53@霖禁,*" />
+      <comment position="28" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,NP-OB1,NP,IP-REL,54@縫為黒沓,*" />
+      <comment position="32" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,IP-ADV,55@刺佩而,*" />
+      <comment position="34" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,IP-ADV,56@庭立住,*" />
+      <comment position="37" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,57@退莫立,*" />
+      <comment position="41" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-SBJ,NP,IP-REL,58@禁尾迹女蚊,*" />
+      <comment position="44" raw="multi-sentence,IP-MAT;@2,IP-ADV,59@髣髴聞而,*" />
+      <comment position="46" raw="multi-sentence,IP-MAT;@2,IP-ADV,60@我丹所来為,*" />
+      <comment position="50" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,61@水縹,*" />
+      <comment position="52" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,62@絹帶尾,*" />
+      <comment position="56" raw="multi-sentence,IP-MAT;@2,IP-ADV,63@引帶成,*" />
+      <comment position="59" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,NP-PRD,64@韓帶丹取為,*" />
+      <comment position="64" raw="multi-sentence,IP-MAT;@2,65@海神之,*" />
+      <comment position="66" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,IP-REL,PP,NP,66@殿蓋丹,*" />
+      <comment position="70" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,IP-REL,67@飛翔,*" />
+      <comment position="72" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,IP-REL,PP-SBJ,NP,68@為軽如来,*" />
+      <comment position="76" raw="multi-sentence,IP-MAT;@2,IP-ADV,PP-OB2,NP,69@腰細丹,*" />
+      <comment position="79" raw="multi-sentence,IP-MAT;@2,IP-ADV,70@取餝氷,*" />
+      <comment position="82" raw="multi-sentence,IP-MAT;@2,71@真十鏡,*" />
+      <comment position="84" raw="multi-sentence,IP-MAT;@2,IP-ADV,72@取雙懸而,*" />
+      <comment position="87" raw="multi-sentence,IP-MAT;@2,73@己蚊果,*" />
+      <comment position="90" raw="multi-sentence,IP-MAT;@2,74@還氷見乍,*" />
+      <comment position="92" raw="multi-sentence,IP-MAT,75@春避而,*" />
+      <comment position="94" raw="multi-sentence,IP-MAT,IP-ADV,76@野邊尾廻者,*" />
+      <comment position="98" raw="multi-sentence,IP-MAT,77@面白見,*" />
+      <comment position="100" raw="multi-sentence,IP-MAT,IP-ADV,78@我矣思経蚊,*" />
+      <comment position="105" raw="multi-sentence,IP-MAT,79@狭野津鳥,*" />
+      <comment position="109" raw="multi-sentence,IP-MAT,80@来鳴翔経,*" />
+      <comment position="113" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,NP-SBJ,81@秋僻而,*" />
+      <comment position="115" raw="multi-sentence,IP-MAT;@2,IP-ADV,82@山邊尾徃者,*" />
+      <comment position="119" raw="multi-sentence,IP-MAT;@2,83@名津蚊為迹,*" />
+      <comment position="120" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ARG,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
+      <comment position="121" raw="multi-sentence,IP-MAT;@2,IP-ADV,84@我矣思経蚊,*" />
+      <comment position="126" raw="multi-sentence,IP-MAT;@2,85@天雲裳,*" />
+      <comment position="129" raw="multi-sentence,IP-MAT;@2,86@行田菜引,*" />
+      <comment position="132" raw="multi-sentence,IP-MAT;@3,IP-ADV,87@還立,*" />
+      <comment position="134" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-ADV-PTH,NP,N,88@路尾所来者,*" />
+      <comment position="137" raw="multi-sentence,IP-MAT;@3,89@打氷刺,*" />
+      <comment position="139" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,CONJP,NP,90@宮尾見名,*" />
+      <comment position="141" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,91@刺竹之,*" />
+      <comment position="143" raw="multi-sentence,IP-MAT;@3,IP-ADV,PP-SBJ,NP,NP,92@舎人壮裳,*" />
+      <comment position="146" raw="multi-sentence,IP-MAT;@3,IP-ADV,93@忍経等氷,*" />
+      <comment position="148" raw="multi-sentence,IP-MAT;@3,IP-ADV,94@還等氷見乍,*" />
+      <comment position="151" raw="multi-sentence,IP-MAT;@3,95@誰子其迹哉,*" />
+      <comment position="157" raw="multi-sentence,IP-MAT;@3,96@所思而在,*" />
+      <comment position="160" raw="multi-sentence,IP-MAT,97@如是,*" />
+      <comment position="161" raw="multi-sentence,IP-MAT,98@所為故為,*" />
+      <comment position="162" raw="multi-sentence,IP-MAT,99@古部,*" />
+      <comment position="163" raw="multi-sentence,IP-MAT,PP-SBJ,NP,IP-REL,100@狭々寸為我哉,*" />
+      <comment position="167" raw="multi-sentence,IP-MAT,101@端寸八為,*" />
+      <comment position="168" raw="multi-sentence,IP-MAT,102@今日八方子等丹,*" />
+      <comment position="174" raw="multi-sentence,IP-MAT,103@五十狭邇迹哉,*" />
+      <comment position="178" raw="multi-sentence,IP-MAT,104@所思而在,*" />
+      <comment position="181" raw="multi-sentence,IP-MAT;@4,105@如是,*" />
+      <comment position="182" raw="multi-sentence,IP-MAT;@4,106@所為故為,*" />
+      <comment position="183" raw="multi-sentence,IP-MAT;@4,107@古部之,*" />
+      <comment position="185" raw="multi-sentence,IP-MAT;@4,PP-SBJ,NP,108@賢人藻,*" />
+      <comment position="189" raw="multi-sentence,IP-MAT;@4,109@後之世之,*" />
+      <comment position="193" raw="multi-sentence,IP-MAT;@4,IP-ADV,IP-ARG,NP-PRD,110@堅監将為迹,*" />
+      <comment position="198" raw="multi-sentence,IP-MAT;@4,111@老人矣,*" />
+      <comment position="201" raw="multi-sentence,IP-MAT;@4,NP-OB1,IP-REL,112@送為車,*" />
+      <comment position="204" raw="multi-sentence,IP-MAT;@4,113@持還来,*" />
+      <comment position="208" raw="multi-sentence,IP-MAT,114@持還来,*" />
+    </roundtrip-data>
+    <raw-text role="processing">
+      <sentence n="1">
+        <kanji>信巾裳成</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="2">
+        <kanji>者之寸丹取為支</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="3">
+        <kanji>屋所経</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="4">
+        <kanji>稲寸丁女蚊</kanji>
+        <transcription>inaki wotomye ga</transcription>
+      </sentence>
+      <sentence n="5">
+        <kanji>妻問迹</kanji>
+        <transcription>tuma dopu to</transcription>
+      </sentence>
+      <sentence n="6">
+        <kanji>我丹所来為</kanji>
+        <transcription>ware ni okose si</transcription>
+      </sentence>
+      <sentence n="7">
+        <kanji>彼方之</kanji>
+        <transcription>wotikata no</transcription>
+      </sentence>
+      <sentence n="8">
+        <kanji>二綾裏沓</kanji>
+        <transcription>puta aya sita gutu</transcription>
+      </sentence>
+      <sentence n="9">
+        <kanji>飛鳥</kanji>
+        <transcription>tobu tori no</transcription>
+      </sentence>
+      <sentence n="10">
+        <kanji>飛鳥壮蚊</kanji>
+        <transcription>asuka wotokwo ga</transcription>
+      </sentence>
+      <sentence n="11">
+        <kanji>霖禁</kanji>
+        <transcription>nag ame imi</transcription>
+      </sentence>
+      <sentence n="12">
+        <kanji>縫為黒沓</kanji>
+        <transcription>nupi si kurwo gutu</transcription>
+      </sentence>
+      <sentence n="13">
+        <kanji>刺佩而</kanji>
+        <transcription>sasi pakite</transcription>
+      </sentence>
+      <sentence n="14">
+        <kanji>庭立住</kanji>
+        <transcription>nipa ni tatazume</transcription>
+      </sentence>
+      <sentence n="15">
+        <kanji>退莫立</kanji>
+        <transcription>makari na tati to</transcription>
+      </sentence>
+      <sentence n="16">
+        <kanji>禁尾迹女蚊</kanji>
+        <transcription>sapuru wotomye ga</transcription>
+      </sentence>
+      <sentence n="17">
+        <kanji>髣髴聞而</kanji>
+        <transcription>pono kikite</transcription>
+      </sentence>
+      <sentence n="18">
+        <kanji>我丹所来為</kanji>
+        <transcription>ware ni okose si</transcription>
+      </sentence>
+      <sentence n="19">
+        <kanji>水縹</kanji>
+        <transcription>mipanada no</transcription>
+      </sentence>
+      <sentence n="20">
+        <kanji>絹帶尾</kanji>
+        <transcription>kinu no obi wo</transcription>
+      </sentence>
+      <sentence n="21">
+        <kanji>引帶成</kanji>
+        <transcription>piki obi nasu</transcription>
+      </sentence>
+      <sentence n="22">
+        <kanji>韓帶丹取為</kanji>
+        <transcription>kara obi ni tora se</transcription>
+      </sentence>
+      <sentence n="23">
+        <kanji>海神之</kanji>
+        <transcription>watatumi no</transcription>
+      </sentence>
+      <sentence n="24">
+        <kanji>殿蓋丹</kanji>
+        <transcription>tono no iraka ni</transcription>
+      </sentence>
+      <sentence n="25">
+        <kanji>飛翔</kanji>
+        <transcription>tobi kakeru</transcription>
+      </sentence>
+      <sentence n="26">
+        <kanji>為軽如来</kanji>
+        <transcription>sugaru no goto ki</transcription>
+      </sentence>
+      <sentence n="27">
+        <kanji>腰細丹</kanji>
+        <transcription>kosi boso ni</transcription>
+      </sentence>
+      <sentence n="28">
+        <kanji>取餝氷</kanji>
+        <transcription>tori kazara pi</transcription>
+      </sentence>
+      <sentence n="29">
+        <kanji>真十鏡</kanji>
+        <transcription>maswo kagami</transcription>
+      </sentence>
+      <sentence n="30">
+        <kanji>取雙懸而</kanji>
+        <transcription>tori name kakete</transcription>
+      </sentence>
+      <sentence n="31">
+        <kanji>己蚊果</kanji>
+        <transcription>ono ga kapo</transcription>
+      </sentence>
+      <sentence n="32">
+        <kanji>還氷見乍</kanji>
+        <transcription>kapyerapi mitutu</transcription>
+      </sentence>
+      <sentence n="33">
+        <kanji>春避而</kanji>
+        <transcription>paru sarite</transcription>
+      </sentence>
+      <sentence n="34">
+        <kanji>野邊尾廻者</kanji>
+        <transcription>nwo pye wo megureba</transcription>
+      </sentence>
+      <sentence n="35">
+        <kanji>面白見</kanji>
+        <transcription>omosirwo mi</transcription>
+      </sentence>
+      <sentence n="36">
+        <kanji>我矣思経蚊</kanji>
+        <transcription>ware wo omo pe ka</transcription>
+      </sentence>
+      <sentence n="37">
+        <kanji>狭野津鳥</kanji>
+        <transcription>sa nwo tu tori</transcription>
+      </sentence>
+      <sentence n="38">
+        <kanji>来鳴翔経</kanji>
+        <transcription>ki naki kakera pu</transcription>
+      </sentence>
+      <sentence n="39">
+        <kanji>秋僻而</kanji>
+        <transcription>aki sarite</transcription>
+      </sentence>
+      <sentence n="40">
+        <kanji>山邊尾徃者</kanji>
+        <transcription>yama pye wo yukeba</transcription>
+      </sentence>
+      <sentence n="41">
+        <kanji>名津蚊為迹</kanji>
+        <transcription>natukasi to</transcription>
+      </sentence>
+      <sentence n="42">
+        <kanji>我矣思経蚊</kanji>
+        <transcription>ware wo omo pe ka</transcription>
+      </sentence>
+      <sentence n="43">
+        <kanji>天雲裳</kanji>
+        <transcription>ama kumo mo</transcription>
+      </sentence>
+      <sentence n="44">
+        <kanji>行田菜引</kanji>
+        <transcription>yuki tanabiki nu</transcription>
+      </sentence>
+      <sentence n="45">
+        <kanji>還立</kanji>
+        <transcription>kapyeri tati</transcription>
+      </sentence>
+      <sentence n="46">
+        <kanji>路尾所来者</kanji>
+        <transcription>miti wo kureba</transcription>
+      </sentence>
+      <sentence n="47">
+        <kanji>打氷刺</kanji>
+        <transcription>utipi sasu</transcription>
+      </sentence>
+      <sentence n="48">
+        <kanji>宮尾見名</kanji>
+        <transcription>miya womina</transcription>
+      </sentence>
+      <sentence n="49">
+        <kanji>刺竹之</kanji>
+        <transcription>sasutake no</transcription>
+      </sentence>
+      <sentence n="50">
+        <kanji>舎人壮裳</kanji>
+        <transcription>toneri wotokwo mo</transcription>
+      </sentence>
+      <sentence n="51">
+        <kanji>忍経等氷</kanji>
+        <transcription>sino burapi</transcription>
+      </sentence>
+      <sentence n="52">
+        <kanji>還等氷見乍</kanji>
+        <transcription>kapye rapi mitutu</transcription>
+      </sentence>
+      <sentence n="53">
+        <kanji>誰子其迹哉</kanji>
+        <transcription>ta ga kwo so to ya</transcription>
+      </sentence>
+      <sentence n="54">
+        <kanji>所思而在</kanji>
+        <transcription>omopa yete aru</transcription>
+      </sentence>
+      <sentence n="55">
+        <kanji>如是</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="56">
+        <kanji>所為故為</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="57">
+        <kanji>古部</kanji>
+        <transcription>inisipye</transcription>
+      </sentence>
+      <sentence n="58">
+        <kanji>狭々寸為我哉</kanji>
+        <transcription>sasaki si ware ya</transcription>
+      </sentence>
+      <sentence n="59">
+        <kanji>端寸八為</kanji>
+        <transcription>pasikiyasi</transcription>
+      </sentence>
+      <sentence n="60">
+        <kanji>今日八方子等丹</kanji>
+        <transcription>kyepu ya mo kwo ra ni</transcription>
+      </sentence>
+      <sentence n="61">
+        <kanji>五十狭邇迹哉</kanji>
+        <transcription>isa ni to ya</transcription>
+      </sentence>
+      <sentence n="62">
+        <kanji>所思而在</kanji>
+        <transcription>omopa yete aru</transcription>
+      </sentence>
+      <sentence n="63">
+        <kanji>如是</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="64">
+        <kanji>所為故為</kanji>
+        <transcription />
+      </sentence>
+      <sentence n="65">
+        <kanji>古部之</kanji>
+        <transcription>inisipye no</transcription>
+      </sentence>
+      <sentence n="66">
+        <kanji>賢人藻</kanji>
+        <transcription>sakasi ki pito mo</transcription>
+      </sentence>
+      <sentence n="67">
+        <kanji>後之世之</kanji>
+        <transcription>noti no yo no</transcription>
+      </sentence>
+      <sentence n="68">
+        <kanji>堅監将為迹</kanji>
+        <transcription>kagami ni se mu to</transcription>
+      </sentence>
+      <sentence n="69">
+        <kanji>老人矣</kanji>
+        <transcription>oi pito wo</transcription>
+      </sentence>
+      <sentence n="70">
+        <kanji>送為車</kanji>
+        <transcription>okuri si kuruma</transcription>
+      </sentence>
+      <sentence n="71">
+        <kanji>持還来</kanji>
+        <transcription>moti kapyeri k yeri</transcription>
+      </sentence>
+      <sentence n="72">
+        <kanji>持還来</kanji>
+        <transcription>moti kapyeri k yeri</transcription>
+      </sentence>
+    </raw-text>
+    <multi-sentence>
+      <IP-MAT index="2">
+        <IP-ADV>
           <WORD lemma="L099997">
             <ILL>
               <____ form="" phon="" raw_tag="信巾裳成" />
