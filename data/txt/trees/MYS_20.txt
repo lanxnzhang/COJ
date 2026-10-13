@@ -2115,7 +2115,7 @@ multi-sentence,IP-MAT,IP-ADV,NP-SBJ,N,L080504,N,L050163,PHON,ama
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,N,L080504,N;@2,L050516,PFX,L000060,PHON,wo
 multi-sentence,IP-MAT,IP-ADV,NP-SBJ,N,L080504,N;@2,L050516,N,L050007a,PHON,bune
 multi-sentence,IP-MAT,IP-ADV,43@波良良爾宇伎弖,*
-multi-sentence,IP-MAT,IP-ADV,IP-ADV,ADJ-INF,ADJ-STEM,L090709,PHON,parara
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,ADJ-INF,ADJ-STM,L090709,PHON,parara
 multi-sentence,IP-MAT,IP-ADV,IP-ADV,ADJ-INF,COP-INF,L031965,PHON,ni
 multi-sentence,IP-MAT,IP-ADV,VB-GER,L030238a,PHON,ukite
 multi-sentence,IP-MAT,44@於保美気爾,*

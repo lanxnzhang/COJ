@@ -2717,9 +2717,9 @@
   </block>
   <block header="kaga nabete ywo ni pa kokonoywo pi ni pa towoka wo" id="NSK.26">
     <roundtrip-data format="coj-txt" source-id="NSK.26">
-      <comment position="0" raw="mulit-sentence,IP-MAT,IP-ADV,0@伽餓奈倍低,*" />
-      <comment position="3" raw="mulit-sentence,IP-MAT,1@用珥波虚虚能用,*" />
-      <comment position="8" raw="mulit-sentence,IP-MAT;@2,2@比珥波苔塢伽塢,*" />
+      <comment position="0" raw="multi-sentence,IP-MAT,IP-ADV,0@伽餓奈倍低,*" />
+      <comment position="3" raw="multi-sentence,IP-MAT,1@用珥波虚虚能用,*" />
+      <comment position="8" raw="multi-sentence,IP-MAT;@2,2@比珥波苔塢伽塢,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -2735,7 +2735,7 @@
         <transcription>pi ni pa towo ka wo</transcription>
       </sentence>
     </raw-text>
-    <mulit-sentence>
+    <multi-sentence>
       <IP-MAT index="1" inferred_index="1">
         <IP-ADV>
           <NP-OB1>
@@ -2778,7 +2778,7 @@
         </NP-PRD>
         <P-INTJ form="wo" lemma="L000535" phon="PHON" />
       </IP-MAT>
-    </mulit-sentence>
+    </multi-sentence>
   </block>
   <block header="wopari ni tadani mukapyeru pitotumatu apare pitotumatu pito ni ariseba kinu kisemasi wo tati pakemasi wo" id="NSK.27">
     <roundtrip-data format="coj-txt" source-id="NSK.27">

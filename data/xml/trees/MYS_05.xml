@@ -9647,8 +9647,8 @@
   </block>
   <block header="yuku pune wo puritodomwikane ika bakari kwoposiku arikyemu saywopimye" id="MYS.5.875">
     <roundtrip-data format="coj-txt" source-id="MYS.5.875">
-      <comment position="0" raw="CP-FINAL,IP-SUB,0@由久布祢遠,*" />
-      <comment position="3" raw="CP-FINAL,IP-SUB,1@布利等騰尾加祢,*" />
+      <comment position="0" raw="CP-FINAL,IP-SUB,IP-ADV,0@由久布祢遠,*" />
+      <comment position="3" raw="CP-FINAL,IP-SUB,IP-ADV,1@布利等騰尾加祢,*" />
       <comment position="6" raw="CP-FINAL,IP-SUB,2@伊加婆加利,*" />
       <comment position="8" raw="CP-FINAL,IP-SUB,3@故保斯苦阿利家武,*" />
       <comment position="13" raw="CP-FINAL,4@麻都良佐欲比売,*" />
@@ -9677,16 +9677,16 @@
     </raw-text>
     <CP-FINAL>
       <IP-SUB>
-        <PP-OB1>
-          <NP>
-            <IP-REL>
-              <VB-ADC form="yuku" lemma="L031840a" phon="PHON" />
-            </IP-REL>
-            <N form="pune" lemma="L050007a" phon="PHON" />
-          </NP>
-          <P-CASE-ACC form="wo" lemma="L000534" phon="PHON" />
-        </PP-OB1>
         <IP-ADV>
+          <PP-OB1>
+            <NP>
+              <IP-REL>
+                <VB-ADC form="yuku" lemma="L031840a" phon="PHON" />
+              </IP-REL>
+              <N form="pune" lemma="L050007a" phon="PHON" />
+            </NP>
+            <P-CASE-ACC form="wo" lemma="L000534" phon="PHON" />
+          </PP-OB1>
           <VB-INF>
             <VB-STM form="puri" index="1" inferred_index="1" lemma="L031560a" phon="PHON" />
             <VB-STM form="todomwi" index="2" lemma="L031214a" phon="PHON" />

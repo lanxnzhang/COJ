@@ -23376,15 +23376,15 @@
           </NP>
           <P-CASE-GEN form="no" lemma="L000520" phon="PHON" />
         </PP-OB1>
-        <VB-ADN>
+        <VB-NML>
           <VB-STM form="sira" lemma="L031967a" phon="LOG" />
-          <VAX-NEG-ADN form="naku" lemma="L000006a" phon="">
+          <VAX-NEG-NML form="naku" lemma="L000006a" phon="">
             <form-parts>
               <part form="na" phon="LOG" />
               <part form="ku" phon="PHON" />
             </form-parts>
-          </VAX-NEG-ADN>
-        </VB-ADN>
+          </VAX-NEG-NML>
+        </VB-NML>
       </IP-MAT>
     </multi-sentence>
   </block>

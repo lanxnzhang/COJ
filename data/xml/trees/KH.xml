@@ -1874,11 +1874,11 @@
   </block>
   <block header="nezumi no ipye yone tuki purupi kwi wo kirite piki kiri idasu yotu to ipu ka swore" id="KH.27">
     <roundtrip-data format="coj-txt" source-id="KH.27">
-      <comment position="0" raw="multi-clause,IP-MAT,IP-ADV,IP-ADV,0@祢須弥能伊弊,*" />
-      <comment position="3" raw="multi-clause,IP-MAT,IP-ADV,IP-ADV,1@与祢都岐不留比,*" />
-      <comment position="6" raw="multi-clause,IP-MAT,IP-ADV,2@紀呼岐利弖,*" />
-      <comment position="9" raw="multi-clause,IP-MAT,3@比岐岐利伊隄須,*" />
-      <comment position="12" raw="multi-clause,4@与都等伊不可蘇礼,*" />
+      <comment position="0" raw="multi-sentence,IP-MAT,IP-ADV,IP-ADV,0@祢須弥能伊弊,*" />
+      <comment position="3" raw="multi-sentence,IP-MAT,IP-ADV,IP-ADV,1@与祢都岐不留比,*" />
+      <comment position="6" raw="multi-sentence,IP-MAT,IP-ADV,2@紀呼岐利弖,*" />
+      <comment position="9" raw="multi-sentence,IP-MAT,3@比岐岐利伊隄須,*" />
+      <comment position="12" raw="multi-sentence,4@与都等伊不可蘇礼,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -1902,7 +1902,7 @@
         <transcription>yo tu to ipu ka swore</transcription>
       </sentence>
     </raw-text>
-    <multi-clause>
+    <multi-sentence>
       <IP-MAT>
         <IP-ADV>
           <IP-ADV>
@@ -1953,7 +1953,7 @@
           <PRO-N form="swore" lemma="L042042" phon="PHON" />
         </NP-OB1>
       </CP-FINAL>
-    </multi-clause>
+    </multi-sentence>
   </block>
   <block header="sirakumo no tanabiku yama pa miredo akanu kamo tadu naraba asa tobikwoyete yupubye komasi wo" id="KH.28">
     <roundtrip-data format="coj-txt" source-id="KH.28">

@@ -318,7 +318,6 @@ multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,NP,N,N,L052495,PHON,asa
 multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,NP,N,N;@2,L080099,N,L050012a,LOG,te
 multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,NP,NP,N,N;@2,L080099,N;@2,L031144b,LOG,dukuri
 multi-sentence,IP-MAT;@2,IP-ADV,PP-OB1,P-CASE-ACC,L000534,PHON,wo
-
 multi-sentence,IP-MAT;@2,IP-ADV,43@信巾裳成,*
 multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,信巾裳成
 multi-sentence,IP-MAT;@2,IP-ADV,44@者之寸丹取為支,*

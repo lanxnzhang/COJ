@@ -830,23 +830,23 @@ IP-MAT,VB-ADN,VAX-PRF-ADN,L000023,PHON,turu
 ID,NSK.25
 
 =N(" kaga nabete ywo ni pa kokonoywo pi ni pa towoka wo ")
-mulit-sentence,IP-MAT,IP-ADV,0@伽餓奈倍低,*
-mulit-sentence,IP-MAT,IP-ADV,NP-OB1,N,L080670,N,L050033b,PHON,ka
-mulit-sentence,IP-MAT,IP-ADV,NP-OB1,N,L080670,N;@2,L050033b,PHON,ga
-mulit-sentence,IP-MAT,IP-ADV,VB-GER,L031299a,PHON,nabete
-mulit-sentence,IP-MAT,1@用珥波虚虚能用,*
-mulit-sentence,IP-MAT,PP-ADV,NP,N,L050039,PHON,ywo
-mulit-sentence,IP-MAT,PP-ADV,P-CASE-DAT,L000519,PHON,ni
-mulit-sentence,IP-MAT,PP-ADV,P-TOP,L000522,PHON,pa
-mulit-sentence,IP-MAT,NP-PRD,N,NUM,L002009,PHON,kokono
-mulit-sentence,IP-MAT,NP-PRD,N,N,L050039,PHON,ywo
-mulit-sentence,IP-MAT;@2,2@比珥波苔塢伽塢,*
-mulit-sentence,IP-MAT;@2,PP-ADV,NP,N,L050090,PHON,pi
-mulit-sentence,IP-MAT;@2,PP-ADV,P-CASE-DAT,L000519,PHON,ni
-mulit-sentence,IP-MAT;@2,PP-ADV,P-TOP,L000522,PHON,pa
-mulit-sentence,IP-MAT;@2,NP-PRD,NP,N,NUM,L002010,PHON,towo
-mulit-sentence,IP-MAT;@2,NP-PRD,NP,N,CL,L050033b,PHON,ka
-mulit-sentence,IP-MAT;@2,P-INTJ,L000535,PHON,wo
+multi-sentence,IP-MAT,IP-ADV,0@伽餓奈倍低,*
+multi-sentence,IP-MAT,IP-ADV,NP-OB1,N,L080670,N,L050033b,PHON,ka
+multi-sentence,IP-MAT,IP-ADV,NP-OB1,N,L080670,N;@2,L050033b,PHON,ga
+multi-sentence,IP-MAT,IP-ADV,VB-GER,L031299a,PHON,nabete
+multi-sentence,IP-MAT,1@用珥波虚虚能用,*
+multi-sentence,IP-MAT,PP-ADV,NP,N,L050039,PHON,ywo
+multi-sentence,IP-MAT,PP-ADV,P-CASE-DAT,L000519,PHON,ni
+multi-sentence,IP-MAT,PP-ADV,P-TOP,L000522,PHON,pa
+multi-sentence,IP-MAT,NP-PRD,N,NUM,L002009,PHON,kokono
+multi-sentence,IP-MAT,NP-PRD,N,N,L050039,PHON,ywo
+multi-sentence,IP-MAT;@2,2@比珥波苔塢伽塢,*
+multi-sentence,IP-MAT;@2,PP-ADV,NP,N,L050090,PHON,pi
+multi-sentence,IP-MAT;@2,PP-ADV,P-CASE-DAT,L000519,PHON,ni
+multi-sentence,IP-MAT;@2,PP-ADV,P-TOP,L000522,PHON,pa
+multi-sentence,IP-MAT;@2,NP-PRD,NP,N,NUM,L002010,PHON,towo
+multi-sentence,IP-MAT;@2,NP-PRD,NP,N,CL,L050033b,PHON,ka
+multi-sentence,IP-MAT;@2,P-INTJ,L000535,PHON,wo
 ID,NSK.26
 
 =N(" wopari ni tadani mukapyeru pitotumatu apare pitotumatu pito ni ariseba kinu kisemasi wo tati pakemasi wo ")

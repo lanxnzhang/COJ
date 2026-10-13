@@ -12556,24 +12556,24 @@
   </block>
   <block header="kusakabye no koti no yama to tatamikomo pyeguri no yama no kotigoti no yama no kapi ni tatizakayuru pabirokumakasi moto ni pa ikumidake opwi suwepye ni pa tasimidake opwi ikumidake ikumi pa nezu tasimidake tasi ni pa winezu noti mo kumi nemu so no omopiduma apare" id="KK.91">
     <roundtrip-data format="coj-txt" source-id="KK.91">
-      <comment position="0" raw="multi-clause,IP-MAT,0@久佐加辨能,*" />
-      <comment position="3" raw="multi-clause,IP-MAT,NP,IP-REL,PP,NP,PP,NP,CONJP,PP,NP,PP,NP,1@許知能夜麻登,*" />
-      <comment position="7" raw="multi-clause,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,PP,NP,2@多多美許母,*" />
-      <comment position="9" raw="multi-clause,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,PP,NP,NP,3@弊具理能夜麻能,*" />
-      <comment position="13" raw="multi-clause,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,4@許知碁知能,*" />
-      <comment position="16" raw="multi-clause,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,NP,5@夜麻能賀比爾,*" />
-      <comment position="20" raw="multi-clause,IP-MAT,NP,IP-REL,6@多知邪加由流,*" />
-      <comment position="22" raw="multi-clause,IP-MAT,NP,7@波毘呂久麻加斯,*" />
-      <comment position="26" raw="multi-clause,IP-MAT;@2,8@母登爾波,*" />
-      <comment position="29" raw="multi-clause,IP-MAT;@2,IP-ADV,9@伊久美陀気淤斐,*" />
-      <comment position="33" raw="multi-clause,IP-MAT;@2,10@須恵幣爾波,*" />
-      <comment position="37" raw="multi-clause,IP-MAT;@2,IP-ADV,11@多斯美陀気淤斐,*" />
-      <comment position="40" raw="multi-clause,IP-MAT;@2,12@伊久美陀気,*" />
-      <comment position="43" raw="multi-clause,IP-MAT;@2,IP-ADV,13@伊久美波泥受,*" />
-      <comment position="48" raw="multi-clause,IP-MAT,IP-ADV,14@多斯美陀気,*" />
-      <comment position="50" raw="multi-clause,IP-MAT,IP-ADV,15@多斯爾波韋泥受,*" />
-      <comment position="56" raw="multi-clause,CP-FINAL,IP-SUB,16@能知母久美泥牟,*" />
-      <comment position="61" raw="multi-clause,CP-FINAL,17@曾能淤母比豆麻阿波禮,*" />
+      <comment position="0" raw="multi-sentence,IP-MAT,0@久佐加辨能,*" />
+      <comment position="3" raw="multi-sentence,IP-MAT,NP,IP-REL,PP,NP,PP,NP,CONJP,PP,NP,PP,NP,1@許知能夜麻登,*" />
+      <comment position="7" raw="multi-sentence,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,PP,NP,2@多多美許母,*" />
+      <comment position="9" raw="multi-sentence,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,PP,NP,NP,3@弊具理能夜麻能,*" />
+      <comment position="13" raw="multi-sentence,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,4@許知碁知能,*" />
+      <comment position="16" raw="multi-sentence,IP-MAT,NP,IP-REL,PP,NP,PP,NP,NP,NP,5@夜麻能賀比爾,*" />
+      <comment position="20" raw="multi-sentence,IP-MAT,NP,IP-REL,6@多知邪加由流,*" />
+      <comment position="22" raw="multi-sentence,IP-MAT,NP,7@波毘呂久麻加斯,*" />
+      <comment position="26" raw="multi-sentence,IP-MAT;@2,8@母登爾波,*" />
+      <comment position="29" raw="multi-sentence,IP-MAT;@2,IP-ADV,9@伊久美陀気淤斐,*" />
+      <comment position="33" raw="multi-sentence,IP-MAT;@2,10@須恵幣爾波,*" />
+      <comment position="37" raw="multi-sentence,IP-MAT;@2,IP-ADV,11@多斯美陀気淤斐,*" />
+      <comment position="40" raw="multi-sentence,IP-MAT;@2,12@伊久美陀気,*" />
+      <comment position="43" raw="multi-sentence,IP-MAT;@2,IP-ADV,13@伊久美波泥受,*" />
+      <comment position="48" raw="multi-sentence,IP-MAT,IP-ADV,14@多斯美陀気,*" />
+      <comment position="50" raw="multi-sentence,IP-MAT,IP-ADV,15@多斯爾波韋泥受,*" />
+      <comment position="56" raw="multi-sentence,CP-FINAL,IP-SUB,16@能知母久美泥牟,*" />
+      <comment position="61" raw="multi-sentence,CP-FINAL,17@曾能淤母比豆麻阿波禮,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -12649,7 +12649,7 @@
         <transcription>so no omopi duma apare</transcription>
       </sentence>
     </raw-text>
-    <multi-clause>
+    <multi-sentence>
       <IP-MAT index="1" inferred_index="1">
         <NP>
           <IP-REL>
@@ -12846,7 +12846,7 @@
           <INTJ form="apare" lemma="L050817" phon="PHON" />
         </NP>
       </CP-FINAL>
-    </multi-clause>
+    </multi-sentence>
   </block>
   <block header="mimoro no itukasi ga moto kasi ga moto yuyusiki kamo kasiparawotomye" id="KK.92">
     <roundtrip-data format="coj-txt" source-id="KK.92">

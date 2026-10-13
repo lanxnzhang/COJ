@@ -4411,11 +4411,11 @@
           <VB-INF form="kwoye" lemma="L030747a" phon="PHON" />
         </IP-ADV>
         <NP-ADV>
-          <ADV-WH lemma="L004054">
+          <WH-ADV lemma="L004054">
             <WH-ADJ form="ika" lemma="L042002" phon="LOG" />
             <N form="sama" lemma="L090187" phon="LOG" />
             <COP-INF form="ni" lemma="L031965" phon="PHON" />
-          </ADV-WH>
+          </WH-ADV>
         </NP-ADV>
         <VB-EXC>
           <VB-STM form="omoposi" lemma="L030402a" phon="LOG" />
@@ -4940,11 +4940,11 @@
           <VB-GER form="kwoyete" lemma="L030747a" phon="LOG" />
         </IP-ADV>
         <NP-ADV>
-          <ADV-WH lemma="L004054">
+          <WH-ADV lemma="L004054">
             <WH-ADJ form="ika" lemma="L042002" phon="LOG" />
             <N form="sama" lemma="L090187" phon="LOG" />
             <COP-INF form="ni" lemma="L031965" phon="PHON" />
-          </ADV-WH>
+          </WH-ADV>
         </NP-ADV>
         <VB-EXC>
           <VB-STM form="omoposi" lemma="L030402a" phon="LOG" />

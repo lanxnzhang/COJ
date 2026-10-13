@@ -23923,11 +23923,11 @@
         </PP-SBJ>
         <IP-ADV>
           <NP-ADV>
-            <ADV-WH lemma="L004054">
+            <WH-ADV lemma="L004054">
               <WH-ADJ form="ika" lemma="L042002" phon="LOG" />
               <N form="sama" lemma="L090187" phon="LOG" />
               <COP-INF form="ni" lemma="L031965" phon="PHON" />
-            </ADV-WH>
+            </WH-ADV>
           </NP-ADV>
           <VB-EXC>
             <VB-STM form="omopi" lemma="L030399a" phon="LOG" />
@@ -25885,11 +25885,11 @@
           <VB-CSS form="aredomo" lemma="L030125a" phon="LOG" />
         </IP-ADV>
         <NP-ADV>
-          <ADV-WH lemma="L004054">
+          <WH-ADV lemma="L004054">
             <WH-ADJ form="ika" lemma="L042002" phon="LOG" />
             <N form="sama" lemma="L090187" phon="LOG" />
             <COP-INF form="ni" lemma="L031965" phon="PHON" />
-          </ADV-WH>
+          </WH-ADV>
         </NP-ADV>
         <VB-EXC>
           <VB-STM form="omopi" lemma="L030399a" phon="LOG" />

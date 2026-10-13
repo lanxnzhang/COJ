@@ -587,29 +587,29 @@ IP-MAT,VB-IMP,L031712a,PHON,mi
 ID,KH.26
 
 =N(" nezumi no ipye yone tuki purupi kwi wo kirite piki kiri idasu yotu to ipu ka swore ")
-multi-clause,IP-MAT,IP-ADV,IP-ADV,0@祢須弥能伊弊,*
-multi-clause,IP-MAT,IP-ADV,IP-ADV,NP-ADV,PP,NP,N,L080570,PHON,nezumi
-multi-clause,IP-MAT,IP-ADV,IP-ADV,NP-ADV,PP,P-CASE-GEN,L000520,PHON,no
-multi-clause,IP-MAT,IP-ADV,IP-ADV,NP-ADV,N,L050006a,PHON,ipye
-multi-clause,IP-MAT,IP-ADV,IP-ADV,1@与祢都岐不留比,*
-multi-clause,IP-MAT,IP-ADV,IP-ADV,NP-OB1,N,L090045a,PHON,yone
-multi-clause,IP-MAT,IP-ADV,IP-ADV,VB-INF,L031131a,PHON,tuki
-multi-clause,IP-MAT,IP-ADV,IP-ADV,VB-INF;@2,L080571a,PHON,purupi
-multi-clause,IP-MAT,IP-ADV,2@紀呼岐利弖,*
-multi-clause,IP-MAT,IP-ADV,PP-OB1,NP,N,L050003a,PHON,kwi
-multi-clause,IP-MAT,IP-ADV,PP-OB1,P-CASE-ACC,L000534,PHON,wo
-multi-clause,IP-MAT,IP-ADV,VB-GER,L030606a,PHON,kirite
-multi-clause,IP-MAT,3@比岐岐利伊隄須,*
-multi-clause,IP-MAT,VB-INF,L031474a,PHON,piki
-multi-clause,IP-MAT,VB-ADC,VB-STM,L030606a,PHON,kiri
-multi-clause,IP-MAT,VB-ADC,VB-ADC,L030164a,PHON,idasu
-multi-clause,4@与都等伊不可蘇礼,*
-multi-clause,CP-FINAL,IP-SUB,PP-OB2,NP,N,NUM,L002004,PHON,yo
-multi-clause,CP-FINAL,IP-SUB,PP-OB2,NP,N,CL,L002015a,PHON,tu
-multi-clause,CP-FINAL,IP-SUB,PP-OB2,P-COMP,L000530,PHON,to
-multi-clause,CP-FINAL,IP-SUB,VB-ADN,L030199a,PHON,ipu
-multi-clause,CP-FINAL,IP-SUB,P-FOC,L000506,PHON,ka
-multi-clause,CP-FINAL,NP-OB1,PRO-N,L042042,PHON,swore
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,0@祢須弥能伊弊,*
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP-ADV,PP,NP,N,L080570,PHON,nezumi
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP-ADV,PP,P-CASE-GEN,L000520,PHON,no
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP-ADV,N,L050006a,PHON,ipye
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,1@与祢都岐不留比,*
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP-OB1,N,L090045a,PHON,yone
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,VB-INF,L031131a,PHON,tuki
+multi-sentence,IP-MAT,IP-ADV,IP-ADV,VB-INF;@2,L080571a,PHON,purupi
+multi-sentence,IP-MAT,IP-ADV,2@紀呼岐利弖,*
+multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,N,L050003a,PHON,kwi
+multi-sentence,IP-MAT,IP-ADV,PP-OB1,P-CASE-ACC,L000534,PHON,wo
+multi-sentence,IP-MAT,IP-ADV,VB-GER,L030606a,PHON,kirite
+multi-sentence,IP-MAT,3@比岐岐利伊隄須,*
+multi-sentence,IP-MAT,VB-INF,L031474a,PHON,piki
+multi-sentence,IP-MAT,VB-ADC,VB-STM,L030606a,PHON,kiri
+multi-sentence,IP-MAT,VB-ADC,VB-ADC,L030164a,PHON,idasu
+multi-sentence,4@与都等伊不可蘇礼,*
+multi-sentence,CP-FINAL,IP-SUB,PP-OB2,NP,N,NUM,L002004,PHON,yo
+multi-sentence,CP-FINAL,IP-SUB,PP-OB2,NP,N,CL,L002015a,PHON,tu
+multi-sentence,CP-FINAL,IP-SUB,PP-OB2,P-COMP,L000530,PHON,to
+multi-sentence,CP-FINAL,IP-SUB,VB-ADN,L030199a,PHON,ipu
+multi-sentence,CP-FINAL,IP-SUB,P-FOC,L000506,PHON,ka
+multi-sentence,CP-FINAL,NP-OB1,PRO-N,L042042,PHON,swore
 ID,KH.27
 
 =N(" sirakumo no tanabiku yama pa miredo akanu kamo tadu naraba asa tobikwoyete yupubye komasi wo ")

@@ -1304,9 +1304,9 @@ multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,PLN,L060120,N,L050034,LOG,yama
 multi-sentence,IP-MAT,IP-ADV,PP-OB1,P-CASE-ACC,L000534,PHON,wo
 multi-sentence,IP-MAT,IP-ADV,VB-INF,L030747a,PHON,kwoye
 multi-sentence,IP-MAT,14@何方,*
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,WH-ADJ,L042002,LOG,ika
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,N,L090187,LOG,sama
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,COP-INF,L031965,PHON,ni
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,WH-ADJ,L042002,LOG,ika
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,N,L090187,LOG,sama
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,COP-INF,L031965,PHON,ni
 multi-sentence,IP-MAT,15@御念食可,*
 multi-sentence,IP-MAT,VB-EXC,VB-STM,L030402a,LOG,omoposi
 multi-sentence,IP-MAT,VB-EXC,VB-EXC,L031751a,LOG,myese
@@ -1464,9 +1464,9 @@ multi-sentence,IP-MAT,IP-ADV,NP-OB1,PLN,L060120,PLN,L092001,PHON-KUN,nara
 multi-sentence,IP-MAT,IP-ADV,NP-OB1,PLN,L060120,N,L050034,LOG,yama
 multi-sentence,IP-MAT,IP-ADV,VB-GER,L030747a,LOG,kwoyete
 multi-sentence,IP-MAT,14@何方,*
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,WH-ADJ,L042002,LOG,ika
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,N,L090187,LOG,sama
-multi-sentence,IP-MAT,NP-ADV,ADV-WH,L004054,COP-INF,L031965,PHON,ni
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,WH-ADJ,L042002,LOG,ika
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,N,L090187,LOG,sama
+multi-sentence,IP-MAT,NP-ADV,WH-ADV,L004054,COP-INF,L031965,PHON,ni
 multi-sentence,IP-MAT,15@所念計米可,*
 multi-sentence,IP-MAT,VB-EXC,VB-STM,L030402a,LOG,omoposi
 multi-sentence,IP-MAT,VB-EXC,VAX-SPST-STM,L000015,PHON,kye

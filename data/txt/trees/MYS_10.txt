@@ -7269,9 +7269,9 @@ multi-sentence,IP-MAT;@2,PP-OB1,NP,IP-REL,VB-ADC,VAX-CJR-ADC,L000002,LOG,mu
 multi-sentence,IP-MAT;@2,PP-OB1,NP,4@道乃不知久,*
 multi-sentence,IP-MAT;@2,PP-OB1,NP,N,L050091,LOG,miti
 multi-sentence,IP-MAT;@2,PP-OB1,P-CASE-GEN,L000520,PHON,no
-multi-sentence,IP-MAT;@2,VB-ADN,VB-STM,L031967a,LOG,sira
-multi-sentence,IP-MAT;@2,VB-ADN,VAX-NEG-ADN,L000006a,LOG,na
-multi-sentence,IP-MAT;@2,VB-ADN,VAX-NEG-ADN,L000006a,PHON,ku
+multi-sentence,IP-MAT;@2,VB-NML,VB-STM,L031967a,LOG,sira
+multi-sentence,IP-MAT;@2,VB-NML,VAX-NEG-NML,L000006a,LOG,na
+multi-sentence,IP-MAT;@2,VB-NML,VAX-NEG-NML,L000006a,PHON,ku
 ID,MYS.10.2084
 
 =N(" ama no gapa seze ni siranami takakyedomo tada watarikinu mataba kurusimi ")

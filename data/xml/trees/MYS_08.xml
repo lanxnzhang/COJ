@@ -9252,12 +9252,12 @@
         <XTN-IFC form="nari" lemma="L000804" phon="PHON" />
       </IP-MAT>
       <IP-MAT index="2">
-        <IP_ADV>
+        <IP-ADV>
           <NP-OB1>
             <N form="pimo" lemma="L051763" phon="LOG" />
           </NP-OB1>
           <VB-INF form="toki" lemma="L031199a" phon="LOG" />
-        </IP_ADV>
+        </IP-ADV>
         <VB-OPT>
           <VB-OPT form="makena" lemma="L031624a" phon="">
             <form-parts>

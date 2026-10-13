@@ -11331,17 +11331,15 @@
         <NP-SBJ>
           <IP-EMB>
             <NP-SBJ>
-              <N>
-                <APP-NP index="1" inferred_index="1">
-                  <N>
-                    <PFX-HON form="mi" lemma="L000035" phon="LOG" />
-                    <N form="tami" lemma="L090360" phon="LOG" />
-                  </N>
-                </APP-NP>
-                <APP-NP index="2">
-                  <PRO-N form="ware" lemma="L042059" phon="LOG" />
-                </APP-NP>
-              </N>
+              <NP-APP index="1" inferred_index="1">
+                <N>
+                  <PFX-HON form="mi" lemma="L000035" phon="LOG" />
+                  <N form="tami" lemma="L090360" phon="LOG" />
+                </N>
+              </NP-APP>
+              <NP-APP index="2">
+                <PRO-N form="ware" lemma="L042059" phon="LOG" />
+              </NP-APP>
             </NP-SBJ>
             <VB-ADN>
               <VB-STM form="ik" lemma="L030146a" phon="LOG" />
@@ -16987,7 +16985,7 @@
                     </IP-REL>
                     <PLN lemma="L080684">
                       <PLN form="yamato" lemma="L052386" phon="PLOG" />
-                      <COP-ADI form="no" lemma="L031965" phon="NLPOG" />
+                      <COP-ADI form="no" lemma="L031965" phon="NLOG" />
                       <N form="kuni" lemma="L051337" phon="LOG" />
                     </PLN>
                   </NP>

@@ -24519,9 +24519,9 @@
 .ITYPE	lower_bigrade
 .DERIVATION	ref_target=F000052	-e-
 .TRANSITIVITY	transitive
-.TRANSREL	ref_target=L030927a	sugus
-.TRANSREL	ref_target=L030932a	sugwos
-.TRANSREL	ref_target=L030930a	sugur
+.TRANSREL	ref_target=L030927a	sugusi
+.TRANSREL	ref_target=L030932a	sugwosi
+.TRANSREL	ref_target=L030930a	suguri
 .TRANSREL	ref_target=L030926a	sugwi
 
 ---------------------------------------------------
@@ -44939,7 +44939,7 @@
 .FORM	nosaki
 .KANA	ノサキ
 .POS	noun
-.COMPOUND	ref_target=L052548	no
+.COMPOUND	ref_target=L052548	ni
 .COMPOUND	ref_target=L050116	saki
 
 ---------------------------------------------------
@@ -53251,20 +53251,14 @@
 .POS	noun
 
 ---------------------------------------------------
-=== L052548a
+=== L052548
 .GLOSS	baggage
 .MEANING	baggage
 .FORM	ni
 .KANA	ニ
-.POS	noun (exposed)
-
----------------------------------------------------
-=== L052548b
-.GLOSS	baggage
-.MEANING	baggage
 .FORM	no
 .KANA	ノ
-.POS	noun (covert)
+.POS	noun
 
 ---------------------------------------------------
 === L052551

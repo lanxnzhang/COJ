@@ -2879,8 +2879,8 @@ multi-sentence,IP-MAT,VB-ADC,VB-STM,L030612a,LOG,ki
 multi-sentence,IP-MAT,VB-ADC,VB-ADC,L030206a,PHON,masu
 multi-sentence,IP-MAT,XTN-IFC,L000804,PHON,nari
 multi-sentence,IP-MAT;@2,4@紐解設奈,*
-multi-sentence,IP-MAT;@2,IP_ADV,NP-OB1,N,L051763,LOG,pimo
-multi-sentence,IP-MAT;@2,IP_ADV,VB-INF,L031199a,LOG,toki
+multi-sentence,IP-MAT;@2,IP-ADV,NP-OB1,N,L051763,LOG,pimo
+multi-sentence,IP-MAT;@2,IP-ADV,VB-INF,L031199a,LOG,toki
 multi-sentence,IP-MAT;@2,VB-OPT,VB-OPT,L031624a,LOG,make
 multi-sentence,IP-MAT;@2,VB-OPT,VB-OPT,L031624a,PHON,na
 ID,MYS.8.1518a

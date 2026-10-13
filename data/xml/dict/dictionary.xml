@@ -40795,9 +40795,9 @@
       <ref form="-e-" raw="ref_target=F000052&#9;-e-" target="F000052" />
     </derivation>
     <transrel>
-      <ref form="sugus" raw="ref_target=L030927a&#9;sugus" target="L030927a" />
-      <ref form="sugwos" raw="ref_target=L030932a&#9;sugwos" target="L030932a" />
-      <ref form="sugur" raw="ref_target=L030930a&#9;sugur" target="L030930a" />
+      <ref form="sugusi" raw="ref_target=L030927a&#9;sugusi" target="L030927a" />
+      <ref form="sugwosi" raw="ref_target=L030932a&#9;sugwosi" target="L030932a" />
+      <ref form="suguri" raw="ref_target=L030930a&#9;suguri" target="L030930a" />
       <ref form="sugwi" raw="ref_target=L030926a&#9;sugwi" target="L030926a" />
     </transrel>
     <transitivity>transitive</transitivity>
@@ -72958,7 +72958,7 @@
       <value>noun</value>
     </pos>
     <compound>
-      <ref form="no" raw="ref_target=L052548&#9;no" target="L052548" />
+      <ref form="ni" raw="ref_target=L052548&#9;ni" target="L052548" />
       <ref form="saki" raw="ref_target=L050116&#9;saki" target="L050116" />
     </compound>
   </entry>
@@ -85782,28 +85782,17 @@
       <value>noun</value>
     </pos>
   </entry>
-  <entry id="L052548a">
+  <entry id="L052548">
     <gloss>baggage</gloss>
     <meanings>
       <meaning>baggage</meaning>
     </meanings>
     <forms>
       <form kana="ニ" phonemic="ni" />
-    </forms>
-    <pos>
-      <value>noun (exposed)</value>
-    </pos>
-  </entry>
-  <entry id="L052548b">
-    <gloss>baggage</gloss>
-    <meanings>
-      <meaning>baggage</meaning>
-    </meanings>
-    <forms>
       <form kana="ノ" phonemic="no" />
     </forms>
     <pos>
-      <value>noun (covert)</value>
+      <value>noun</value>
     </pos>
   </entry>
   <entry id="L052551">
