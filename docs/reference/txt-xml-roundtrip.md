@@ -27,6 +27,12 @@ XML corpus ──CorpusDocument.from_file──> XML-backed model
 
 Dictionary conversion uses `Dictionary`/`DictEntry` from `src/coj/core/dictionary.py` and explicit XML maps in `src/coj/xml/dictionary_xml.py`.
 
+## Header/tree discrepancy policy — TXT → XML only
+
+The project-author clarification in [PAQ-006](../registers/project-author-questions.md#paq-006--resolving-headertree-content-discrepancies) applies specifically to **TXT → XML**: when header/tree content differs, report the inconsistency, retain enough exact evidence in the data-issue records for review, and continue conversion. Do not choose a side or silently correct source data. This is the accepted policy; automatic legacy converter reporting/registration is still an implementation gap. Current cases and historical resolutions are tracked in [DI-007](../registers/data-issues.md#di-007--header-and-tree-derived-transcription-content-discrepancies).
+
+This policy does not establish behavior for XML → TXT or other conversion/export workflows. The SYN authoring system's reviewed write-back/export retains its existing blocking rules for unresolved discrepancies. Source drafts may retain both layers without authorizing reviewed publication.
+
 ## TXT corpus grammar and meaning
 
 ### Document and text boundaries

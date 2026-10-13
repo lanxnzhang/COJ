@@ -4,7 +4,9 @@ Several annotations in the current corpus are absent from, or insufficiently exp
 
 For each genuine category, please provide its expansion, annotation function, relationship to similar labels, and appropriate reference section. Where applicable, please specify **Parts of speech: Words**, **Parts of speech: Bound morphemes**, or another category. Existing explanations in software are provisional, not assumed to be authoritative.
 
-EN/SM identifiers use dotted spelling: `EN.1.1` corresponds to source ID `1_EN_01`. The [detailed investigation](../archive/tag-investigation-report.md) contains counts and further evidence; this shorter document omits parser and XML-name artifacts.
+Rechecked 13 October 2026 after import 3b8d060. Current source examples remain evidence, not inferred definitions. Counts in the linked archived investigation are historical. The current-source scan counts source-line incidences, not distinct syntax nodes; a label repeated along paths is not a new occurrence on every line. None of the still-present categories below is being resolved from software descriptions.
+
+EN/SM identifiers use provisional dotted spelling (PAQ-009): `EN.1.1` corresponds to source ID `1_EN_01`. The [detailed investigation](../archive/tag-investigation-report.md) contains counts and further evidence; this shorter document omits parser and XML-name artifacts.
 
 ## Main questions
 
@@ -27,7 +29,7 @@ Other examples are `C-N` in EN.1.2, `C-PP` in EN.1.3, `C-ADV` in EN.12.1, and `C
 - **`APP-N` / `APP-NP`:** What do these labels mean, and how do they differ from `NP-APP`? EN.1.6 has `NP-PRD → N → APP-N → N sumyera`; EN.7.3 has `APP-NP` containing `kotosi no …`.
 - **`CP-N`:** What is its function? EN.3.2 has `N → CP-N → N(ADJ-STM nigi, N sine)`. Software calls it “noun complementizer phrase”; is that correct?
 - **`N-DVB`:** How does it differ from `DVN`? EN.10.5 annotates `twopa` as `N-DVB`.
-- **`ADV-WH`:** Is this distinct from `WH-ADV`? In MYS.1.29a it contains `ika + sama + ni`.
+- **Historical `ADV-WH`:** the older MYS.1.29a example is no longer present as ADV-WH; current source uses WH-ADV after 3b8d060. Its historical relationship is unconfirmed, but this is not a current-corpus occurrence. The source correction is recorded below rather than presented as new chief-editor guidance.
 
 ### 3. Numeral-related structures
 
@@ -63,9 +65,9 @@ Are the following genuine writing-mode categories? Please confirm their meanings
 | --- | --- | --- |
 | `BPHON` | SM.1.2, `are` | Back-phonographic / reversed phonographic reading |
 | `ORDLOG` | EN.10.6, `pe` | Ordinal logographic |
-| `NLPOG` | MYS.6.1047, `no` | Non-logographic, partially obscured |
+| `NLPOG` (historical only) | Older MYS.6.1047, `no`; now NLOG after 3b8d060 | Non-logographic, partially obscured (software-only description) |
 
-In particular, is `NLPOG` intentional or a spelling variant of another writing-mode annotation?
+No NLPOG remains in current TXT or XML. The imported source replaced the older example with NLOG; software still defines NLPOG. Whether it was ever an intentional historical writing-mode category remains unconfirmed; a software description is not authority to reinstate it.
 
 ## Secondary verification questions
 
@@ -97,11 +99,13 @@ Remaining questions above are retained for consultation. XML-generated names, mi
 
 ### Root grouping label: `multi-clause`
 
-**Question:** How does this root label differ from `multi-sentence`? It occurs in KH.27 and KK.91.
+**Historical question:** How does this root label differ from `multi-sentence`? Older data used it in KH.27 and KK.91.
 
 **Answer:** Use `multi-sentence` for sentence-level grouping. `multi-clause` is deprecated.
 
 **Authority:** Editor-in-Chief; recorded 8 October 2026.
+
+**Current source recheck:** no multi-clause remains in current TXT/XML after the latest source import. The parser still preserves historical input without silent renaming. This source synchronization implements the recorded annotation decision; it does not change the compatibility rule.
 
 **Status:** Resolved.
 
@@ -118,3 +122,10 @@ no standardization between them is specified.
 [CAT-02](../reference/annotation-guidelines.md#cat-02--confirmed-labels-and-usage).
 
 **Status:** Resolved.
+
+## Current data corrections versus unresolved terminology
+
+- **ADV-WH → WH-ADV** and **NLPOG → NLOG:** source changes imported in 3b8d060; zero current occurrences of the older spellings. Historical category interpretation is not independently confirmed here. No original question/example is silently discarded.
+- **FRM:** confirmed guidance remains `frame`; any older software descriptions such as `formal/nominal` are implementation wording, not grounds to reopen or contradict that answer.
+- **ILL / NULL:** semantic questions remain CEQ-004/CEQ-005. Special source-character forms, trace-like *T*, LOG;@2 and malformed markers are documented once in DI-004-006/DI-010-012 and PAQ-007/008/018, rather than listed as new abbreviation definitions here.
+- Other listed labels remain present in the current source scan; IP-EMP, PFX-PHB and VB-DVB still have no corpus examples. Absence alone does not establish deprecation or semantics.

@@ -50,6 +50,10 @@ The [data issues](../../registers/data-issues.md),
 unresolved semantics. Preserve their evidence and ask the author when a required
 behavior cannot be determined. This design does not resolve those questions.
 
+### Scope of the TXT → XML discrepancy decision
+
+[PAQ-006](../../registers/project-author-questions.md#paq-006--resolving-headertree-content-discrepancies), clarified by the project author on 13 October 2026, requires reporting/recording header/tree content discrepancies and continuing **TXT → XML conversion only**. It does not relax this design's blocking rules for unresolved discrepancies in SYN reviewed write-back/export. It also specifies no policy for XML → TXT or any other conversion. Legacy converter automatic reporting remains pending; preserving a discrepancy in a draft is separate from approving reviewed export.
+
 ## Document and Text organization
 
 One complete `.syn.json` file represents one **Document**, containing ordered
