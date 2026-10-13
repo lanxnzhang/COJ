@@ -101,10 +101,10 @@ multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
 
 ### DI-006 — Two anomalous marker-like lines
 
-- **Status:** Open; interpretations remain distinct and provisional.
-- **Extent:** corpus-wide scan found exactly one malformed numeric-@ marker and one bare-star anomaly after excluding the separately registered 347 NULL,* lines.
+- **Status:** MYS.19.4220 attached-marker case Resolved; SM.29.2 bare-star case Open.
+- **Evidence scope:** the 13 October COJ scan found one malformed numeric-@ marker and one bare-star anomaly after excluding the separately registered NULL,* lines. Source synchronization status is distinct from author-decision status.
 
-#### MYS.19.4220 — attached marker
+#### MYS.19.4220 - attached marker (Resolved)
 
 ```txt
 # data/txt/trees/MYS_19.txt:3839
@@ -113,9 +113,9 @@ IP-MAT,IP-ADV,IP-ADV,IP-EPT.18@於保夫祢能,*
 IP-MAT,IP-ADV,IP-ADV,IP-EPT,MK,L020022,N,L050510,ADJ-STM,L007009a,PHON,opo
 ```
 
-The author believes `IP-EPT.18@於保夫祢能,*` should be `IP-EPT,18@於保夫祢能,*` (PAQ-004), but explicitly requires later correction confirmation. It remains a raw roundtrip comment, not a recognized segment/boundary. Its missing recognized 18 also contributes to DI-009's MYS.19.4220 numbering diagnostic; that is the same evidence, not another authorized correction.
+The project author reports that this typo has already been corrected in ONCOJ (PAQ-004): the period between IP-EPT and the numeric marker is replaced by a comma. It is awaiting normal ONCOJ to COJ synchronization. The old malformed line remains in this COJ checkout; that is not an unresolved author decision or permission to edit COJ source directly. The inventory retains the original line and its context. Its missing recognized marker 18 contributes to DI-009's current-checkout diagnostic; that observation does not reopen the resolved source correction.
 
-#### Source 2_SM_29 / XML SM.29.2 — bare star
+#### Source 2_SM_29 / XML SM.29.2 - bare star (Open)
 
 ```txt
 # data/txt/text/SM_29.txt:110
@@ -124,25 +124,7 @@ IP-MAT,PP-TOP,NP,IP-REL,VB-ADC,*
 IP-MAT,PP-TOP,NP,9@許止方不得,*
 ```
 
-The author believes this is an editing error but its intended content is unknown (PAQ-005). No intended content or replacement is proposed. Raw preservation establishes neither structure nor source-text processing. Full cases are inventory.malformed_markers / inventory.bare_stars; no additional cases were found, and none was repaired.
-
-# data/txt/trees/MYS_19.txt:3838
-IP-MAT,IP-ADV,IP-ADV,IP-EPT.18@於保夫祢能,*
-```
-
-Current marker recognition requires the numeric marker to begin after a comma. `18@...` is attached to `IP-EPT.` and therefore is preserved as a raw roundtrip comment but does not create a raw-text segment or normal marker boundary.
-
-#### SM.29 bare star line
-
-```txt
-# data/txt/text/SM_29.txt:110
-IP-MAT,PP-TOP,NP,IP-REL,VB-ADC,*
-```
-
-This is also preserved as a raw roundtrip comment but has neither numbered source-text payload nor recognized boundary semantics.
-
-- **Current result:** raw preservation protects textual round-trip, but does not establish intended structure or source-text processing.
-- **Related questions:** PAQ-004 and PAQ-005.
+The investigation is complete, but intended content remains unknown (PAQ-005). Keep the substantive issue Open until reliable evidence or editorial review establishes it. Do not infer/reconstruct/propose a replacement or alter source data. The line is preserved as a raw comment without recognized source-segment/boundary semantics. Full original cases remain in inventory.malformed_markers / inventory.bare_stars.
 
 ## Cross-layer discrepancies
 
@@ -289,8 +271,8 @@ No occurrence was modified or reinterpreted.
 - **Missing required fields:** L050830 lacks GLOSS/MEANING/FORM/KANA/POS; L080156 and L099997 lack POS. Other absent optional-field counts are inventory.dictionary.field_absent_entries. Absence is not labeled a source error here.
 - **Current-data roundtrip probe:** all 6,498 parsed entry field maps survive TXT model → XML → model, including these blanks. This does not cover skipped untagged content (DI-003) or physical syntax/order identity.
 - **Normalization probe, on copies only:** three entries change semantic presence states. L080156/L099997 gain POS=[]; L050830 gains GLOSS="", MEANING=[], FORM=[], KANA=[""] and POS=[]. Empty repeated lists emit no TXT occurrence; a bare blank KANA without FORM is not serialized to XML.
-- **Synthetic mapping probes:** blank optional singular CORRESP disappears; orphan/extra KANA values disappear; FORM without KANA gains a blank KANA; NOTE/NOTES merge; unmapped fields disappear. These are implementation counterexamples, not claims that those fixtures occur in current source. Indexed field values are reordered by explicit index and duplicate singular occurrences overwrite.
-- **Current architecture:** no SYN dictionary codec exists; generic corpus compatibility snapshots do not resolve these dictionary mappings. PAQ-015 records zero NOTES source occurrences and the still-provisional alias question. PAQ-019 owns unsupported-formal-data policy. Full field/order/model/normalization evidence is inventory.dictionary.
+- **Synthetic mapping probes:** blank optional singular CORRESP disappears; orphan/extra KANA values disappear; FORM without KANA gains a blank KANA; unmapped fields disappear. These are implementation counterexamples, not claims that those fixtures occur in current source. Indexed field values are reordered by explicit index and duplicate singular occurrences overwrite.
+- **Current architecture:** no SYN dictionary codec exists; generic corpus compatibility snapshots do not resolve these dictionary mappings. PAQ-019 owns unsupported-formal-data policy. Full field/order/model/normalization evidence is inventory.dictionary.
 
 ### DI-012 — Nonalphabetic syntax/form candidates and provisional trace notation
 
