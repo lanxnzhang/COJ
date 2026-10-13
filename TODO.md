@@ -2098,6 +2098,83 @@ Please make three small Stage 2 UI fixes. Do not change the data model or begin 
 3. Open Text work list: EN, MYS and SM should use the same left alignment, font size/weight and general row styling as FK, JSHT, KH, KK, NSK, etc. Their only additional affordance should be a small expand/collapse indicator on the right. Do not right-align or visually emphasize the work name itself.
 Keep everything else unchanged. Run the relevant tests and briefly report the cause of the Untitled Document 3 issue and what was changed. If anything about the intended behavior is unclear or requires an assumption not established by the current design/repository, ask me before deciding or implementing it. Do not guess.
 
+### After commit d6edd91
+Before implementing Stage 3, investigate the repository and prepare a concise design/feasibility analysis for assisted recursive analysis and refinement. Do not change code yet.
+Inspect the actual corpus, dictionary, annotation guidelines/issues, existing processors/search code, and relevant tests. Determine what evidence is genuinely available for assisting annotation after Source has been entered, for example:
+taka yuku ya
+
+The intended goal is to pre-fill as much well-supported analysis as possible, including:
+- lemma IDs;
+- node categories/tags such as ADJ-STM, VB-ADC, P-FOC;
+- supported finer segmentation/refinement;
+- recursive tagged subtree patterns such as paruyama → paru + yama;
+- parent/component lemma associations and existing compound structures;
+- attested forms under existing lemma entries.
+The workflow should remain pre-fill → user reviews → user corrects exceptions, not repeated confirmation dialogs.
+Please investigate and report:
+1. What corpus/dictionary evidence can reliably support each kind of suggestion, and what existing code/indexes can be reused.
+2. How ambiguous cases should be recognized and presented—for example multiple lemma/category candidates versus a strongly supported existing attestation.
+3. How whole previously attested tagged subtrees can be suggested for a new occurrence without assuming that every occurrence of the same form/lemma has identical structure.
+4. How the user should efficiently correct a wrong lemma, category, segmentation, or proposed subtree.
+5. How manual script annotation should work at this stage, especially multi-selection/batch PHON or LOG with individual exceptions.
+6. What Analyse should do for:
+   - a new/unanalysed Text;
+   - partially analysed material;
+   - an imported Text that already has an annotated hierarchy.
+Existing authored/imported analysis must never be silently overwritten. Editing Source does not automatically reanalyse it. Analyse is an explicit user action, and suggestions that would alter existing analysis must remain reviewable rather than being silently applied.
+Use concrete repository examples such as taka, yuku, paruyama, titipapa, takayuku, and multipart ipaku where useful. Distinguish evidence-supported behavior from heuristics that would require a new linguistic decision.
+Also identify any Stage 3 behavior that is still underspecified and needs my decision before implementation.
+Do not guess unresolved linguistic or workflow semantics. If the repository evidence and existing requirements do not determine something, ask me rather than choosing a behavior yourself. Do not implement Stage 3 yet.
+
+#### After commit d6edd91 (2)
+Here are my decisions for the unresolved Stage 3 behaviors. Please incorporate them into the Stage 3 design, verify them against the repository, and report any remaining implementation-critical questions. Do not implement Stage 3 yet.
+1. Default eligibility and evidence
+Dominant attestation evidence may be used to pre-fill the editable default even when it is not 100% conflict-free. The goal is to reduce repetitive manual annotation.
+- Strong/dominant evidence → pre-fill the best-supported analysis, while making it easy to inspect and change.
+- Genuinely ambiguous/non-dominant evidence → present multiple candidates rather than arbitrarily choosing one.
+- Frequency is evidence, not linguistic certainty.
+EN and SM must be treated as a separate evidence domain. Other Documents must not currently use EN/SM annotations as evidence for defaults or ranking. EN/SM may use evidence from the rest of the corpus. Preserve/flag their editorial status appropriately.
+Pre-filling must never hide or remove alternative candidates. For example, if one lemma/category analysis accounts for 95% of relevant attestations and another for 5%, the 95% candidate may be pre-filled, but the user must still be able to inspect the alternatives and switch directly to the 5% candidate. Pre-fill means an editable default, not an accepted or locked decision.
+2. Automatic subtree scope
+Assisted Analyse may pre-fill supported structure through the word level, including recursive lexical/morphological/compound structure and word-level structures such as MK where the repository’s existing segmentation/annotation rules classify them as words.
+Do not automatically construct phrase-level or higher syntax at this stage.
+Please inspect the existing annotation/segmentation guidelines and corpus rules for the established word/phrase boundary rather than inventing a new definition. If MK or another category has context-dependent status that makes this rule insufficient, show me the concrete evidence and ask.
+3. Incomplete analysis and deletion/refinement
+A missing lemma on a current leaf/terminal normally indicates unfinished annotation: theoretically the final lowest-level analysed components should have lemma IDs. An internal/higher node does not necessarily require a lemma.
+Verify actual corpus exceptions (NULL, traces, special tags, unresolved editorial cases, etc.) from the repository before encoding validation rules. Do not infer completeness from lemma == null without accounting for documented exceptions.
+When the user explicitly deletes/withdraws an analysed child or refinement, treat that as a real deletion from the current model rather than permanently retaining detached/orphaned analysis merely for possible recovery.
+- Provide ordinary session undo/redo, similar to a normal text editor.
+- Undo history is transient UI/session state and should not be persisted in .syn.json.
+- It may be discarded when the editing page/session is closed; long-term version recovery belongs to Git.
+- If a node being deleted is still referenced by current alignment, legacy anchors or other meaningful data, do not leave dangling references or silently discard those relationships. Show the impact and require appropriate resolution/confirmation.
+This is different from deleting Source material: deleting Source must not imply that the user intended to delete existing linguistic analysis, so affected analysis remains preserved/unresolved under the policy already established.
+4. Batch script assignment
+Script annotation should support efficient downward assignment where that is linguistically appropriate. If a lexical whole is assigned PHON, its component material should also be PHON; otherwise the whole would not consistently be PHON.
+Therefore selecting an appropriate higher lexical node and assigning PHON should be able to apply to its relevant descendant terminal/writing units, with undo and individual correction afterward.
+However, do not generalize this blindly to every internal syntactic node or every script value. Inspect the existing corpus representation and annotation guidelines to determine where script annotations actually live and how LOG/PHON/multipart cases behave. Preserve existing mixed-script evidence such as multipart forms rather than overwriting it by assumption.
+The intended interaction remains pre-fill → review → correct exceptions, with Analyse as an explicit user action. Existing imported/authored hierarchy must never be silently overwritten by re-analysis.
+Please update the Stage 3 design accordingly and tell me:
+- what concrete evidence/ranking policy you recommend implementing from these rules;
+- what corpus exceptions affect completeness or script propagation;
+- whether any semantic/workflow decision is still required before implementation.
+Do not guess unresolved behavior. If the requirements and repository evidence do not determine something, ask me before deciding. Do not implement Stage 3 yet.
+
+#### After commit d6edd91 (3)
+Please now update syntax-tree-authoring-design.md to incorporate the Stage 3 findings and decisions from this review. Do not implement Stage 3 yet.
+In particular, record:
+- Evidence ranking: use configurable ≥95% support across at least 3 distinct Texts as the conservative initial gate for pre-filling a dominant candidate. This is a suggestion policy, not an annotation rule. All attested alternatives must remain accessible and directly selectable.
+- Evidence domains: ordinary and unnamed Texts exclude EN/SM evidence. Explicitly identified EN/SM Texts may use both ordinary and EN/SM evidence, with the domains distinguishable. Do not add an evidence-domain selector for ordinary unnamed drafts. EN/SM must not contribute to ordinary defaults until I explicitly authorize that later.
+- MK: retain MK as a special Stage 3-eligible Word category. Supported internal tagged subtrees, including internal PP/IP structures, may be suggested. Preserve distinct attested structural alternatives rather than assuming one invariant structure per lemma. Do not generalize MK behavior to other Word categories without repository evidence.
+- Automatic scope: Stage 3 may construct evidence-supported lexical/morphological/word-level recursive analysis. Do not automatically construct ordinary phrase-level or higher syntax beyond the established eligible Word structures.
+- Completeness: final lowest-level analysed components are normally expected to have lemma IDs, while internal/higher nodes need not. Encode actual documented exceptions rather than treating every missing lemma identically.
+- Refinement deletion: explicitly deleting/withdrawing analysis removes it from the current model. Keep ordinary session undo/redo only; do not persist editing history in .syn.json. Git provides long-term history. Existing references must be handled explicitly rather than left dangling. This remains distinct from deleting Source, which preserves affected analysis as unresolved.
+- Script annotation: model this as efficient scope-based batch annotation, not parent→child inheritance. Determine applicable terminals/writing parts from the actual corpus model. Batch assignment fills empty applicable values by default and preserves existing script annotations; changing an existing value requires explicit override/edit. Support useful scopes such as explicit multi-selection, source line, subtree, or unannotated applicable units in the Text where appropriate.
+- Analyse: remains an explicit action. Existing imported/authored analysis is never silently overwritten; proposed changes to existing analysis require review.
+Update any earlier Stage 3 proposals that conflict with these findings, including the previous MK and script-propagation assumptions.
+Then give me a concise assessment of whether any implementation-critical semantic or workflow decisions still remain unresolved before Stage 3 can begin. Distinguish genuine blockers from questions that can safely remain deferred to later stages.
+Do not implement anything yet. Do not guess unresolved behavior. If a decision is genuinely required and neither the repository nor these requirements determines it, ask me.
+
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

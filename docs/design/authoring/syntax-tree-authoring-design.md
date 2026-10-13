@@ -1,9 +1,10 @@
 # Syntax-tree authoring: source-first workflow
 
-Revised 13 October 2026 following **After commit 023a10c (2)–(9)**
-and the **After commit 7d5fb6f / 8c3dfc5** Stage 2 usability corrections and the
-author's header, synchronization, unified-hierarchy and permissive source-edit
-clarifications. The Stage 1 + Stage 2 milestone now implements version-2
+Revised 13 October 2026 following **After commit 023a10c (2)–(9)**,
+the **After commit 7d5fb6f / 8c3dfc5** Stage 2 usability corrections and
+**After commit d6edd91 (2)–(3)** Stage 3 review and confirmed decisions. This
+incorporates the author's header, synchronization, unified-hierarchy and
+permissive source-edit clarifications. The Stage 1 + Stage 2 milestone now implements version-2
 multi-Text Documents, paired source entry, read-only corpus opening and
 revision-checked `.syn.json` saves inside the existing Editing tab. Analysis,
 full hierarchy editing and reviewed TXT/XML export remain later stages. No
@@ -12,6 +13,8 @@ for the implemented behavior and limits.
 The earlier separate syntax/composition model and split/replacement alternatives
 are superseded: the target is one recursively annotated hierarchy, with
 composition as a view of that hierarchy and refinement preserving higher nodes.
+Stage 3 remains unimplemented; the accepted policies and repository findings
+below must not be read as an implementation report.
 
 The [A/B comparison](syn-prototype-comparison.md) and its eight static files
 remain historical alternatives, not the settled authoring format. The
@@ -117,7 +120,10 @@ require routine header entry. No manually typed occurrence IDs, alignment
 records or preservation blocks belong in the normal view.
 
 An unfinished transcription, missing lemma, unresolved category or absent tree
-is a valid draft. A compound without a lemma is valid in completed annotation:
+is a valid draft. Under the author's Stage 3 clarification, an ordinary current
+leaf without a lemma normally represents unfinished annotation; trace/special
+material and parser/editorial exceptions require separate handling. An internal
+compound without a lemma is valid in completed annotation:
 it requires neither confirmation of that absence nor a new dictionary entry.
 Composition is revised by changing the relevant nodes/relationships in the
 same hierarchy. Nested compounds are recursive subtrees. Competing analyses of
@@ -157,7 +163,9 @@ choosing an analysis or reconciliation representation.
 ### Assisted annotation
 
 - Search/autocomplete existing lemma IDs using forms and dictionary information;
-  rank candidates using corpus attestations and retain the attested spelling.
+  rank candidates using corpus attestations from the permitted evidence domain
+  and retain the attested spelling. Dominant evidence may pre-fill an editable
+  default; alternatives remain inspectable and directly selectable.
 - Suggest terminal categories from previous attestations of the same form/lemma
   and relevant, established morphological patterns. Category belongs to the
   annotated node, not the dictionary entry; dictionary POS is
@@ -183,16 +191,274 @@ For example, `taka` has several exact dictionary matches; `yuku` is attested
 under L031840a whose dictionary form is `yuki`. A surface-form match alone is
 not enough to choose a lemma/category. For `paruyama`, explicit component links
 and attested `N → N + N` structure support a proposed `paru + yama` analysis
-with L090723 retained. Ranking thresholds, broader morphological inference and
-unattested analyses are not specified here; establish evidence and ask where
-a required linguistic behavior remains undecided. No per-item confirmation
-dialog is required for well-supported pre-fills.
+with L090723 retained. Dominant defaults and evidence-supported word-level
+automatic scope, including the MK special case below, are authorized. The
+configurable initial gate is at least 95% support across at least three distinct
+Texts; it governs suggestions, not annotation validity. Broader morphology and
+unattested analyses remain deferred. No per-item confirmation dialog is required
+for well-supported pre-fills.
 
 The existing `treditor` application is the proposed primary authoring interface.
 Users normally work through its structured UI. VS Code initially supports file
 storage, inspection and Git history; a full editing extension is deferred.
 Paired entry and the revised container/hierarchy schema are implemented in
 Stage 1 + Stage 2; assisted analysis and editable hierarchy views remain deferred.
+
+## Stage 3 decisions and verified feasibility
+
+This section incorporates **After commit d6edd91 (2)–(3)** and the author
+responses to the repository review. The threshold, domain policy, MK eligibility
+and scope-based script interaction are accepted decisions. This revision updates
+the design only; no Stage 3 code, corpus correction or new runtime validation is
+authorized. Remaining questions are identified by the operations they affect.
+
+### Evidence domains and editable defaults — accepted
+
+EN/SM constitute a separate evidence domain. Ordinary and unnamed Texts exclude
+EN/SM annotation evidence from both defaults and ranking, including indirect
+frequency totals or subtree counts. Only explicitly identified EN/SM Texts may
+use both ordinary and EN/SM evidence, with their domains distinguishable where
+useful. Do not add an evidence-domain selector for ordinary unnamed drafts.
+EN/SM may enter the ordinary evidence base only after explicit author
+authorization. Preserve attestation domain/editorial status; do not normalize
+deferred EN/SM labels by analogy. Ask about a real unclear membership case rather
+than inferring a domain from arbitrary display names or storage filenames.
+
+A strong/dominant candidate may be pre-filled even with minority alternatives.
+Pre-fill is an editable suggestion, never acceptance, locking or deletion of
+other candidates. Show candidate counts, relevant context, source locations,
+quality flags and alternatives. Switching to a minority candidate should be
+one scoped operation with undo, not repeated dialogs. Genuine non-dominance
+must not be resolved by entry order or an arbitrary tie-break.
+
+Analyse reads current **Source**, not Text Input or the historical header, and
+runs only on explicit invocation. For new/unanalysed material it may pre-fill
+eligible word-level analysis. Existing imported/authored hierarchy is protected:
+proposals affecting it remain a reviewable change set until explicitly accepted.
+Partial analysis needs field-aware treatment: ordinary leaf lemma absence is
+normally unfinished; internal lemma absence is legitimate and must not invite
+an automatically invented parent lemma. Unknown/special cases remain flagged.
+
+### Initial evidence ranking — accepted suggestion policy
+
+1. Filter annotations by the target evidence domain **before** calculating
+   candidates, counts or defaults. Dictionary entry lookup is a separate source;
+   a processor-generated dictionary association does not establish independent
+   editorial confirmation. Keep provenance visible where known.
+2. Retrieve exact attested surface forms and complete ordered word-level
+   subtree yields. Use attested form/lemma pairs for inflected realizations
+   (`yuku → L031840a`, dictionary `yuki`), not a newly inferred inflection rule.
+   Dictionary `.FORM` and ordered `.COMPOUND` references corroborate associations;
+   they supply neither corpus votes nor missing node categories by themselves.
+3. Group joint lemma/category or recursive structure alternatives for the same
+   matched span and comparable analysis scope. Preserve their correlations,
+   ordered children and genuine distinctions. Keep writing-mode evidence
+   separate from lexical-pattern equivalence; do not copy its values onto new
+   occurrences automatically. Do not inflate counts with enclosing NP/IP
+   wrappers sharing a yield or with dictionary lookup hits.
+4. Compare exact local-context support when enough examples exist; otherwise
+   retain broader attested surface support with its context differences visible.
+   Missing/unknown analysis remains an uncertainty bucket rather than being
+   silently dropped to manufacture high dominance. Known malformed labels,
+   missing dictionary targets and unresolved special structures are ineligible
+   for an unqualified default; preserve them as flagged evidence.
+5. Use a **configurable initial gate of at least 95% support among comparable
+   attested occurrences, with the dominant candidate supported across at least
+   three distinct Text records**. This is a conservative suggestion/ranking
+   policy, not a linguistic or annotation rule. Display occurrence and
+   distinct-Text counts; repetitions do not count as additional Texts. Use
+   persistent Text record identity, not just scholarly ID, because duplicate IDs
+   exist. All attested alternatives remain accessible and directly selectable,
+   including a 5% alternative when a 95% candidate is pre-filled. Below the gate,
+   offer candidates without an arbitrary default. Dictionary corroboration does
+   not supply corpus votes or waive the minimum sample.
+6. Ordinary and unnamed Texts use only ordinary evidence. Explicit EN/SM Texts
+   may use both domains; retain domain-specific counts/provenance. There is no
+   unnamed-draft domain selector. Filter before aggregation. Membership changes
+   do not silently reanalyse or rewrite authored data: refresh suggestions on
+   explicit Analyse and surface any previously ineligible-domain suggestions
+   for review, retaining their provenance.
+
+Revalidated non-EN/SM evidence illustrates the consequence of domain filtering:
+
+| Material | Permitted non-EN/SM evidence | Consequence under the accepted initial gate |
+|---|---|---|
+| `yuku` | 247 VB-ADC/L031840a and one each VB-ADN, VB-CLS, VB-INF, all in uploaded trees. | ADC has 98.8% occurrence support; retain all three minority alternatives. EN/SM's six ADC references and three unassigned leaves must not enter these counts. |
+| `taka` | 140 ADJ-STM/L007005 out of 158 uploaded terminal attestations; other noun, place-name, verb and adverb analyses remain. | 88.6% does not pass 95%; contextual and whole-subtree evidence remains available without an arbitrary choice. |
+| `paruyama` | Eight N/L090723 → N paru/L051724 + N yama/L050034 subtrees. | Whole recursive candidate supported by corpus and dictionary components. |
+| `titipapa` | 21 complete uploaded N/L050402 component analyses; two incomplete SM examples are separate-domain evidence. | SM's missing `papa` lemma must not weaken or change a non-EN/SM default/ranking. |
+| `takayuku` | KK.67/68 attest VB-ADC/L030996a → ADJ-STM taka/L007005 + VB-ADC yuku/L031840a. | Exact template remains selectable; two Texts fall below the three-Text gate. |
+
+Frequency is evidence support, not certainty or a calibrated linguistic
+probability. The gate is configurable; context differences and all alternatives
+remain visible. Reuse dictionary lookup,
+complete corpus/legacy records and search/TGrep retrieval, but add a complete
+attestation index with source revision, block ordinal and node address. Reduced
+renderer payloads omit preservation attributes. Existing bulk processors rewrite
+IDs/entries and impose pairing/disambiguation heuristics; they are not a default
+annotation authority or a safe autocomplete service.
+
+### Automatic scope and MK special case — accepted
+
+Stage 3 may construct evidence-supported lexical, morphological and word-level
+recursive analysis. Do not automatically construct ordinary phrase-level or
+higher syntax outside established eligible Word structures. Unknown labels
+acquire neither invented structural levels nor eligibility from dictionary IDs.
+
+**MK remains a special Stage 3-eligible category within Parts of Speech: Words.**
+Supported complete MK subtrees may be suggested, including internal PP/IP
+structure. Internal phrase tags alone do not disqualify MK. The author expects
+those constituents to remain internal to the lexical unit, with the whole MK
+participating in surrounding syntax. Instantiate supported internal structure;
+do not infer relations to surrounding material or include enclosing IP-EPT in
+an MK template. Existing hierarchy changes still require review/acceptance.
+
+The dictionary identifies L020020 (`okitunami`) and L020022 (`opobuneno`) as
+makura kotoba. The four uploaded MK occurrences containing confirmed
+phrase/clause categories retain them wholly inside MK. No traces or explicit
+relation attributes were found inside uploaded MK indicating a connection from
+an internal constituent to external material. Containment supports the intended
+interpretation; it does not independently prove every linguistic dependency.
+
+The ordinary corpus contains **1,890 MK nodes**, 1,881 lemma-bearing, with
+269 distinct lemma IDs. Of 183 repeated lemma IDs, **131 have identical ordered
+tag structures and 52 vary**. Of all MK nodes, 1,873 occur directly under IP-EPT;
+other placements include nested MK and occasional IP-REL/IP-ADV parents.
+Neither placement nor lemma identity guarantees an invariant internal pattern.
+
+| Lemma/material | Attested structural alternatives | Initial suggestion consequence |
+|---|---|---|
+| L020020, `okitunami` | MYS.11.2596b and MYS.13.3225: MK → PP(NP(N oki), P-CASE-GEN tu) + N nami. MYS.19.4220: MK → N oki + P-CASE-GEN tu + N nami. | Preserve both templates. Across three lemma occurrences, 2/3 does not meet 95%. |
+| L020022, `opobuneno` | Twenty: MK → N(ADJ-STM opo, N bune) + COP-ADI no. MYS.13.3324a/b: MK → IP-ADV(NP-PRD(N(ADJ-STM opo, N bune)), COP-ADI no). MYS.11.2436: MK → N(ADJ-STM opo, N bune) + P-CASE-GEN no. | Preserve all three templates. Across 23 lemma occurrences, 20/23 does not meet 95%. |
+| L020021 | Three `yamataduno` patterns: MK → N(N yama, N tadu) + COP-ADI no; MYS.2.85 `yamatadune`: MK → N yama + VB-INF tadune. The dictionary lists both forms. | Surface form and internal categories matter; one lemma alone cannot select a template. |
+| L090487, `mitugurino` | Five occurrences share MK → N(N(NUM, CL), N) + COP-ADI. | Stable recursive structure; rank the complete analysis using the ordinary gate and evidence checks. |
+
+The stability counts compare ordered tag topology, not final complete-candidate
+identity: component lemmas, forms, preserved distinctions and comparable matched
+scopes also matter. Do not merge distinct patterns to inflate dominance or copy
+occurrence IDs/scripts from evidence. Candidate alternatives are suggestions,
+not competing persistent analyses of the same occurrence.
+
+Segmentation remains a separate projection. SEG-03/04 still preserve internal
+phrase boundaries: actual current outputs are `oki tu nami` for MYS.11.2596b,
+`opobune no` for MYS.13.3324a, and `takayukuya` for KK.67. These outputs do not
+decide Stage 3 eligibility or authorize flattening/retagging imported structures.
+The earlier proposal to exclude the outer IP/PP-containing MK is superseded.
+
+Do not generalize this MK exception to other Words-category tags. Follow their
+actual guidelines and repository evidence; ask about unclear concrete cases.
+MK eligibility does not license constructing arbitrary phrase/clause analysis
+from input or extending relations outside the supported lexical subtree.
+
+### Completeness exceptions verified against current files
+
+An ordinary form-bearing current leaf normally needs a lemma before being
+considered finished; an internal/higher node does not. Draft Save remains
+permissive. Completeness is a diagnostic distinct from structural validation,
+dictionary-entry creation and future reviewed export. Writing parts are not
+analysed nodes: `ipa/LOG` and `ku/PHON` do not each need a lemma merely because
+they are writing units. If independently supported analysis promotes them to
+actual annotated children, the normal component rule then applies. Filled but
+nonexistent lemma IDs also require review; presence alone is not completion.
+
+The current scan separates these cases:
+
+- **243 traces:** XML `_T_` leaves retain `raw_tag="*T*"`, empty form/script and
+  no lemma. Do not label them ordinary lexical omissions or invent dictionary IDs.
+- **347 `NULL,*` TXT lines:** current parsing preserves them as positioned
+  roundtrip comments, outside the active tree. CEQ-005 semantics remain open;
+  do not turn them into nodes or call them complete based on missing/present lemma.
+- **20 ILL TXT records:** five recognized ASCII forms/parts and 15 non-ASCII
+  special forms currently misread into paths. Actual tree leaves include 243
+  traces plus 15 such missing-form parser artifacts. Special `WORD`/ILL cases
+  need status-aware handling, not a rule that a sentinel lemma proves completion.
+- **Ordinary-looking uploaded omissions are malformed cases:** the only two
+  uploaded form-bearing leaves without a lemma are MYS.7.1268 (`PHON-KUN` used
+  as a category, form `ni`) and MYS.9.1777 (`NL000033` used as a category, `ku`).
+  Inspect/preserve their raw TXT paths rather than treating them as ordinary
+  auto-fill examples. The 14,887 form-bearing lemma-less EN/SM leaves are
+  separate-domain unfinished/editorial material, not evidence for other defaults.
+- **Unconfirmed labels/material:** C-/APP-, FRAG, special writing values, missing
+  forms and unresolved alignments remain flagged under the guidelines/issues.
+  No new exception meanings or automatic label/ID corrections are supplied here.
+
+### Explicit analysis deletion versus Source deletion — accepted
+
+Explicitly deleting an analysed node/refinement removes it from the **current
+model**. Do not keep detached copies indefinitely just for recovery. Ordinary
+undo/redo restores identities, fields, topology and relationships within the
+session; this history is not written into `.syn.json` and may be discarded when
+the page/session closes. Git provides long-term version recovery. Immutable
+import snapshots remain historical compatibility evidence, not an active orphan
+analysis graph or serialized undo log.
+
+Before deleting referenced material, show the affected parent/child links,
+input links, writing-part relationships and known meaningful anchors. Require
+explicit resolution/confirmation of retirement or valid retargeting; block an
+unresolved deletion rather than leave dangling references or silently lose
+relationships. Recheck the document revision at application time. Rebinding by
+form spelling or guessing an unknown annotation's reference semantics is unsafe.
+
+This does **not** change Source deletion/replacement: those operations preserve
+existing linguistic analysis as unresolved/orphaned because they do not express
+an intent to delete it. Explicit analysis deletion and Source deletion remain
+different commands. Removing children can change the retained parent's yield
+and invalidate input relationships, so recompute impact rather than silently
+altering Source or the parent's lemma.
+
+**Whole-refinement withdrawal is explicitly deferred.** Do not implement a general
+“withdraw all refinement and automatically reconstruct the parent terminal”
+operation in Stage 3. Ordinary session undo/redo is sufficient to reverse a recent
+refinement. Deliberately removing established refinement after child forms or
+scripts have changed has no specified coarse-terminal result: do not restore a
+historical form, concatenate current children or redistribute writing annotations
+by assumption. Keep this as an open future structural-editing decision. Assisted
+analysis, downward refinement, candidate correction, lemma/category suggestions
+and batch script annotation may proceed without it. If Stage 3 unexpectedly
+requires this behavior, stop and ask the author. Real deletion and transient
+recovery remain settled; this deferral does not reinstate detached recovery nodes.
+
+### Scope-based script annotation — accepted
+
+Script annotation is **scope-based batch editing, not parent-to-child inheritance
+or propagation**. The full-XML scan finds no nonempty higher structural-node
+script attributes. Ordinary terminals store values directly; multipart terminals
+store them on ordered writing parts. All **3,130 multipart terminal parents**
+have empty `phon` fields while their **6,335 parts** carry actual values.
+An empty multipart parent is not an unannotated script-bearing unit. Higher-node
+aggregate display is derived, not an additional persistent script annotation.
+
+The interaction is: **select a scope → identify applicable script-bearing units
+→ assign the chosen value**. Useful scopes include explicit multi-selection,
+a source line, a selected subtree, and all currently unannotated applicable units
+in a Text. A subtree is a selection scope regardless of its syntactic category;
+selecting it does not annotate its parent or change analysis eligibility. Source
+line scopes use demonstrable input/analysis links, not guessed character matching
+or passage-imposed word boundaries. Uncertain applicability/coverage must be
+shown as unresolved rather than silently mapped to guessed target units.
+
+Batch assignment fills empty applicable values by default and preserves **all
+existing nonempty values**, including LOG, NLOG, PHON-KUN, PHON-ON and mixed
+multipart values. Changing an existing value requires an explicit override/edit.
+There is no inherited PHON operation or automatic PHON normalization, and no
+speculative restriction limiting LOG scope selection to terminals. Show targets,
+preserved values and unresolved exclusions; use one undoable batch with individual
+correction available. Empty traces/parser artifacts do not become ordinary script
+targets merely because they lack a value. Preserve special/editorial statuses.
+
+Of the multipart terminals, **2,563 contain LOG/PHON mixtures**. MYS.4.619
+`ipaku` is one VB-NML/L030199a terminal with `ipa/LOG + ku/PHON` parts; writing
+boundaries do not authorize morphological children. A default PHON batch leaves
+both existing values intact. BS.1 `titipapa` is PHON on both components, whereas
+MYS.5.800 is LOG on both. PHON-KUN, PHON-ON, NLOG, PLOG, BPHON, ORDLOG,
+NLPOG, ILL and two `inLOG` values also occur. Do not infer meanings for unusual
+values, silently normalize them or copy a lexical template's scripts onto new
+occurrences.
+
+This supersedes the downward-PHON proposal and pending mixed-value replacement
+question: default assignment preserves existing values; replacement requires
+explicit intent. Multi-selection controls and override UI are implementation
+details constrained by this policy, not unresolved linguistic inheritance rules.
 
 ## Input, unified hierarchy and derived views
 
@@ -544,9 +810,12 @@ terminal realization with child-derived output; a mismatch requires review.
 
 Undo restores the previous node realization, children and links; redo restores
 the same generated identities. Collapsing n0 for display leaves its children
-intact. Withdrawing or regrouping analysis is a separate structural operation,
-not display collapse; its deletion/history and annotation-transfer policies
-remain to be agreed before implementation. A reference specifically requiring
+intact. Explicitly withdrawing/deleting analysis is real removal from the current
+model with transient session undo/redo, not permanent detached recovery records.
+Review/resolve reference impacts before deletion. General whole-refinement
+withdrawal and coarse-material/writing reconstruction are deferred, as specified
+in the Stage 3 section; recent refinement can be reversed with session undo/redo.
+A reference specifically requiring
 a terminal must be reconciled when its node becomes internal. Stable node IDs
 alone do not define that transition's alignment or script behavior.
 
@@ -823,10 +1092,36 @@ protocol. Those details need evidence/author decisions before implementation.
 
 ### Decisions deliberately left open
 
+Stage 3's configurable dominance gate, evidence-domain restriction without an
+unnamed-draft selector, MK special-case eligibility, recursive lexical scope,
+normal leaf completeness, real analysis deletion/session undo and scope-based
+script assignment are settled. Analyse is explicit; changes to existing analysis
+require review. Historical proposals do not represent current decisions.
+
+**No global semantic blocker remains for beginning bounded Stage 3 work** on
+attested candidate retrieval, editable pre-fills for unanalysed input, alternatives
+and script batches over known applicable units. Exact indexes, command layout,
+configuration storage and validation mechanics need implementation specifications,
+not new linguistic rules. Preserve/flag unsupported cases and avoid commands
+whose required behavior has not been determined.
+
+**Whole-refinement withdrawal is a deferred future structural-editing behavior,
+not a Stage 3 blocker.** Do not implement general removal of all refinement with
+automatic parent-terminal reconstruction. Session undo/redo handles reversal of
+recent refinement; later deliberate removal after child edits needs a policy
+that is not yet specified. Assisted analysis, downward refinement, candidate
+correction, lemma/category suggestions and script batches may proceed. If their
+implementation unexpectedly requires that reconstruction, stop and ask rather
+than selecting a transfer policy. Ordinary explicit node deletion still requires
+resolved reference impact without guessing a new terminal realization.
+
+The following remain deferred to their affected commands/stages, rather than
+blanket blockers for Stage 3 or ordinary draft Save:
+
 | Required clarification before implementing the affected behavior | Current limit |
 |---|---|
 | Historical header emission after annotation changes | Preserve it and show discrepancies; do not choose retained versus regenerated export output by assumption. |
-| Exact `.syn` schema, terminal transitions and compatibility anchors | Unified node identity and downward refinement are settled. More detailed input-unit anchors, terminal-specific transitions, withdrawal/regrouping history and annotation transfer still require explicit specifications; Stage 2 version 2 implements the container/hierarchy and conservative evidence links; later terminal transitions remain open. |
+| Exact `.syn` schema, terminal transitions and compatibility anchors | Unified node identity and downward refinement are settled. More detailed input-unit anchors, terminal-specific transitions and annotation/material transfer still require explicit specifications; explicit analysis deletion with transient undo is settled; Stage 2 version 2 implements the container/hierarchy and conservative evidence links; later terminal transitions remain open. |
 | Marker labels/exact spelling and malformed markers | PAQ-003/004/005/021 remain open. Display numbering from 1 does not license renumbering historical markers. |
 | ILL, NULL, traces and unresolved tag classifications | CEQ-004/005, PAQ-007 and guideline TBDs remain open. Retain the evidence; parser behavior is not a linguistic answer. |
 | General morphology, non-concatenative realization and finer hyphenation | Coincident writing/analysis boundaries reuse nodes when finer analysis is independently supported. Use supported existing analysis only; no new paradigms or unspecified hyphenation rules are chosen. No crossing-boundary mechanism is required by current evidence; ask if a real case emerges. |
@@ -1016,7 +1311,7 @@ version-2 schema contains none of the obsolete occurrence/syntax/group tables.
    Document/Text container, entered transcription/initial boundaries, one
    annotated node hierarchy, input links, historical headers and typed legacy
    records. Preserve higher nodes during downward refinement. Specify remaining
-   terminal-transition/alignment and withdrawal policies with the author where
+   terminal-transition/alignment and material-transfer policies with the author where
    evidence is insufficient. Define explicit conversion for old single-Text
    drafts; retain deterministic codec and atomic revision checks. Demonstrate
    multi-Text save/reload with stable identities, order and byte-identical no-op
@@ -1027,16 +1322,26 @@ version-2 schema contains none of the obsolete occurrence/syntax/group tables.
    legacy import adapters on representative Documents without bulk migration;
    existing annotations must appear in the same views as new authoring data.
 3. **Assisted recursive analysis and refinement in the workspace.** Use corpus/dictionary evidence
-   to pre-fill supported tagged subtrees, lemmas/categories and component
-   structure with fresh node identities. Retain the higher annotated nodes and
+   to pre-fill supported tagged word-level subtrees, lemmas/categories and component
+   structure with fresh node identities, respecting the evidence-domain restriction
+   and the configurable 95%/three-Text editable-default policy above. Include
+   supported MK internal PP/IP patterns as the established special case; do not
+   construct ordinary phrase-level or higher syntax outside eligible Word
+   structures. Preserve attested alternatives. Defer general whole-refinement
+   withdrawal/automatic parent reconstruction; use session undo/redo to reverse
+   recent refinement. Stop and ask if Stage 3 unexpectedly requires that behavior.
+   Retain the higher annotated nodes and
    original input links. Provide manual correction of the same hierarchy,
-   writing-mode metadata and batch scripts. Results are already persistent
+   writing-mode metadata and scope-based script batches: fill empty applicable
+   values and preserve existing values unless explicitly overridden. Results are persistent
    workspace nodes, with no transfer between analysis and tree modes. Reuse
    coincident writing/analysis boundaries when independently supported.
    Composition is a view; lemma-less
    internal analysis is valid. Verify fresh-instance identity, refinement
    save/reload/undo, no duplicated yield and no dictionary mutation. Use
-   `paruyama`, `titipapa`, ambiguous `taka`, attested `yuku`, and multipart `ipaku`.
+   `paruyama`, `titipapa`, ambiguous `taka`, attested `yuku`, multipart `ipaku`,
+   MK alternatives, and EN/SM exclusion for ordinary/unnamed Texts. Check minority
+   candidate switching and preservation of existing script values.
 4. **Text-like editing and efficient upward construction.** Add direct node
    content editing, Enter, local indent/outdent, structurally valid selection
    and cut/copy/paste, and direct child creation with undo/redo. Maintain validity
