@@ -5,6 +5,7 @@
   let browsing = false, selectedDocument = null, query = "", saveChoice = null, statusNode, saveButton, warnings;
   const clone = value => JSON.parse(JSON.stringify(value));
   const fields = new Map(), openSections = new Map(), browserOpen = new Set(), savedCache = new Map();
+  const documentNumbers = new WeakMap(); let nextDocumentNumber = 1;
   const page = document.createElement("section");
   page.id = "editor-page-editing"; page.className = "editor-page editing-page hidden";
   document.querySelector(".detail-pane").appendChild(page);
@@ -155,14 +156,18 @@
       if (names.size === 1) items.forEach(entry => browser.appendChild(documentButton(entry)));
       else {
         const group = el("details", undefined, "collection-node"); group.open = !!query || browserOpen.has(work);
-        group.appendChild(el("summary", work, "collection-heading"));
+        group.appendChild(el("summary", work, "editing-work-item editing-work-group"));
         group.addEventListener("toggle", () => { if (!group.isConnected) return; if (group.open) browserOpen.add(work); else browserOpen.delete(work); });
         items.forEach(entry => group.appendChild(documentButton(entry))); browser.appendChild(group);
       }
     });
     if (!grouped.size) browser.appendChild(el("p", "No matches.", "sidebar-loading"));
   }
-  function draftName(draft) { return draft.state.document.name || `Untitled Document ${session.drafts.indexOf(draft) + 1}`; }
+  function draftName(draft) {
+    if (draft.state.document.name) return draft.state.document.name;
+    if (!documentNumbers.has(draft)) documentNumbers.set(draft, nextDocumentNumber++);
+    return `Untitled Document ${documentNumbers.get(draft)}`;
+  }
   function renderDrafts() {
     drafts.replaceChildren();
     if (!session.drafts.length) return;
@@ -326,7 +331,6 @@
     const review = el("div");
     input.appendChild(field("Text Input", scratch.value, value => { scratch.value = value; scratch.preview = null; scratch.replacement = false; review.replaceChildren(); }, "paste", true));
     const area = fields.get("paste"); area.rows = 7;
-    area.placeholder = "美阿止都久留\nmi ato tukuru\n伊志乃比鼻伎波\nisi no pibiki pa";
     area.scrollTop = scratch.scrollTop; area.addEventListener("scroll", () => { scratch.scrollTop = area.scrollTop; });
     input.append(button("Preview", () => { scratch.preview = COJEditing.parsePairs(scratch.value); scratch.replacement = false; }), review);
     if (scratch.preview) {

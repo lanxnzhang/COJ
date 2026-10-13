@@ -59,8 +59,11 @@
 .editing-session-drafts summary { padding: 5px 16px; cursor: pointer; font-size: 12px; color: var(--muted); }
 .editing-session-drafts .editing-row-action { margin-left: 16px; }
 .editing-session-drafts .editing-text-item { padding-left: 24px; }
-.editing-work-item { display: flex; align-items: center; width: 100%; text-align: left; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; }
-.collection-node .editing-work-item { padding-left: 30px; }
+.editing-work-item { display: flex; align-items: center; justify-content: flex-start; font-weight: 400; letter-spacing: normal; width: 100%; text-align: left; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; }
+.editing-browser .editing-work-group { padding-left: 16px; cursor: pointer; }
+.editing-work-group::after { content: "›"; margin-left: auto; color: var(--muted); font-size: 14px; transition: transform .15s ease; }
+.collection-node[open] > .editing-work-group::after { transform: rotate(90deg); }
+.collection-node > button.editing-work-item { padding-left: 30px; }
 .editing-work-item small { margin-left: auto; color: var(--muted); font-size: 10px; }
 .editing-work-item:hover, .editing-work-item[aria-current=true] { background: var(--blue-pale); }
 .editing-text-browser { display: grid; gap: 2px; }

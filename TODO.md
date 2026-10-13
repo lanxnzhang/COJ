@@ -2091,6 +2091,13 @@ Preserve the recent compact Source layout, stable workspace width and generated 
 Do not implement Stage 3 assisted analysis or Stage 4 tree editing yet.
 If any requested behavior conflicts with the current model or requires an unresolved semantic decision, ask me rather than guessing. Otherwise implement this usability pass and briefly explain how to test New Text, New Document, Open Text, Text Input → Preview → Add to Source, and Save/Reopen.
 
+### After commit 2d6ea25
+Please make three small Stage 2 UI fixes. Do not change the data model or begin Stage 3.
+1. New Document numbering: investigate why a fresh session currently starts with Untitled Document 3 rather than Untitled Document 1, and fix the draft naming/counting behavior. Do not guess the cause; verify the current state logic first.
+2. Text Input: when empty, leave the input area visually empty. Remove the current example text (美阿止都久留 / mi ato tukuru / ...) from the editable area/placeholder because it looks like real preloaded content. The input format is already clear from the workflow and Preview behavior.
+3. Open Text work list: EN, MYS and SM should use the same left alignment, font size/weight and general row styling as FK, JSHT, KH, KK, NSK, etc. Their only additional affordance should be a small expand/collapse indicator on the right. Do not right-align or visually emphasize the work name itself.
+Keep everything else unchanged. Run the relevant tests and briefly report the cause of the Untitled Document 3 issue and what was changed. If anything about the intended behavior is unclear or requires an assumption not established by the current design/repository, ask me before deciding or implementing it. Do not guess.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

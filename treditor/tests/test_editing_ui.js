@@ -58,11 +58,33 @@ async function session(options = {}) {
 }
 async function type(input, text) { input.value = text; await input.dispatch("input"); }
 (async () => {
+  // Numbers count only unnamed Documents, not standalone Text wrappers or opened named files.
+  let numbering = await session();
+  await numbering.button("New Document").dispatch("click"); assert.ok(numbering.summary("Untitled Document 1"));
+  await numbering.button("New Text").dispatch("click"); await numbering.button("New Text").dispatch("click");
+  await numbering.button("New Document").dispatch("click"); assert.ok(numbering.summary("Untitled Document 2"));
+  assert.ok(numbering.summary("Untitled Document 1"));
+  numbering = await session();
+  await numbering.button("New Text").dispatch("click"); await numbering.button("New Text").dispatch("click");
+  await numbering.button("Open Text").dispatch("click"); await numbering.label("Browse KK (corpus)").dispatch("click");
+  await numbering.label("Open KK.67 in KK, 1").dispatch("click");
+  await numbering.button("New Document").dispatch("click"); assert.ok(numbering.summary("Untitled Document 1"));
+  // Moving an earlier standalone Text into a Document must not renumber other draft labels.
+  await numbering.label("Return to Untitled Text 1 (1, 1)").dispatch("click"); await numbering.button("Save").dispatch("click");
+  const numberTarget = numbering.input("Save destination");
+  numberTarget.value = numberTarget.children.find(n => n.textContent.startsWith("KK (session draft)")).value;
+  await numberTarget.dispatch("change"); await numbering.button("Confirm Save").dispatch("click");
+  assert.ok(numbering.summary("Untitled Document 1"));
+  await numbering.button("New Text").dispatch("click"); await numbering.button("Save").dispatch("click");
+  await type(numbering.input("Document name"), "Numbering-check"); await numbering.button("Confirm Save").dispatch("click");
+  assert.ok(numbering.summary("Untitled Document 1"));
+  disk.clear();
   let ui = await session();
   assert.equal(all(ui.page, n => n.tag === "button").length, 0);
   await ui.button("New Text").dispatch("click");
   assert.ok(ui.input("Text ID")); assert.equal(ui.input("Document name"), undefined);
   assert.strictEqual(Element.focused, ui.input("Text Input"));
+  assert.equal(ui.input("Text Input").value, ""); assert.ok(!ui.input("Text Input").placeholder);
   await type(ui.input("Text ID"), "Draft-A");
   const scratch = "美阿止都久留\nmi ato tukuru\n伊志乃比鼻伎波\nisi no pibiki pa";
   await type(ui.input("Text Input"), scratch);
@@ -100,6 +122,7 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   await ui.button("Save").dispatch("click"); assert.deepEqual(disk.get("Bundle.syn.json").document.texts[key].passage_order, ids);
   // Search and master/detail navigation keep every draft and its scratch input.
   await ui.button("Open Text").dispatch("click"); assert.ok(ui.summary("MYS"));
+
   assert.equal(ui.summary("Current Document"), undefined); assert.equal(ui.summary("Other corpus Documents"), undefined);
   assert.equal(ui.label("Open KK.67 in KK, 1"), undefined);
   await ui.label("Browse KK (corpus)").dispatch("click");
