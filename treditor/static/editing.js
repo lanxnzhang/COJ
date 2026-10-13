@@ -1,27 +1,27 @@
 "use strict";
 (() => {
-  const state = new COJEditing.State();
-  let files = [], corpus = [], busy = false, hasDocument = false, message = "", focusNext = null;
-  let pasted = "", preview = null, browseMode = null, query = "", statusNode, saveButton, warnings;
+  const session = new COJEditing.Session();
+  let state = new COJEditing.State(), files = [], corpus = [], busy = false, message = "", focusNext = null;
+  let browsing = false, selectedDocument = null, query = "", saveChoice = null, statusNode, saveButton, warnings;
+  const clone = value => JSON.parse(JSON.stringify(value));
   const fields = new Map(), openSections = new Map(), browserOpen = new Set(), savedCache = new Map();
   const page = document.createElement("section");
   page.id = "editor-page-editing"; page.className = "editor-page editing-page hidden";
   document.querySelector(".detail-pane").appendChild(page);
   const sidebar = document.querySelector("#editing-sidebar-controls");
-  const actions = el("div", undefined, "editing-sidebar-actions");
+  const actions = el("div", undefined, "wb-mode-list editing-sidebar-actions");
+  const drafts = el("div", undefined, "editing-session-drafts");
   const browser = el("div", undefined, "editing-browser");
   const search = el("input"); search.type = "search"; search.placeholder = "Find a Text or Document…";
   search.setAttribute("aria-label", "Find a Text or Document");
-  const browserTitle = el("h2"), browserMessage = el("p", undefined, "editing-hint");
   const sidebarStatus = el("p", undefined, "editing-sidebar-status"); sidebarStatus.setAttribute("role", "status");
-  actions.append(button("New Text", () => startBrowse("create")), button("Open Text", () => startBrowse("open")), button("New Document", newDocument));
-  sidebar.append(actions, sidebarStatus, browserTitle, search, browserMessage, browser);
+  actions.append(button("New Text", () => createDraft(true)), button("Open Text", startBrowse), button("New Document", () => createDraft(false)));
+  sidebar.append(actions, sidebarStatus, drafts, search, browser);
   search.addEventListener("input", () => {
-    query = search.value.trim().toLowerCase(); renderBrowser();
-    // Saved files have no Text inventory endpoint. Read them only for expansion/search.
+    query = search.value.trim().toLowerCase(); renderBrowser(); if (browsing) render();
     if (query) files.forEach(filename => {
-      const entry = {kind: "saved", key: filename};
-      if (!savedCache.has(filename)) getSaved(entry).then(renderBrowser).catch(error => { sidebarStatus.textContent = error.message; });
+      if (!savedCache.has(filename)) getSaved({key: filename}).then(() => { renderBrowser(); if (browsing) render(); })
+        .catch(error => { sidebarStatus.textContent = error.message; });
     });
   });
   function el(tag, text, className) {
@@ -44,7 +44,7 @@
     finally { busy = false; render(); }
   }
   function resize(input) {
-    if (input.tagName !== "TEXTAREA") return;
+    if (input.tagName !== "TEXTAREA" || input.getAttribute("aria-label") === "Text Input") return;
     input.style.height = "auto";
     input.style.height = `${Math.max(28, input.scrollHeight + 2)}px`;
   }
@@ -66,10 +66,11 @@
     });
     return node;
   }
+  function inputState() { return session.input(); }
   function updateStatus() {
-    const status = message || (state.dirty || pasted.trim() ? "Unsaved changes" : state.savedFilename ? "All changes saved" : "Not saved yet");
-    statusNode.textContent = status; sidebarStatus.textContent = message;
-    if (saveButton) saveButton.disabled = busy || !state.document.name.trim();
+    const status = message || (state.dirty ? "Unsaved Source" : state.savedFilename ? "Source saved" : "Not saved yet");
+    statusNode.textContent = session.current ? status : ""; sidebarStatus.textContent = message;
+    if (saveButton) saveButton.disabled = busy;
     if (warnings) {
       warnings.replaceChildren(); const issues = state.unresolved();
       if (issues.length) {
@@ -85,23 +86,27 @@
       }
     }
   }
-  function mayReplace() { return !(state.dirty || pasted.trim()) || window.confirm("Discard unsaved changes to this Document?"); }
-  function checkPaste() { if (pasted.trim()) throw new Error("Apply or clear the bulk entry before switching Texts."); }
-  function newDocument() {
-    if (!mayReplace()) return;
-    state.reset(); state.markDirty(); hasDocument = true; pasted = ""; preview = null;
-    browseMode = null; message = ""; focusNext = "document-name";
+  function activate(draft, textKey) {
+    session.select(draft.key, textKey); state = draft.state;
+    browsing = false; saveChoice = null; message = "";
   }
-  async function startBrowse(mode) {
-    browseMode = mode; query = ""; search.value = ""; busy = true; render();
+  function createDraft(standalone) {
+    activate(session.create(standalone)); focusNext = "paste";
+  }
+  function addTextToDraft(draft) {
+    activate(draft); state.addText(); focusNext = "paste";
+  }
+  async function refreshInventory() {
     [files, corpus] = await Promise.all([apiFetch("/api/authoring/files"), apiFetch("/api/authoring/corpus")]);
-    savedCache.clear(); message = "";
+  }
+  async function startBrowse() {
+    browsing = true; selectedDocument = null; query = ""; search.value = ""; saveChoice = null;
+    busy = true; render(); savedCache.clear(); await refreshInventory(); message = "";
   }
   async function getSaved(entry) {
     if (!savedCache.has(entry.key)) {
-      const pending = apiFetch(`/api/authoring/files/${encodeURIComponent(entry.key)}`);
-      savedCache.set(entry.key, pending);
-      try { const data = await pending; savedCache.set(entry.key, data); }
+      const pending = apiFetch(`/api/authoring/files/${encodeURIComponent(entry.key)}`); savedCache.set(entry.key, pending);
+      try { savedCache.set(entry.key, await pending); }
       catch (error) { savedCache.delete(entry.key); throw error; }
     }
     return await savedCache.get(entry.key);
@@ -110,109 +115,179 @@
     return document.text_order.map((key, i) => ({key, text_id: document.texts[key].text_id, ordinal: i + 1}));
   }
   function entries() {
-    const result = [];
-    if (hasDocument) result.push({kind: "current", key: "current", name: state.document.name || "Untitled Document", group: "Current Document", texts: textEntries(state.document)});
-    files.filter(filename => filename !== state.savedFilename).forEach(filename => {
-      const data = savedCache.get(filename);
-      result.push({kind: "saved", key: filename, name: data?.document?.name || filename.replace(/\.syn\.json$/, ""), group: "Saved Documents", texts: data?.document ? textEntries(data.document) : null});
+    const result = files.map(filename => {
+      const live = session.drafts.find(d => d.state.savedFilename === filename), cached = savedCache.get(filename);
+      const document = live?.state.document || cached?.document;
+      return {kind: "saved", key: filename, name: document?.name || filename.replace(/\.syn\.json$/, ""),
+        texts: document ? textEntries(document) : null};
     });
-    corpus.forEach(item => result.push({kind: "corpus", ...item,
-      group: item.name.match(/^(.+)_\d+$/)?.[1] || "Other corpus Documents", texts: item.texts.map((text, i) => ({...text, ordinal: i + 1}))}));
+    corpus.forEach(item => result.push({kind: "corpus", ...item, texts: item.texts.map((t, i) => ({...t, ordinal: i + 1}))}));
     return result;
   }
-  function renderBrowser() {
-    browser.replaceChildren(); search.hidden = !browseMode; browserTitle.hidden = !browseMode;
-    browserMessage.textContent = browseMode === "create" ? "Choose the Document for the new Text." : "";
-    browserTitle.textContent = browseMode === "create" ? "New Text" : "Open Text";
-    if (!browseMode) return;
-    const groups = new Map();
-    entries().forEach(entry => {
-      const nameMatches = `${entry.name} ${entry.group}`.toLowerCase().includes(query);
-      const matches = (entry.texts || []).filter(t => t.text_id.toLowerCase().includes(query));
-      if (query && !nameMatches && entry.texts && !matches.length) return;
-      if (!groups.has(entry.group)) groups.set(entry.group, []);
-      groups.get(entry.group).push({...entry, filtered: !query || nameMatches ? entry.texts : matches});
-    });
-    groups.forEach((items, group) => {
-      const section = el("details", undefined, "collection-node"), summary = el("summary", group, "collection-heading");
-      section.open = !!query || group === "Current Document" || group === "Saved Documents" || browserOpen.has(group);
-      section.addEventListener("toggle", () => { if (!section.isConnected) return; if (section.open) browserOpen.add(group); else browserOpen.delete(group); });
-      section.appendChild(summary);
-      items.forEach(entry => {
-        if (browseMode === "create") {
-          const choose = button(entry.name, () => chooseDocument(entry, null, true)); choose.className = "document-item";
-          choose.setAttribute("aria-label", `Add Text to ${entry.name}`); section.appendChild(choose); return;
-        }
-        const doc = el("details", undefined, "document-node"), heading = el("summary"), texts = el("div", undefined, "inline-passage-list");
-        heading.append(el("strong", entry.name), el("small", entry.texts ? String(entry.texts.length) : ""));
-        const docKey = `${entry.kind}:${entry.key}`;
-        doc.open = browserOpen.has(docKey) || (!!query && !!entry.filtered?.length);
-        function fill() {
-          texts.replaceChildren();
-          if (!entry.texts) { texts.appendChild(el("p", "Expand to load Texts", "sidebar-loading")); return; }
-          const counts = new Map();
-          entry.texts.forEach(text => counts.set(text.text_id, (counts.get(text.text_id) || 0) + 1));
-          (entry.filtered || []).forEach(text => {
-            const label = text.text_id || `Untitled Text ${text.ordinal}`;
-            const display = counts.get(text.text_id) > 1 ? `${label} (${text.ordinal})` : label;
-            const choose = button(display, () => chooseDocument(entry, text.key)); choose.className = "editing-text-item";
-            choose.setAttribute("aria-label", `Open ${label} in ${entry.name}, ${text.ordinal}`);
-            if (entry.kind === "current" && state.activeText === text.key) choose.setAttribute("aria-current", "true");
-            texts.appendChild(choose);
-          });
-          if (!entry.texts.length) texts.appendChild(el("p", "Empty Document", "sidebar-loading"));
-        }
-        fill();
-        doc.addEventListener("toggle", async () => {
-          if (!doc.isConnected) return;
-          if (!doc.open) { browserOpen.delete(docKey); return; }
-          browserOpen.add(docKey);
-          if (!entry.texts) {
-            texts.replaceChildren(el("p", "Loading…", "sidebar-loading"));
-            try {
-              const data = await getSaved(entry); entry.texts = textEntries(data.document);
-              entry.filtered = query && !entry.name.toLowerCase().includes(query) ? entry.texts.filter(t => t.text_id.toLowerCase().includes(query)) : entry.texts;
-              fill();
-            } catch (error) { texts.replaceChildren(el("p", error.message, "sidebar-loading")); }
-          }
-        });
-        doc.append(heading, texts); section.appendChild(doc);
-      });
-      browser.appendChild(section);
-    });
-    if (!groups.size) browser.appendChild(el("p", "No matching Documents or Texts.", "sidebar-loading"));
+  function matchingTexts(entry) {
+    const work = entry.name.match(/^(.+)_\d+$/)?.[1] || entry.name;
+    const matchName = `${entry.name} ${work}`.toLowerCase().includes(query);
+    return !query || matchName ? entry.texts || [] : (entry.texts || []).filter(t => t.text_id.toLowerCase().includes(query));
   }
-  async function chooseDocument(entry, textKey, create = false) {
-    if (entry.kind === "current") checkPaste();
-    else {
-      if (!mayReplace()) return;
+  function renderBrowser() {
+    browser.replaceChildren(); search.hidden = !browsing;
+    if (!browsing) return;
+    const all = entries(), grouped = new Map();
+    all.forEach(entry => {
+      const work = entry.name.match(/^(.+)_\d+$/)?.[1] || entry.name;
+      if (query && entry.texts && !matchingTexts(entry).length && !`${entry.name} ${work}`.toLowerCase().includes(query)) return;
+      if (!grouped.has(work)) grouped.set(work, []); grouped.get(work).push(entry);
+    });
+    function documentButton(entry) {
+      const node = button(entry.name, async () => {
+        selectedDocument = entry; busy = true; render();
+        if (entry.kind === "saved" && !entry.texts) { const data = await getSaved(entry); entry.texts = textEntries(data.document); }
+      });
+      node.className = "editing-work-item";
+      node.setAttribute("aria-label", `Browse ${entry.name} (${entry.kind === "saved" ? "saved" : "corpus"})`);
+      if (selectedDocument?.key === entry.key && selectedDocument?.kind === entry.kind) node.setAttribute("aria-current", "true");
+      node.appendChild(el("small", entry.kind === "saved" ? "Saved" : "")); return node;
+    }
+    [...grouped.keys()].sort((a, b) => a.localeCompare(b)).forEach(work => {
+      const items = grouped.get(work);
+      // A work needs a second level only when it has distinct storage Documents.
+      const names = new Set(all.filter(e => (e.name.match(/^(.+)_\d+$/)?.[1] || e.name) === work).map(e => e.name));
+      if (names.size === 1) items.forEach(entry => browser.appendChild(documentButton(entry)));
+      else {
+        const group = el("details", undefined, "collection-node"); group.open = !!query || browserOpen.has(work);
+        group.appendChild(el("summary", work, "collection-heading"));
+        group.addEventListener("toggle", () => { if (!group.isConnected) return; if (group.open) browserOpen.add(work); else browserOpen.delete(work); });
+        items.forEach(entry => group.appendChild(documentButton(entry))); browser.appendChild(group);
+      }
+    });
+    if (!grouped.size) browser.appendChild(el("p", "No matches.", "sidebar-loading"));
+  }
+  function draftName(draft) { return draft.state.document.name || `Untitled Document ${session.drafts.indexOf(draft) + 1}`; }
+  function renderDrafts() {
+    drafts.replaceChildren();
+    if (!session.drafts.length) return;
+    drafts.appendChild(el("h2", "Session drafts"));
+    session.drafts.forEach(draft => {
+      const container = draft.standalone ? el("div") : el("details");
+      if (!draft.standalone) {
+        container.open = draft.key === session.active;
+        container.appendChild(el("summary", draftName(draft)));
+        const add = icon(`Add Text to ${draftName(draft)}`, "+", () => addTextToDraft(draft)); container.appendChild(add);
+      }
+      const texts = textEntries(draft.state.document), counts = new Map();
+      texts.forEach(text => counts.set(text.text_id, (counts.get(text.text_id) || 0) + 1));
+      texts.forEach(text => {
+        const label = text.text_id || `Untitled Text ${text.ordinal}`;
+        const node = button(counts.get(text.text_id) > 1 ? `${label} (${text.ordinal})` : label, () => activate(draft, text.key)); node.className = "editing-text-item";
+        node.setAttribute("aria-label", `Return to ${label} (${session.drafts.indexOf(draft) + 1}, ${text.ordinal})`);
+        if (!browsing && session.active === draft.key && state.activeText === text.key) node.setAttribute("aria-current", "true");
+        container.appendChild(node);
+      });
+      drafts.appendChild(container);
+    });
+  }
+  async function openText(entry, textKey) {
+    const origin = `${entry.kind}:${entry.key}`;
+    let draft = session.drafts.find(d => d.origin === origin || (entry.kind === "saved" && d.state.savedFilename === entry.key));
+    if (!draft) {
       busy = true; render();
       const data = entry.kind === "saved" ? await getSaved(entry) : await apiFetch(`/api/authoring/corpus/${encodeURIComponent(entry.key)}`);
-      state.open(data.document, data.filename, data.revision); hasDocument = true; pasted = ""; preview = null;
-      if (entry.kind === "corpus") message = "Corpus draft copy; original files remain unchanged.";
+      draft = session.open(data, origin);
     }
-    if (create) { state.addText(); preview = null; focusNext = "paste"; }
-    else {
-      const key = entry.kind === "corpus" ? state.document.text_order[Number(textKey)] : textKey;
-      state.selectText(key); preview = null;
-    }
-    browseMode = "open";
+    const key = entry.kind === "corpus" ? draft.state.document.text_order[Number(textKey)] : textKey;
+    activate(draft, key);
+  }
+  function renderTextBrowser(parent) {
+    parent.appendChild(el("h1", selectedDocument?.name || "Open Text"));
+    if (!selectedDocument) return;
+    const list = el("div", undefined, "editing-text-browser");
+    const counts = new Map(); (selectedDocument.texts || []).forEach(t => counts.set(t.text_id, (counts.get(t.text_id) || 0) + 1));
+    matchingTexts(selectedDocument).forEach(text => {
+      const label = text.text_id || `Untitled Text ${text.ordinal}`;
+      const node = button(counts.get(text.text_id) > 1 ? `${label} (${text.ordinal})` : label, () => openText(selectedDocument, text.key));
+      node.className = "editing-text-result"; node.setAttribute("aria-label", `Open ${label} in ${selectedDocument.name}, ${text.ordinal}`); list.appendChild(node);
+    });
+    if (!selectedDocument.texts) list.appendChild(el("p", "Loading…"));
+    else if (!selectedDocument.texts.length) list.appendChild(el("p", "Empty Document"));
+    else if (!matchingTexts(selectedDocument).length) list.appendChild(el("p", "No matching Texts."));
+    parent.appendChild(list);
   }
   async function save() {
-    if (pasted.trim()) throw new Error("Preview and apply the bulk entry, or clear it before saving.");
-    const filename = state.savedFilename || COJEditing.filenameForDocument(state.document.name);
-    state.filename = filename; busy = true; render(); let data;
+    if (state.savedFilename && !session.current.standalone) return writeDraft(session.current, state.document.name);
+    busy = true; render(); await refreshInventory();
+    saveChoice = {target: "new", name: state.document.name, copy: false};
+  }
+  async function writeDocument(candidate, filename, revision) {
+    busy = true; render();
     try {
-      data = await apiFetch(`/api/authoring/files/${encodeURIComponent(filename)}`, {method: "PUT", headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({document: state.document, expected_revision: state.expectedRevision()})});
+      return await apiFetch(`/api/authoring/files/${encodeURIComponent(filename)}`, {method: "PUT", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({document: candidate, expected_revision: revision})});
     } catch (error) {
-      if (/This file changed/.test(error.message)) throw new Error(state.expectedRevision() === null
-        ? "A saved Document already uses this name. Choose another name or open it."
-        : "This Document changed elsewhere. Your draft is retained; reopen it or use Save a copy.");
+      if (/This file changed/.test(error.message)) throw new Error("This Document changed or already exists. Your session drafts are retained; save a copy or review the changed file in a fresh session.");
       throw error;
     }
-    state.saved(data.filename, data.revision); savedCache.set(data.filename, {...data, document: state.document});
-    if (!files.includes(data.filename)) files.push(data.filename); message = "Saved complete Document.";
+  }
+  async function writeDraft(draft, name, copy = false) {
+    const candidate = clone(draft.state.document); candidate.name = name.trim();
+    const filename = copy ? COJEditing.filenameForDocument(name) : draft.state.savedFilename || COJEditing.filenameForDocument(name);
+    const revision = copy ? null : draft.state.expectedRevision();
+    const data = await writeDocument(candidate, filename, revision);
+    if (copy) {
+      const copied = session.open({document: candidate, ...data}, `saved:${filename}`);
+      copied.inputs = new Map([...draft.inputs].map(([k, v]) => [k, {...v}])); activate(copied, draft.state.activeText);
+    } else {
+      draft.state.document = candidate; draft.state.saved(data.filename, data.revision); draft.standalone = false; draft.origin = `saved:${data.filename}`; activate(draft);
+    }
+    savedCache.set(data.filename, {document: candidate, ...data}); if (!files.includes(data.filename)) files.push(data.filename);
+    saveChoice = null; message = "Saved complete Document.";
+  }
+  function destinations() {
+    const result = session.drafts.filter(d => !d.standalone && d.key !== session.current.key)
+      .map(d => ({kind: "session", key: d.key, name: draftName(d)}));
+    entries().filter(e => !session.drafts.some(d => d.state.savedFilename === e.key || d.origin === `${e.kind}:${e.key}`)).forEach(e => result.push(e));
+    return result;
+  }
+  async function confirmSave() {
+    const original = session.current, choice = {...saveChoice};
+    busy = true; render();
+    if (!original.standalone || choice.target === "new") return writeDraft(original, choice.name, choice.copy);
+    const entry = destinations().find(e => `${e.kind}:${e.key}` === choice.target);
+    if (!entry) throw new Error("Choose a Document.");
+    let target = entry.kind === "session" ? session.drafts.find(d => d.key === entry.key) : null;
+    let targetState;
+    if (target) targetState = target.state;
+    else {
+      const data = entry.kind === "saved" ? await getSaved(entry) : await apiFetch(`/api/authoring/corpus/${encodeURIComponent(entry.key)}`);
+      targetState = new COJEditing.State(); targetState.open(data.document, data.filename, data.revision);
+    }
+    const candidate = clone(targetState.document), textKey = original.state.activeText;
+    if (candidate.texts[textKey]) throw new Error("Text identity already belongs to this Document; review before saving.");
+    candidate.texts[textKey] = clone(original.state.text); candidate.text_order.push(textKey);
+    if (!candidate.name) candidate.name = choice.name.trim();
+    const filename = targetState.savedFilename || COJEditing.filenameForDocument(candidate.name);
+    const data = await writeDocument(candidate, filename, targetState.expectedRevision());
+    // Move into the selected container only after the atomic disk save succeeds.
+    if (!target) target = session.open({document: candidate, ...data}, `saved:${data.filename}`);
+    else { target.state.document = candidate; target.state.saved(data.filename, data.revision); }
+    target.standalone = false; target.origin = `saved:${data.filename}`;
+    if (original.inputs.has(textKey)) target.inputs.set(textKey, original.inputs.get(textKey));
+    session.drafts = session.drafts.filter(d => d !== original); activate(target, textKey);
+    savedCache.set(data.filename, {document: candidate, ...data}); if (!files.includes(data.filename)) files.push(data.filename);
+    message = "Saved complete Document.";
+  }
+  function renderSaveChoice(parent) {
+    if (!saveChoice) return;
+    const panel = el("section", undefined, "editing-save-choice"); panel.appendChild(el("h2", "Save Document"));
+    if (session.current.standalone && !saveChoice.copy) {
+      const label = el("label", "Document"), select = el("select"); select.setAttribute("aria-label", "Save destination");
+      const option = el("option", "New Document"); option.value = "new"; select.appendChild(option);
+      destinations().forEach(entry => { const item = el("option", `${entry.name} (${entry.kind === "session" ? "session draft" : entry.kind})`); item.value = `${entry.kind}:${entry.key}`; select.appendChild(item); });
+      select.value = saveChoice.target; select.addEventListener("change", () => run(() => { saveChoice.target = select.value; })); label.appendChild(select); panel.appendChild(label);
+    }
+    const chosen = destinations().find(e => `${e.kind}:${e.key}` === saveChoice.target);
+    const targetName = chosen?.kind === "session" ? session.drafts.find(d => d.key === chosen.key)?.state.document.name : chosen?.name;
+    if (saveChoice.target === "new" || !targetName) panel.appendChild(field("Document name", saveChoice.name, value => { saveChoice.name = value; }, "save-name"));
+    panel.append(button("Confirm Save", confirmSave, true), button("Cancel", () => { saveChoice = null; })); parent.appendChild(panel);
   }
   function addRow(position) { const id = state.addPassage("", "", position); focusNext = `original:${id}`; message = ""; }
   function insertion(position) {
@@ -238,21 +313,49 @@
     });
     source.appendChild(insertion(state.text.passage_order.length)); parent.appendChild(source);
   }
-  function renderBulk(parent) {
-    const bulk = details("Bulk entry", !state.text.passage_order.length); bulk.className = "editing-bulk";
-    if (pasted.trim() || preview) bulk.open = true;
+  function pairPreview(pairs, offset = 0) {
     const review = el("div", undefined, "editing-paste-preview");
-    bulk.appendChild(field("Text / Transcription", pasted, value => { pasted = value; preview = null; review.replaceChildren(); }, "paste", true, "Bulk entry"));
-    fields.get("paste").placeholder = "美阿止都久留\nmi ato tukuru\n伊志乃比鼻伎波\nisi no pibiki pa";
-    bulk.append(button("Preview", () => { preview = COJEditing.parsePairs(pasted); }), review);
-    if (preview) {
-      preview.forEach((pair, index) => {
-        const row = el("div", undefined, "editing-preview-row");
-        row.append(el("span", String(state.text.passage_order.length + index + 1)), el("div", pair.original), el("div", pair.transcription)); review.appendChild(row);
-      });
-      review.appendChild(button("Apply", () => { state.appendPairs(preview); pasted = ""; preview = null; message = ""; }));
+    pairs.forEach((pair, index) => {
+      const row = el("div", undefined, "editing-preview-row");
+      row.append(el("span", String(offset + index + 1)), el("div", pair.original), el("div", pair.transcription)); review.appendChild(row);
+    }); return review;
+  }
+  function renderInput(parent) {
+    const scratch = inputState(), input = details("Text Input", !state.text.passage_order.length); input.className = "editing-input";
+    input.appendChild(el("p", "Session scratch · Save stores Source", "editing-hint"));
+    const review = el("div");
+    input.appendChild(field("Text Input", scratch.value, value => { scratch.value = value; scratch.preview = null; scratch.replacement = false; review.replaceChildren(); }, "paste", true));
+    const area = fields.get("paste"); area.rows = 7;
+    area.placeholder = "美阿止都久留\nmi ato tukuru\n伊志乃比鼻伎波\nisi no pibiki pa";
+    area.scrollTop = scratch.scrollTop; area.addEventListener("scroll", () => { scratch.scrollTop = area.scrollTop; });
+    input.append(button("Preview", () => { scratch.preview = COJEditing.parsePairs(scratch.value); scratch.replacement = false; }), review);
+    if (scratch.preview) {
+      input.open = true;
+      review.append(pairPreview(scratch.preview, state.text.passage_order.length), button("Add to Source", () => {
+        state.appendPairs(scratch.preview); scratch.preview = null; scratch.replacement = false; message = "";
+      }));
+      if (state.text.passage_order.length) {
+        const advanced = details("Source replacement");
+        advanced.appendChild(button("Replace entire Source", () => { scratch.replacement = true; })); review.appendChild(advanced);
+      }
+      if (scratch.replacement) {
+        const confirmation = el("section", undefined, "editing-replacement-review");
+        confirmation.setAttribute("aria-label", "Confirm Source replacement");
+        scratch.replacementEvidence = JSON.stringify(state.text.passage_order.map(id => state.text.passages[id]));
+        confirmation.append(el("h3", `Replace all ${state.text.passage_order.length} Source rows in ${state.text.text_id || "Untitled Text"} with ${scratch.preview.length} rows?`),
+          el("p", "Existing analysis and alignment evidence will be preserved; affected relationships will become unresolved."),
+          el("h4", "Source being replaced"), pairPreview(state.text.passage_order.map(id => state.text.passages[id])),
+          el("h4", "Replacement Source"), pairPreview(scratch.preview),
+          button("Confirm replacement", () => {
+            if (scratch.replacementEvidence !== JSON.stringify(state.text.passage_order.map(id => state.text.passages[id]))) {
+              scratch.replacement = false; throw new Error("Source changed; review replacement again.");
+            }
+            state.replacePairs(scratch.preview); scratch.preview = null; scratch.replacement = false; message = ""; }),
+          button("Cancel replacement", () => { scratch.replacement = false; }));
+        review.appendChild(confirmation);
+      }
     }
-    parent.appendChild(bulk);
+    parent.appendChild(input);
   }
   function renderAnalysis(parent) {
     if (!Object.keys(state.text.nodes).length) return;
@@ -275,55 +378,48 @@
   }
   function render() {
     fields.clear(); page.replaceChildren(); const controls = el("fieldset", undefined, "editing-workspace"); controls.disabled = busy;
-    statusNode = el("p", undefined, "editing-status"); statusNode.setAttribute("role", "status"); saveButton = null; warnings = null; controls.appendChild(statusNode);
-    if (!hasDocument) controls.appendChild(el("h1", "Editing"));
+    statusNode = el("p", undefined, "editing-status"); statusNode.setAttribute("role", "status"); saveButton = null; warnings = null;
+    controls.appendChild(statusNode);
+    if (browsing) renderTextBrowser(controls);
+    else if (!session.current) controls.appendChild(el("h1", "Editing"));
     else {
       const heading = el("div", undefined, "editing-text-heading");
-      heading.appendChild(el("h1", state.text ? state.text.text_id || "Untitled Text" : "Empty Document"));
-      heading.appendChild(el("span", state.document.name || "Untitled Document", "editing-document-label"));
+      heading.append(el("h1", state.text?.text_id || "Untitled Text"), el("span", session.current.standalone ? "Unsaved Text" : state.document.name || "Unsaved Document", "editing-document-label"));
       saveButton = button("Save", save, true); heading.appendChild(saveButton); controls.appendChild(heading);
-      const meta = details("Document", !state.document.name); meta.className = "editing-document-options";
-      meta.appendChild(field("Document name", state.document.name, value => { state.document.name = value; state.markDirty(); heading.children[1].textContent = value || "Untitled Document"; renderBrowser(); }, "document-name"));
       if (state.savedFilename) {
-        meta.appendChild(el("p", `data/authoring/${state.savedFilename}`, "editing-hint"));
-        meta.appendChild(button("Save a copy", () => {
-          if (pasted.trim()) throw new Error("Apply or clear the bulk entry before saving a copy.");
-          const name = window.prompt("Name for the copied Document:", state.document.name + "-copy"); if (!name) return;
-          COJEditing.filenameForDocument(name); state.document.name = name; state.filename = state.savedFilename = null; state.revision = null; state.markDirty(); return save();
-        }));
+        const meta = details("Document");
+        meta.appendChild(field("Document name", state.document.name, value => {
+          state.document.name = value; state.markDirty(); heading.children[1].textContent = value; renderDrafts();
+        }, "display-name", false, "Document display name"));
+        meta.append(el("p", `data/authoring/${state.savedFilename}`, "editing-hint"),
+          button("Save a copy", () => { saveChoice = {target: "new", name: state.document.name + "-copy", copy: true}; })); controls.appendChild(meta);
       }
-      controls.appendChild(meta);
+      renderSaveChoice(controls);
       if (state.text) {
-        controls.appendChild(field("Text ID", state.text.text_id, value => {
-          state.text.text_id = value; state.markDirty(); heading.children[0].textContent = value || "Untitled Text"; renderBrowser();
-        }, "text-id"));
+        controls.appendChild(field("Text ID", state.text.text_id, value => { state.text.text_id = value; state.markDirty(); heading.children[0].textContent = value || "Untitled Text"; renderDrafts(); }, "text-id"));
         warnings = el("section", undefined, "editing-warnings"); warnings.setAttribute("role", "status"); controls.appendChild(warnings);
-        if (state.removal) controls.appendChild(button("Undo removal", () => { state.undoRemoval(); message = ""; }));
-        renderBulk(controls); renderSource(controls); renderAnalysis(controls);
+        if (state.removal) controls.appendChild(button(state.removal.kind === "replacement" ? "Undo replacement" : "Undo removal", () => { state.undoRemoval(); message = ""; }));
+        renderInput(controls); renderSource(controls); renderAnalysis(controls);
       }
     }
-    page.appendChild(controls); updateStatus(); renderBrowser(); resizeFields();
+    page.appendChild(controls); updateStatus(); renderDrafts(); renderBrowser(); resizeFields();
     for (const node of actions.children) node.disabled = busy;
     if (focusNext && !busy) { fields.get(focusNext)?.focus(); focusNext = null; }
   }
   const tools = el("details", undefined, "editing-file-tools"); tools.appendChild(el("summary", "Import Document"));
   const upload = el("input"); upload.type = "file"; upload.accept = ".json"; upload.setAttribute("aria-label", "Import .syn.json Document");
   upload.addEventListener("change", () => run(async () => {
-    const file = upload.files[0]; if (!file || !mayReplace()) return;
+    const file = upload.files[0]; if (!file) return;
     if (file.size > 32000000) throw new Error("The file is too large (maximum 32 MB).");
     busy = true; render(); const data = await apiFetch("/api/authoring/validate", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({content: await file.text()})});
-    state.open(data.document); hasDocument = true; pasted = ""; preview = null; browseMode = "open"; message = "Imported draft copy.";
+    activate(session.open(data, `import:${session.makeId()}`)); message = "Imported draft copy.";
   }));
   tools.appendChild(upload); sidebar.appendChild(tools);
-  window.addEventListener("beforeunload", event => { if (state.dirty || pasted.trim()) { event.preventDefault(); event.returnValue = ""; } });
+  window.addEventListener("beforeunload", event => { if (session.hasUnsaved) { event.preventDefault(); event.returnValue = ""; } });
   window.addEventListener("resize", resizeFields);
   if (typeof ResizeObserver !== "undefined") {
     let lastWidth = -1;
-    const observer = new ResizeObserver(entries => {
-      const width = entries[0].contentRect.width;
-      if (width !== lastWidth) { lastWidth = width; resizeFields(); }
-    });
-    observer.observe(page);
+    const observer = new ResizeObserver(entries => { const width = entries[0].contentRect.width; if (width !== lastWidth) { lastWidth = width; resizeFields(); } }); observer.observe(page);
   }
   render();
 })();

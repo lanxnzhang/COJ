@@ -87,14 +87,18 @@ Start the existing app with `python treditor/app.py`, then open **Editing**
 below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
 `data/authoring/`; it does not modify corpus TXT/XML or dictionary data.
 
-1. In the Editing sidebar, **New Document** creates an empty container. Enter
-   its **Document name** (under **Document**) and Save it if desired. No Text is
-   created automatically.
-2. **New Text** asks you to choose its existing Document: the current container,
-   a saved Document, or a corpus Document opened as a draft copy. Choosing the
-   parent creates an empty Text with no placeholder source row. Enter **Text ID**.
-3. **Bulk entry** is initially expanded for an empty Text. Paste alternating
-   original/transcription lines, for example:
+1. **New Text** immediately creates a blank, unsaved Text. Start editing without
+   choosing a Document or storage name. **New Document** creates an unnamed,
+   unsaved container with one blank Text. Its small **+** in **Session drafts**
+   adds another Text to that same container before saving. The three primary
+   sidebar actions use the same button sizing as Workbench.
+2. **Session drafts** lets you return to open Texts/Documents without losing
+   Source edits, Text Input, previews or input scroll positions. Creating or
+   opening something else does not discard drafts or require a naming decision.
+   Drafts and scratch input live only in this page session, not browser recovery
+   storage; refresh/closing the page loses unsaved work and warns before leaving.
+3. **Text Input** is an independent, normally editable and scrollable scratch
+   area, also available on existing Texts. Paste or type alternating lines:
 
    ```text
    美阿止都久留
@@ -103,64 +107,64 @@ below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
    isi no pibiki pa
    ```
 
-   Select **Preview**, verify the numbered pairs, then **Apply**. Preview changes
-   no authored data. Apply appends the reviewed pairs, which remain individually
-   editable. Editing the paste invalidates its preview. Optional original-line
-   numbers must start at 1 and continue in order; blank separators are accepted.
-4. **Source** shows compact numbered **Text** and **Transcription** pairs.
-   Inputs grow to fit their content. The small **+** controls insert before a
-   pair or append at the end; **×** removes a pair and offers **Undo removal**.
-   Display numbers update, while existing source/node identities and alignment
-   evidence remain unchanged. Enter in transcription continues to the next pair.
-5. **Save** writes the complete Document in `data/authoring/`, including all its
-   Texts and unresolved drafts. Text ID/display-name edits retain a saved file's
-   path. **Document → Save a copy** chooses a fresh destination. No Git commit
-   is made automatically.
-6. **Open Text** browses/searches Texts in the sidebar. Related corpus Documents
-   are grouped (for example MYS → MYS_01, MYS_02). Expand a Document to select
-   its Texts, or search by Text ID/Document name. Saved Document contents are
-   read for expansion/search; browsing does not replace the active draft.
-   Selecting a Text in the current Document retains other Texts' edits; opening
-   another Document warns before discarding unsaved changes. Corpus selections
-   open draft copies without writing to TXT/XML.
+   Select **Preview**, review the numbered pairs, then **Add to Source**. Nothing
+   is authored at Preview. Addition creates rows when Source is empty and appends
+   when rows already exist. The scratch content stays intact; editing it
+   invalidates its preview but never changes Source. Editing Source never
+   rewrites Text Input. Save stores Source; it neither serializes scratch input
+   nor requires scratch input to have been added/cleared.
+4. **Source** remains the authoritative authoring input: compact numbered
+   **Text** and **Transcription** pairs. Inputs grow to fit content. The small
+   **+** controls insert before a pair or append; **×** removes a pair, with
+   **Undo removal**. Display numbering changes while persistent identities and
+   existing alignment evidence remain stable. Enter in transcription continues.
+5. After Preview, **Source replacement → Replace entire Source** opens a separate
+   confirmation showing the old rows, the current Text and replacement count.
+   **Confirm replacement** replaces Source with fresh paired rows. It preserves
+   the hierarchy and original evidence, marks affected links unresolved and
+   offers **Undo replacement**. If Source changed during review, review again
+   before replacing. Replacement is separate from normal **Add to Source**.
+6. **Save** is manual. For a standalone new Text it opens a destination chooser:
+   add it to an existing Document (including a session container) or save into
+   a new named Document. An unnamed new Document asks for its final name at
+   Save. **Confirm Save** writes the complete Document, including its other
+   Texts and any unresolved drafts. A failed save/merge retains the original
+   drafts; Text/container membership is committed only after disk save succeeds.
+   Already saved Documents use their existing filename on subsequent Save.
+   **Document → Save a copy** chooses a fresh destination. Display-name/Text-ID
+   changes do not rename an existing file; no Git commit is made automatically.
+7. **Open Text** uses a compact master/detail browser: works/Documents on the
+   left, the selected Document's Texts in the workspace on the right. A work
+   gets a second level only when it actually contains multiple storage Documents
+   (for example MYS → MYS_01, MYS_02); BS/KK need no redundant group. Search
+   Text IDs or Document names, choose a Document, then its Text. Returning to
+   an already open Document uses its retained session draft. Corpus opening
+   creates a draft copy without modifying the original TXT/XML.
 
-**Preserved analysis (read only)** displays the retained hierarchy with generated
-indentation/connector guides, plus its historical header. No connector characters
-are authored and no hierarchy editing is enabled. Expanding sections retains the
-workspace width; source fields resize when the available width changes.
+**Preserved analysis (read only)** displays retained nodes with generated tree
+indentation/connector guides and its historical header. The workspace width and
+scrollbar gutter remain stable when sections expand/collapse. No analysis or
+hierarchy editing has been added in this milestone.
 
-Drafts are not saved automatically. Hiding/reopening the Editing tab retains
-state while the page remains loaded. Refresh/page close warns about unsaved
-changes, but leaving loses them; there is no browser recovery store. Opening a
-different Document also warns before discarding unsaved changes. Saved/unsaved
-status is visible above the fields.
-
-Editing imported source content never rewrites or deletes its hierarchy.
+Changing imported source content never rewrites/deletes its hierarchy.
 Whitespace-only transcription changes with unchanged original text retain
-supported alignment. Uncertain content changes mark the passage's relationships
-unresolved and preserve their original evidence. Removing a passage retains
-orphaned analysis. Warnings identify affected passages; draft Save remains
-available. No automatic re-analysis or TXT/XML synchronization occurs. Reviewed
-export/write-back and editable analysis are later stages.
+supported alignment. Uncertain content changes mark that Source row's links
+unresolved and preserve original evidence. Removal/replacement retains orphaned
+analysis; unresolved drafts can still be saved. Re-analysis and TXT/XML
+synchronization remain explicit later operations, not effects of typing or Save.
 
 Storage names use letters, numbers, dots, underscores or hyphens; reserved
-Windows device names are rejected. Text IDs are scholarly metadata rather than
-paths. Existing destinations and stale revisions cannot be silently overwritten.
-A failed Save retains the draft. File import validates version-2 `.syn.json`
-and opens an unsaved copy. Version-1 prototype files require reviewed conversion
-and are rejected; conversion controls are not implemented in this milestone.
+Windows device names are rejected. Text IDs remain scholarly metadata, not
+paths. Stale revisions/existing destinations cannot be silently overwritten.
+File import validates version-2 `.syn.json` and adds a session draft. Version-1
+prototype files still require reviewed conversion and are rejected.
 
-The backend checks ordered membership, hierarchy references/cycles, writing
-parts, initial boundaries and evidence-linked alignment status. Incomplete
-analysis and unresolved relationships are valid drafts. The deterministic UTF-8
-codec and atomic store support complete Documents up to 32 MB. Saves use a local
-server lock plus disk fingerprints; simultaneous independent server processes
-are not a supported collaboration mode.
-
-Implementation remains modular in `src/coj/authoring/`, `treditor/authoring.py`,
-`editing-state.js` and `editing.js`. Existing browsing and Workbench remain
-separate. Stage 3+ suggestions, morphology, full hierarchy editing and reviewed
-TXT/XML export are deferred; the corpus has not been migrated.
+The version-2 schema, deterministic UTF-8 codec, atomic file store and 32 MB
+limit are unchanged. Saves use a local server lock and disk fingerprints;
+simultaneous independent server processes are not a supported collaboration
+mode. Session navigation/scratch input are client-only state in
+`editing-state.js`; `editing.js` controls the UI. Stage 3/4 analysis/tree editing,
+reviewed TXT/XML export and corpus migration remain deferred.
 
 ## Importing primary authoring TXT
 

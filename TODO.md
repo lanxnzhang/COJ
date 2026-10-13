@@ -2027,6 +2027,70 @@ This is still not a final visual redesign. Keep the existing COJ/treditor style,
 Do not start Stage 3 assisted analysis or Stage 4 tree editing yet.
 If any requested behavior conflicts with the current Document/Text model or repository evidence, ask me rather than guessing. Otherwise implement these usability corrections and briefly tell me how to test them.
 
+### After commit 8c3dfc5
+Please make another Stage 2 usability pass before proceeding to Stage 3. The current data model can remain unchanged; this is mainly a workflow and UI correction.
+1. Redesign New Text / New Document as flexible drafts
+Keep New Text, Open Text, and New Document as equal-level actions in the Editing sidebar, but make them visually consistent with the existing Workbench/sidebar UI rather than small secondary-looking controls.
+Creating and saving should not be unnecessarily coupled:
+- New Text should immediately create an unsaved blank Text that the user can start editing. Do not require choosing a Document first. When the user later saves, they can choose which existing Document to add it to or create a new Document.
+- New Document should immediately create an unsaved Document containing one blank Text, so the user can start working immediately. The user can add more Texts to it before saving and choose its final Document name when saving.
+- Unsaved Texts/Documents should be able to remain as session drafts while the user temporarily navigates elsewhere and returns to them. Do not force premature naming/storage decisions.
+Saving remains explicit/manual.
+2. Redesign Open Text as a compact master-detail browser
+Do not show every Document as a button or put most works under an artificial Other corpus documents category.
+The left side should show works/document groups, left-aligned and visually compact:
+BS
+EN
+KK
+MYS
+  MYS_01
+  MYS_02
+  ...
+...
+
+Only works that genuinely contain multiple storage Documents need a second level. For example, MYS_* belongs under MYS; a single-Document work should not get a redundant extra level.
+Selecting a Document should show its Texts on the right side. Keep the existing search functionality.
+Do not add a separate Current Document category; current editing state can be shown in the workspace itself.
+3. Rename and fix Bulk Entry as Text Input
+Text Input is an independent editable scratch/input area for fast typing and pasting. It is not the authoritative Source and should not automatically synchronize with Source.
+It should support normal editing, scrolling and full-content browsing, including when an existing Text is open.
+The expected alternating-line format is:
+美阿止都久留
+mi ato tukuru
+伊志乃比鼻伎波
+isi no pibiki pa
+阿米爾伊多利
+ame ni itari
+
+Workflow:
+Text Input
+    → Preview
+    → review parsed numbered pairs
+    → Add to Source
+
+Use Add to Source consistently as the action label.
+Source is the authoring input used by later analysis; Text Input remains a scratch representation. Source edits do not automatically rewrite Text Input, and Text Input edits do not affect Source until the user explicitly applies them.
+If Source is empty, Add to Source simply creates the parsed Source rows.
+If Source already contains rows, default to adding the previewed pairs to the end. Provide a secondary destructive option to Replace entire Source, with a clear confirmation showing what will be replaced. Do not make replacement as easy to trigger accidentally as ordinary addition.
+Replacing Source must follow the existing permissive-draft policy: do not silently delete or rewrite existing annotated hierarchy. Preserve affected analysis/evidence and mark invalid or uncertain relationships unresolved.
+Source → Text Input synchronization, if added later, must also be explicit rather than automatic.
+4. Keep Source compact and authoritative
+After Add to Source, the parsed content appears in the normal compact numbered Source editor:
+1  Text           [美阿止都久留]
+   Transcription  [mi ato tukuru]
+
+2  Text           [伊志乃比鼻伎波]
+   Transcription  [isi no pibiki pa]
+
+Keep the existing lightweight + insertion between rows, automatic visible renumbering, removal and undo. Do not return to large per-passage cards.
+5. General UI cleanup
+Keep the central workspace focused on the current Text. Use the sidebar for document/text navigation and creation.
+Reuse the visual language, spacing, button sizing and hierarchy of existing well-designed treditor/Workbench UI where appropriate rather than introducing another control style.
+Keep Document lists and labels left-aligned. Remove redundant instructional prose where the controls already make the workflow clear.
+Preserve the recent compact Source layout, stable workspace width and generated hierarchy guides.
+Do not implement Stage 3 assisted analysis or Stage 4 tree editing yet.
+If any requested behavior conflicts with the current model or requires an unresolved semantic decision, ask me rather than guessing. Otherwise implement this usability pass and briefly explain how to test New Text, New Document, Open Text, Text Input → Preview → Add to Source, and Save/Reopen.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

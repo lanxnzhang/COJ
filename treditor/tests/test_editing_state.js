@@ -49,3 +49,28 @@ assert.throws(() => state.addPassage("", "", -1));
 assert.throws(() => state.addPassage("", "", 99));
 state.removePassage(middle); assert.deepEqual(state.text.passage_order, before);
 state.undoRemoval(); assert.equal(state.text.passage_order[0], middle);
+
+// Replacing Source preserves the unified hierarchy and immutable original links.
+const originalSource = JSON.stringify(state.text.passages), originalOrder = state.text.passage_order.slice();
+const analysisBefore = JSON.stringify(state.text.nodes), evidenceBefore = JSON.stringify(state.text.links.l.evidence);
+state.replacePairs([{original: "替代", transcription: "replacement"}]);
+assert.equal(state.text.passage_order.length, 1);
+assert.ok(!originalOrder.includes(state.text.passage_order[0]));
+assert.equal(JSON.stringify(state.text.nodes), analysisBefore);
+assert.equal(JSON.stringify(state.text.links.l.evidence), evidenceBefore);
+assert.equal(state.text.links.l.status, "unresolved");
+assert.equal(state.removal.kind, "replacement");
+state.undoRemoval(); assert.equal(JSON.stringify(state.text.passages), originalSource);
+assert.deepEqual(state.text.passage_order, originalOrder);
+const {Session} = require("../static/editing-state.js");
+const sessions = new Session(() => `session-${++id}`);
+const standalone = sessions.create(), documentDraft = sessions.create(false);
+assert.equal(standalone.standalone, true); assert.equal(documentDraft.standalone, false);
+assert.equal(documentDraft.state.document.text_order.length, 1); assert.equal(documentDraft.state.document.name, "");
+sessions.select(standalone.key);
+const input = sessions.input(); input.value = "independent\ninput"; input.scrollTop = 44;
+assert.equal(standalone.state.text.passage_order.length, 0);
+sessions.select(documentDraft.key); documentDraft.state.addText("second");
+sessions.select(standalone.key); assert.strictEqual(sessions.input(), input);
+assert.equal(sessions.input().scrollTop, 44); assert.equal(sessions.hasUnsaved, true);
+assert.equal(JSON.stringify(standalone.state.document).includes("independent"), false);

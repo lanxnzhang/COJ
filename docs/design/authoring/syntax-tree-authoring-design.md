@@ -1,7 +1,7 @@
 # Syntax-tree authoring: source-first workflow
 
-Revised 12 October 2026 following **After commit 023a10c (2)–(9)**
-and the **After commit 7d5fb6f** Stage 2 usability corrections and the
+Revised 13 October 2026 following **After commit 023a10c (2)–(9)**
+and the **After commit 7d5fb6f / 8c3dfc5** Stage 2 usability corrections and the
 author's header, synchronization, unified-hierarchy and permissive source-edit
 clarifications. The Stage 1 + Stage 2 milestone now implements version-2
 multi-Text Documents, paired source entry, read-only corpus opening and
@@ -939,15 +939,37 @@ XML/TXT or write to external source repositories.
   Unicode code-point initial ranges. Display numbering follows passage order
   from 1. These ranges are input boundaries, not inferred terminal boundaries.
   Source-only drafts create no analysis nodes.
-- Editing provides sidebar New Document/New Text/Open Text actions. New Document
-  creates only an empty container; New Text requires an explicit existing parent
-  choice and starts with primary bulk entry, not a placeholder source row. A
-  compact grouped Document/Text browser supports Text-ID/name search and
-  on-demand expansion. Numbered Text/Transcription pairs support insertion
-  between existing pairs, Enter to continue and removal/undo. Bulk Preview
-  precedes Apply; complete-Document Save/Reopen retains existing persistence.
-  Switching Texts retains other
-  Texts' drafts. Pending paste must be applied or cleared before Save/switching.
+- Editing provides equal-level sidebar New Text/Open Text/New Document actions
+  sized like Workbench. New Text is an immediate standalone session draft;
+  New Document is an immediate unnamed container with one blank Text. Additional
+  Texts can be added through the session container's sidebar control before
+  saving. Session navigation retains all open drafts rather than replacing them.
+- Open Text is a compact master/detail browser: work/Document entries on the
+  left, the selected Document's Texts in the central workspace. Multiple-storage
+  works get one expandable level; single-Document works are direct entries.
+  There is no artificial Other/Current Document category. Text-ID/name search
+  remains available; choosing an already open file returns to its live draft.
+- Text Input is independent session-only scratch with normal textarea editing,
+  scrolling and preserved input/previews/scroll positions across navigation.
+  Preview shows numbered pairs; **Add to Source** creates/appends rows without
+  clearing scratch or silently synchronizing either representation. Source
+  edits never rewrite scratch; scratch edits never affect Source. Scratch is
+  not serialized and does not prevent an explicit Source save. Later analysis
+  uses Source, not Text Input.
+- Secondary **Replace entire Source** requires a separate review of old rows,
+  current Text and replacement count before confirmation. It preserves the
+  hierarchy and original alignment evidence, creates fresh Source identities,
+  marks orphaned links unresolved and offers Undo replacement. Source changes
+  during review invalidate confirmation. Compact Source insertion/removal,
+  visible renumbering, Enter navigation and generated tree guides are retained.
+- Manual Save asks for a destination for standalone Texts: an existing Document
+  or a new one. Unnamed Document drafts choose their final storage name there.
+  Destination merges are staged on a complete cloned Document and applied to
+  session membership only after atomic save succeeds; failures retain both
+  source and target drafts. Existing Documents retain their paths and revision
+  checks. Saving any container saves all its Texts, including other unsaved
+  Texts already in that container. No file is created merely by creating a
+  draft, naming a proposed destination, previewing or editing.
 - The corpus adapter explicitly reads complete XML Documents and preserves
   original XML/TXT snapshots, block records, historical headers, attributes,
   markers and writing-mode parts. It maps only exact ordered compacted yields;
@@ -965,14 +987,15 @@ XML/TXT or write to external source repositories.
   32 MB limit accommodates the measured largest corpus Document (MYS_10,
   17,619,990 serialized bytes); table limits apply per Text. This is local
   single-server storage, not a multi-process collaboration protocol.
-- `data/authoring/<Document name>.syn.json` is chosen on first Save. Later
+- `data/authoring/<Document name>.syn.json` is chosen at the explicit first Save. Later
   display-name/Text-ID changes retain that path. Save a copy chooses a fresh
   destination without replacing an existing file. Imported copies have no
   overwrite authorization/revision. Storage names use safe ASCII filename
   characters; scholarly Text IDs remain unrestricted text.
-- Drafts are kept in memory until Save. Refresh/closing the page warns about
-  unsaved changes but provides no automatic recovery. Switching/hiding the
-  Editing tab retains the live draft while the page remains loaded.
+- Drafts are kept in session memory until Save. Scratch input remains session-only
+  even after Source is saved. Refresh/closing the page warns about unsaved
+  drafts/scratch but provides no automatic recovery. Navigating between drafts
+  or hiding the Editing tab retains the live state while the page remains loaded.
 
 **Version-1 draft conversion policy:** never reinterpret a version-1 file as
 version 2 or overwrite it while opening. A reviewed conversion must preserve

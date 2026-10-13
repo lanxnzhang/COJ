@@ -95,6 +95,13 @@
       this.removal = null; this.dirty = true;
     }
     appendPairs(pairs) { pairs.forEach(pair => this.addPassage(pair.original, pair.transcription)); }
+    replacePairs(pairs) {
+      if (!this.text) throw new Error("Choose a Text first.");
+      const snapshot = {document: clone(this.document), activeText: this.activeText, kind: "replacement"};
+      this.text.passages = {}; this.text.passage_order = [];
+      this.appendPairs(pairs); reconcile(this.text);
+      this.removal = snapshot; this.dirty = true;
+    }
     unresolved() {
       if (!this.text) return [];
       const output = [];
@@ -112,7 +119,35 @@
     saved(filename, revision) { this.filename = filename; this.savedFilename = filename; this.revision = revision; this.dirty = false; }
     expectedRevision() { return this.filename === this.savedFilename ? this.revision : null; }
   }
-  const api = {State, newDocument, newText, newPassage, filenameForDocument, parsePairs, units, compact, reconcile};
+  // Session-only navigation and scratch input; never serialized into .syn.json.
+  class Session {
+    constructor(makeId = () => root.crypto.randomUUID()) { this.makeId = makeId; this.drafts = []; this.active = null; }
+    get current() { return this.drafts.find(d => d.key === this.active) || null; }
+    create(standalone = true) {
+      const state = new State(this.makeId); state.addText();
+      const draft = {key: this.makeId(), state, standalone, origin: null, inputs: new Map()};
+      this.drafts.push(draft); this.active = draft.key; return draft;
+    }
+    open(data, origin) {
+      let draft = this.drafts.find(d => d.origin === origin);
+      if (!draft) {
+        const state = new State(this.makeId); state.open(data.document, data.filename, data.revision);
+        draft = {key: this.makeId(), state, standalone: false, origin, inputs: new Map()}; this.drafts.push(draft);
+      }
+      this.active = draft.key; return draft;
+    }
+    select(key, textKey) {
+      const draft = this.drafts.find(d => d.key === key); if (!draft) throw new Error("Draft not found.");
+      if (textKey) draft.state.selectText(textKey); this.active = key; return draft;
+    }
+    input(draft = this.current, textKey = draft?.state.activeText) {
+      if (!draft || !textKey) return null;
+      if (!draft.inputs.has(textKey)) draft.inputs.set(textKey, {value: "", preview: null, scrollTop: 0, replacement: false});
+      return draft.inputs.get(textKey);
+    }
+    get hasUnsaved() { return this.drafts.some(d => d.state.dirty || [...d.inputs.values()].some(i => i.value.length)); }
+  }
+  const api = {State, Session, newDocument, newText, newPassage, filenameForDocument, parsePairs, units, compact, reconcile};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.COJEditing = api;
 })(typeof window !== "undefined" ? window : globalThis);
