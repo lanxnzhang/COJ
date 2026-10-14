@@ -15743,10 +15743,10 @@
       <comment position="97" raw="multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,31@乎須久爾奈礼婆,*" />
       <comment position="100" raw="multi-sentence,IP-MAT,IP-ADV,32@美許登母知,*" />
       <comment position="102" raw="multi-sentence,IP-MAT,IP-ADV,33@多知和可礼奈婆,*" />
-      <comment position="104" raw="multi-sentence,IP-MAT,35@吉民婆安礼騰母,*" />
-      <comment position="106" raw="multi-sentence,IP-MAT,IP-ADV,PP-SBJ,NP,34@於久礼多流,*" />
-      <comment position="109" raw="multi-sentence,IP-MAT,37@美知由久和礼播,*" />
-      <comment position="112" raw="multi-sentence,IP-MAT,PP,NP,IP-REL,NP,36@多麻保許乃,*" />
+      <comment position="104" raw="multi-sentence,IP-MAT,34@於久礼多流,*" />
+      <comment position="106" raw="multi-sentence,IP-MAT,IP-ADV,PP-SBJ,NP,35@吉民婆安礼騰母,*" />
+      <comment position="109" raw="multi-sentence,IP-MAT,36@多麻保許乃,*" />
+      <comment position="112" raw="multi-sentence,IP-MAT,PP,NP,IP-REL,NP,37@美知由久和礼播,*" />
       <comment position="116" raw="multi-sentence,IP-MAT,38@之良久毛能,*" />
       <comment position="119" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1-SRC,NP,IP-EMB,39@多奈妣久夜麻乎,*" />
       <comment position="122" raw="multi-sentence,IP-MAT,IP-ADV,40@伊波祢布美,*" />
@@ -15756,8 +15756,8 @@
       <comment position="136" raw="multi-sentence,IP-MAT;@4,44@則許母倍婆,*" />
       <comment position="138" raw="multi-sentence,IP-MAT;@4,45@許己呂志伊多思,*" />
       <comment position="142" raw="multi-sentence,IP-MAT,46@保等登芸須,*" />
-      <comment position="143" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,IP-ADV,PP,NP,48@多麻爾母我,*" />
-      <comment position="147" raw="multi-sentence,IP-MAT,NP-PRD,47@許恵爾安倍奴久,*" />
+      <comment position="143" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,IP-ADV,PP,NP,47@許恵爾安倍奴久,*" />
+      <comment position="147" raw="multi-sentence,IP-MAT,NP-PRD,48@多麻爾母我,*" />
       <comment position="150" raw="multi-sentence,IP-MAT;@6,49@手爾麻吉毛知弖,*" />
       <comment position="154" raw="multi-sentence,IP-MAT;@6,IP-ADV,50@安佐欲比爾,*" />
       <comment position="157" raw="multi-sentence,IP-MAT;@6,IP-ADV,51@見都追由可牟乎,*" />
@@ -15902,19 +15902,19 @@
         <transcription>tati wakareba</transcription>
       </sentence>
       <sentence n="35">
-        <kanji>吉民婆安礼騰母</kanji>
+        <kanji>於久礼多流</kanji>
         <transcription>okure taru</transcription>
       </sentence>
       <sentence n="36">
-        <kanji>於久礼多流</kanji>
+        <kanji>吉民婆安礼騰母</kanji>
         <transcription>kimi pa aredomo</transcription>
       </sentence>
       <sentence n="37">
-        <kanji>美知由久和礼播</kanji>
+        <kanji>多麻保許乃</kanji>
         <transcription>tama poko no</transcription>
       </sentence>
       <sentence n="38">
-        <kanji>多麻保許乃</kanji>
+        <kanji>美知由久和礼播</kanji>
         <transcription>miti yuku ware pa</transcription>
       </sentence>
       <sentence n="39">
@@ -15954,11 +15954,11 @@
         <transcription>pototogisu</transcription>
       </sentence>
       <sentence n="48">
-        <kanji>多麻爾母我</kanji>
+        <kanji>許恵爾安倍奴久</kanji>
         <transcription>kowe ni ape nuku</transcription>
       </sentence>
       <sentence n="49">
-        <kanji>許恵爾安倍奴久</kanji>
+        <kanji>多麻爾母我</kanji>
         <transcription>tama ni moga</transcription>
       </sentence>
       <sentence n="50">

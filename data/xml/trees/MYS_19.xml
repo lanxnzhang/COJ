@@ -12532,7 +12532,7 @@
       <comment position="47" raw="IP-MAT,IP-ADV,PP-ADV,IP-NMZ,15@和可礼爾之欲理,*" />
       <comment position="51" raw="IP-MAT,IP-ADV,16@於吉都奈美,*" />
       <comment position="54" raw="IP-MAT,IP-ADV,NP-SBJ,IP-REL,17@等乎牟麻欲妣伎,*" />
-      <comment position="56" raw="IP-MAT,IP-ADV,IP-ADV,IP-EPT.18@於保夫祢能,*" />
+      <comment position="56" raw="IP-MAT,IP-ADV,IP-ADV,IP-EPT,18@於保夫祢能,*" />
       <comment position="59" raw="IP-MAT,IP-ADV,IP-ADV,19@由久良由久良耳,*" />
       <comment position="61" raw="IP-MAT,IP-ADV,IP-ADV;@2,20@於毛可宜爾,*" />
       <comment position="63" raw="IP-MAT,IP-ADV,21@毛得奈民延都都,*" />
@@ -12611,29 +12611,33 @@
       </sentence>
       <sentence n="18">
         <kanji>等乎牟麻欲妣伎</kanji>
-        <transcription>towomu maywobiki opo bune no</transcription>
+        <transcription>towomu maywobiki</transcription>
       </sentence>
       <sentence n="19">
+        <kanji>於保夫祢能</kanji>
+        <transcription>opo bune no</transcription>
+      </sentence>
+      <sentence n="20">
         <kanji>由久良由久良耳</kanji>
         <transcription>yukurayukura ni</transcription>
       </sentence>
-      <sentence n="20">
+      <sentence n="21">
         <kanji>於毛可宜爾</kanji>
         <transcription>omokage ni</transcription>
       </sentence>
-      <sentence n="21">
+      <sentence n="22">
         <kanji>毛得奈民延都都</kanji>
         <transcription>motona mi yetutu</transcription>
       </sentence>
-      <sentence n="22">
+      <sentence n="23">
         <kanji>可久古非婆</kanji>
         <transcription>kaku kwopwiba</transcription>
       </sentence>
-      <sentence n="23">
+      <sentence n="24">
         <kanji>意伊豆久安我未</kanji>
         <transcription>oi duku a ga mwi</transcription>
       </sentence>
-      <sentence n="24">
+      <sentence n="25">
         <kanji>氣太志安倍牟可母</kanji>
         <transcription>kedasi ape mu kamo</transcription>
       </sentence>

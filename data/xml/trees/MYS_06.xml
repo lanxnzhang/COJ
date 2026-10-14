@@ -1622,16 +1622,16 @@
       <comment position="36" raw="multi-sentence,CP-FINAL,10@百礒城乃,*" />
       <comment position="39" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,IP-ADV,PP,NP,11@大宮人毛,*" />
       <comment position="43" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,IP-ADV,12@越乞爾,*" />
-      <comment position="46" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,IP-ADV,14@思自仁思有者,*" />
-      <comment position="50" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,15@毎見,*" />
-      <comment position="52" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,16@文丹乏,*" />
-      <comment position="55" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,17@玉葛,*" />
-      <comment position="57" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,18@絶事無,*" />
-      <comment position="61" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,19@萬代爾,*" />
-      <comment position="64" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,20@如是霜願跡,*" />
-      <comment position="69" raw="multi-sentence,CP-FINAL,IP-SUB,21@天地之,*" />
-      <comment position="72" raw="multi-sentence,CP-FINAL,IP-SUB,PP-OB1,NP,22@神乎曽祷,*" />
-      <comment position="76" raw="multi-sentence,CP-FINAL,23@恐有等毛,*" />
+      <comment position="46" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,IP-ADV,13@思自仁思有者,*" />
+      <comment position="50" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,14@毎見,*" />
+      <comment position="52" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,15@文丹乏,*" />
+      <comment position="55" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,16@玉葛,*" />
+      <comment position="57" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,IP-ADV,17@絶事無,*" />
+      <comment position="61" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,18@萬代爾,*" />
+      <comment position="64" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ARG,19@如是霜願跡,*" />
+      <comment position="69" raw="multi-sentence,CP-FINAL,IP-SUB,20@天地之,*" />
+      <comment position="72" raw="multi-sentence,CP-FINAL,IP-SUB,PP-OB1,NP,21@神乎曽祷,*" />
+      <comment position="76" raw="multi-sentence,CP-FINAL,22@恐有等毛,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -2151,8 +2151,8 @@
       <comment position="30" raw="multi-sentence,IP-MAT,10@秋去者,*" />
       <comment position="32" raw="multi-sentence,IP-MAT,11@霧立渡,*" />
       <comment position="35" raw="multi-sentence,IP-MAT;@2,12@其山之,*" />
-      <comment position="39" raw="multi-sentence,IP-MAT;@2,14@弥益々爾,*" />
-      <comment position="42" raw="multi-sentence,IP-MAT;@2,13@此河之,*" />
+      <comment position="39" raw="multi-sentence,IP-MAT;@2,13@弥益々爾,*" />
+      <comment position="42" raw="multi-sentence,IP-MAT;@2,14@此河之,*" />
       <comment position="46" raw="multi-sentence,IP-MAT;@2,IP-ADV,15@絶事無,*" />
       <comment position="50" raw="multi-sentence,IP-MAT;@2,16@百石木能,*" />
       <comment position="53" raw="multi-sentence,IP-MAT;@2,PP-SBJ,NP,17@大宮人者,*" />
@@ -18587,28 +18587,28 @@
       <comment position="8" raw="multi-sentence,IP-MAT,PP,NP,IP-REL,2@高所知,*" />
       <comment position="11" raw="multi-sentence,IP-MAT,PP,NP,3@布當乃宮者,*" />
       <comment position="15" raw="multi-sentence,IP-MAT,4@百樹成,*" />
-      <comment position="19" raw="multi-sentence,IP-MAT,6@山者木高之,*" />
-      <comment position="24" raw="multi-sentence,IP-MAT;@2,7@落多藝都,*" />
-      <comment position="26" raw="multi-sentence,IP-MAT;@2,PP,NP,PP,NP,8@湍音毛清之,*" />
-      <comment position="32" raw="multi-sentence,IP-MAT,9@鴬乃,*" />
-      <comment position="34" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,PP-ADV,NP,IP-REL,10@来鳴春部者,*" />
-      <comment position="39" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,11@巌者,*" />
-      <comment position="42" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,12@山下耀,*" />
-      <comment position="45" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,13@錦成,*" />
-      <comment position="47" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,14@花咲乎呼里,*" />
-      <comment position="50" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,15@左壮鹿乃,*" />
-      <comment position="54" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,PP-ADV,NP,IP-REL,16@妻呼秋者,*" />
-      <comment position="58" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,17@天霧合,*" />
-      <comment position="61" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,IP-ADV,PP-SBJ,NP,18@之具礼乎疾,*" />
-      <comment position="65" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,19@狭丹頬歴,*" />
-      <comment position="68" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,NP-SBJ,20@黄葉散乍,*" />
-      <comment position="70" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,21@八千年爾,*" />
-      <comment position="74" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,22@安礼衝之乍,*" />
-      <comment position="78" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,23@天下,*" />
-      <comment position="81" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,24@所知食跡,*" />
-      <comment position="86" raw="multi-sentence,IP-MAT,NP,IP-REL,25@百代爾母,*" />
-      <comment position="90" raw="multi-sentence,IP-MAT,NP,IP-REL,26@不可易,*" />
-      <comment position="93" raw="multi-sentence,IP-MAT,NP,27@大宮處,*" />
+      <comment position="19" raw="multi-sentence,IP-MAT,5@山者木高之,*" />
+      <comment position="24" raw="multi-sentence,IP-MAT;@2,6@落多藝都,*" />
+      <comment position="26" raw="multi-sentence,IP-MAT;@2,PP,NP,PP,NP,7@湍音毛清之,*" />
+      <comment position="32" raw="multi-sentence,IP-MAT,8@鴬乃,*" />
+      <comment position="34" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,PP-ADV,NP,IP-REL,9@来鳴春部者,*" />
+      <comment position="39" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,10@巌者,*" />
+      <comment position="42" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,11@山下耀,*" />
+      <comment position="45" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,12@錦成,*" />
+      <comment position="47" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,13@花咲乎呼里,*" />
+      <comment position="50" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,14@左壮鹿乃,*" />
+      <comment position="54" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,PP-ADV,NP,IP-REL,15@妻呼秋者,*" />
+      <comment position="58" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,16@天霧合,*" />
+      <comment position="61" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,IP-ADV,PP-SBJ,NP,17@之具礼乎疾,*" />
+      <comment position="65" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,18@狭丹頬歴,*" />
+      <comment position="68" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,IP-ADV,NP-SBJ,19@黄葉散乍,*" />
+      <comment position="70" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,20@八千年爾,*" />
+      <comment position="74" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,IP-ADV,IP-ADV,21@安礼衝之乍,*" />
+      <comment position="78" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,22@天下,*" />
+      <comment position="81" raw="multi-sentence,IP-MAT,NP,IP-REL,IP-ADV,23@所知食跡,*" />
+      <comment position="86" raw="multi-sentence,IP-MAT,NP,IP-REL,24@百代爾母,*" />
+      <comment position="90" raw="multi-sentence,IP-MAT,NP,IP-REL,25@不可易,*" />
+      <comment position="93" raw="multi-sentence,IP-MAT,NP,26@大宮處,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">

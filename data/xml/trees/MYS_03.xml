@@ -4796,10 +4796,10 @@
   <block header="mikapa no putami no miti yu wakarenaba wa ga se mo ware mo pitori ka mo yukamu" id="MYS.3.276b">
     <roundtrip-data format="coj-txt" source-id="MYS.3.276b">
       <comment position="0" raw="IP-MAT,0@水河乃,*" />
-      <comment position="2" raw="IP-MAT,IP-ADV,PP-OB1-SRC,NP,PP,3@二見之自道,*" />
-      <comment position="6" raw="IP-MAT,IP-ADV,4@別者,*" />
-      <comment position="9" raw="IP-MAT,0@吾勢毛文,*" />
-      <comment position="15" raw="IP-MAT,1@獨可文將去,*" />
+      <comment position="2" raw="IP-MAT,IP-ADV,PP-OB1-SRC,NP,PP,1@二見之自道,*" />
+      <comment position="6" raw="IP-MAT,IP-ADV,2@別者,*" />
+      <comment position="9" raw="IP-MAT,3@吾勢毛吾文,*" />
+      <comment position="15" raw="IP-MAT,4@獨可文將去,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -4815,7 +4815,7 @@
         <transcription>wakare na ba</transcription>
       </sentence>
       <sentence n="4">
-        <kanji>吾勢毛文</kanji>
+        <kanji>吾勢毛吾文</kanji>
         <transcription>wa ga se mo ware mo</transcription>
       </sentence>
       <sentence n="5">
@@ -8989,9 +8989,9 @@
       <comment position="107" raw="multi-sentence,IP-MAT;@4,NP-PRD,IP-REL,IP-ADV,NP-PRD,30@鎮十方,*" />
       <comment position="110" raw="multi-sentence,IP-MAT;@4,NP-PRD,IP-REL,31@座祇可間,*" />
       <comment position="113" raw="multi-sentence,IP-MAT,32@寳十方,*" />
-      <comment position="116" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,35@成有山可聞,*" />
-      <comment position="120" raw="multi-sentence,IP-MAT;@6,33@駿河有,*" />
-      <comment position="123" raw="multi-sentence,IP-MAT;@6,PP-SBJ,NP,34@不盡能高峯者,*" />
+      <comment position="116" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,33@成有山可聞,*" />
+      <comment position="120" raw="multi-sentence,IP-MAT;@6,34@駿河有,*" />
+      <comment position="123" raw="multi-sentence,IP-MAT;@6,PP-SBJ,NP,35@不盡能高峯者,*" />
       <comment position="128" raw="multi-sentence,IP-MAT;@6,36@雖見不飽香聞,*" />
     </roundtrip-data>
     <raw-text role="processing">

@@ -8960,8 +8960,8 @@
       <comment position="0" raw="IP-MAT,0@奥鳥,*" />
       <comment position="3" raw="IP-MAT,PP-SBJ,NP,IP-REL,IP-ARG,NP-PRD,1@鴨云舟者,*" />
       <comment position="8" raw="IP-MAT,2@也良乃埼,*" />
-      <comment position="11" raw="IP-MAT,IP-ARG,IP-ADV,4@所聞許奴可聞,*" />
-      <comment position="15" raw="IP-MAT,3@多未弖榜來跡,*" />
+      <comment position="11" raw="IP-MAT,IP-ARG,IP-ADV,3@多未弖榜來跡,*" />
+      <comment position="15" raw="IP-MAT,4@所聞許奴可聞,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -8977,11 +8977,11 @@
         <transcription>yara no saki</transcription>
       </sentence>
       <sentence n="4">
-        <kanji>所聞許奴可聞</kanji>
+        <kanji>多未弖榜來跡</kanji>
         <transcription>tamwite kogi ku to</transcription>
       </sentence>
       <sentence n="5">
-        <kanji>多未弖榜來跡</kanji>
+        <kanji>所聞許奴可聞</kanji>
         <transcription>kikoye ko nu kamo</transcription>
       </sentence>
     </raw-text>
