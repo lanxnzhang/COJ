@@ -31,15 +31,15 @@ Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN auth
 - **Answer:** ASCII x-based forms represent illegible/damaged source text; ILL means illegible and is appropriate here. Dictionary L099997 has GLOSS `ILLEGIBLE`, MEANING `[illegible word]`, and placeholder FORM/KANA `xxxxxxxxxx`; it is not a license to substitute that placeholder for an actual occurrence.
 - Non-ASCII forms such as `莫囂圓隣之` preserve known source characters whose linguistic transcription is undetermined. They are genuine special word forms, retained in the tree, textual material/header and search, rather than syntax tags. Preserve imported headers independently; do not automatically rewrite them.
 - **Deferred:** the chief editor is considering a different future tag for the second situation. Keep current ILL and L099997 assignments; no new tag or data migration is chosen.
-- **Implementation:** corrected TXT parsing recognizes current special ILL forms in the form slot. Existing stored XML still contains fifteen malformed syntax paths; its repair needs explicit approval. See DI-004 and the [scoped XML preview](../../reports/special-terminals-4f1eada-preview.patch).
+- **Implementation:** corrected TXT parsing recognizes current special ILL forms in the form slot. The explicitly approved repair now stores all fifteen special forms correctly; DI-004 is Resolved and future retagging remains Deferred. See the [applied XML patch](../../reports/special-terminals-4f1eada-preview.patch).
 
 ## CEQ-005 — Meaning of `NULL,*`
 
-- **Status:** Answered; stored-XML correction pending approval (DI-005).
+- **Status:** Answered; approved stored-XML correction verified and DI-005 Resolved.
 - **Authority:** chief-editor clarifications in [TODO: After commit 4f1eada](../../TODO.md).
 - **Answer:** NULL is a genuine null syntax terminal with empty phonological/orthographic content. The trailing `*` is its TXT encoding, not word material. Preserve the node and exact `NULL,*` TXT roundtrip; it contributes zero transcription characters. Do not store a literal `∅`.
 - **Distinction:** `number@text,*` is a source marker, not a null terminal. An otherwise unexplained bare star remains opaque evidence pending DI-006 review.
-- **Implementation:** the parser now builds empty NULL leaves; new XML conversions contain the nodes. Existing XML still stores all 347 occurrences only as roundtrip comments. No corpus XML has been changed.
+- **Implementation:** the parser now builds empty NULL leaves; new XML conversions contain the nodes. The approved stored-XML repair now represents all 347 occurrences as empty syntax terminals, with exact TXT encoding preserved. Applied outputs match the verified stage; TXT/dictionary sources remain unchanged.
 
 # Resolved / answered questions
 

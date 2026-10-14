@@ -415,11 +415,9 @@
       <comment position="6" raw="IP-MAT,IP-ADV,NP,IP-REL,1@心置弖毛談比賜比相見弖末之,*" />
       <comment position="18" raw="IP-MAT,IP-ADV,NP,2@物乎,*" />
       <comment position="20" raw="IP-MAT,3@悔加毛,*" />
-      <comment position="21" raw="IP-MAT,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="22" raw="IP-MAT,4@哀加毛,*" />
-      <comment position="23" raw="IP-MAT,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="24" raw="IP-MAT,5@云,*" />
-      <comment position="26" raw="IP-MAT,IP-ADV,NP,6@部不知毛之在加毛,*" />
+      <comment position="23" raw="IP-MAT,4@哀加毛,*" />
+      <comment position="26" raw="IP-MAT,5@云,*" />
+      <comment position="28" raw="IP-MAT,IP-ADV,NP,6@部不知毛之在加毛,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -513,12 +511,18 @@
       <IP-ADV>
         <ADJ>
           <ADJ form="kuyasi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-ADV>
       <IP-ADV>
         <ADJ>
           <ADJ form="kanasi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-ADV>

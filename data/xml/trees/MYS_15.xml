@@ -4600,8 +4600,7 @@
       <comment position="3" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,1@安之敞乎左之弖,*" />
       <comment position="7" raw="multi-sentence,IP-MAT,2@等妣和多類,*" />
       <comment position="9" raw="multi-sentence,CP-FINAL,3@安奈多頭多頭志,*" />
-      <comment position="11" raw="multi-sentence,CP-FINAL,IP-SUB,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="11" raw="multi-sentence,CP-FINAL,4@比等里佐奴礼婆,*" />
+      <comment position="12" raw="multi-sentence,CP-FINAL,4@比等里佐奴礼婆,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -4660,6 +4659,9 @@
           </NP-ADV>
           <ADJ-CLS>
             <ADJ-STM form="tadutadusi" lemma="L007181" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ-CLS>
         </IP-SUB>
         <IP-ADV>
@@ -10533,7 +10535,6 @@
       <comment position="6" raw="multi-sentence,IP-MAT,2@安礼麻多武,*" />
       <comment position="9" raw="multi-sentence,CP-FINAL,3@波夜伎万世伎美,*" />
       <comment position="13" raw="multi-sentence,IP-MAT,IP-ADV,4@麻多勢久流思母,*" />
-      <comment position="15" raw="multi-sentence,IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -10605,6 +10606,9 @@
         </IP-ADV>
         <ADJ-CLS>
           <ADJ-STM form="kurusi" lemma="L007096" phon="PHON" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ-CLS>
         <P-TOP form="mo" lemma="L000514" phon="PHON" />
       </IP-MAT>
@@ -10879,7 +10883,6 @@
       <comment position="5" raw="IP-MAT,IP-ADV,2@安里都礼杼,*" />
       <comment position="7" raw="IP-MAT,3@伊敞爾安流伊毛之,*" />
       <comment position="12" raw="IP-MAT,4@於母比我奈思母,*" />
-      <comment position="14" raw="IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -10941,6 +10944,9 @@
           <VB-STM form="omopi" lemma="L030399a" phon="PHON" />
           <ADJ-STM form="ganasi" lemma="L007022" phon="PHON" />
         </ADJ-STM>
+        <ACP-CLS lemma="L000033">
+          <NULL form="" phon="" />
+        </ACP-CLS>
       </ADJ-CLS>
       <P-TOP form="mo" lemma="L000514" phon="PHON" />
     </IP-MAT>
@@ -12181,7 +12187,6 @@
       <comment position="8" raw="IP-MAT,PP-SBJ,NP,IP-REL,PP-OB1,NP,IP-REL,2@夜杼里奴流,*" />
       <comment position="10" raw="IP-MAT,PP-SBJ,NP,IP-REL,PP-OB1,NP,3@君乎麻都良牟,*" />
       <comment position="14" raw="IP-MAT,PP-SBJ,NP,4@比等之可奈之母,*" />
-      <comment position="17" raw="IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -12252,6 +12257,9 @@
       </PP-SBJ>
       <ADJ-CLS>
         <ADJ-STM form="kanasi" lemma="L007022" phon="PHON" />
+        <ACP-CLS lemma="L000033">
+          <NULL form="" phon="" />
+        </ACP-CLS>
       </ADJ-CLS>
       <P-TOP form="mo" lemma="L000514" phon="PHON" />
     </IP-MAT>
@@ -15237,11 +15245,10 @@
   <block header="urupasi to a ga mopu imo wo omopitutu yukeba ka motona yukiasikaru ramu" id="MYS.15.3729">
     <roundtrip-data format="coj-txt" source-id="MYS.15.3729">
       <comment position="0" raw="IP-MAT,0@宇流波之等,*" />
-      <comment position="1" raw="IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-ARG,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="2" raw="IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,1@安我毛布伊毛乎,*" />
-      <comment position="7" raw="IP-MAT,IP-ADV,2@於毛比都追,*" />
-      <comment position="8" raw="IP-MAT,3@由気婆可母等奈,*" />
-      <comment position="11" raw="IP-MAT,4@由伎安思可流良武,*" />
+      <comment position="3" raw="IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,1@安我毛布伊毛乎,*" />
+      <comment position="8" raw="IP-MAT,IP-ADV,2@於毛比都追,*" />
+      <comment position="9" raw="IP-MAT,3@由気婆可母等奈,*" />
+      <comment position="12" raw="IP-MAT,4@由伎安思可流良武,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -15273,6 +15280,9 @@
               <IP-ARG>
                 <ADJ-CLS>
                   <ADJ-STM form="urupasi" lemma="L007205" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ-CLS>
                 <P-COMP form="to" lemma="L000530" phon="PHON" />
               </IP-ARG>
@@ -16940,10 +16950,9 @@
     <roundtrip-data format="coj-txt" source-id="MYS.15.3748">
       <comment position="0" raw="multi-sentence,IP-MAT,0@比等久爾波,*" />
       <comment position="3" raw="multi-sentence,IP-MAT,IP-ARG,1@須美安之等曾伊布,*" />
-      <comment position="5" raw="multi-sentence,IP-MAT,IP-ARG,VB-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="8" raw="multi-sentence,CP-FINAL,2@須牟也気久,*" />
-      <comment position="10" raw="multi-sentence,CP-FINAL,IP-SUB,3@波也可反里万世,*" />
-      <comment position="13" raw="multi-sentence,CP-FINAL,4@古非之奈奴刀爾,*" />
+      <comment position="9" raw="multi-sentence,CP-FINAL,2@須牟也気久,*" />
+      <comment position="11" raw="multi-sentence,CP-FINAL,IP-SUB,3@波也可反里万世,*" />
+      <comment position="14" raw="multi-sentence,CP-FINAL,4@古非之奈奴刀爾,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -16982,6 +16991,9 @@
           <VB-CLS>
             <VB-STM form="sumi" lemma="L030950a" phon="PHON" />
             <ADJ-STM form="asi" lemma="L007224" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </VB-CLS>
           <P-COMP form="to" lemma="L000530" phon="PHON" />
           <P-FOC form="so" lemma="L000527" phon="PHON" />
@@ -17518,11 +17530,10 @@
   <block header="urupasi to a ga mopu imo wo yamakapa wo naka ni pyenarite yasukyeku mo nasi" id="MYS.15.3755">
     <roundtrip-data format="coj-txt" source-id="MYS.15.3755">
       <comment position="0" raw="IP-MAT,0@宇流波之等,*" />
-      <comment position="1" raw="IP-MAT,IP-ADV,PP-OB1-SRC,NP,IP-REL,IP-ARG,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="2" raw="IP-MAT,IP-ADV,PP-OB1-SRC,NP,IP-REL,1@安我毛布伊毛乎,*" />
-      <comment position="7" raw="IP-MAT,IP-ADV,2@山川乎,*" />
-      <comment position="10" raw="IP-MAT,IP-ADV,IP-ADV,3@奈可爾敞奈里弖,*" />
-      <comment position="13" raw="IP-MAT,4@夜須家久毛奈之,*" />
+      <comment position="3" raw="IP-MAT,IP-ADV,PP-OB1-SRC,NP,IP-REL,1@安我毛布伊毛乎,*" />
+      <comment position="8" raw="IP-MAT,IP-ADV,2@山川乎,*" />
+      <comment position="11" raw="IP-MAT,IP-ADV,IP-ADV,3@奈可爾敞奈里弖,*" />
+      <comment position="14" raw="IP-MAT,4@夜須家久毛奈之,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -17554,6 +17565,9 @@
               <IP-ARG>
                 <ADJ-CLS>
                   <ADJ-STM form="urupasi" lemma="L007205" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ-CLS>
                 <P-COMP form="to" lemma="L000530" phon="PHON" />
               </IP-ARG>
@@ -18478,11 +18492,10 @@
   <block header="urupasi to omopi si omopaba sitabimo ni yupituke motite yamazu sinwopase" id="MYS.15.3766">
     <roundtrip-data format="coj-txt" source-id="MYS.15.3766">
       <comment position="0" raw="IP-MAT,0@宇流波之等,*" />
-      <comment position="1" raw="IP-MAT,IP-ADV,IP-ARG,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="2" raw="IP-MAT,IP-ADV,1@於毛比之於毛婆波,*" />
-      <comment position="5" raw="IP-MAT,2@之多婢毛爾,*" />
-      <comment position="8" raw="IP-MAT,IP-ADV,IP-ADV,3@由比都気毛知弖,*" />
-      <comment position="11" raw="IP-MAT,4@夜麻受之努波世,*" />
+      <comment position="3" raw="IP-MAT,IP-ADV,1@於毛比之於毛婆波,*" />
+      <comment position="6" raw="IP-MAT,2@之多婢毛爾,*" />
+      <comment position="9" raw="IP-MAT,IP-ADV,IP-ADV,3@由比都気毛知弖,*" />
+      <comment position="12" raw="IP-MAT,4@夜麻受之努波世,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -18511,6 +18524,9 @@
         <IP-ARG>
           <ADJ-CLS>
             <ADJ-STM form="urupasi" lemma="L007205" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ-CLS>
           <P-COMP form="to" lemma="L000530" phon="PHON" />
         </IP-ARG>
@@ -19042,9 +19058,8 @@
       <comment position="0" raw="multi-sentence,IP-MAT,0@君我牟多,*" />
       <comment position="3" raw="multi-sentence,IP-MAT,IP-ADV,1@由可麻之毛能乎,*" />
       <comment position="6" raw="multi-sentence,IP-MAT,2@於奈自許等,*" />
-      <comment position="7" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="8" raw="multi-sentence,IP-MAT;@2,3@於久礼弖乎礼杼,*" />
-      <comment position="10" raw="multi-sentence,IP-MAT;@2,4@与伎許等毛奈之,*" />
+      <comment position="9" raw="multi-sentence,IP-MAT;@2,3@於久礼弖乎礼杼,*" />
+      <comment position="11" raw="multi-sentence,IP-MAT;@2,4@与伎許等毛奈之,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -19090,6 +19105,9 @@
           <IP-REL>
             <ADJ-CLS>
               <ADJ-STM form="onazi" lemma="L007134" phon="PHON" />
+              <ACP-CLS lemma="L000033">
+                <NULL form="" phon="" />
+              </ACP-CLS>
             </ADJ-CLS>
           </IP-REL>
           <N form="koto" lemma="L050041" phon="PHON" />

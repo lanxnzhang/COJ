@@ -89,8 +89,7 @@
       <comment position="24" raw="IP-MAT,IP-ADV;@3,IP-ADV,IP-ADV,IP-ADV,IP-ADV,NP,IP-REL,IP-ADV,4@好阿流良牟止念仁,*" />
       <comment position="31" raw="IP-MAT,IP-ADV;@3,IP-ADV,IP-ADV,IP-ADV,5@伊豫国与利白,*" />
       <comment position="38" raw="IP-MAT,IP-ADV;@3,IP-ADV,IP-ADV,IP-ADV,PP,NP,6@祥鹿乎献奉天在礼方有礼志,*" />
-      <comment position="47" raw="IP-MAT,IP-ADV;@3,IP-ADV,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="47" raw="IP-MAT,IP-ADV;@3,IP-ADV,7@与呂許保志止奈毛見流,*" />
+      <comment position="48" raw="IP-MAT,IP-ADV;@3,IP-ADV,7@与呂許保志止奈毛見流,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -248,6 +247,9 @@
             </IP-ADV>
             <ADJ>
               <ADJ form="uresi" lemma="L007020b" phon="PHON" />
+              <ACP-CLS lemma="L000033">
+                <NULL form="" phon="" />
+              </ACP-CLS>
             </ADJ>
           </IP-ADV>
           <VB-INF form="yorokobosi" lemma="L031890a" phon="PHON" />
@@ -266,13 +268,11 @@
   <block header="mata mi tu no yo goto no oyazi toki ni atumari te aru koto ito medurasi to omoposi kasikwo mari taputwo bwi omi tati to tomo ni koto ni ayasi ku urupasi ki sirwo ki katati wo namo mi yorokobu ru" id="SM.46.3">
     <roundtrip-data format="coj-txt" source-id="3_SM_46">
       <comment position="0" raw="IP-MAT,0@復三乃善事乃同,*" />
-      <comment position="8" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,IP-ADV,NP,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="8" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,IP-ADV,NP,1@時仁,*" />
-      <comment position="10" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,2@集天在,*" />
-      <comment position="13" raw="IP-MAT,IP-ADV,IP-ADV,NP,3@己止甚希有止念畏末利尊備,*" />
-      <comment position="16" raw="IP-MAT,IP-ADV,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="22" raw="IP-MAT,4@諸臣等止共仁異奇久麗白伎,*" />
-      <comment position="35" raw="IP-MAT,PP,NP,5@形乎奈毛見喜流,*" />
+      <comment position="9" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,IP-ADV,NP,1@時仁,*" />
+      <comment position="11" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,2@集天在,*" />
+      <comment position="14" raw="IP-MAT,IP-ADV,IP-ADV,NP,3@己止甚希有止念畏末利尊備,*" />
+      <comment position="24" raw="IP-MAT,4@諸臣等止共仁異奇久麗白伎,*" />
+      <comment position="37" raw="IP-MAT,PP,NP,5@形乎奈毛見喜流,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -327,6 +327,9 @@
                   <IP-REL>
                     <ADJ>
                       <ADJ form="oyazi" phon="LOG" />
+                      <ACP-CLS lemma="L000033">
+                        <NULL form="" phon="" />
+                      </ACP-CLS>
                     </ADJ>
                   </IP-REL>
                   <N form="toki" phon="LOG" />
@@ -348,6 +351,9 @@
           </NP>
           <ADJ>
             <ADJ form="medurasi" phon="LOG" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ>
           <P-COMP form="to" lemma="L000530" phon="PHON" />
         </IP-ADV>

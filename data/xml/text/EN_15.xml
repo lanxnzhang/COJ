@@ -17,28 +17,25 @@
       <comment position="87" raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,N,C-N,12@妙照,*" />
       <comment position="89" raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,N,C-N;@2,13@妙和妙荒妙五色,*" />
       <comment position="97" raw="IP-MAT,IP-ARG,IP-ADV,NP-PRD,N,C-N,NP,14@物,*" />
-      <comment position="98" raw="IP-MAT,IP-ARG,IP-ADV,COP-INF,NULL,*" />
-      <comment position="98" raw="IP-MAT,IP-ARG,15@御酒波𤭖邊高知,*" />
-      <comment position="106" raw="IP-MAT,IP-ARG,IP-ADV,16@𤭖腹滿雙弖,*" />
-      <comment position="112" raw="IP-MAT,IP-ARG,17@山野物波甘菜辛菜,*" />
-      <comment position="121" raw="IP-MAT,IP-ARG,IP-ADV,COP-INF,NULL,*" />
-      <comment position="121" raw="IP-MAT,IP-ARG,18@靑海原物波鰭廣物鰭狹物奧津海菜邊津海菜爾至万弖爾雜,*" />
-      <comment position="151" raw="IP-MAT,IP-ARG,IP-ADV;@20,PP-OB1,NP,19@物乎如橫山置高成乎〈弖〉,*" />
-      <comment position="162" raw="IP-MAT,IP-ARG,20@獻留,*" />
-      <comment position="165" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,21@宇豆,*" />
-      <comment position="167" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,22@幣帛乎安幣帛乃,*" />
-      <comment position="172" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP-PRD,23@足幣帛爾〈止〉平久聞食弖,*" />
-      <comment position="180" raw="IP-MAT,IP-ARG,24@皇良我朝庭乎常磐爾,*" />
-      <comment position="188" raw="IP-MAT,IP-ARG,IP-ADV,25@堅磐爾齋奉,*" />
-      <comment position="193" raw="IP-MAT,IP-ARG,26@茂,*" />
-      <comment position="194" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="194" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP-PRD,27@御世爾幸閇奉給弖,*" />
-      <comment position="202" raw="IP-MAT,IP-ARG,28@自此十二月始,*" />
-      <comment position="207" raw="IP-MAT,IP-ARG,29@來,*" />
-      <comment position="209" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-RES,IP-NMZ,PP-DAT,NP,30@十二月爾至万弖爾平久,*" />
-      <comment position="216" raw="IP-MAT,IP-ARG,IP-ADV,31@御坐所令御坐給止,*" />
-      <comment position="225" raw="IP-MAT,IP-ARG,32@今年十二月某日齋比,*" />
-      <comment position="234" raw="IP-MAT,IP-ARG,33@鎭奉止申,*" />
+      <comment position="99" raw="IP-MAT,IP-ARG,15@御酒波𤭖邊高知,*" />
+      <comment position="107" raw="IP-MAT,IP-ARG,IP-ADV,16@𤭖腹滿雙弖,*" />
+      <comment position="113" raw="IP-MAT,IP-ARG,17@山野物波甘菜辛菜,*" />
+      <comment position="123" raw="IP-MAT,IP-ARG,18@靑海原物波鰭廣物鰭狹物奧津海菜邊津海菜爾至万弖爾雜,*" />
+      <comment position="153" raw="IP-MAT,IP-ARG,IP-ADV;@20,PP-OB1,NP,19@物乎如橫山置高成乎〈弖〉,*" />
+      <comment position="164" raw="IP-MAT,IP-ARG,20@獻留,*" />
+      <comment position="167" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,21@宇豆,*" />
+      <comment position="169" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,22@幣帛乎安幣帛乃,*" />
+      <comment position="174" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP-PRD,23@足幣帛爾〈止〉平久聞食弖,*" />
+      <comment position="182" raw="IP-MAT,IP-ARG,24@皇良我朝庭乎常磐爾,*" />
+      <comment position="190" raw="IP-MAT,IP-ARG,IP-ADV,25@堅磐爾齋奉,*" />
+      <comment position="195" raw="IP-MAT,IP-ARG,26@茂,*" />
+      <comment position="197" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP-PRD,27@御世爾幸閇奉給弖,*" />
+      <comment position="205" raw="IP-MAT,IP-ARG,28@自此十二月始,*" />
+      <comment position="210" raw="IP-MAT,IP-ARG,29@來,*" />
+      <comment position="212" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-RES,IP-NMZ,PP-DAT,NP,30@十二月爾至万弖爾平久,*" />
+      <comment position="219" raw="IP-MAT,IP-ARG,IP-ADV,31@御坐所令御坐給止,*" />
+      <comment position="228" raw="IP-MAT,IP-ARG,32@今年十二月某日齋比,*" />
+      <comment position="237" raw="IP-MAT,IP-ARG,33@鎭奉止申,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -467,6 +464,9 @@
               </C-N>
             </N>
           </NP-PRD>
+          <COP-INF>
+            <NULL form="" phon="" />
+          </COP-INF>
         </IP-ADV>
         <IP-ADV index="1" inferred_index="1">
           <PP-TOP>
@@ -540,6 +540,9 @@
               </C-N>
             </N>
           </NP-PRD>
+          <COP-INF>
+            <NULL form="" phon="" />
+          </COP-INF>
         </IP-ADV>
         <IP-ADV index="1" inferred_index="1">
           <PP-TOP>
@@ -757,6 +760,9 @@
               <IP-REL>
                 <ADJ>
                   <ADJ-STM form="ikasi" phon="LOG" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ>
               </IP-REL>
               <N>

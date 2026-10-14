@@ -83,7 +83,7 @@ IP-MAT,VB-ADC,L031257a,VB-STM,L031258a,PHON,dwori
 
 The fields before the final annotations describe an ordered root-to-leaf path. A lemma-ID-shaped field immediately after an internal tag is attached to that internal node. At a normal leaf, the final ASCII word form, preceding writing-mode/script tag, and optional preceding lemma are separated from the path.
 
-**Current recognition:** ordinary forms retain the existing `^[A-Za-z]+$` rule. Under the chief-editor clarification, nonempty non-ASCII material in the final form slot after `ILL` is also recognized as a genuine special form. This is a scoped exception, not an unrestricted ordinary spelling rule. Imported headers remain independently preserved. Stored historical XML artifacts still require approved correction (DI-004).
+**Current recognition:** ordinary forms retain the existing `^[A-Za-z]+$` rule. Under the chief-editor clarification, nonempty non-ASCII material in the final form slot after `ILL` is also recognized as a genuine special form. This is a scoped exception, not an unrestricted ordinary spelling rule. Imported headers remain independently preserved. The explicitly approved stored-XML repair now preserves all fifteen non-ASCII ILL forms correctly (DI-004 Resolved); no new tag is introduced.
 
 When a source tag cannot be used literally as an XML element name, it is sanitized and the original is stored as `raw_tag`. XML → TXT prefers `raw_tag`.
 
@@ -131,7 +131,7 @@ IP-MAT,IP-ADV,COP-INF,NULL,*
 - **Chief-editor confirmed:** a genuine null syntax terminal with empty form and phonological/orthographic content. The star is a TXT encoding token, never word material.
 - Corrected parsing creates a `NULL` leaf with `form=""` and `phon=""`. Both XML-backed and field-list decoders reproduce the original `NULL,*`; derived transcription contributes no characters. No literal `∅` is stored.
 - Numbered `number@text,*` source markers remain separate. The unexplained SM.29.2 bare-star record stays opaque roundtrip evidence, without guessed node or marker semantics.
-- The 347 current records in 300 texts/45 documents remain roundtrip comments in stored XML until explicitly approved correction. Changing the parser does not automatically synchronize existing XML or TXT.
+- The explicitly approved repair now stores all 347 records in 300 texts/45 documents as empty syntax terminals, with exact TXT roundtrip preserved. Changing the parser still does not automatically synchronize existing XML or TXT.
 
 ### `*T*` traces
 
@@ -178,7 +178,7 @@ Example:
 | `TAG;@N` | node key with suffix | `TAG index="N"` | Project-author distinction rule |
 | unsuffixed same-tag peer | ordinary tag plus suffixed peer evidence | `index="1" inferred_index="1"` | Implementation bridge; reverse suppresses `;@1` |
 | numbered marker | `CommentLine`; transient boundary attached to next corpus line | exact positioned roundtrip comment; syntax split; derived raw-text sentence | Project-author/strong |
-| `NULL,*` | `CorpusLine`, path ends at NULL | empty NULL syntax leaf; exact star reconstructed | Chief-editor confirmed; stored XML correction pending |
+| `NULL,*` | `CorpusLine`, path ends at NULL | empty NULL syntax leaf; exact star reconstructed | Chief-editor confirmed; approved stored XML correction verified |
 | `*T*` | empty trace `CorpusLine` | `_T_` with `raw_tag="*T*"`, empty form/phon | Chief-editor confirmed |
 | non-ASCII ILL form | `CorpusLine.word_form` | ordinary form attribute, phon=ILL, original lemma retained | Chief-editor confirmed special material; future retagging Deferred |
 | multipart run | several `CorpusLine`s | one leaf plus ordered form parts | Explicit confirmed convention |
@@ -322,8 +322,8 @@ They do **not** provide an unconditional semantic-lossless guarantee over all cu
 
 - future duplicate dictionary IDs would still silently replace earlier entries; the historical L080539 data collision is resolved;
 - untagged dictionary continuation lines remain unsupported; the historical L051953 source note has been corrected;
-- stored historical XML still misrepresents fifteen non-ASCII ILL forms, although corrected TXT conversion now recognizes them;
-- stored historical XML still omits 347 confirmed NULL terminals from syntax; corrected TXT conversion includes them, pending approved XML repair;
+- historical stored XML misrepresented fifteen non-ASCII ILL forms; this current-data defect is now repaired by approved conversion, while future retagging remains Deferred;
+- historical stored XML omitted 347 confirmed NULL terminals; this current-data defect is now repaired by approved conversion with empty form and exact TXT encoding;
 - malformed marker-like lines survive as raw lines but do not receive normal marker processing;
 - unknown dictionary fields and unknown XML constructs are not reported/preserved by a general extension mechanism.
 

@@ -357,8 +357,6 @@
   <block header="uramyesi kamo kanasi kamo" id="SM.51.5">
     <roundtrip-data format="coj-txt" source-id="5_SM_51">
       <comment position="0" raw="CP-FINAL,0@恨加母悲加母,*" />
-      <comment position="1" raw="CP-FINAL,IP-SUB,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="3" raw="CP-FINAL,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -370,12 +368,18 @@
       <IP-SUB>
         <ADJ>
           <ADJ form="uramyesi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-SUB>
       <IP-ADV>
         <ADJ>
           <ADJ form="kanasi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-ADV>
@@ -543,8 +547,6 @@
   <block header="kuyasi kamo atarasi kamo" id="SM.51.7">
     <roundtrip-data format="coj-txt" source-id="7_SM_51">
       <comment position="0" raw="CP-FINAL,0@悔加母惜加母,*" />
-      <comment position="1" raw="CP-FINAL,IP-SUB,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="3" raw="CP-FINAL,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -556,12 +558,18 @@
       <IP-SUB>
         <ADJ>
           <ADJ form="kuyasi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-SUB>
       <IP-ADV>
         <ADJ>
           <ADJ form="atarasi" phon="LOG" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
         <P-FNL-MPH form="kamo" lemma="L000507" phon="PHON" />
       </IP-ADV>

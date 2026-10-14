@@ -300,7 +300,6 @@
       <comment position="4" raw="IP-MAT,IP-ADV,1@天之日嗣止定賜比儲賜部流,*" />
       <comment position="16" raw="IP-MAT,IP-ADV,PP-DAT,NP,2@皇太子位仁謀反大逆人之子乎治賜部例婆,*" />
       <comment position="35" raw="IP-MAT,3@卿等百官人等天下百姓能念良麻久毛恥志賀多自気奈志,*" />
-      <comment position="59" raw="IP-MAT,IP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -486,6 +485,9 @@
               <part form="si" phon="PHON" />
             </form-parts>
           </ADJ>
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ>
       </IP-ADV>
       <ADJ>

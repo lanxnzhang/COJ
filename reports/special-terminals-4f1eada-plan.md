@@ -1,6 +1,6 @@
 # Special-terminal XML repair proposal after 4f1eada
 
-**Status: unapplied, awaiting user approval.** Parser/model fixes and tests are implemented. No TXT, dictionary or corpus XML has changed.
+**Status: explicitly approved, applied and verified.** The following proposal is retained as the review record. Exactly 45 XML files and the corresponding import manifest were updated; TXT and dictionary sources remain unchanged. Applied content matches every staged payload exactly. See the [applied audit](special-terminals-4f1eada-applied-audit.json).
 
 Browsing/search and SYN import read stored XML. Current XML omits 347 NULL terminals and misrepresents 15 known-source ILL forms. Fixing the TXT parser alone cannot repair those existing views. User instructions in TODO: After commit 4f1eada explicitly require approval before corpus XML changes.
 
@@ -72,3 +72,5 @@ Paths are relative to `data/`.
 The [read-only audit](special-terminals-4f1eada-audit.json) records counts, current remaining discrepancies and source hashes. DI-001 is already Resolved by 4f1eada's distinct SM.15 IDs. Trace semantics are chief-editor Confirmed; all 243 traces retain zero transcription yield and exact TXT roundtrip. DI-004/005 remain Open while this patch is unapplied; DI-012's trace subcase is Resolved, but its ILL subcase remains Open. General word-form repertoire and future ILL retagging remain open/deferred under their respective registers.
 
 Guarded preview ID: `d23894c435984c71a5f8982b2f094ec2`. Both external source commits remain those recorded in the existing manifest. All 116 source files are unchanged; 45 XML files require replacement, no TXT/dictionary files do. The importer recalculates all XML outputs because conversion code changed; the remaining outputs are identical. No preview blockers or warnings. See the local `.primary-txt-import/preview.txt` and `preview.json`.
+
+Application result: 347 stored NULL nodes, zero non-ASCII ILL path artifacts, 243 unchanged traces; all 13 distinct non-ASCII ILL strings are searchable, and NULL syntax search finds all 300 affected Texts. Seven unrelated header/content discrepancies remain; no editorial source/header corrections were made. DI-004/005 current representation defects are Resolved; possible future ILL retagging is explicitly Deferred.

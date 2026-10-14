@@ -584,12 +584,11 @@
       <comment position="20" raw="IP-MAT,IP-ADV,NP,2@異,*" />
       <comment position="23" raw="IP-MAT,IP-ADV,NP,3@雲立天在,*" />
       <comment position="27" raw="IP-MAT,4@同,*" />
-      <comment position="28" raw="IP-MAT,IP-ADV,IP-ADV,NP,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="28" raw="IP-MAT,IP-ADV,IP-ADV,NP,5@月廿三日仁,*" />
-      <comment position="38" raw="IP-MAT,IP-ADV,6@東南角仁有,*" />
-      <comment position="43" raw="IP-MAT,IP-ADV,NP,7@雲本朱,*" />
-      <comment position="47" raw="IP-MAT,IP-ADV,8@末黄,*" />
-      <comment position="50" raw="IP-MAT,IP-ADV,9@稍具五色止奏利,*" />
+      <comment position="29" raw="IP-MAT,IP-ADV,IP-ADV,NP,5@月廿三日仁,*" />
+      <comment position="39" raw="IP-MAT,IP-ADV,6@東南角仁有,*" />
+      <comment position="44" raw="IP-MAT,IP-ADV,NP,7@雲本朱,*" />
+      <comment position="48" raw="IP-MAT,IP-ADV,8@末黄,*" />
+      <comment position="51" raw="IP-MAT,IP-ADV,9@稍具五色止奏利,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -699,6 +698,9 @@
             <IP-REL>
               <ADJ>
                 <ADJ form="onazi" phon="LOG" />
+                <ACP-CLS lemma="L000033">
+                  <NULL form="" phon="" />
+                </ACP-CLS>
               </ADJ>
             </IP-REL>
             <N form="tukwi" index="1" inferred_index="1" phon="LOG" />

@@ -1323,12 +1323,11 @@
   <block header="tugi ni moro moro no dai popusi ga naka ni mo ko no puta ri no zen zi tati i oyazi kokoro wo moti te api sitagapi miti wo kokoro zasi te yo no naka no kurawi kagapuri woba negapa zu imasape domo namo napo yamu koto wo e zu te enkou zen zi ni popu sin no kurawi saduke maturu" id="SM.41.10">
     <roundtrip-data format="coj-txt" source-id="10_SM_41">
       <comment position="0" raw="IP-MAT,0@次尔諸大法師可中仁毛此二禅師等伊同心乎以天相従,*" />
-      <comment position="21" raw="IP-MAT,IP-ADV,IP-ADV,IP-ADV,IP-ADV,IP-ADV,IP-ADV,NP,NP-ADV,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="27" raw="IP-MAT,IP-ADV,IP-ADV,IP-ADV,IP-ADV,1@道乎志天,*" />
-      <comment position="32" raw="IP-MAT,IP-ADV,IP-ADV,IP-ADV,2@世間乃位冠乎波不楽,*" />
-      <comment position="41" raw="IP-MAT,IP-ADV,IP-ADV,3@伊末佐倍止毛奈毛,*" />
-      <comment position="44" raw="IP-MAT,IP-ADV,4@猶不得止天,*" />
-      <comment position="51" raw="IP-MAT,5@円興禅師尔法臣位授末川流,*" />
+      <comment position="28" raw="IP-MAT,IP-ADV,IP-ADV,IP-ADV,IP-ADV,1@道乎志天,*" />
+      <comment position="33" raw="IP-MAT,IP-ADV,IP-ADV,IP-ADV,2@世間乃位冠乎波不楽,*" />
+      <comment position="42" raw="IP-MAT,IP-ADV,IP-ADV,3@伊末佐倍止毛奈毛,*" />
+      <comment position="45" raw="IP-MAT,IP-ADV,4@猶不得止天,*" />
+      <comment position="52" raw="IP-MAT,5@円興禅師尔法臣位授末川流,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -1413,6 +1412,9 @@
                     <NP-ADV>
                       <ADJ>
                         <ADJ form="oyazi" phon="LOG" />
+                        <ACP-CLS lemma="L000033">
+                          <NULL form="" phon="" />
+                        </ACP-CLS>
                       </ADJ>
                     </NP-ADV>
                     <N form="kokoro" lemma="L050037" phon="LOG" />

@@ -127,7 +127,7 @@ The following primarily support current serialization or processing:
 - XML indentation and ordinary whitespace;
 - `<raw-text>` as a regenerable processing view.
 
-Chief-editor confirmed: NULL is an empty syntax terminal (`NULL,*` in TXT), `*T*` is an empty trace, and ILL source-character strings are genuine special forms. Neither NULL nor traces supply transcription characters. Existing stored XML corrections for NULL/ILL require approval. Marker-number meaning, anomalous marker-like lines, semicolon suffixes and several container attributes remain separate unresolved matters. Future retagging of known-source ILL forms is Deferred. See the question documents.
+Chief-editor confirmed: NULL is an empty syntax terminal (`NULL,*` in TXT), `*T*` is an empty trace, and ILL source-character strings are genuine special forms. Neither NULL nor traces supply transcription characters. The explicitly approved stored XML corrections for NULL/ILL are now applied and verified, preserving unchanged TXT source and exact roundtrip. Marker-number meaning, anomalous marker-like lines, semicolon suffixes and several container attributes remain separate unresolved matters. Future retagging of known-source ILL forms is Deferred. See the question documents.
 
 ## Tight coupling in the current implementation
 

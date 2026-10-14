@@ -2,55 +2,7 @@
 
 This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
-Revalidated 14 October 2026 against current TXT and XML at `4f1eada`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. The [current read-only audit](../../reports/special-terminals-4f1eada-audit.json) records counts, affected XML paths and source hashes; the [unapplied repair preview](../../reports/special-terminals-4f1eada-preview.patch) covers 305 blocks in 45 XML files. Parser corrections do not automatically update stored XML. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no source data was modified.
-
-## Parser limitations
-
-### DI-004 — `ILL` special word forms
-
-- **Status:** Open stored-XML correction; parser fix verified; current semantics Answered; future retagging Deferred.
-- **Confirmed meaning:** ASCII x-based material is illegible/damaged source text; ILL properly means illegible. Dictionary L099997 is `ILLEGIBLE`, `[illegible word]`, FORM/KANA `xxxxxxxxxx`. Preserve actual occurrence forms and assignments.
-- Non-ASCII material represents known source characters with undetermined linguistic transcription. It is genuine special word-form material, retained in syntax, textual representation/header and search. Do not interpret it as path components.
-- **Chief-editor authority:** TODO: After commit 4f1eada; CEQ-004. A possible distinct future tag for known-source forms is Deferred; no replacement tag or migration is defined.
-- **Current implementation:** corrected TXT parsing recognizes all twenty ILL rows (five ASCII, fifteen non-ASCII). New conversions preserve form, lemma, ILL, textual material and exact TXT roundtrip; search tests verify form/transcription/header retrieval. Imported headers remain preserved independently.
-- **Stored data:** fifteen non-ASCII syntax-path artifacts remain in existing XML across six texts/six documents. Browsing/search and SYN corpus import read that XML; the correction cannot take effect there until an approved repair. No corpus data was changed. Keep DI-004 Open.
-- **Historical table:** source lines/locations below remain current; its recognition column describes the pre-fix parser/stored-XML state, not corrected TXT parsing.
-
-| Source and line | Source text ID | Complete source line | Final form / recognized |
-|---|---|---|---|
-| `data/txt/trees/BS.txt:331` | `BS.11` | `FRAG,WORD,L099997,ILL,xxx` | `xxx` / yes |
-| `data/txt/trees/BS.txt:622` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,x` | `x` / yes |
-| `data/txt/trees/BS.txt:624` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,xxx` | `xxx` / yes |
-| `data/txt/trees/BS.txt:626` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,xxxx` | `xxxx` / yes |
-| `data/txt/trees/BS.txt:629` | `BS.21` | `multi-sentence,IP-MAT,FRAG,NP-ADV,PP,NP,WORD,L099997,ILL,xx` | `xx` / yes |
-| `data/txt/trees/MYS_01.txt:462` | `MYS.1.9` | `multi-sentence,IP-MAT,WORD,L099997,ILL,莫囂圓隣之` | `莫囂圓隣之` / no |
-| `data/txt/trees/MYS_01.txt:464` | `MYS.1.9` | `multi-sentence,IP-MAT,WORD,L099997,ILL,大相七兄爪謁氣` | `大相七兄爪謁氣` / no |
-| `data/txt/trees/MYS_02.txt:2974` | `MYS.2.156` | `IP-MAT,WORD,L099997,ILL,已具耳` | `已具耳` / no |
-| `data/txt/trees/MYS_02.txt:2976` | `MYS.2.156` | `IP-MAT,WORD,L099997,ILL,矣自得見監乍共` | `矣自得見監乍共` / no |
-| `data/txt/trees/MYS_04.txt:5302` | `MYS.4.655` | `multi-sentence,IP-MAT;@2,WORD,L099997,ILL,邑礼左變` | `邑礼左變` / no |
-| `data/txt/trees/MYS_13.txt:1320` | `MYS.13.3242` | `IP-MAT,NP-VOC,CONJP,NP,IP-REL,NP-PRD,IP-REL,IP-ADV,IP-ARG,PP-SBJ,NP,WORD,L099997,ILL,行靡闕` | `行靡闕` / no |
-| `data/txt/trees/MYS_14.txt:2110` | `MYS.14.3419;azuma_uta` | `multi-sentence,IP-MAT,WORD,L099997,ILL,奈可中次下` | `奈可中次下` / no |
-| `data/txt/trees/MYS_16.txt:280` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,WORD,L099997,ILL,刺部重部` | `刺部重部` / no |
-| `data/txt/trees/MYS_16.txt:322` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,信巾裳成` | `信巾裳成` / no |
-| `data/txt/trees/MYS_16.txt:324` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,者之寸丹取為支` | `者之寸丹取為支` / no |
-| `data/txt/trees/MYS_16.txt:326` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,屋所経` | `屋所経` / no |
-| `data/txt/trees/MYS_16.txt:537` | `MYS.16.3791` | `multi-sentence,IP-MAT,WORD,L099997,ILL,如是` | `如是` / no |
-| `data/txt/trees/MYS_16.txt:539` | `MYS.16.3791` | `multi-sentence,IP-MAT,WORD,L099997,ILL,所為故為` | `所為故為` / no |
-| `data/txt/trees/MYS_16.txt:566` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,如是` | `如是` / no |
-| `data/txt/trees/MYS_16.txt:568` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,所為故為` | `所為故為` / no |
-
-Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. No form, tag or annotation was changed.
-- **After 4f1eada recheck:** all twenty source lines remain unchanged. Regression tests recognize all twenty and preserve their encoding; fifteen stored-XML artifacts remain. The issue is not Resolved merely because semantics and the parser are corrected.
-
-## Unresolved semantic questions
-
-### DI-005 — Confirmed `NULL,*` terminals omitted from stored XML
-
-- **Status:** Open stored-XML correction; semantics Answered and parser fix verified.
-- **Extent:** 347 lines in 300 texts across 45 documents (65 under TXT text, 282 under TXT trees).
-- **Chief-editor confirmation:** NULL is a genuine null syntax terminal. Empty phonological/orthographic content; the star is TXT encoding only. Preserve the node, exact encoding, and zero transcription yield. Do not insert a literal `∅` into data. CEQ-005 records the answer.
-- **Current parser/model:** NULL,* becomes a CorpusLine ending at NULL and an empty XML leaf. Both XML decoder paths restore the exact star encoding. It is distinct from numbered source markers. Tests cover simple and embedded-lemma paths and all 347 current records.
-- **Stored XML:** zero NULL syntax leaves; all 347 records remain positioned roundtrip comments. SYN imports/browsing still read that legacy XML. The [repair preview](../../reports/special-terminals-4f1eada-preview.patch) inserts the missing syntax and adjusts comment positions while preserving source rows, forms, headers and exact TXT encoding. Applying it requires explicit approval; no XML was changed.
+Revalidated 14 October 2026 against current TXT and XML at `4f1eada`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. The [pre-repair audit](../../reports/special-terminals-4f1eada-audit.json) records original counts and hashes. After explicit user approval, the verified [repair patch](../../reports/special-terminals-4f1eada-preview.patch) was applied through the guarded importer to 305 blocks in 45 XML files, with the corresponding import-manifest update. [The applied audit](../../reports/special-terminals-4f1eada-applied-audit.json) records current results. Applied files match staged payloads exactly; TXT/dictionary sources and unrelated XML remain unchanged. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no TXT or dictionary source data was modified.
 
 ## Anomalies
 
@@ -86,11 +38,13 @@ The investigation is complete, but intended content remains unknown (PAQ-005). K
 ### DI-007 — Header and tree-derived transcription content discrepancies
 
 - **Status:** Open; source-side authority/corrections still require review.
-- **Current extent (14 October):** 5,665 texts; 640 exact matches, 5,013 segmentation-only differences, 12 content discrepancies.
-- **Method:** current XML block@header vs ordered recognized CorpusLine.word_form values, ignoring whitespace only. Multipart pieces are included. This diagnostic is not a decision to replace either layer. DI-004 non-ASCII forms remain absent from recognized transcription.
+- **Current extent after approved DI-004 repair (14 October):** 5,665 texts and seven content discrepancies. The historical pre-repair comparison below had 640 exact matches, 5,013 segmentation-only differences and twelve content discrepancies. Five discrepancy cases were solely omitted ILL material and are now resolved by faithful conversion; MYS.16.3791 retains other content differences.
+- **Method:** current XML block@header vs ordered recognized CorpusLine.word_form values, ignoring whitespace only. Multipart pieces are included. This diagnostic is not a decision to replace either layer. DI-004 non-ASCII forms now participate in recognized transcription; no historical header was replaced.
 - **Author policy (PAQ-006 and 13 October scope clarification):** **TXT → XML only** must report/register header/tree discrepancies and continue; do not silently choose a side or modify data. This does not specify XML → TXT policy. SYN reviewed write-back/export keeps its existing blocking rules for unresolved discrepancies. Automatic legacy converter reporting remains unimplemented. SYN opening already records historical-header/passage or passage/hierarchy disagreements.
 
-#### Current discrepancy list
+- **Current remaining discrepancy IDs:** SM.45.20, SM.61.11, MYS.7.1306, MYS.9.1740, MYS.11.2793, MYS.16.3791 and NSK.40. MYS.1.9, MYS.2.156, MYS.4.655, MYS.13.3242 and MYS.14.3419;azuma_uta now agree in content after their source-character ILL material was restored. This is a converter repair, not a source/header editorial change. DI-007 remains Open.
+
+#### Pre-repair discrepancy list (historical evidence)
 
 | XML file | Text ID | Character-difference excerpts (header → tree) |
 |---|---|---|
@@ -216,16 +170,60 @@ No occurrence was modified or reinterpreted.
 
 - **14 October recheck:** both explicitly blank MEANING values remain (L080104:48837; L091024:54325), and the same required fields remain absent in L080156, L099997 and L050830. All 6,498 current parsed field value/presence maps survive the XML roundtrip probe, but documented normalization/synthetic mapping limitations are unchanged. Blank values are not declared erroneous merely because they are blank.
 
+# Resolved / closed data issues
+
+### DI-004 — `ILL` special word forms
+
+- **Status:** Resolved current parser/stored-XML representation; current semantics Answered. Possible future retagging explicitly **Deferred**.
+- **Confirmed meaning:** ASCII x-based material is illegible/damaged source text; ILL properly means illegible. Dictionary L099997 is `ILLEGIBLE`, `[illegible word]`, FORM/KANA `xxxxxxxxxx`. Preserve actual occurrence forms and assignments.
+- Non-ASCII material represents known source characters with undetermined linguistic transcription. It is genuine special word-form material, retained in syntax, textual representation/header and search. Do not interpret it as path components.
+- **Chief-editor authority:** TODO: After commit 4f1eada; CEQ-004. A possible distinct future tag for known-source forms is Deferred; no replacement tag or migration is defined.
+- **Current implementation:** corrected TXT parsing recognizes all twenty ILL rows (five ASCII, fifteen non-ASCII). New conversions preserve form, lemma, ILL, textual material and exact TXT roundtrip; search tests verify form/transcription/header retrieval. Imported headers remain preserved independently.
+- **Applied stored-data correction:** all fifteen non-ASCII records across six texts/six documents are now WORD form material with the original ILL and L099997 assignments; zero non-ASCII syntax-path artifacts remain. Thirteen distinct strings cover the fifteen occurrences, and all are found by corpus form search. Fifteen derived transcription rows now include their retained material. Headers, source rows, marker order and original TXT encoding are unchanged. All five ASCII ILL rows remain intact.
+- **Historical table:** source lines/locations below remain current; its recognition column describes the pre-fix parser/stored-XML state, not corrected TXT parsing.
+
+| Source and line | Source text ID | Complete source line | Final form / recognized |
+|---|---|---|---|
+| `data/txt/trees/BS.txt:331` | `BS.11` | `FRAG,WORD,L099997,ILL,xxx` | `xxx` / yes |
+| `data/txt/trees/BS.txt:622` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,x` | `x` / yes |
+| `data/txt/trees/BS.txt:624` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,xxx` | `xxx` / yes |
+| `data/txt/trees/BS.txt:626` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,xxxx` | `xxxx` / yes |
+| `data/txt/trees/BS.txt:629` | `BS.21` | `multi-sentence,IP-MAT,FRAG,NP-ADV,PP,NP,WORD,L099997,ILL,xx` | `xx` / yes |
+| `data/txt/trees/MYS_01.txt:462` | `MYS.1.9` | `multi-sentence,IP-MAT,WORD,L099997,ILL,莫囂圓隣之` | `莫囂圓隣之` / no |
+| `data/txt/trees/MYS_01.txt:464` | `MYS.1.9` | `multi-sentence,IP-MAT,WORD,L099997,ILL,大相七兄爪謁氣` | `大相七兄爪謁氣` / no |
+| `data/txt/trees/MYS_02.txt:2974` | `MYS.2.156` | `IP-MAT,WORD,L099997,ILL,已具耳` | `已具耳` / no |
+| `data/txt/trees/MYS_02.txt:2976` | `MYS.2.156` | `IP-MAT,WORD,L099997,ILL,矣自得見監乍共` | `矣自得見監乍共` / no |
+| `data/txt/trees/MYS_04.txt:5302` | `MYS.4.655` | `multi-sentence,IP-MAT;@2,WORD,L099997,ILL,邑礼左變` | `邑礼左變` / no |
+| `data/txt/trees/MYS_13.txt:1320` | `MYS.13.3242` | `IP-MAT,NP-VOC,CONJP,NP,IP-REL,NP-PRD,IP-REL,IP-ADV,IP-ARG,PP-SBJ,NP,WORD,L099997,ILL,行靡闕` | `行靡闕` / no |
+| `data/txt/trees/MYS_14.txt:2110` | `MYS.14.3419;azuma_uta` | `multi-sentence,IP-MAT,WORD,L099997,ILL,奈可中次下` | `奈可中次下` / no |
+| `data/txt/trees/MYS_16.txt:280` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,WORD,L099997,ILL,刺部重部` | `刺部重部` / no |
+| `data/txt/trees/MYS_16.txt:322` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,信巾裳成` | `信巾裳成` / no |
+| `data/txt/trees/MYS_16.txt:324` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,者之寸丹取為支` | `者之寸丹取為支` / no |
+| `data/txt/trees/MYS_16.txt:326` | `MYS.16.3791` | `multi-sentence,IP-MAT;@2,IP-ADV,WORD,L099997,ILL,屋所経` | `屋所経` / no |
+| `data/txt/trees/MYS_16.txt:537` | `MYS.16.3791` | `multi-sentence,IP-MAT,WORD,L099997,ILL,如是` | `如是` / no |
+| `data/txt/trees/MYS_16.txt:539` | `MYS.16.3791` | `multi-sentence,IP-MAT,WORD,L099997,ILL,所為故為` | `所為故為` / no |
+| `data/txt/trees/MYS_16.txt:566` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,如是` | `如是` / no |
+| `data/txt/trees/MYS_16.txt:568` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,所為故為` | `所為故為` / no |
+
+Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. No form, tag or annotation was changed.
+- **Approved repair verification:** all twenty TXT source rows remain unchanged. Corrected conversions and stored XML preserve forms, annotations and exact TXT roundtrip. Applied XML is byte-identical to the reviewed staged output. DI-004 is Resolved because its actual parser and stored-data defects are repaired; no new tag is introduced and future retagging remains Deferred.
+
+### DI-005 — `NULL,*` terminal representation
+
+- **Status:** Resolved current parser/stored-XML representation; semantics Answered.
+- **Extent:** 347 lines in 300 texts across 45 documents (65 under TXT text, 282 under TXT trees).
+- **Chief-editor confirmation:** NULL is a genuine null syntax terminal. Empty phonological/orthographic content; the star is TXT encoding only. Preserve the node, exact encoding, and zero transcription yield. Do not insert a literal `∅` into data. CEQ-005 records the answer.
+- **Current parser/model:** NULL,* becomes a CorpusLine ending at NULL and an empty XML leaf. Both XML decoder paths restore the exact star encoding. It is distinct from numbered source markers. Tests cover simple and embedded-lemma paths and all 347 current records.
+- **Applied stored XML:** all 347 NULL terminals now exist as empty syntax leaves in 300 texts/45 documents. Their old comment-only copies were removed, and later comment positions were adjusted to count the restored tree rows. Source rows/order, headers, nonempty forms and exact NULL,* TXT encoding remain unchanged; no star or literal ∅ was introduced as form material. Corpus syntax search finds all 300 affected Texts. Applied XML matches the explicitly approved [repair patch](../../reports/special-terminals-4f1eada-preview.patch) exactly.
+
 ### DI-012 — Nonalphabetic syntax/form candidates and confirmed traces
 
-- **Status:** trace subcase Resolved / chief-editor Confirmed; overall issue Open for the fifteen ILL stored-XML artifacts owned by DI-004. General character repertoire remains PAQ-018.
+- **Status:** Resolved current special-terminal representation; trace semantics chief-editor Confirmed. The approved DI-004 correction resolves the ILL artifact subcase. General ordinary character repertoire remains PAQ-018, and possible future ILL retagging is Deferred.
 - **Extent:** 243 traces in 182 texts/25 documents plus fifteen non-ASCII ILL rows. The five ASCII ILL rows remain in DI-004; there is no new ordinary spelling rule.
 - **Confirmed trace semantics:** *T* marks the syntactic position and grammatical function of the associated element. In BS.3, the NP-SBJ trace indicates subject function within the modifying clause. This supersedes the previous provisional interpretation (PAQ-007).
 - **Verified representation:** all 243 traces remain genuine empty terminals, XML `_T_` with raw_tag=*T*, empty form/phon; SYN imports category *T* and empty form. Tag queries find traces; form queries do not. Regression tests preserve exact TXT roundtrip and zero normal transcription yield. No trace data correction is required.
-- **ILL subcase:** known source characters with undetermined transcription are genuine special word forms. Corrected TXT parsing now recognizes them; existing XML remains malformed until approved repair. Do not mark this entire issue Resolved while DI-004 remains Open.
+- **ILL subcase:** all fifteen known-source-character forms are now correctly stored as genuine special forms under current ILL, retaining undetermined-transcription status. DI-004 is Resolved for current parser/XML behavior; possible future retagging remains Deferred. No ordinary character repertoire beyond the explicitly confirmed cases is inferred.
 - **Historical evidence:** the unchanged 13 October inventory retains code points, neighbors and exact lines. Current counts and source hashes are in the [4f1eada audit](../../reports/special-terminals-4f1eada-audit.json).
-
-# Resolved / closed data issues
 
 ### DI-001 — Duplicate text ID `1_SM_15`
 
@@ -331,21 +329,21 @@ No occurrence was modified or reinterpreted.
 
 The historical table and inventory preserve the earlier sequences/context. The then-proposed MYS.3.276b correction is now present as 0,1,2,3,4; no additional source edits were made by this task.
 
-## After 4f1eada implementation revalidation (14 October 2026)
+## After approved 4f1eada XML repair revalidation (14 October 2026)
 
 | Issue | Current finding / status |
 |---|---|
 | DI-001 | Distinct SM.15 source/XML IDs; zero current document-local collisions. Resolved. |
 | DI-002 | 6,498 dictionary headings, zero duplicate IDs; distinct L080725 and L080539 persist. Resolved data issue; general duplicate-parser risk remains. |
 | DI-003 | L051953 complete source NOTE equals XML note; zero untagged nonempty dictionary lines. Resolved data issue; generic continuation support remains separate. |
-| DI-004 | All twenty source ILL rows recognized by corrected conversion; fifteen stored XML artifacts remain. Open pending approved correction. |
-| DI-005 | All 347 source nulls recognized/roundtripped; zero stored XML NULL nodes. Open pending approved correction. |
+| DI-004 | All twenty ILL rows recognized; fifteen non-ASCII forms repaired, zero stored artifacts. Resolved; future retagging Deferred. |
+| DI-005 | All 347 source nulls recognized/roundtripped and stored as empty XML syntax nodes. Resolved. |
 | DI-006 | Corrected attached marker remains; one unexplained SM.29.2 bare star. Mixed status unchanged; no guessed repair. |
-| DI-007 | Same twelve stored-XML header/content mismatches; no header/source corrections applied. Open; previewed ILL material restoration is not an editorial correction of other discrepancies. |
+| DI-007 | Seven remaining header/content mismatches after restoring ILL material; no header/source corrections applied. Open. |
 | DI-008 | Six numbered source payloads still contain x placeholders; terminology/schema decision remains Open. |
 | DI-009 | 37,708 markers; zero numbering anomalies. Resolved. |
 | DI-010 | All fourteen LOG;@2 occurrences remain. Open semantic decision. |
 | DI-011 | Two explicitly blank MEANING fields remain; L080156/L099997 lack POS, L050830 lacks the five required fields. Existing preservation/normalization limits remain Open. |
-| DI-012 | All 243 trace terminals have empty form and exact roundtrip; trace subcase Confirmed/Resolved. Overall issue stays Open for DI-004 artifacts. |
+| DI-012 | All 243 traces remain empty with exact roundtrip; trace semantics Confirmed and current special-terminal representation Resolved. Future ILL retagging Deferred. |
 
-No TXT, dictionary or corpus XML was modified. Audit hashes cover the source files. Current source semantics are recorded separately from unapplied XML corrections and remaining editorial decisions.
+The approved repair changed exactly 45 corpus XML files and the import manifest. Applied outputs match the verified stage exactly. No TXT, dictionary or unrelated XML was modified. Audit hashes cover the source files; source revisions are unchanged. The repair introduces no automatic synchronization or new source-of-truth policy. Remaining editorial decisions stay separate.

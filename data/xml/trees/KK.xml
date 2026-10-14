@@ -100,43 +100,40 @@
       <comment position="8" raw="multi-sentence,IP-MAT,2@夜斯麻久爾,*" />
       <comment position="11" raw="multi-sentence,IP-MAT,IP-ADV,3@都麻麻岐迦泥弖,*" />
       <comment position="14" raw="multi-sentence,IP-MAT,4@登富登富斯,*" />
-      <comment position="16" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="16" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,5@故志能久迩迩,*" />
-      <comment position="20" raw="multi-sentence,IP-MAT,IP-ADV,6@佐加志賣遠,*" />
-      <comment position="21" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1-MPT,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="23" raw="multi-sentence,IP-MAT,IP-ADV,7@阿理登岐加志弖,*" />
-      <comment position="27" raw="multi-sentence,IP-MAT,IP-ADV;@2,8@久波志賣遠,*" />
-      <comment position="28" raw="multi-sentence,IP-MAT,IP-ADV;@2,PP-OB1-MPT,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="30" raw="multi-sentence,IP-MAT,IP-ADV;@2,9@阿理登伎許志弖,*" />
-      <comment position="33" raw="multi-sentence,IP-MAT,10@佐用婆比爾,*" />
-      <comment position="36" raw="multi-sentence,IP-MAT,IP-ADV,11@阿理多多斯,*" />
-      <comment position="39" raw="multi-sentence,IP-MAT,12@用婆比迩,*" />
-      <comment position="41" raw="multi-sentence,IP-MAT,13@阿理加用婆勢,*" />
-      <comment position="44" raw="multi-sentence,IP-MAT;@2,IP-ADV,14@多知賀遠母,*" />
-      <comment position="48" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,15@伊麻陀登迦受弖,*" />
-      <comment position="51" raw="multi-sentence,IP-MAT;@2,IP-ADV,16@淤須比遠母,*" />
-      <comment position="54" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,17@伊麻陀登加泥婆,*" />
-      <comment position="57" raw="multi-sentence,IP-MAT;@2,IP-ADV,18@遠登賣能,*" />
-      <comment position="60" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,19@那須夜伊多斗遠,*" />
-      <comment position="64" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,20@淤曾夫良比,*" />
-      <comment position="65" raw="multi-sentence,IP-MAT;@2,IP-ADV,21@和何多多勢禮婆,*" />
-      <comment position="70" raw="multi-sentence,IP-MAT;@2,IP-ADV,22@比許豆良比,*" />
-      <comment position="71" raw="multi-sentence,IP-MAT;@2,IP-ADV,23@和何多多勢禮婆,*" />
-      <comment position="76" raw="multi-sentence,IP-MAT;@2,24@阿遠夜麻迩,*" />
-      <comment position="79" raw="multi-sentence,IP-MAT;@2,25@奴延波那伎奴,*" />
-      <comment position="83" raw="multi-sentence,IP-MAT,26@佐怒都登理,*" />
-      <comment position="87" raw="multi-sentence,IP-MAT,PP-SBJ,NP,27@岐芸斯波登與牟,*" />
-      <comment position="90" raw="multi-sentence,IP-MAT;@4,28@爾波都登理,*" />
-      <comment position="93" raw="multi-sentence,IP-MAT;@4,PP-SBJ,NP,29@迦祁波那久,*" />
-      <comment position="96" raw="multi-sentence,IP-MAT,30@宇禮多久母,*" />
-      <comment position="100" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,31@那久那留登理加,*" />
-      <comment position="104" raw="multi-sentence,IP-MAT;@6,32@許能登理母,*" />
-      <comment position="108" raw="multi-sentence,IP-MAT;@6,33@宇知夜米許世泥,*" />
-      <comment position="111" raw="multi-sentence,IP-MAT,34@伊斯多布夜,*" />
-      <comment position="112" raw="multi-sentence,IP-MAT,NP-SBJ,35@阿麻波勢豆加比,*" />
-      <comment position="114" raw="multi-sentence,IP-MAT,36@許登能,*" />
-      <comment position="116" raw="multi-sentence,IP-MAT,PP,NP,37@加多理其登母,*" />
-      <comment position="119" raw="multi-sentence,IP-MAT,38@許遠婆,*" />
+      <comment position="17" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,5@故志能久迩迩,*" />
+      <comment position="21" raw="multi-sentence,IP-MAT,IP-ADV,6@佐加志賣遠,*" />
+      <comment position="25" raw="multi-sentence,IP-MAT,IP-ADV,7@阿理登岐加志弖,*" />
+      <comment position="29" raw="multi-sentence,IP-MAT,IP-ADV;@2,8@久波志賣遠,*" />
+      <comment position="33" raw="multi-sentence,IP-MAT,IP-ADV;@2,9@阿理登伎許志弖,*" />
+      <comment position="36" raw="multi-sentence,IP-MAT,10@佐用婆比爾,*" />
+      <comment position="39" raw="multi-sentence,IP-MAT,IP-ADV,11@阿理多多斯,*" />
+      <comment position="42" raw="multi-sentence,IP-MAT,12@用婆比迩,*" />
+      <comment position="44" raw="multi-sentence,IP-MAT,13@阿理加用婆勢,*" />
+      <comment position="47" raw="multi-sentence,IP-MAT;@2,IP-ADV,14@多知賀遠母,*" />
+      <comment position="51" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,15@伊麻陀登迦受弖,*" />
+      <comment position="54" raw="multi-sentence,IP-MAT;@2,IP-ADV,16@淤須比遠母,*" />
+      <comment position="57" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,17@伊麻陀登加泥婆,*" />
+      <comment position="60" raw="multi-sentence,IP-MAT;@2,IP-ADV,18@遠登賣能,*" />
+      <comment position="63" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,PP-OB1,NP,IP-EMB,19@那須夜伊多斗遠,*" />
+      <comment position="67" raw="multi-sentence,IP-MAT;@2,IP-ADV,IP-ADV,20@淤曾夫良比,*" />
+      <comment position="68" raw="multi-sentence,IP-MAT;@2,IP-ADV,21@和何多多勢禮婆,*" />
+      <comment position="73" raw="multi-sentence,IP-MAT;@2,IP-ADV,22@比許豆良比,*" />
+      <comment position="74" raw="multi-sentence,IP-MAT;@2,IP-ADV,23@和何多多勢禮婆,*" />
+      <comment position="79" raw="multi-sentence,IP-MAT;@2,24@阿遠夜麻迩,*" />
+      <comment position="82" raw="multi-sentence,IP-MAT;@2,25@奴延波那伎奴,*" />
+      <comment position="86" raw="multi-sentence,IP-MAT,26@佐怒都登理,*" />
+      <comment position="90" raw="multi-sentence,IP-MAT,PP-SBJ,NP,27@岐芸斯波登與牟,*" />
+      <comment position="93" raw="multi-sentence,IP-MAT;@4,28@爾波都登理,*" />
+      <comment position="96" raw="multi-sentence,IP-MAT;@4,PP-SBJ,NP,29@迦祁波那久,*" />
+      <comment position="99" raw="multi-sentence,IP-MAT,30@宇禮多久母,*" />
+      <comment position="103" raw="multi-sentence,IP-MAT,NP-PRD,IP-REL,31@那久那留登理加,*" />
+      <comment position="107" raw="multi-sentence,IP-MAT;@6,32@許能登理母,*" />
+      <comment position="111" raw="multi-sentence,IP-MAT;@6,33@宇知夜米許世泥,*" />
+      <comment position="114" raw="multi-sentence,IP-MAT,34@伊斯多布夜,*" />
+      <comment position="115" raw="multi-sentence,IP-MAT,NP-SBJ,35@阿麻波勢豆加比,*" />
+      <comment position="117" raw="multi-sentence,IP-MAT,36@許登能,*" />
+      <comment position="119" raw="multi-sentence,IP-MAT,PP,NP,37@加多理其登母,*" />
+      <comment position="122" raw="multi-sentence,IP-MAT,38@許遠婆,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -349,6 +346,9 @@
                 </NP-SBJ>
                 <ADJ-CLS>
                   <ADJ-STM form="topodoposi" lemma="L007196" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ-CLS>
               </IP-REL>
               <PLN lemma="L060383">
@@ -364,6 +364,9 @@
               <IP-REL>
                 <ADJ-CLS>
                   <ADJ-STM form="sakasi" lemma="L007156" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ-CLS>
               </IP-REL>
               <N form="mye" lemma="L050132" phon="PHON" />
@@ -385,6 +388,9 @@
               <IP-REL>
                 <ADJ-CLS>
                   <ADJ-STM form="kupasi" lemma="L007091" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ-CLS>
               </IP-REL>
               <N form="mye" lemma="L050132" phon="PHON" />
@@ -1236,26 +1242,25 @@
       <comment position="88" raw="multi-sentence,IP-MAT,IP-ADV,NP,IP-REL,29@牟那美流登岐,*" />
       <comment position="91" raw="multi-sentence,IP-MAT,IP-ADV,30@波多多芸母,*" />
       <comment position="93" raw="multi-sentence,IP-MAT,IP-ADV,31@許斯與呂志,*" />
-      <comment position="96" raw="multi-sentence,IP-MAT,IP-ADV,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="96" raw="multi-sentence,CP-FINAL,32@伊刀古夜能,*" />
-      <comment position="100" raw="multi-sentence,CP-FINAL,IP-SUB,NP-VOC,IP-REL,NP-PRD,33@伊毛能美許等,*" />
-      <comment position="103" raw="multi-sentence,CP-FINAL,IP-SUB,34@牟良登理能,*" />
-      <comment position="106" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,35@和賀牟禮伊那婆,*" />
-      <comment position="110" raw="multi-sentence,CP-FINAL,IP-SUB,36@比気登理能,*" />
-      <comment position="113" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,37@和賀比気伊那婆,*" />
-      <comment position="117" raw="multi-sentence,CP-FINAL,IP-SUB,38@那迦士登波,*" />
-      <comment position="120" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,39@那波伊布登母,*" />
-      <comment position="124" raw="multi-sentence,CP-FINAL,IP-SUB,40@夜麻登能,*" />
-      <comment position="126" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,IP-ADV,IP-ADV,NP-PRD,41@比登母登須須岐,*" />
-      <comment position="129" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,IP-ADV,42@宇那加夫斯,*" />
-      <comment position="131" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,43@那賀那加佐麻久,*" />
-      <comment position="136" raw="multi-sentence,CP-FINAL,IP-SUB,44@阿佐阿米能,*" />
-      <comment position="139" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,NP-PRD,45@疑理爾多多牟叙,*" />
-      <comment position="144" raw="multi-sentence,CP-FINAL,46@和加久佐能,*" />
-      <comment position="148" raw="multi-sentence,CP-FINAL,NP-VOC,IP-REL,NP-PRD,47@都麻能美許登,*" />
-      <comment position="151" raw="multi-sentence,IP-MAT,48@許登能,*" />
-      <comment position="153" raw="multi-sentence,IP-MAT,PP,NP,49@加多理碁登母,*" />
-      <comment position="156" raw="multi-sentence,IP-MAT,50@許遠婆,*" />
+      <comment position="97" raw="multi-sentence,CP-FINAL,32@伊刀古夜能,*" />
+      <comment position="101" raw="multi-sentence,CP-FINAL,IP-SUB,NP-VOC,IP-REL,NP-PRD,33@伊毛能美許等,*" />
+      <comment position="104" raw="multi-sentence,CP-FINAL,IP-SUB,34@牟良登理能,*" />
+      <comment position="107" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,35@和賀牟禮伊那婆,*" />
+      <comment position="111" raw="multi-sentence,CP-FINAL,IP-SUB,36@比気登理能,*" />
+      <comment position="114" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,37@和賀比気伊那婆,*" />
+      <comment position="118" raw="multi-sentence,CP-FINAL,IP-SUB,38@那迦士登波,*" />
+      <comment position="121" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,39@那波伊布登母,*" />
+      <comment position="125" raw="multi-sentence,CP-FINAL,IP-SUB,40@夜麻登能,*" />
+      <comment position="127" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,IP-ADV,IP-ADV,NP-PRD,41@比登母登須須岐,*" />
+      <comment position="130" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,IP-ADV,42@宇那加夫斯,*" />
+      <comment position="132" raw="multi-sentence,CP-FINAL,IP-SUB,IP-NMZ-SBJ,43@那賀那加佐麻久,*" />
+      <comment position="137" raw="multi-sentence,CP-FINAL,IP-SUB,44@阿佐阿米能,*" />
+      <comment position="140" raw="multi-sentence,CP-FINAL,IP-SUB,IP-ADV,NP-PRD,45@疑理爾多多牟叙,*" />
+      <comment position="145" raw="multi-sentence,CP-FINAL,46@和加久佐能,*" />
+      <comment position="149" raw="multi-sentence,CP-FINAL,NP-VOC,IP-REL,NP-PRD,47@都麻能美許登,*" />
+      <comment position="152" raw="multi-sentence,IP-MAT,48@許登能,*" />
+      <comment position="154" raw="multi-sentence,IP-MAT,PP,NP,49@加多理碁登母,*" />
+      <comment position="157" raw="multi-sentence,IP-MAT,50@許遠婆,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -1757,6 +1762,9 @@
           </PP-SBJ>
           <ADJ-CLS>
             <ADJ-STM form="yorosi" lemma="L007217" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ-CLS>
         </IP-ADV>
       </IP-MAT>
@@ -3118,7 +3126,6 @@
       <comment position="38" raw="multi-sentence,IP-MAT,IP-ADV,13@久夫都都伊,*" />
       <comment position="40" raw="multi-sentence,IP-MAT,IP-ADV,IP-ADV,NP-OB1,14@伊斯都都伊母知,*" />
       <comment position="43" raw="multi-sentence,IP-MAT,IP-ADV,15@伊麻宇多婆余良斯,*" />
-      <comment position="46" raw="multi-sentence,IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -3325,6 +3332,9 @@
         </IP-ADV>
         <ADJ-CLS>
           <ADJ-STM form="yorasi" lemma="L007216" phon="PHON" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ-CLS>
       </IP-MAT>
     </multi-sentence>
@@ -5304,7 +5314,6 @@
       <comment position="6" raw="multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,3@阿袁加岐,*" />
       <comment position="8" raw="multi-sentence,IP-MAT;@2,PP-SBJ,NP,IP-REL,VB-ADN,N,L080331,4@夜麻碁母禮流,*" />
       <comment position="11" raw="multi-sentence,IP-MAT;@2,PP-SBJ,NP,5@夜麻登志宇流波斯,*" />
-      <comment position="14" raw="multi-sentence,IP-MAT;@2,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -5379,6 +5388,9 @@
         </PP-SBJ>
         <ADJ-CLS>
           <ADJ-STM form="urupasi" lemma="L007205" phon="PHON" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ-CLS>
       </IP-MAT>
     </multi-sentence>
@@ -6200,8 +6212,7 @@
       <comment position="24" raw="multi-sentence,CP-FINAL,8@許能美岐能,*" />
       <comment position="29" raw="multi-sentence,CP-FINAL,IP-SUB,PP-SBJ,NP,9@美岐能,*" />
       <comment position="32" raw="multi-sentence,CP-FINAL,IP-SUB,10@阿夜迩宇多陀怒斯,*" />
-      <comment position="35" raw="multi-sentence,CP-FINAL,IP-SUB,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="35" raw="multi-sentence,CP-FINAL,11@佐佐,*" />
+      <comment position="36" raw="multi-sentence,CP-FINAL,11@佐佐,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -6352,6 +6363,9 @@
           <ADJ-CLS>
             <ADV form="uta" lemma="L080159" phon="PHON" />
             <ADJ-STM form="danwosi" lemma="L007182" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ-CLS>
         </IP-SUB>
         <NP>
@@ -7047,19 +7061,17 @@
       <comment position="7" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,PP,NP,IP-REL,2@比流都美迩,*" />
       <comment position="10" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,PP,NP,IP-REL,3@和賀由久美知能,*" />
       <comment position="15" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,4@迦具波斯,*" />
-      <comment position="17" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="17" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,5@波那多知婆那波,*" />
-      <comment position="20" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,6@本都延波,*" />
-      <comment position="23" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-ADV,7@登理韋賀良斯,*" />
-      <comment position="26" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,8@志豆延波,*" />
-      <comment position="29" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-ADV,9@比登登理賀良斯,*" />
-      <comment position="32" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,10@美都具理能,*" />
-      <comment position="36" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,PP,NP,11@那迦都延能,*" />
-      <comment position="40" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,12@本都毛理,*" />
-      <comment position="41" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,13@阿迦良袁登賣袁,*" />
-      <comment position="44" raw="multi-sentence,IP-MAT,IP-ADV,14@伊邪佐佐婆,*" />
-      <comment position="46" raw="multi-sentence,IP-MAT,15@余良斯那,*" />
-      <comment position="47" raw="multi-sentence,IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
+      <comment position="18" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,PP,NP,5@波那多知婆那波,*" />
+      <comment position="21" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,6@本都延波,*" />
+      <comment position="24" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-ADV,7@登理韋賀良斯,*" />
+      <comment position="27" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,8@志豆延波,*" />
+      <comment position="30" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,IP-ADV,9@比登登理賀良斯,*" />
+      <comment position="33" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,10@美都具理能,*" />
+      <comment position="37" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,PP,NP,11@那迦都延能,*" />
+      <comment position="41" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,12@本都毛理,*" />
+      <comment position="42" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,13@阿迦良袁登賣袁,*" />
+      <comment position="45" raw="multi-sentence,IP-MAT,IP-ADV,14@伊邪佐佐婆,*" />
+      <comment position="47" raw="multi-sentence,IP-MAT,15@余良斯那,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -7182,6 +7194,9 @@
                           <N form="ka" lemma="L050101" phon="PHON" />
                           <ADJ-STM form="gupasi" lemma="L007091" phon="PHON" />
                         </ADJ-STM>
+                        <ACP-CLS lemma="L000033">
+                          <NULL form="" phon="" />
+                        </ACP-CLS>
                       </ADJ-CLS>
                     </IP-REL>
                     <N lemma="L050627">
@@ -7265,6 +7280,9 @@
         </IP-ADV>
         <ADJ-CLS>
           <ADJ-STM form="yorasi" lemma="L007216" phon="PHON" />
+          <ACP-CLS lemma="L000033">
+            <NULL form="" phon="" />
+          </ACP-CLS>
         </ADJ-CLS>
         <P-FNL-XCL form="na" lemma="L000550" phon="PHON" />
       </IP-MAT>
@@ -8985,9 +9003,8 @@
       <comment position="19" raw="multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,7@夜麻登袁須疑,*" />
       <comment position="22" raw="multi-sentence,IP-MAT,8@和賀,*" />
       <comment position="25" raw="multi-sentence,IP-MAT,PP-SBJ,NP,IP-REL,9@美賀本斯久迩波,*" />
-      <comment position="26" raw="multi-sentence,IP-MAT,PP-SBJ,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="28" raw="multi-sentence,IP-MAT,10@迦豆良紀多迦美夜,*" />
-      <comment position="31" raw="multi-sentence,IP-MAT;@2,11@和芸弊能阿多理,*" />
+      <comment position="29" raw="multi-sentence,IP-MAT,10@迦豆良紀多迦美夜,*" />
+      <comment position="32" raw="multi-sentence,IP-MAT;@2,11@和芸弊能阿多理,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -9123,6 +9140,9 @@
               </PP-SBJ>
               <ADJ-CLS>
                 <ADJ-STM form="migaposi" lemma="L090433" phon="PHON" />
+                <ACP-CLS lemma="L000033">
+                  <NULL form="" phon="" />
+                </ACP-CLS>
               </ADJ-CLS>
             </IP-REL>
             <N form="kuni" lemma="L051337" phon="PHON" />
@@ -9493,7 +9513,6 @@
       <comment position="6" raw="IP-MAT,PP,NP,IP-REL,2@母能麻袁須,*" />
       <comment position="8" raw="IP-MAT,PP,NP,3@阿賀勢能岐美波,*" />
       <comment position="14" raw="IP-MAT,4@那美多具麻志母,*" />
-      <comment position="16" raw="IP-MAT,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -9565,6 +9584,9 @@
           <N form="namita" lemma="L051582" phon="PHON" />
           <ADJ-STM form="gumasi" lemma="L007054" phon="PHON" />
         </ADJ-STM>
+        <ACP-CLS lemma="L000033">
+          <NULL form="" phon="" />
+        </ACP-CLS>
       </ADJ-CLS>
       <P-TOP form="mo" lemma="L000514" phon="PHON" />
     </IP-MAT>
@@ -11233,11 +11255,10 @@
   <block header="urupasi to sane si saneteba karikomono midareba midare sane si saneteba" id="KK.80">
     <roundtrip-data format="coj-txt" source-id="KK.80">
       <comment position="0" raw="CP-FINAL,IP-SUB,0@宇流波斯登,*" />
-      <comment position="1" raw="CP-FINAL,IP-SUB,IP-ADV,ADJ-CLS,ACP-CLS,L000033,NULL,*" />
-      <comment position="2" raw="CP-FINAL,IP-SUB,1@佐泥斯佐泥弖婆,*" />
-      <comment position="8" raw="CP-FINAL,IP-SUB,2@加理許母能,*" />
-      <comment position="11" raw="CP-FINAL,IP-SUB,IP-ADV,3@美陀禮婆美陀禮,*" />
-      <comment position="13" raw="CP-FINAL,4@佐泥斯佐泥弖婆,*" />
+      <comment position="3" raw="CP-FINAL,IP-SUB,1@佐泥斯佐泥弖婆,*" />
+      <comment position="9" raw="CP-FINAL,IP-SUB,2@加理許母能,*" />
+      <comment position="12" raw="CP-FINAL,IP-SUB,IP-ADV,3@美陀禮婆美陀禮,*" />
+      <comment position="14" raw="CP-FINAL,4@佐泥斯佐泥弖婆,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -11266,6 +11287,9 @@
         <IP-ADV>
           <ADJ-CLS>
             <ADJ-STM form="urupasi" lemma="L007205" phon="PHON" />
+            <ACP-CLS lemma="L000033">
+              <NULL form="" phon="" />
+            </ACP-CLS>
           </ADJ-CLS>
           <P-COMP form="to" lemma="L000530" phon="PHON" />
         </IP-ADV>

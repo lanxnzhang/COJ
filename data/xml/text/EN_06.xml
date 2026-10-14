@@ -24,19 +24,17 @@
       <comment position="146" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,19@𤭖乃腹滿竝弖,*" />
       <comment position="152" raw="IP-MAT,IP-ARG,IP-ARG,20@山野物波甘菜辛菜,*" />
       <comment position="161" raw="IP-MAT,IP-ARG,IP-ARG,21@靑海原乃物波鰭乃廣物鰭狹物息都毛波邊都毛波爾至末弖雜,*" />
-      <comment position="187" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,COP-INF,NULL,*" />
-      <comment position="189" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV;@22,PP-OB1,NP,22@物乎如橫山置高成弖,*" />
-      <comment position="200" raw="IP-MAT,IP-ARG,IP-ARG,23@獻留,*" />
-      <comment position="203" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,24@宇豆乃,*" />
-      <comment position="205" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-OB1,NP,25@大幣帛乎平久所聞弖,*" />
-      <comment position="213" raw="IP-MAT,IP-ARG,IP-ARG,26@天皇我御世乎堅石爾,*" />
-      <comment position="221" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,27@常石爾齋奉利,*" />
-      <comment position="227" raw="IP-MAT,IP-ARG,IP-ARG,28@伊賀志,*" />
-      <comment position="228" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADC-CLS,NULL,*" />
-      <comment position="228" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,29@御世爾幸閇奉弖,*" />
-      <comment position="234" raw="IP-MAT,IP-ARG,IP-ARG,30@萬世爾,*" />
-      <comment position="237" raw="IP-MAT,IP-ARG,IP-ARG,31@御命坐女給止,*" />
-      <comment position="243" raw="IP-MAT,IP-ARG,32@稱辭竟奉久止申,*" />
+      <comment position="190" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV;@22,PP-OB1,NP,22@物乎如橫山置高成弖,*" />
+      <comment position="201" raw="IP-MAT,IP-ARG,IP-ARG,23@獻留,*" />
+      <comment position="204" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,24@宇豆乃,*" />
+      <comment position="206" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-OB1,NP,25@大幣帛乎平久所聞弖,*" />
+      <comment position="214" raw="IP-MAT,IP-ARG,IP-ARG,26@天皇我御世乎堅石爾,*" />
+      <comment position="222" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,27@常石爾齋奉利,*" />
+      <comment position="228" raw="IP-MAT,IP-ARG,IP-ARG,28@伊賀志,*" />
+      <comment position="230" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,29@御世爾幸閇奉弖,*" />
+      <comment position="236" raw="IP-MAT,IP-ARG,IP-ARG,30@萬世爾,*" />
+      <comment position="239" raw="IP-MAT,IP-ARG,IP-ARG,31@御命坐女給止,*" />
+      <comment position="245" raw="IP-MAT,IP-ARG,32@稱辭竟奉久止申,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -723,6 +721,9 @@
               </IP-NMZ>
               <P-CASE-ABL form="made" phon="PHON" />
             </PP-RES>
+            <COP-INF>
+              <NULL form="" phon="" />
+            </COP-INF>
           </IP-ADV>
           <IP-ADV index="22">
             <PP-OB1>
@@ -841,6 +842,9 @@
                   <ADJ>
                     <ADJ-STM form="ikasi" phon="PHON" />
                   </ADJ>
+                  <ADC-CLS>
+                    <NULL form="" phon="" />
+                  </ADC-CLS>
                 </IP-REL>
                 <N>
                   <PFX-HON form="mi" lemma="L000035" phon="LOG" />
@@ -899,10 +903,9 @@
       <comment position="32" raw="IP-MAT,IP-ARG,IP-ARG,4@天皇我朝庭爾彌高爾,*" />
       <comment position="39" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,5@彌廣爾,*" />
       <comment position="42" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,6@伊賀志,*" />
-      <comment position="43" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="43" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,7@夜具波江乃如久立榮之女,*" />
-      <comment position="51" raw="IP-MAT,IP-ARG,IP-ARG,8@令仕奉給止,*" />
-      <comment position="56" raw="IP-MAT,IP-ARG,9@稱辭竟奉良久止申,*" />
+      <comment position="44" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,7@夜具波江乃如久立榮之女,*" />
+      <comment position="52" raw="IP-MAT,IP-ARG,IP-ARG,8@令仕奉給止,*" />
+      <comment position="57" raw="IP-MAT,IP-ARG,9@稱辭竟奉良久止申,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -1068,6 +1071,9 @@
               <IP-REL>
                 <ADJ>
                   <ADJ-STM form="ikasi" phon="PHON" />
+                  <ACP-CLS lemma="L000033">
+                    <NULL form="" phon="" />
+                  </ACP-CLS>
                 </ADJ>
               </IP-REL>
               <PP-GEN>

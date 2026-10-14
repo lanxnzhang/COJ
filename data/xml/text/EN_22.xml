@@ -253,25 +253,24 @@
       <comment position="24" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,4@常磐,*" />
       <comment position="27" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,5@堅磐爾,*" />
       <comment position="30" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,6@伊賀志,*" />
-      <comment position="31" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="31" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,7@御世爾幸倍給比,*" />
-      <comment position="38" raw="IP-MAT,IP-ARG,IP-ADV,8@阿禮坐,*" />
-      <comment position="40" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-OB1,NP,9@皇子等乎毛惠給比,*" />
-      <comment position="48" raw="IP-MAT,IP-ARG,IP-ADV,10@百,*" />
-      <comment position="50" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP,11@官人等天下四方國乃百姓爾至万弖長平久護惠比,*" />
-      <comment position="72" raw="IP-MAT,IP-ARG,IP-ADV,12@幸給止,*" />
-      <comment position="75" raw="IP-MAT,IP-ARG,13@三,*" />
-      <comment position="78" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,IP-REL,PP-DAT,NP,14@郡國〻處〻寄奉禮留,*" />
-      <comment position="87" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,15@神戸,*" />
-      <comment position="89" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,16@人等乃常毛進留,*" />
-      <comment position="97" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,17@由紀乃,*" />
-      <comment position="99" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,18@御酒御贄懸税千税餘五百税乎如橫山久置足成弖,*" />
-      <comment position="121" raw="IP-MAT,IP-ARG,19@大中臣太玉串爾隱侍弖,*" />
-      <comment position="129" raw="IP-MAT,IP-ARG,20@今年九月十七日朝日,*" />
-      <comment position="142" raw="IP-MAT,IP-ARG,IP-ADV,21@豐榮祭爾,*" />
-      <comment position="144" raw="IP-MAT,IP-ARG,22@天津祝詞乃,*" />
-      <comment position="148" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-REL,PP-OB1,NP,23@太祝詞辭乎稱申,*" />
-      <comment position="154" raw="IP-MAT,IP-ARG,PP-OB1,NP,24@事乎神主部物忌等諸聞食止宣,*" />
+      <comment position="32" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,7@御世爾幸倍給比,*" />
+      <comment position="39" raw="IP-MAT,IP-ARG,IP-ADV,8@阿禮坐,*" />
+      <comment position="41" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-OB1,NP,9@皇子等乎毛惠給比,*" />
+      <comment position="49" raw="IP-MAT,IP-ARG,IP-ADV,10@百,*" />
+      <comment position="51" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,NP,11@官人等天下四方國乃百姓爾至万弖長平久護惠比,*" />
+      <comment position="73" raw="IP-MAT,IP-ARG,IP-ADV,12@幸給止,*" />
+      <comment position="76" raw="IP-MAT,IP-ARG,13@三,*" />
+      <comment position="79" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,IP-REL,PP-DAT,NP,14@郡國〻處〻寄奉禮留,*" />
+      <comment position="88" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,15@神戸,*" />
+      <comment position="90" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,NP-SBJ,IP-REL,16@人等乃常毛進留,*" />
+      <comment position="98" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,17@由紀乃,*" />
+      <comment position="100" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,18@御酒御贄懸税千税餘五百税乎如橫山久置足成弖,*" />
+      <comment position="122" raw="IP-MAT,IP-ARG,19@大中臣太玉串爾隱侍弖,*" />
+      <comment position="130" raw="IP-MAT,IP-ARG,20@今年九月十七日朝日,*" />
+      <comment position="143" raw="IP-MAT,IP-ARG,IP-ADV,21@豐榮祭爾,*" />
+      <comment position="145" raw="IP-MAT,IP-ARG,22@天津祝詞乃,*" />
+      <comment position="149" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-REL,PP-OB1,NP,23@太祝詞辭乎稱申,*" />
+      <comment position="155" raw="IP-MAT,IP-ARG,PP-OB1,NP,24@事乎神主部物忌等諸聞食止宣,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -464,6 +463,9 @@
                 <IP-REL>
                   <ADJ>
                     <ADJ-STM form="ikasi" phon="PHON" />
+                    <ACP-CLS lemma="L000033">
+                      <NULL form="" phon="" />
+                    </ACP-CLS>
                   </ADJ>
                 </IP-REL>
                 <N>

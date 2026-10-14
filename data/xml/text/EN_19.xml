@@ -286,27 +286,25 @@
       <comment position="25" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,4@常磐,*" />
       <comment position="28" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,5@堅磐爾,*" />
       <comment position="31" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,6@伊賀志,*" />
-      <comment position="32" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="32" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,7@御世爾幸倍終給比,*" />
-      <comment position="39" raw="IP-MAT,IP-ARG,IP-ADV,8@阿禮坐,*" />
-      <comment position="41" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-OB1,9@皇子等乎毛惠給比,*" />
-      <comment position="48" raw="IP-MAT,IP-ARG,IP-ADV,10@百,*" />
-      <comment position="50" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-SBJ,11@官人等天下四方國乃百姓爾至万弖長平久作食留,*" />
-      <comment position="65" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,IP-ADV,COP-INF,NULL,*" />
-      <comment position="72" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,12@五,*" />
-      <comment position="75" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,13@穀乎毛豐爾令榮給比護惠比,*" />
-      <comment position="87" raw="IP-MAT,IP-ARG,IP-ADV,14@幸給止,*" />
-      <comment position="90" raw="IP-MAT,IP-ARG,15@三,*" />
-      <comment position="93" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,PP-DAT,NP,16@郡國〻處〻爾寄奉禮留,*" />
-      <comment position="103" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,17@神戸,*" />
-      <comment position="105" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,PP-TOP,NP,PP-GEN,NP,18@人達能常毛進留,*" />
-      <comment position="113" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,19@御調,*" />
-      <comment position="116" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,20@糸由貴乃,*" />
-      <comment position="119" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,21@御酒御贄乎如海山置足成弖,*" />
-      <comment position="132" raw="IP-MAT,IP-ARG,22@大中臣太玉串爾隱侍弖,*" />
-      <comment position="140" raw="IP-MAT,IP-ARG,23@今年六月十七日乃朝日乃,*" />
-      <comment position="151" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-REL,IP-ADV,24@豐榮祭爾稱申,*" />
-      <comment position="157" raw="IP-MAT,IP-ARG,PP-OB1,NP,25@事乎神主部物忌等諸聞食止宣,*" />
+      <comment position="33" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,IP-ADV,NP-PRD,7@御世爾幸倍終給比,*" />
+      <comment position="40" raw="IP-MAT,IP-ARG,IP-ADV,8@阿禮坐,*" />
+      <comment position="42" raw="IP-MAT,IP-ARG,IP-ADV,IP-ADV,PP-OB1,9@皇子等乎毛惠給比,*" />
+      <comment position="49" raw="IP-MAT,IP-ARG,IP-ADV,10@百,*" />
+      <comment position="51" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-SBJ,11@官人等天下四方國乃百姓爾至万弖長平久作食留,*" />
+      <comment position="74" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,12@五,*" />
+      <comment position="77" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,13@穀乎毛豐爾令榮給比護惠比,*" />
+      <comment position="89" raw="IP-MAT,IP-ARG,IP-ADV,14@幸給止,*" />
+      <comment position="92" raw="IP-MAT,IP-ARG,15@三,*" />
+      <comment position="95" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,PP-DAT,NP,16@郡國〻處〻爾寄奉禮留,*" />
+      <comment position="105" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,17@神戸,*" />
+      <comment position="107" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,IP-REL,PP-TOP,NP,PP-GEN,NP,18@人達能常毛進留,*" />
+      <comment position="115" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,IP-REL,NP-PRD,19@御調,*" />
+      <comment position="118" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,20@糸由貴乃,*" />
+      <comment position="121" raw="IP-MAT,IP-ARG,IP-ADV,PP-OB1,NP,21@御酒御贄乎如海山置足成弖,*" />
+      <comment position="134" raw="IP-MAT,IP-ARG,22@大中臣太玉串爾隱侍弖,*" />
+      <comment position="142" raw="IP-MAT,IP-ARG,23@今年六月十七日乃朝日乃,*" />
+      <comment position="153" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-REL,IP-ADV,24@豐榮祭爾稱申,*" />
+      <comment position="159" raw="IP-MAT,IP-ARG,PP-OB1,NP,25@事乎神主部物忌等諸聞食止宣,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -506,6 +504,9 @@
                 <IP-REL>
                   <ADJ>
                     <ADJ-STM form="ikasi" phon="PHON" />
+                    <ACP-CLS lemma="L000033">
+                      <NULL form="" phon="" />
+                    </ACP-CLS>
                   </ADJ>
                 </IP-REL>
                 <N>
@@ -600,6 +601,9 @@
                     </IP-NMZ>
                     <P-RES form="made" phon="PHON" />
                   </PP-RES>
+                  <COP-INF>
+                    <NULL form="" phon="" />
+                  </COP-INF>
                 </IP-ADV>
                 <IP-ADV index="3">
                   <ADJ>

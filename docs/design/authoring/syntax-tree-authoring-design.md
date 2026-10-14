@@ -376,12 +376,12 @@ The current scan separates these cases:
   Do not label them ordinary lexical omissions or invent dictionary IDs.
 - **347 `NULL,*` TXT lines (chief-editor Confirmed):** genuine empty syntax
   terminals. Corrected TXT parsing creates NULL leaves with empty form/script
-  and exact star encoding on roundtrip. Stored XML still has positioned comments
-  pending approved repair; do not manufacture form material or a lemma.
+  and exact star encoding on roundtrip. The approved stored-XML repair now
+  includes all 347 empty terminals; do not manufacture form material or a lemma.
 - **20 ILL TXT records (current cases Confirmed):** five ASCII x-based
   illegible forms/parts and fifteen known-source-character forms with
   undetermined transcription. Corrected TXT parsing recognizes both as material;
-  stored XML still has fifteen path artifacts pending approved correction.
+  the approved stored-XML correction now preserves all fifteen special forms.
   L099997 is the dictionary illegible-word entry, not proof of linguistic
   completion. Future distinct tagging of known-source ILL is Deferred; no
   new tag, automatic synchronization or ordinary repertoire expansion.
@@ -1076,7 +1076,7 @@ legacy raw-text pairing does not authorize silently overwriting header/tree
 content. Exact regeneration/conflict policy remains PAQ-002. Fresh `;@N`
 allocation, partial-character coverage and new annotation mappings remain
 unresolved. Current NULL/ILL/trace semantics are now chief-editor confirmed;
-stored-XML NULL/ILL repair requires approval, and future known-source ILL
+stored-XML NULL/ILL repair has been explicitly approved and verified; future known-source ILL
 retagging is Deferred. Future annotation types need explicit typed
 extensions and versioned adapters, not silent omission or interpretation by
 visual similarity.
@@ -1138,7 +1138,7 @@ blanket blockers for Stage 3 or ordinary draft Save:
 | Historical header emission after annotation changes | Preserve it and show discrepancies; do not choose retained versus regenerated export output by assumption. |
 | Exact `.syn` schema, terminal transitions and compatibility anchors | Unified node identity and downward refinement are settled. More detailed input-unit anchors, terminal-specific transitions and annotation/material transfer still require explicit specifications; explicit analysis deletion with transient undo is settled; Stage 2 version 2 implements the container/hierarchy and conservative evidence links; later terminal transitions remain open. |
 | Marker labels/exact spelling and malformed markers | PAQ-003/004/005/021 remain open. Display numbering from 1 does not license renumbering historical markers. |
-| ILL, NULL, traces and unresolved tag classifications | Current ILL/NULL/trace semantics are chief-editor Confirmed (CEQ-004/005, PAQ-007). Stored-XML ILL/NULL repair awaits approval; future ILL retagging and unrelated classifications remain open/deferred. |
+| ILL, NULL, traces and unresolved tag classifications | Current ILL/NULL/trace semantics are chief-editor Confirmed (CEQ-004/005, PAQ-007). The approved stored-XML ILL/NULL repair is verified; future ILL retagging and unrelated classifications remain open/deferred. |
 | General morphology, non-concatenative realization and finer hyphenation | Coincident writing/analysis boundaries reuse nodes when finer analysis is independently supported. Use supported existing analysis only; no new paradigms or unspecified hyphenation rules are chosen. No crossing-boundary mechanism is required by current evidence; ask if a real case emerges. |
 | Detailed synchronization/reconciliation and unsupported export mappings | Explicit user control and discrepancy blocking are settled; a more specific policy is not. |
 

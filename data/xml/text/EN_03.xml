@@ -287,27 +287,23 @@
       <comment position="5" raw="IP-MAT,IP-ARG,IP-ARG,PP-TOP,NP,2@幣帛者御服明,*" />
       <comment position="11" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,NP-PRD,N,C-N,3@妙照,*" />
       <comment position="13" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,NP-PRD,N,C-N;@2,4@妙和妙荒妙,*" />
-      <comment position="18" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,COP-INF,NULL,*" />
-      <comment position="18" raw="IP-MAT,IP-ARG,IP-ARG,5@五色,*" />
-      <comment position="21" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,NP-SBJ,6@物楯戈御馬,*" />
-      <comment position="26" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,COP-INF,NULL,*" />
-      <comment position="26" raw="IP-MAT,IP-ARG,IP-ARG,7@御酒者𤭖乃閇高知,*" />
-      <comment position="34" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,8@𤭖乃腹滿雙弖,*" />
-      <comment position="40" raw="IP-MAT,IP-ARG,IP-ARG,9@和稻荒稻爾,*" />
-      <comment position="45" raw="IP-MAT,IP-ARG,IP-ARG,10@山爾住,*" />
-      <comment position="48" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-TOP,NP,11@物者毛乃和支,*" />
-      <comment position="54" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,N,C-N,12@物毛乃荒支,*" />
-      <comment position="59" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,N,C-N;@2,13@物,*" />
-      <comment position="60" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,COP-INF,NULL,*" />
-      <comment position="60" raw="IP-MAT,IP-ARG,IP-ARG,14@大野乃原爾生,*" />
-      <comment position="66" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-TOP,NP,15@物者甘菜辛菜,*" />
-      <comment position="72" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,COP-INF,NULL,*" />
-      <comment position="72" raw="IP-MAT,IP-ARG,IP-ARG,16@靑海原爾住,*" />
-      <comment position="78" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,PP-TOP,NP,17@物者鰭乃廣支,*" />
-      <comment position="84" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,N,C-N,18@物鰭乃狹支,*" />
-      <comment position="89" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,N,C-N;@2,19@物奧津藻葉邊津藻葉爾至万弖置足弖,*" />
-      <comment position="104" raw="IP-MAT,IP-ARG,IP-ARG,20@奉久止,*" />
-      <comment position="108" raw="IP-MAT,IP-ARG,21@皇神前爾白賜部止宣,*" />
+      <comment position="19" raw="IP-MAT,IP-ARG,IP-ARG,5@五色,*" />
+      <comment position="22" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,NP-SBJ,6@物楯戈御馬,*" />
+      <comment position="28" raw="IP-MAT,IP-ARG,IP-ARG,7@御酒者𤭖乃閇高知,*" />
+      <comment position="36" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,8@𤭖乃腹滿雙弖,*" />
+      <comment position="42" raw="IP-MAT,IP-ARG,IP-ARG,9@和稻荒稻爾,*" />
+      <comment position="47" raw="IP-MAT,IP-ARG,IP-ARG,10@山爾住,*" />
+      <comment position="50" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-TOP,NP,11@物者毛乃和支,*" />
+      <comment position="56" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,N,C-N,12@物毛乃荒支,*" />
+      <comment position="61" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,IP-ADV,NP-PRD,N,C-N;@2,13@物,*" />
+      <comment position="63" raw="IP-MAT,IP-ARG,IP-ARG,14@大野乃原爾生,*" />
+      <comment position="69" raw="IP-MAT,IP-ARG,IP-ARG,IP-ADV,PP-TOP,NP,15@物者甘菜辛菜,*" />
+      <comment position="76" raw="IP-MAT,IP-ARG,IP-ARG,16@靑海原爾住,*" />
+      <comment position="82" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,PP-TOP,NP,17@物者鰭乃廣支,*" />
+      <comment position="88" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,N,C-N,18@物鰭乃狹支,*" />
+      <comment position="93" raw="IP-MAT,IP-ARG,IP-ARG,PP-RES,IP-NMZ,PP-DAT,N,C-N;@2,19@物奧津藻葉邊津藻葉爾至万弖置足弖,*" />
+      <comment position="108" raw="IP-MAT,IP-ARG,IP-ARG,20@奉久止,*" />
+      <comment position="112" raw="IP-MAT,IP-ARG,21@皇神前爾白賜部止宣,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -457,6 +453,9 @@
                 </C-N>
               </N>
             </NP-PRD>
+            <COP-INF>
+              <NULL form="" phon="" />
+            </COP-INF>
           </IP-ADV>
           <IP-ADV>
             <NP-SBJ>
@@ -488,6 +487,9 @@
                   </C-N>
                 </N>
               </NP-PRD>
+              <COP-INF>
+                <NULL form="" phon="" />
+              </COP-INF>
             </IP-ADV>
           </IP-ADV>
           <IP-ADV>
@@ -600,6 +602,9 @@
                   </C-N>
                 </N>
               </NP-PRD>
+              <COP-INF>
+                <NULL form="" phon="" />
+              </COP-INF>
             </IP-ADV>
           </IP-ADV>
           <IP-ADV>
@@ -644,6 +649,9 @@
                   </C-N>
                 </N>
               </NP-PRD>
+              <COP-INF>
+                <NULL form="" phon="" />
+              </COP-INF>
             </IP-ADV>
           </IP-ADV>
           <PP-RES>
@@ -1296,10 +1304,8 @@
       <comment position="27" raw="IP-MAT,PP-ACC,NP,4@幣帛乎明,*" />
       <comment position="30" raw="IP-MAT,IP-ADV,NP-PRD,N,C-N,5@妙照,*" />
       <comment position="32" raw="IP-MAT,IP-ADV,NP-PRD,N,C-N;@2,6@妙和妙荒妙,*" />
-      <comment position="37" raw="IP-MAT,IP-ADV,COP-INF,NULL,*" />
-      <comment position="37" raw="IP-MAT,7@五色,*" />
-      <comment position="40" raw="IP-MAT,IP-ADV,NP,N,8@物楯戈至万弖奉,*" />
-      <comment position="46" raw="IP-MAT,IP-ADV,COP-INF,NULL,*" />
+      <comment position="38" raw="IP-MAT,7@五色,*" />
+      <comment position="41" raw="IP-MAT,IP-ADV,NP,N,8@物楯戈至万弖奉,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -1458,6 +1464,9 @@
             </C-N>
           </N>
         </NP-PRD>
+        <COP-INF>
+          <NULL form="" phon="" />
+        </COP-INF>
       </IP-ADV>
       <IP-ADV>
         <NP>
@@ -1493,6 +1502,9 @@
           </IP-NMZ>
           <P-RES form="made" lemma="L000512" phon="PHON" />
         </PP-RES>
+        <COP-INF>
+          <NULL form="" phon="" />
+        </COP-INF>
       </IP-ADV>
       <VB>
         <VB-STM form="tate" phon="LOG" />

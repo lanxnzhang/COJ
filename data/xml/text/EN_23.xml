@@ -18,10 +18,9 @@
       <comment position="75" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-EMB,IP-ADV,13@御座之女牟止,*" />
       <comment position="80" raw="IP-MAT,IP-ARG,PP-OB1,NP,IP-EMB,14@御杖代止進給布,*" />
       <comment position="88" raw="IP-MAT,IP-ARG,PP-OB1,NP,15@御命乎大中臣茂,*" />
-      <comment position="95" raw="IP-MAT,IP-ARG,IP-ADV,NP,PP-GEN,NP,IP-REL,ADJ,ACP-CLS,L000033,NULL,*" />
-      <comment position="95" raw="IP-MAT,IP-ARG,IP-ADV,NP,PP-GEN,NP,16@桙中取持弖,*" />
-      <comment position="101" raw="IP-MAT,IP-ARG,17@恐美恐美毛,*" />
-      <comment position="106" raw="IP-MAT,IP-ARG,18@申久止申,*" />
+      <comment position="96" raw="IP-MAT,IP-ARG,IP-ADV,NP,PP-GEN,NP,16@桙中取持弖,*" />
+      <comment position="102" raw="IP-MAT,IP-ARG,17@恐美恐美毛,*" />
+      <comment position="107" raw="IP-MAT,IP-ARG,18@申久止申,*" />
     </roundtrip-data>
     <raw-text role="processing">
       <sentence n="1">
@@ -364,6 +363,9 @@
                 <IP-REL>
                   <ADJ>
                     <ADJ-STM form="ikasi" phon="LOG" />
+                    <ACP-CLS lemma="L000033">
+                      <NULL form="" phon="" />
+                    </ACP-CLS>
                   </ADJ>
                 </IP-REL>
                 <N form="poko" phon="LOG" />
