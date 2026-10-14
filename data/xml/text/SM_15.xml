@@ -482,8 +482,8 @@
       </VB>
     </IP-MAT>
   </block>
-  <block header="sikaredomo napo yamu koto e zu si te kasikwo kyeredomo mi kagapuri tatematuru koto wo kasikwo mi mo mawosi tamapa ku to mawosu" id="SM.15.1">
-    <roundtrip-data format="coj-txt" source-id="1_SM_15">
+  <block header="sikaredomo napo yamu koto e zu si te kasikwo kyeredomo mi kagapuri tatematuru koto wo kasikwo mi mo mawosi tamapa ku to mawosu" id="SM.15.3">
+    <roundtrip-data format="coj-txt" source-id="3_SM_15">
       <comment position="0" raw="IP-MAT,IP-ARG,0@然,*" />
       <comment position="1" raw="IP-MAT,IP-ARG,1@猶止,*" />
       <comment position="3" raw="IP-MAT,IP-ARG,IP-ADV,NP;@2,2@事不得為天恐家礼登毛,*" />
