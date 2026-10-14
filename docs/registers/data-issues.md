@@ -2,33 +2,19 @@
 
 This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
-Revalidated 14 October 2026 against current TXT and XML at `745d5d0`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no source data was modified.
-
-## Confirmed data errors
-
-### DI-001 — Duplicate text ID `1_SM_15`
-
-- **Status:** Open
-- **Category:** identity collision
-- **Evidence:** `data/txt/text/SM_15.txt:108` and `:192` both end different blocks with `ID,1_SM_15`. They become two `<block id="SM.15.1">` elements in `data/xml/text/SM_15.xml` (near lines 3 and 485).
-- **First text header:** `sumyera ga opo mikoto ni imase mawosi tamapu ... kanarazu nasi matura mu`
-- **Second text header:** `sikaredomo napo yamu koto e zu si te ... kasikwo mi mo mawosi tamapa ku to mawosu`
-- **Current implementation:** parsing retains both ordered blocks, but ID lookup returns the first matching text. XML does not enforce uniqueness.
-- **Effect:** direct opening, lookup, and future change references cannot distinguish the two blocks reliably.
-- **Related question:** PAQ-011.
-- **Author position (PAQ-009/PAQ-011):** keep open; SM editing and final identifier design are incomplete. Do not allocate a replacement ID. Dotted SM IDs are provisional, not a final naming policy.
-- **Current SYN behavior:** the read-only corpus adapter preserves both blocks under separate hidden Text identities. This resolves internal identity collapse in the draft adapter, not the scholarly-ID or legacy-lookup collision.
-- **14 October recheck:** unchanged: both TXT IDs remain at lines 108/192 and two XML blocks still have SM.15.1. This identity collision is not fixed; the author's identifier review remains deferred under PAQ-009/PAQ-011.
+Revalidated 14 October 2026 against current TXT and XML at `4f1eada`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. The [current read-only audit](../../reports/special-terminals-4f1eada-audit.json) records counts, affected XML paths and source hashes; the [unapplied repair preview](../../reports/special-terminals-4f1eada-preview.patch) covers 305 blocks in 45 XML files. Parser corrections do not automatically update stored XML. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no source data was modified.
 
 ## Parser limitations
 
 ### DI-004 — `ILL` special word forms
 
-- **Status:** Open; chief-editor semantics pending (CEQ-004), formal character/category review pending (PAQ-018).
-- **Category:** parser/model mismatch.
-- **Author position:** the final field is meaningful source/form information; some source-character forms reflect insufficiently identified/read transcription. This is not a complete formal repertoire or a finalized definition of ILL.
-- **Current scan:** 20 lines: five ASCII x-based forms recognized, fifteen non-ASCII forms misread as syntax components. Their strings survive as raw_tag data, but are absent from recognized tree transcription/lexical search. Do not conflate retained bytes with correct semantic modeling.
-- **Current SYN adapter:** retains the original TXT/XML snapshots and imported hierarchy/category information; it does not repair this legacy parser interpretation.
+- **Status:** Open stored-XML correction; parser fix verified; current semantics Answered; future retagging Deferred.
+- **Confirmed meaning:** ASCII x-based material is illegible/damaged source text; ILL properly means illegible. Dictionary L099997 is `ILLEGIBLE`, `[illegible word]`, FORM/KANA `xxxxxxxxxx`. Preserve actual occurrence forms and assignments.
+- Non-ASCII material represents known source characters with undetermined linguistic transcription. It is genuine special word-form material, retained in syntax, textual representation/header and search. Do not interpret it as path components.
+- **Chief-editor authority:** TODO: After commit 4f1eada; CEQ-004. A possible distinct future tag for known-source forms is Deferred; no replacement tag or migration is defined.
+- **Current implementation:** corrected TXT parsing recognizes all twenty ILL rows (five ASCII, fifteen non-ASCII). New conversions preserve form, lemma, ILL, textual material and exact TXT roundtrip; search tests verify form/transcription/header retrieval. Imported headers remain preserved independently.
+- **Stored data:** fifteen non-ASCII syntax-path artifacts remain in existing XML across six texts/six documents. Browsing/search and SYN corpus import read that XML; the correction cannot take effect there until an approved repair. No corpus data was changed. Keep DI-004 Open.
+- **Historical table:** source lines/locations below remain current; its recognition column describes the pre-fix parser/stored-XML state, not corrected TXT parsing.
 
 | Source and line | Source text ID | Complete source line | Final form / recognized |
 |---|---|---|---|
@@ -54,32 +40,17 @@ Revalidated 14 October 2026 against current TXT and XML at `745d5d0`, after the 
 | `data/txt/trees/MYS_16.txt:568` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,所為故為` | `所為故為` / no |
 
 Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. No form, tag or annotation was changed.
-- **14 October recheck:** all 20 source lines and recorded locations are unchanged; five ASCII forms are recognized and fifteen non-ASCII forms remain misclassified. Parser/model and chief-editor questions remain Open.
+- **After 4f1eada recheck:** all twenty source lines remain unchanged. Regression tests recognize all twenty and preserve their encoding; fifteen stored-XML artifacts remain. The issue is not Resolved merely because semantics and the parser are corrected.
 
 ## Unresolved semantic questions
 
-### DI-005 — Ambiguous `NULL,*` lines
+### DI-005 — Confirmed `NULL,*` terminals omitted from stored XML
 
-- **Status:** Open; chief-editor answer pending
-- **Category:** unclear semantic/structural role
-- **Extent:** 347 lines in 300 texts across 45 documents (65 under `data/txt/text`, 282 under `data/txt/trees`).
-- **Examples:**
-
-```txt
-# data/txt/text/EN_01.txt, source ID 3_EN_01 (current XML ID EN.1.3)
-IP-MAT,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
-
-# data/txt/text/EN_01.txt, source ID 4_EN_01 (current XML ID EN.1.4)
-IP-MAT,IP-ADV,COP-INF,NULL,*
-
-# data/txt/trees/KK.txt
-multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
-```
-
-- **Current implementation:** every line ends with `*`, so it is classified as `CommentLine`, stored only as a positioned roundtrip comment, excluded from the syntax tree, and excluded from derived raw-text sentences.
-- **Interpretive risk:** if these are empty terminals, the computational tree omits them; if they are source-format annotations, turning them into nodes would invent structure.
-- **Chief-editor question:** CEQ-005.
-- **14 October recheck:** unchanged: 347 lines in 300 texts/45 documents. SYN retains original XML/TXT and comments; the data does not establish their intended terminal/annotation semantics. CEQ-005 remains pending.
+- **Status:** Open stored-XML correction; semantics Answered and parser fix verified.
+- **Extent:** 347 lines in 300 texts across 45 documents (65 under TXT text, 282 under TXT trees).
+- **Chief-editor confirmation:** NULL is a genuine null syntax terminal. Empty phonological/orthographic content; the star is TXT encoding only. Preserve the node, exact encoding, and zero transcription yield. Do not insert a literal `∅` into data. CEQ-005 records the answer.
+- **Current parser/model:** NULL,* becomes a CorpusLine ending at NULL and an empty XML leaf. Both XML decoder paths restore the exact star encoding. It is distinct from numbered source markers. Tests cover simple and embedded-lemma paths and all 347 current records.
+- **Stored XML:** zero NULL syntax leaves; all 347 records remain positioned roundtrip comments. SYN imports/browsing still read that legacy XML. The [repair preview](../../reports/special-terminals-4f1eada-preview.patch) inserts the missing syntax and adjusts comment positions while preserving source rows, forms, headers and exact TXT encoding. Applying it requires explicit approval; no XML was changed.
 
 ## Anomalies
 
@@ -245,16 +216,32 @@ No occurrence was modified or reinterpreted.
 
 - **14 October recheck:** both explicitly blank MEANING values remain (L080104:48837; L091024:54325), and the same required fields remain absent in L080156, L099997 and L050830. All 6,498 current parsed field value/presence maps survive the XML roundtrip probe, but documented normalization/synthetic mapping limitations are unchanged. Blank values are not declared erroneous merely because they are blank.
 
-### DI-012 — Nonalphabetic syntax/form candidates and provisional trace notation
+### DI-012 — Nonalphabetic syntax/form candidates and confirmed traces
 
-- **Status:** Open; formal repertoire/categories pending (PAQ-007/PAQ-018); no validator or source change authorized.
-- **Complete extent:** 258 nonalphabetic final-field candidates: 243 *T* lines in 182 texts/25 documents and 15 non-ASCII ILL lines. The ILL issue/examples are owned by DI-004, not a second data-error list. All five x-based ILL forms are ASCII and remain in DI-004's inventory. An independent scan of every non-comment/nonheader/non-ID tree line found no other nonalphabetic final field.
-- **Evidence:** inventory.outside_ascii_forms records actual final strings, every Unicode character/code point, file/line, source ID and neighbors; inventory.traces retains every complete *T* line. Candidate location does not prove a formally permitted word form.
-- **Current representation:** *T* becomes `_T_` with raw_tag=*T*, empty form/phon; XML → TXT restores the literal tag. It participates in the tree tag payload, not ordinary recognized transcription/form search. SYN keeps the category and original snapshots but supplies no finalized trace semantics. Author's trace interpretation is provisional and awaits chief-editor confirmation sought by the author.
-- **Source-character understanding:** author explains some characters as uncertain/untranscribed source information; do not classify all observed forms by guess or broaden the alphabetic validator indiscriminately. Meaningful information must be retained while the formal category design remains open.
-- **14 October recheck:** unchanged: 258 candidates (243 trace-like lines in 182 texts/25 documents and 15 non-ASCII ILL lines). Formal repertoire/category decisions remain Open; observed source usage alone does not settle them.
+- **Status:** trace subcase Resolved / chief-editor Confirmed; overall issue Open for the fifteen ILL stored-XML artifacts owned by DI-004. General character repertoire remains PAQ-018.
+- **Extent:** 243 traces in 182 texts/25 documents plus fifteen non-ASCII ILL rows. The five ASCII ILL rows remain in DI-004; there is no new ordinary spelling rule.
+- **Confirmed trace semantics:** *T* marks the syntactic position and grammatical function of the associated element. In BS.3, the NP-SBJ trace indicates subject function within the modifying clause. This supersedes the previous provisional interpretation (PAQ-007).
+- **Verified representation:** all 243 traces remain genuine empty terminals, XML `_T_` with raw_tag=*T*, empty form/phon; SYN imports category *T* and empty form. Tag queries find traces; form queries do not. Regression tests preserve exact TXT roundtrip and zero normal transcription yield. No trace data correction is required.
+- **ILL subcase:** known source characters with undetermined transcription are genuine special word forms. Corrected TXT parsing now recognizes them; existing XML remains malformed until approved repair. Do not mark this entire issue Resolved while DI-004 remains Open.
+- **Historical evidence:** the unchanged 13 October inventory retains code points, neighbors and exact lines. Current counts and source hashes are in the [4f1eada audit](../../reports/special-terminals-4f1eada-audit.json).
 
 # Resolved / closed data issues
+
+### DI-001 — Duplicate text ID `1_SM_15`
+
+- **Status:** Resolved (current data correction in 4f1eada)
+- **Category:** identity collision
+- **Historical evidence (before 4f1eada):** `data/txt/text/SM_15.txt:108` and `:192` both end different blocks with `ID,1_SM_15`. They become two `<block id="SM.15.1">` elements in `data/xml/text/SM_15.xml` (near lines 3 and 485).
+- **First text header:** `sumyera ga opo mikoto ni imase mawosi tamapu ... kanarazu nasi matura mu`
+- **Second text header:** `sikaredomo napo yamu koto e zu si te ... kasikwo mi mo mawosi tamapa ku to mawosu`
+- **Current implementation:** parsing retains both ordered blocks, but ID lookup returns the first matching text. XML does not enforce uniqueness.
+- **Effect:** direct opening, lookup, and future change references cannot distinguish the two blocks reliably.
+- **Related question:** PAQ-011.
+- **Author position (PAQ-009/PAQ-011):** keep open; SM editing and final identifier design are incomplete. Do not allocate a replacement ID. Dotted SM IDs are provisional, not a final naming policy.
+- **Current SYN behavior:** the read-only corpus adapter preserves both blocks under separate hidden Text identities. This resolves internal identity collapse in the draft adapter, not the scholarly-ID or legacy-lookup collision.
+- **14 October recheck:** unchanged: both TXT IDs remain at lines 108/192 and two XML blocks still have SM.15.1. This identity collision is not fixed; the author's identifier review remains deferred under PAQ-009/PAQ-011.
+
+- **After 4f1eada recheck:** SM_15.txt:108/:161/:192 now have `1_SM_15`, `2_SM_15`, `3_SM_15`; XML has SM.15.1/.2/.3 with corresponding distinct roundtrip source IDs. No duplicate Text IDs remain within any of the 115 TXT or XML documents. This fixes the actual collision. General final identifier design remains Deferred (PAQ-009/011); no new ID was allocated by this implementation task.
 
 ### DI-002 — Duplicate dictionary ID `L080539`
 
@@ -343,3 +330,22 @@ No occurrence was modified or reinterpreted.
 | `MYS.20.4398` | `data/txt/trees/MYS_20.txt` | 3174–3360 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45` |
 
 The historical table and inventory preserve the earlier sequences/context. The then-proposed MYS.3.276b correction is now present as 0,1,2,3,4; no additional source edits were made by this task.
+
+## After 4f1eada implementation revalidation (14 October 2026)
+
+| Issue | Current finding / status |
+|---|---|
+| DI-001 | Distinct SM.15 source/XML IDs; zero current document-local collisions. Resolved. |
+| DI-002 | 6,498 dictionary headings, zero duplicate IDs; distinct L080725 and L080539 persist. Resolved data issue; general duplicate-parser risk remains. |
+| DI-003 | L051953 complete source NOTE equals XML note; zero untagged nonempty dictionary lines. Resolved data issue; generic continuation support remains separate. |
+| DI-004 | All twenty source ILL rows recognized by corrected conversion; fifteen stored XML artifacts remain. Open pending approved correction. |
+| DI-005 | All 347 source nulls recognized/roundtripped; zero stored XML NULL nodes. Open pending approved correction. |
+| DI-006 | Corrected attached marker remains; one unexplained SM.29.2 bare star. Mixed status unchanged; no guessed repair. |
+| DI-007 | Same twelve stored-XML header/content mismatches; no header/source corrections applied. Open; previewed ILL material restoration is not an editorial correction of other discrepancies. |
+| DI-008 | Six numbered source payloads still contain x placeholders; terminology/schema decision remains Open. |
+| DI-009 | 37,708 markers; zero numbering anomalies. Resolved. |
+| DI-010 | All fourteen LOG;@2 occurrences remain. Open semantic decision. |
+| DI-011 | Two explicitly blank MEANING fields remain; L080156/L099997 lack POS, L050830 lacks the five required fields. Existing preservation/normalization limits remain Open. |
+| DI-012 | All 243 trace terminals have empty form and exact roundtrip; trace subcase Confirmed/Resolved. Overall issue stays Open for DI-004 artifacts. |
+
+No TXT, dictionary or corpus XML was modified. Audit hashes cover the source files. Current source semantics are recorded separately from unapplied XML corrections and remaining editorial decisions.

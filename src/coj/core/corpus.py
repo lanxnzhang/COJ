@@ -230,6 +230,9 @@ class CorpusLine:
         form = annotation.get("form") or ""
         if form:
             parts.append(form)
+        elif leaf_raw_tag == "NULL":
+            # The star encodes an empty terminal; it is not form material.
+            parts.append("*")
         return ",".join(parts)
 
     def __str__(self) -> str:
@@ -256,7 +259,7 @@ class CorpusLine:
 
     @property
     def word_form(self) -> str | None:
-        """Last field if it is a pure-alphabetic word form, else None."""
+        """Recognized form material, including the confirmed special ILL forms."""
         if self._leaf_elem is not None:
             annotation = (
                 self._form_part_elem
@@ -265,6 +268,10 @@ class CorpusLine:
             form = annotation.get("form") or ""
             return form if form else None
         last = self._fields_storage[-1] if self._fields_storage else ""
+        if (len(self._fields_storage) >= 3
+                and strip_disambig(self._fields_storage[-2]) == "ILL"
+                and last and not last.isascii()):
+            return last
         return last if _WORDFORM_RE.match(last) else None
 
     @property
@@ -332,6 +339,8 @@ class CorpusLine:
             parts.append(leaf_raw_tag)
             return parts
         # Field-list mode
+        if self._fields_storage[-2:] == ["NULL", "*"]:
+            return self._fields_storage[:-1]
         if self.word_form is None:
             return list(self._fields_storage)
         end = -2   # before phon_tag and word_form
@@ -463,7 +472,7 @@ class CommentLine:
     @property
     def is_inline_comment(self) -> bool:
         """True for lines like ``IP-MAT,0@神主祝部等,*``."""
-        return self.raw.endswith(",*") and not self.is_header
+        return _kanji_marker_parent_path(self.raw) is not None and not self.is_header
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -898,7 +907,7 @@ def _utterance_to_elem(utt: Utterance) -> ET.Element:
             pending_boundaries.clear()
             corpus_lines.append(line)
             corpus_position += 1
-        elif isinstance(line, CommentLine) and line.is_inline_comment:
+        elif isinstance(line, CommentLine) and not line.is_header and not line.is_id_line:
             comment = ET.SubElement(roundtrip, "comment")
             comment.set("position", str(corpus_position))
             comment.set("raw", line.raw)
@@ -1002,6 +1011,8 @@ def _reconstruct_lines(
                 fields.append(phon)
             if form:
                 fields.append(form)
+            elif raw_tag == "NULL":
+                fields.append("*")
             out.append(CorpusLine(fields))
     else:
         child_prefix = node_path + ([emb_lemma] if emb_lemma else [])
@@ -1242,13 +1253,16 @@ class CorpusDocument:
 def _is_corpus_line(line: str) -> bool:
     """
     Heuristic: a line is a corpus (tree-path) line if it starts with a
-    syntactic-category token, is NOT a header or ID line, and does NOT end
-    with ``*`` (which marks inline original-script comments).
+    comma-delimited path, excluding headers, IDs and numbered source markers.
+    NULL,* is a syntax terminal. Other bare-star records remain opaque source
+    evidence pending editorial review (DI-006), not recognized source markers.
     """
     if _HEADER_RE.match(line) or _ID_LINE_RE.match(line):
         return False
     parts = line.split(",")
-    if parts[-1] == "*":
+    if _kanji_marker_parent_path(line) is not None:
+        return False
+    if parts[-1] == "*" and parts[-2:] != ["NULL", "*"]:
         return False
     # Corpus files occasionally contain unconventional or mistyped root tags
     # (for example ``IP-MAT;_que_``, ``mulit-sentence`` and ``]IP-MAT``).

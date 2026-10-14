@@ -7,9 +7,9 @@ Current findings refer to the 13 October 2026 corpus/code investigation at 3b8d0
 | Status | Questions |
 |---|---|
 | Open | PAQ-005, PAQ-008, PAQ-017, PAQ-018 |
-| Provisional | PAQ-007 |
+| Provisional | None |
 | Deferred | PAQ-001, PAQ-002, PAQ-009, PAQ-011, PAQ-020 |
-| Resolved / Answered | PAQ-003, PAQ-004, PAQ-006, PAQ-010, PAQ-012, PAQ-013, PAQ-014, PAQ-015, PAQ-016, PAQ-019, PAQ-021 |
+| Resolved / Answered | PAQ-003, PAQ-004, PAQ-006, PAQ-010, PAQ-012, PAQ-013, PAQ-014, PAQ-015, PAQ-016, PAQ-019, PAQ-021, PAQ-007 |
 
 ## Open
 
@@ -171,24 +171,19 @@ The cycle is NOTE → ITYPE (91/67), ITYPE → COMPOUND (450/0), COMPOUND → NO
 - **Status:** Open
 - **Question:** what ordinary word-form repertoire and separate source-character/placeholder categories should the formal model support?
 - **Author position:** the full repertoire remains unconfirmed. Some characters placed directly in syntax trees may preserve source information when accurate transcription is unavailable; do not assign that explanation to every case by guess. Preserve meaningful information without treating every observed character as an approved ordinary spelling.
-- **Completed investigation:** 15 non-ASCII ILL final-field forms and 243 *T* lines; five ASCII x-based ILL forms pass current recognition. An independent scan found no other nonalphabetic final field. [DI-004](data-issues.md#di-004--ill-special-word-forms) owns ILL examples; [DI-012](data-issues.md#di-012--nonalphabetic-syntaxform-candidates-and-provisional-trace-notation) and the inventory hold every occurrence, code point and context.
-- **Current implementation:** non-ASCII ILL strings survive as raw_tag-bearing syntax elements but are omitted from recognized lexical transcription; SYN retains that imported hierarchy and original snapshots rather than repairing it.
+- **Completed investigation:** 15 non-ASCII ILL final-field forms and 243 *T* lines; five ASCII x-based ILL forms pass current recognition. An independent scan found no other nonalphabetic final field. [DI-004](data-issues.md#di-004--ill-special-word-forms) owns ILL examples; [DI-012](data-issues.md#di-012--nonalphabetic-syntaxform-candidates-and-confirmed-traces) and the inventory hold every occurrence, code point and context.
+- **Current implementation after 4f1eada:** TXT parsing now recognizes the fifteen non-ASCII ILL strings as genuine special forms, under the explicit chief-editor clarification. Existing stored XML/SYN imports still have the historical artifacts until an approved XML correction. This scoped fix does not establish an unrestricted ordinary character repertoire.
 - **Related evidence:** all six texts with those 15 ILL source-character forms also appear in [DI-007](data-issues.md#di-007--header-and-tree-derived-transcription-content-discrepancies): MYS.1.9, MYS.2.156, MYS.4.655, MYS.13.3242, MYS.14.3419;azuma_uta and MYS.16.3791. Omitted recognized forms explain part of those diagnostic differences. This does not establish a common cause/semantics for every DI-007 case or every difference within those texts; DI-007 also contains other content discrepancies.
-- **Next decision:** later author review/revision. Do not change the validator, formal character/category model or source data now.
+- **Next decision:** the general ordinary character repertoire remains Open. Current ILL cases are now explicitly clarified; possible future retagging of known-source/undetermined-transcription forms is Deferred (CEQ-004). No speculative corpus changes or general validator expansion.
 
 **Latest project-author clarification:** Keep PAQ-018 **Open**. I will review and revise this issue later. Do not change the validator or formal character/category model yet.
 Also note that this issue may be related to the data issue concerning header/tree content inconsistencies. Please check and preserve any relevant cross-reference or evidence between them, but do not assume that they have the same cause or semantics unless the repository evidence establishes that.
 
+**14 October chief-editor update to PAQ-018:** ILL has two confirmed current situations: illegible x-based material (dictionary L099997), and known source characters with undetermined transcription. Both remain current form material; no new tag is introduced. The narrow parser fix supersedes the earlier prohibition for these confirmed cases only. General repertoire review remains Open.
+
 ## Provisional
 
-### PAQ-007 — Formal status of `*T*`
-
-- **Status:** Provisional
-- **Provisional understanding:** *T* likely represents a trace belonging to the annotation system. Formal meaning/status has not been confirmed with the chief editor; this is not an adopted formal model.
-- **Current evidence:** 243 lines in 182 texts/25 documents. XML stores `_T_` with raw_tag="*T*" and empty form/phon. All 243 survive XML to TXT reconstruction; a tag query matches `*T*`, but a form query does not. SYN retains category and original snapshots, not a formal trace schema. [DI-012](data-issues.md#di-012--nonalphabetic-syntaxform-candidates-and-provisional-trace-notation) and the inventory retain locations and context.
-- **Next decision:** the author will confirm meaning/status with the chief editor. Preserve existing information; no implementation, modeling or source changes now.
-
-**Latest project-author clarification:** Keep PAQ-007 **Provisional**. No further implementation or modeling is needed now. I will confirm the formal status and meaning of `*T*` with the chief editor later.
+No current entries; PAQ-007 is now chief-editor Confirmed.
 
 ## Deferred
 
@@ -433,3 +428,12 @@ Update this PAQ with the investigation results, including the relevant earlier T
 Historical fix recovered: TODO After commit a36a1af identified BS.1's two NP-ADV constituents accidentally merged across CP-FINAL marker rows. Commit 4cc54dd restored 4,020 marker-derived boundaries (report: 26,105 unique annotation lines, 1,818 passages, 105 XML documents; 4,089 additional separated nodes). `reports/kanji_marker_boundaries.md`, the repeatable migration and TestKanjiMarkerSyntaxBoundaries retain the evidence.
 
 Current marker parent path means a new **child below that parent**, not a split of the parent named in the marker; `_starts_new_syntax_child()` and `_build_children()` enforce this. Numbers themselves are not semantic under PAQ-003; source text/order, segment events and constituent separation are meaningful. Exact path spelling, marker labels and positioned raw lines are needed for retained TXT reproduction. XML retains both hierarchy and roundtrip comments; SYN imports hierarchy and whole original bytes but has no complete marker-event export adapter. Do not simplify existing preservation merely because some bookkeeping might eventually be derivable.
+
+### PAQ-007 — Formal status of `*T*`
+
+- **Status:** Answered / Confirmed by the chief editor, superseding the earlier provisional direction.
+- **Authority:** [TODO: After commit 4f1eada](../../TODO.md).
+- **Confirmed meaning:** `*T*` is a trace marking the syntactic position and grammatical function of its associated element. In BS.3, the trace under NP-SBJ records that the element modified by the clause is its subject.
+- **Representation:** a genuine empty trace terminal; preserve its category/tree position and exact `*T*` TXT encoding. It supplies no ordinary form or visible transcription material. Current XML uses `_T_`, `raw_tag="*T*"`, empty form/phon; SYN retains category `*T*` and empty form.
+- **Verification:** all 243 current traces in 182 texts/25 documents retain zero form material and exact roundtrip. No trace migration is required. DI-012's ILL artifact subcase remains pending XML approval.
+- **History:** the prior author instruction to keep this Provisional applied before the chief-editor confirmation; it is now superseded.

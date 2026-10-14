@@ -165,4 +165,7 @@ def test_real_corpus_complete_readonly_adapter(key):
         node = next(n for n in text["nodes"].values() if n["form"] == "ipaku")
         assert [(p["form"], p["script"]) for p in node["parts"]] == [("ipa", "LOG"), ("ku", "PHON")]
     if key == "text:SM_15":
-        assert [t["text_id"] for t in doc["texts"].values()].count("SM.15.1") == 2
+        # 4f1eada repaired DI-001 in both TXT and XML.
+        assert [t["text_id"] for t in doc["texts"].values()] == [
+            "SM.15.1", "SM.15.2", "SM.15.3",
+        ]

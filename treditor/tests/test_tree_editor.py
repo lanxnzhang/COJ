@@ -31,6 +31,36 @@ def walk(nodes):
         yield from walk(node.get("children", []))
 
 
+def test_confirmed_special_material_search_and_empty_terminal_queries(client, tmp_path, monkeypatch):
+    from coj.core.corpus import CorpusDocument
+    directory = tmp_path / 'trees'
+    directory.mkdir()
+    empty = tmp_path / 'text'
+    empty.mkdir()
+    text = ('=N(" 莫囂圓隣之 xxx ")\nIP-MAT,0@原文,*\n'
+            'IP-MAT,WORD,L099997,ILL,莫囂圓隣之\n'
+            'IP-MAT,WORD;@2,L099997,ILL,xxx\n'
+            'IP-MAT,NP-SBJ,*T*\nIP-MAT,COP-INF,NULL,*\nID,BS.3\n')
+    CorpusDocument.from_text(text).to_file(str(directory / 'BS.xml'))
+    monkeypatch.setitem(tree_editor.DOCUMENT_SOURCES['trees'], 'directory', directory)
+    monkeypatch.setitem(tree_editor.DOCUMENT_SOURCES['text'], 'directory', empty)
+    for form in ('莫囂圓隣之', 'xxx'):
+        for field in ('word_forms', 'transcription', 'header'):
+            result = client.get('/api/search', query_string={
+                'q': form, 'scope': 'trees', 'fields': field, 'match': 'contains',
+            }).get_json()
+            assert result['total'] == 1
+    for category in ('NULL', '*T*'):
+        result = client.get('/api/tgrep', query_string={
+            'q': f'tag={category}', 'scope': 'trees',
+        }).get_json()
+        assert result['total'] == 1
+        result = client.get('/api/search', query_string={
+            'q': category, 'scope': 'trees', 'fields': 'word_forms', 'match': 'exact',
+        }).get_json()
+        assert result['total'] == 0
+
+
 def test_documents_are_grouped_by_current_data_source(client):
     response = client.get("/api/documents")
 

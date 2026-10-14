@@ -23,7 +23,17 @@ const multipart = {tag: "VB", form: "ipaku", phon: "", parts: [
 assert.equal(text([multipart], "hyphenated"), "ipaku");
 assert.equal(text([branch("C-N", branch("N", leaf("PFX", "a"), leaf("N", "b")))], "word"), "a b");
 assert.equal(text([branch("N", leaf("N", "a"), leaf("N", "x", "ILL"))], "word"), "a x");
-assert.equal(text([branch("N", leaf("N", "a"), leaf("N", "x", "NULL"))], "word"), "a x");
+// Confirmed NULL/trace terminals own no material. Known-source ILL does.
+const specialTerminals = [branch("IP-MAT", leaf("WORD", "莫囂圓隣之", "ILL"),
+  branch("COP-INF", leaf("NULL", "", "")), branch("NP-SBJ", leaf("*T*", "", "")),
+  leaf("WORD", "xxx", "ILL"))];
+const specialBefore = JSON.stringify(specialTerminals);
+for (const mode of ["word", "terminal", "hyphenated"]) {
+  assert.equal(text(specialTerminals, mode), "莫囂圓隣之 xxx");
+  assert.equal(segmentation.format(specialTerminals,
+    [{transcription: "莫囂圓隣之 xxx"}], mode, true, reference)[0].text, "莫囂圓隣之 xxx");
+}
+assert.equal(JSON.stringify(specialTerminals), specialBefore);
 assert.equal(text([branch("N-UNKNOWN", leaf("N", "a"), leaf("N", "b"))], "word"), "a b");
 const before = JSON.stringify(kk);
 const rows = [{number: "4", transcription: "awo kaki"}, {number: "5", transcription: "yama gomor eru"}];

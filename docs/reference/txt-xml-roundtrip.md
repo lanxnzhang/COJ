@@ -83,7 +83,7 @@ IP-MAT,VB-ADC,L031257a,VB-STM,L031258a,PHON,dwori
 
 The fields before the final annotations describe an ordered root-to-leaf path. A lemma-ID-shaped field immediately after an internal tag is attached to that internal node. At a normal leaf, the final ASCII word form, preceding writing-mode/script tag, and optional preceding lemma are separated from the path.
 
-**Implementation limitation:** ordinary word recognition is `^[A-Za-z]+$`. Valid special non-ASCII forms after `ILL` are therefore misclassified as path tags (DI-004).
+**Current recognition:** ordinary forms retain the existing `^[A-Za-z]+$` rule. Under the chief-editor clarification, nonempty non-ASCII material in the final form slot after `ILL` is also recognized as a genuine special form. This is a scoped exception, not an unrestricted ordinary spelling rule. Imported headers remain independently preserved. Stored historical XML artifacts still require approved correction (DI-004).
 
 When a source tag cannot be used literally as an XML element name, it is sanitized and the original is stored as `raw_tag`. XML → TXT prefers `raw_tag`.
 
@@ -128,10 +128,16 @@ Example:
 IP-MAT,IP-ADV,COP-INF,NULL,*
 ```
 
-- Current line classification treats it as a `CommentLine`, because every line ending in `*` is non-tree data.
-- It is preserved in `roundtrip-data`, but it does not become a syntax leaf and it does not start a raw-text sentence because it lacks `N@payload`.
-- The repository contains 347 cases in 300 texts across 45 documents.
-- The intended linguistic/computational semantics require the chief editor (CEQ-005; DI-005).
+- **Chief-editor confirmed:** a genuine null syntax terminal with empty form and phonological/orthographic content. The star is a TXT encoding token, never word material.
+- Corrected parsing creates a `NULL` leaf with `form=""` and `phon=""`. Both XML-backed and field-list decoders reproduce the original `NULL,*`; derived transcription contributes no characters. No literal `∅` is stored.
+- Numbered `number@text,*` source markers remain separate. The unexplained SM.29.2 bare-star record stays opaque roundtrip evidence, without guessed node or marker semantics.
+- The 347 current records in 300 texts/45 documents remain roundtrip comments in stored XML until explicitly approved correction. Changing the parser does not automatically synchronize existing XML or TXT.
+
+### `*T*` traces
+
+- **Chief-editor confirmed:** a genuine trace terminal marking the syntactic position and function of its associated element. BS.3's NP-SBJ trace indicates subject function within the modifying clause.
+- XML preserves `_T_` with `raw_tag="*T*"`, empty form/phon; TXT reconstruction restores `*T*` exactly. It contributes no form/transcription characters. SYN imports the empty terminal with category `*T*`.
+- All 243 current records retain this representation; no corpus migration is needed.
 
 ### Multipart words
 
@@ -153,8 +159,8 @@ Example:
 
 - Lines with an ASCII form but no recognized writing-mode tag are accommodated by treating the penultimate field as the leaf tag and omitting `phon` on reconstruction.
 - Internal node lemmas are supported.
-- Empty XML leaf `form`/`phon` values are omitted as TXT fields.
-- The literal token `*T*`, unusual root/tag spellings, and several legacy annotations survive through permissive path parsing and `raw_tag`, but their formal status is not fully specified (PAQ-007, PAQ-009).
+- Empty XML leaf `form`/`phon` values are omitted as TXT fields; NULL explicitly reconstructs the encoding token `*`.
+- `*T*` trace semantics are confirmed (PAQ-007). Unusual root/tag spellings and other legacy annotations remain separately subject to their own unresolved policies.
 
 ## TXT corpus → model → XML mapping
 
@@ -172,7 +178,9 @@ Example:
 | `TAG;@N` | node key with suffix | `TAG index="N"` | Project-author distinction rule |
 | unsuffixed same-tag peer | ordinary tag plus suffixed peer evidence | `index="1" inferred_index="1"` | Implementation bridge; reverse suppresses `;@1` |
 | numbered marker | `CommentLine`; transient boundary attached to next corpus line | exact positioned roundtrip comment; syntax split; derived raw-text sentence | Project-author/strong |
-| `NULL,*` | `CommentLine` | roundtrip comment only | Implementation; semantics unresolved |
+| `NULL,*` | `CorpusLine`, path ends at NULL | empty NULL syntax leaf; exact star reconstructed | Chief-editor confirmed; stored XML correction pending |
+| `*T*` | empty trace `CorpusLine` | `_T_` with `raw_tag="*T*"`, empty form/phon | Chief-editor confirmed |
+| non-ASCII ILL form | `CorpusLine.word_form` | ordinary form attribute, phon=ILL, original lemma retained | Chief-editor confirmed special material; future retagging Deferred |
 | multipart run | several `CorpusLine`s | one leaf plus ordered form parts | Explicit confirmed convention |
 | invalid XML-name tag | raw path token | sanitized element plus `raw_tag` | Implementation preservation mechanism |
 
@@ -312,10 +320,10 @@ Current converters preserve the semantics they formally recognize: text IDs, hea
 
 They do **not** provide an unconditional semantic-lossless guarantee over all current source data:
 
-- duplicate dictionary ID `L080539` loses the first entry on TXT parsing;
-- the second physical line of the multiline L051953 note is ignored;
-- non-ASCII `ILL` forms become syntax elements rather than forms;
-- `NULL,*` semantics are unresolved and current conversion keeps them outside the tree;
+- future duplicate dictionary IDs would still silently replace earlier entries; the historical L080539 data collision is resolved;
+- untagged dictionary continuation lines remain unsupported; the historical L051953 source note has been corrected;
+- stored historical XML still misrepresents fifteen non-ASCII ILL forms, although corrected TXT conversion now recognizes them;
+- stored historical XML still omits 347 confirmed NULL terminals from syntax; corrected TXT conversion includes them, pending approved XML repair;
 - malformed marker-like lines survive as raw lines but do not receive normal marker processing;
 - unknown dictionary fields and unknown XML constructs are not reported/preserved by a general extension mechanism.
 

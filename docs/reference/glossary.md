@@ -131,7 +131,7 @@ A `;@N` distinction instead indicates a separate sibling.
 
 ### Word form
 
-The form attached to a leaf or multipart component. The current TXT parser recognizes ordinary forms using an ASCII-only rule; special non-ASCII `ILL` forms expose a known limitation (DI-004 in [data-issues.md](../registers/data-issues.md)).
+The material attached to a leaf or multipart component. Ordinary TXT recognition retains the ASCII rule; confirmed non-ASCII ILL source-character material is also recognized as a genuine special form. NULL and *T* are genuine empty syntax terminals, with no ordinary form material. Stored XML corrections for ILL/NULL remain pending approval (see [data issues](../registers/data-issues.md)); future known-source ILL retagging is Deferred.
 
 ### Writing-mode/script tag
 

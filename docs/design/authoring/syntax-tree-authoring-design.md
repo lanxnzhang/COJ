@@ -369,15 +369,22 @@ nonexistent lemma IDs also require review; presence alone is not completion.
 
 The current scan separates these cases:
 
-- **243 traces:** XML `_T_` leaves retain `raw_tag="*T*"`, empty form/script and
-  no lemma. Do not label them ordinary lexical omissions or invent dictionary IDs.
-- **347 `NULL,*` TXT lines:** current parsing preserves them as positioned
-  roundtrip comments, outside the active tree. CEQ-005 semantics remain open;
-  do not turn them into nodes or call them complete based on missing/present lemma.
-- **20 ILL TXT records:** five recognized ASCII forms/parts and 15 non-ASCII
-  special forms currently misread into paths. Actual tree leaves include 243
-  traces plus 15 such missing-form parser artifacts. Special `WORD`/ILL cases
-  need status-aware handling, not a rule that a sentinel lemma proves completion.
+- **243 traces (chief-editor Confirmed after 4f1eada):** XML `_T_` leaves retain
+  `raw_tag="*T*"`, empty form/script and no lemma. A trace marks the syntactic
+  position/function of its associated element; BS.3 has NP-SBJ within the
+  modifying clause. Zero transcription material; preserve exact TXT encoding.
+  Do not label them ordinary lexical omissions or invent dictionary IDs.
+- **347 `NULL,*` TXT lines (chief-editor Confirmed):** genuine empty syntax
+  terminals. Corrected TXT parsing creates NULL leaves with empty form/script
+  and exact star encoding on roundtrip. Stored XML still has positioned comments
+  pending approved repair; do not manufacture form material or a lemma.
+- **20 ILL TXT records (current cases Confirmed):** five ASCII x-based
+  illegible forms/parts and fifteen known-source-character forms with
+  undetermined transcription. Corrected TXT parsing recognizes both as material;
+  stored XML still has fifteen path artifacts pending approved correction.
+  L099997 is the dictionary illegible-word entry, not proof of linguistic
+  completion. Future distinct tagging of known-source ILL is Deferred; no
+  new tag, automatic synchronization or ordinary repertoire expansion.
 - **Ordinary-looking uploaded omissions are malformed cases:** the only two
   uploaded form-bearing leaves without a lemma are MYS.7.1268 (`PHON-KUN` used
   as a category, form `ni`) and MYS.9.1777 (`NL000033` used as a category, `ku`).
@@ -1067,8 +1074,10 @@ derived legacy processing information, not an independently edited authority.
 The new passage transcription is entered authoring data; importing a derived
 legacy raw-text pairing does not authorize silently overwriting header/tree
 content. Exact regeneration/conflict policy remains PAQ-002. Fresh `;@N`
-allocation, NULL/ILL semantics, partial-character coverage and new annotation
-mappings also remain unresolved. Future annotation types need explicit typed
+allocation, partial-character coverage and new annotation mappings remain
+unresolved. Current NULL/ILL/trace semantics are now chief-editor confirmed;
+stored-XML NULL/ILL repair requires approval, and future known-source ILL
+retagging is Deferred. Future annotation types need explicit typed
 extensions and versioned adapters, not silent omission or interpretation by
 visual similarity.
 
@@ -1129,7 +1138,7 @@ blanket blockers for Stage 3 or ordinary draft Save:
 | Historical header emission after annotation changes | Preserve it and show discrepancies; do not choose retained versus regenerated export output by assumption. |
 | Exact `.syn` schema, terminal transitions and compatibility anchors | Unified node identity and downward refinement are settled. More detailed input-unit anchors, terminal-specific transitions and annotation/material transfer still require explicit specifications; explicit analysis deletion with transient undo is settled; Stage 2 version 2 implements the container/hierarchy and conservative evidence links; later terminal transitions remain open. |
 | Marker labels/exact spelling and malformed markers | PAQ-003/004/005/021 remain open. Display numbering from 1 does not license renumbering historical markers. |
-| ILL, NULL, traces and unresolved tag classifications | CEQ-004/005, PAQ-007 and guideline TBDs remain open. Retain the evidence; parser behavior is not a linguistic answer. |
+| ILL, NULL, traces and unresolved tag classifications | Current ILL/NULL/trace semantics are chief-editor Confirmed (CEQ-004/005, PAQ-007). Stored-XML ILL/NULL repair awaits approval; future ILL retagging and unrelated classifications remain open/deferred. |
 | General morphology, non-concatenative realization and finer hyphenation | Coincident writing/analysis boundaries reuse nodes when finer analysis is independently supported. Use supported existing analysis only; no new paradigms or unspecified hyphenation rules are chosen. No crossing-boundary mechanism is required by current evidence; ask if a real case emerges. |
 | Detailed synchronization/reconciliation and unsupported export mappings | Explicit user control and discrepancy blocking are settled; a more specific policy is not. |
 
@@ -1468,8 +1477,9 @@ for this documentation-only revision.
   analysis and internal lemmas. New identities, entered-input boundaries,
   alignment and review provenance need explicit mappings/limits. Draft saving
   remains available when reduced export cannot preserve formal information;
-  NULL/ILL, fresh distinction labels and partial-character mappings still need
-  agreed rules. No separate composition graph is required.
+  Fresh distinction labels and partial-character mappings still need agreed
+  rules. NULL/ILL/trace semantics are Confirmed; reviewed SYN export mappings
+  remain future work and known-source ILL retagging is Deferred. No separate composition graph is required.
 - **Suggestions are evidence, not decisions:** dictionary spelling/POS may
   differ from attestations. Existing compound processors can allocate/refine
   dictionary entries and must not run unchanged as autocomplete. Build a

@@ -2261,6 +2261,41 @@ Please test the redesigned hierarchy with ordinary terminals, high syntactic nod
 If any requested behavior is unclear or requires an assumption not established by the current design/repository, ask me before deciding or implementing it. Do not guess.
 After implementation, briefly summarize the UI changes and how I should test the new Script and Candidates workflows.
 
+### After commit 4f1eada
+Please update the implementation and project documentation based on the following chief-editor clarifications concerning DI-004, DI-005, and DI-012.
+
+DI-004 — ILL
+ILL currently covers two distinct situations:
+1. ASCII x-based forms such as xxx: these represent illegible or damaged source text. ILL means illegible and properly applies to this category. The dictionary entry L099997 should also be taken into account when documenting/implementing this behavior.
+2. Non-ASCII source-character forms such as 莫囂圓隣之: the source characters are known, but their linguistic transcription has not been determined. These are still genuine special word forms and must not be misparsed as syntax components. They must be retained in the syntax tree, preserved in the relevant textual representation/header, and be searchable.
+The chief editor is considering assigning the second category a different tag in the future. Do not invent or migrate to a new tag now. Record this distinction and the possible future retagging explicitly as provisional/deferred work so that it can be handled later.
+Fix the parser/model/search behavior necessary to support the current data correctly and add appropriate regression tests.
+
+DI-005 — NULL,*
+NULL,* encodes a genuine null terminal in the syntactic structure. NULL must therefore be represented in the syntax tree. The terminal has no phonological or orthographic realization and must not be interpreted as having * as its word form.
+The * in the source sequence NULL,* is part of the TXT encoding of the null terminal, not its lexical or orthographic content.
+The current behavior that classifies NULL,* as a CommentLine merely because the line ends in * is incorrect and should be fixed urgently. A trailing * alone does not identify a comment/marker line. Lines with the relevant number@text marker structure, for example 4@曾能夜弊賀岐袁,*, are a different construction and must not be conflated with NULL,*.
+In the internal syntax-tree model, represent NULL as a null terminal with empty phonological/orthographic content. Use the representation most consistent with the existing tree model (for example, an empty/null form rather than inventing * as a word form). Do not introduce a literal ∅ character into corpus data unless the existing model already uses that convention.
+The null terminal must remain present in the syntax tree but must contribute no characters to the normal transcription. TXT roundtrip must reproduce the original NULL,* encoding exactly.
+Review the parsing logic generally rather than applying a one-off patch to individual examples, and add regression tests covering the distinction between NULL,* and actual marker/comment constructions.
+
+DI-012 — *T*
+The chief editor confirms that *T* is a trace. It marks the syntactic position and grammatical function of the element associated with it. For example, in BS.3, *T* under NP-SBJ indicates that the relevant element modified by the clause functions as the subject within that clause.
+*T* must therefore be represented as a genuine trace terminal in the syntax tree. It is not an ordinary word form and should not contribute visible material to normal transcription. Preserve its syntax-tree role and exact source roundtrip behavior.
+Update the documentation so that the previous provisional interpretation of *T* as a trace is now recorded as confirmed by the chief editor.
+Data integrity and documentation
+Do not make speculative changes to corpus data.
+Be particularly careful when changing generated/imported XML. TXT data may belong to or synchronize with an external library/source, so do not introduce XML changes that create unintended TXT/XML synchronization problems or silently establish a new source-of-truth policy. Preserve roundtrip compatibility and the existing source-data boundaries. If implementing the fixes requires changing corpus XML or would cause XML and TXT to diverge in a way that is not clearly authorized, stop and ask me first.
+After implementing the fixes, revalidate the current data against data-issues.md. Update issues that are demonstrably resolved in the current data/implementation to Resolved, and revise their evidence/status descriptions accordingly. Do not mark an issue resolved merely because its semantics are now understood if an implementation or data problem remains.
+Also update the relevant chief-editor/project decision documentation to record these clarifications and the deferred DI-004 retagging decision.
+Do not guess. If the intended interpretation, implementation, data modification, XML/TXT synchronization behavior, or issue status is uncertain, ask me before making that change.
+Finally, report:
+- what implementation behavior changed;
+- what tests were added or updated;
+- what documentation/issues were updated;
+- whether any corpus data or XML was changed;
+- any remaining deferred or unresolved questions.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

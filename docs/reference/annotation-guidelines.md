@@ -210,6 +210,14 @@ XML stores a multipart word as one terminal with ordered form parts. Writing-mod
 
 Representation details are in [TXT/XML round-trip rules](txt-xml-roundtrip.md).
 
+### REP-03 — Confirmed special terminals (chief editor, 14 October 2026)
+
+ILL currently covers illegible/damaged ASCII x-based forms and known non-ASCII source characters whose linguistic transcription is undetermined. Both are genuine material and remain in the syntax tree and searchable textual representation. Dictionary L099997 (`ILLEGIBLE`, `[illegible word]`, placeholder `xxxxxxxxxx`) is used in current records; preserve occurrence forms rather than substituting its placeholder. A future different tag for the known-source situation is Deferred; current ILL is retained.
+
+`NULL,*` denotes a genuine null terminal. Store empty form/phonological content and keep its syntax position. `*` is only the TXT encoding and is reproduced on roundtrip. `*T*` is a confirmed trace, retaining the syntactic position/function of its associated element (BS.3: NP-SBJ within the modifying clause). Neither NULL nor traces contribute characters to normal transcription. A UI empty-node symbol is presentation, never stored corpus material.
+
+Numbered `number@text,*` source markers are a distinct construction. An unexplained bare star is not enough to establish a source marker or a null terminal; preserve its evidence pending review. See [CEQ-004/005](../registers/chief-editor-questions.md) and [PAQ-007](../registers/project-author-questions.md).
+
 ## 6. Unresolved decisions
 
 These decisions still require author/editorial confirmation. Do not fill them from apparent spelling corrections, UI behavior or processing heuristics.
@@ -218,7 +226,7 @@ These decisions still require author/editorial confirmation. Do not fill them fr
 | --- | --- |
 | TBD-01 | Structural levels of unresolved `C-`, deferred legacy `APP-` labels, `FRAG` and other unclassified groupings. Confirmed `NP-APP` is a phrase, not an unresolved label. |
 | TBD-02 | Internal morpheme-boundary selection for hyphenation beyond confirmed examples, including nested and multipart structures. |
-| TBD-03 | Segmentation treatment of traces, null/empty terminals, special ILL forms, malformed labels and missing forms. |
+| TBD-03 | Display grouping beyond zero transcription yield for confirmed traces/nulls, malformed labels and missing forms; future retagging of known-source ILL material. |
 | TBD-04 | Multiple-root/segment formatting and unusual whitespace; acceptance cases specify ordinary spaces between groups. |
 | TBD-05 | Unspecified grammatical + grammatical and phrase-spanning combination cases. |
 | TBD-06 | Meanings, classifications, aliases and permitted combinations of remaining unconfirmed annotations. Confirmed usage in CAT-02 is excluded. |

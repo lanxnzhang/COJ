@@ -2,7 +2,7 @@
 
 Only questions explicitly designated by the project author appear in this ledger. Answers and decision history remain attached to the original ID.
 
-Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN authoring. No chief-editor answer has been inferred from software or from the new project-author answers. Occurrence inventories and data findings are owned by [data issues](data-issues.md), with implementation/author policy in [PAQ](project-author-questions.md). The author will seek trace confirmation under PAQ-007; this review does not assign a new chief-editor question ID.
+Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN authoring. No chief-editor answer has been inferred from software or from the new project-author answers. Occurrence inventories and data findings are owned by [data issues](data-issues.md), with implementation/author policy in [PAQ](project-author-questions.md). The later chief-editor clarifications in TODO: After commit 4f1eada confirm ILL, NULL and trace semantics; the decisions below supersede the earlier provisional notes.
 
 ## CEQ-001 — Project-facing term for an identified unit
 
@@ -26,30 +26,20 @@ Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN auth
 
 ## CEQ-004 — Formal meaning of `ILL` and its word form
 
-- **Question:** What is the formal linguistic meaning of the `ILL` writing-mode/annotation tag and the special word form that follows it? Does it specifically mean unknown, illegible, uncertain, or another category, and how should the non-ASCII form be interpreted?
-- **Context:** the project author's current understanding is that the final field is a word form whose transcription may be unknown or uncertain.
-- **Examples:** all 20 current lines (five ASCII x-based, fifteen non-ASCII) are revalidated in DI-004; exact contexts and code points are in its linked inventory. Examples include `FRAG,WORD,L099997,ILL,xxx`, `...,ILL,莫囂圓隣之`, and `...,ILL,刺部重部`.
-- **Current implementation:** ASCII `x` forms become `phon="ILL"` leaves; non-ASCII forms are incorrectly treated as nested syntax tags and disappear from recognized tree transcription.
-- **Project-author notes:** PAQ-018 provisionally explains some source-character forms as insufficiently identified/read transcription, without finalizing the repertoire or universal meaning of ILL. Preserve all original information; do not change the parser or source data on that provisional interpretation. DI-004/DI-012 own the evidence.
-- **Answer:**
-- **Status:** Pending
+- **Status:** Answered for current cases; future retagging Deferred.
+- **Authority:** chief-editor clarifications in [TODO: After commit 4f1eada](../../TODO.md).
+- **Answer:** ASCII x-based forms represent illegible/damaged source text; ILL means illegible and is appropriate here. Dictionary L099997 has GLOSS `ILLEGIBLE`, MEANING `[illegible word]`, and placeholder FORM/KANA `xxxxxxxxxx`; it is not a license to substitute that placeholder for an actual occurrence.
+- Non-ASCII forms such as `莫囂圓隣之` preserve known source characters whose linguistic transcription is undetermined. They are genuine special word forms, retained in the tree, textual material/header and search, rather than syntax tags. Preserve imported headers independently; do not automatically rewrite them.
+- **Deferred:** the chief editor is considering a different future tag for the second situation. Keep current ILL and L099997 assignments; no new tag or data migration is chosen.
+- **Implementation:** corrected TXT parsing recognizes current special ILL forms in the form slot. Existing stored XML still contains fifteen malformed syntax paths; its repair needs explicit approval. See DI-004 and the [scoped XML preview](../../reports/special-terminals-4f1eada-preview.patch).
 
 ## CEQ-005 — Meaning of `NULL,*`
 
-- **Question:** Do `NULL,*` lines represent actual empty/null syntax terminals that belong in the computational syntax tree, or source-format annotations that should remain outside it?
-- **Context:** 347 cases occur in 300 texts across 45 documents; see DI-005.
-- **Examples:**
-
-```txt
-IP-MAT,IP-ADV,COP-INF,NULL,*
-IP-MAT,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
-multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
-```
-
-- **Current implementation:** because the line ends in `*`, it is a `CommentLine`, preserved in roundtrip metadata, omitted from the syntax tree, and omitted from derived raw text.
-- **Project-author notes:** the 347 lines/300 texts/45 documents are unchanged in the 13 October scan. SYN retains legacy snapshots/roundtrip information; no empty-terminal interpretation was chosen. Do not decide semantics from current implementation behavior.
-- **Answer:**
-- **Status:** Pending
+- **Status:** Answered; stored-XML correction pending approval (DI-005).
+- **Authority:** chief-editor clarifications in [TODO: After commit 4f1eada](../../TODO.md).
+- **Answer:** NULL is a genuine null syntax terminal with empty phonological/orthographic content. The trailing `*` is its TXT encoding, not word material. Preserve the node and exact `NULL,*` TXT roundtrip; it contributes zero transcription characters. Do not store a literal `∅`.
+- **Distinction:** `number@text,*` is a source marker, not a null terminal. An otherwise unexplained bare star remains opaque evidence pending DI-006 review.
+- **Implementation:** the parser now builds empty NULL leaves; new XML conversions contain the nodes. Existing XML still stores all 347 occurrences only as roundtrip comments. No corpus XML has been changed.
 
 # Resolved / answered questions
 
