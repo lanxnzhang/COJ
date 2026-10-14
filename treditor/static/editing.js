@@ -3,10 +3,11 @@
   const session = new COJEditing.Session();
   let state = new COJEditing.State(), files = [], corpus = [], busy = false, message = "", focusNext = null;
   let browsing = false, selectedDocument = null, query = "", saveChoice = null, statusNode, saveButton, warnings;
-  let analysisUndoButton, analysisRedoButton;
-  let analysisPlanNotice, analysisCandidateButtons = [];
+  let analysisUndoButton, analysisRedoButton, analysisSelectionRefresh;
+  let analysisPlanNotice, analysisCandidateButtons = [], analysisDerivedForms = new Map(), analysisScriptControls = [];
   const clone = value => JSON.parse(JSON.stringify(value));
   const fields = new Map(), openSections = new Map(), browserOpen = new Set(), savedCache = new Map();
+  const dictionaryHints = new Map();
   const documentNumbers = new WeakMap(); let nextDocumentNumber = 1;
   const analysisSessions = new WeakMap();
   function analysisSession() {
@@ -66,8 +67,8 @@
     input.addEventListener("input", () => { change(input.value); resize(input); message = ""; updateStatus(); });
     wrap.append(el("span", label), input); return wrap;
   }
-  function details(label, defaultOpen = false) {
-    const key = `${state.document.id}:${state.activeText || "document"}:${label}`, node = el("details");
+  function details(label, defaultOpen = false, uniqueKey = null) {
+    const key = `${state.document.id}:${state.activeText || "document"}:${uniqueKey || label}`, node = el("details");
     node.open = openSections.has(key) ? openSections.get(key) : defaultOpen;
     node.appendChild(el("summary", label));
     node.addEventListener("toggle", () => {
@@ -84,11 +85,17 @@
     if (analysisUndoButton) analysisUndoButton.disabled = busy || !COJAnalysis.canUndo(state);
     if (analysisRedoButton) analysisRedoButton.disabled = busy || !COJAnalysis.canRedo(state);
     if (session.current && state.text && typeof COJAnalysis !== "undefined") {
-      const plan = analysisSession().plan, fresh = plan?.source === COJAnalysis.sourceKey(state.text);
+      const plan = analysisSession().plan, fresh = planFresh(plan);
       analysisCandidateButtons.forEach(([button, allowed]) => { button.disabled = busy || !fresh || !allowed; });
-      if (analysisPlanNotice) analysisPlanNotice.textContent = fresh ? `Evidence domain: ${plan.domain}. Existing hierarchy changes require accepting a candidate.`
-        : "Source or Text identity changed. Analyse again to refresh candidates; existing analysis is preserved.";
+      if (analysisPlanNotice) analysisPlanNotice.textContent = fresh ? ""
+        : "Source or analysed Form changed. Analyse again to refresh candidates; existing analysis is preserved.";
     }
+    analysisDerivedForms.forEach((node, id) => { if (state.text?.nodes[id]) node.textContent = COJAnalysis.material(state.text, id) || "∅"; });
+    analysisScriptControls.forEach(({element, id, part}) => {
+      const node = state.text?.nodes[id], unit = part ? node?.parts.find(p => p.id === part) : node;
+      element.hidden = !unit?.form || !COJEditing.compact(unit.form);
+    });
+    if (analysisSelectionRefresh) analysisSelectionRefresh();
     if (warnings) {
       warnings.replaceChildren(); const issues = state.unresolved();
       if (issues.length) {
@@ -386,129 +393,221 @@
     if (target !== state || textKey !== state.activeText || source !== COJAnalysis.sourceKey(state.text)) throw new Error("Source changed; invoke Analyse again.");
     plan.source = source; current.plan = plan;
     COJAnalysis.initial(state, plan);
+    plan.material = state.text.roots.map(id => COJAnalysis.material(state.text, id)).join("");
     message = Object.keys(state.text.nodes).length ? "Analysis ready. Review candidates and incomplete fields; Save stores the draft." : "Enter Source transcription before Analyse.";
   }
-  function patternOutline(pattern, depth = 0) {
-    return `${"  ".repeat(depth)}${[pattern.category || "?", pattern.form, pattern.lemma].filter(Boolean).join(" ")}\n`
-      + pattern.children.map(c => patternOutline(c, depth + 1)).join("");
+  function planFresh(plan) {
+    return !!plan && plan.source === COJAnalysis.sourceKey(state.text)
+      && (plan.material === undefined || plan.material === state.text.roots.map(id => COJAnalysis.material(state.text, id)).join(""));
   }
-  function candidatePanel(candidates, apply, label) {
-    const panel = details(`Candidates: ${label}`);
-    if (!candidates.length) panel.appendChild(el("p", "No attested analysis. Enter lemma/category manually; unfinished analysis can be saved."));
+  function patternOutline(pattern, depth = 0, showLemma = true) {
+    return `${"  ".repeat(depth)}${[pattern.category || "?", pattern.form, showLemma && pattern.lemma].filter(Boolean).join(" ")}\n`
+      + pattern.children.map(c => patternOutline(c, depth + 1, showLemma)).join("");
+  }
+  function inlineInput(value, label, change, key, className) {
+    const input = el("input", undefined, `editing-inline-input ${className || ""}`);
+    input.type = "text"; input.value = value || ""; input.setAttribute("aria-label", label);
+    input.setAttribute("spellcheck", "false"); fields.set(key, input);
+    input.addEventListener("input", () => { change(input.value); message = ""; updateStatus(); });
+    return input;
+  }
+  function hintFromEntry(entry) {
+    return [entry.gloss, ...(entry.meanings || [])].filter(Boolean).join(" · ");
+  }
+  function lemmaControl(lemma, edit, label, current, dictionary) {
+    if (dictionary) dictionaryHints.set(lemma, hintFromEntry(dictionary));
+    const wrap = el("span", undefined, "editing-inline-lemma"), link = button(lemma || "—", () => {
+      if (lemma) openDictionaryPopupEntry(lemma);
+    });
+    link.className = "editing-lemma-link"; link.setAttribute("aria-label", label);
+    link.hidden = current.showLemma === false; link.disabled = !lemma; link.title = dictionaryHints.get(lemma) || (lemma ? "Open dictionary entry" : "Lemma unresolved");
+    const gloss = el("span", dictionaryHints.get(lemma) || "", "editing-inline-gloss");
+    gloss.hidden = !current.showGloss;
+    let pending = false;
+    async function loadHint() {
+      if (!lemma || pending) return;
+      if (dictionaryHints.has(lemma)) { link.title = dictionaryHints.get(lemma); gloss.textContent = dictionaryHints.get(lemma); return; }
+      pending = true;
+      try {
+        const data = await apiFetch(`/api/dictionary/${encodeURIComponent(lemma)}`);
+        const text = data.fields.filter(f => [".GLOSS", ".MEANING", ".POS"].includes(f.tag)).flatMap(f => f.values).join(" · ");
+        dictionaryHints.set(lemma, text || "Dictionary entry"); link.title = dictionaryHints.get(lemma); gloss.textContent = dictionaryHints.get(lemma);
+      } catch (_) { link.title = "Dictionary entry unavailable; draft annotation is retained."; }
+      finally { pending = false; }
+    }
+    link.addEventListener("pointerenter", loadHint); link.addEventListener("focus", loadHint);
+    wrap.appendChild(link);
+    if (edit) {
+      const pencil = el("button", "✎", "editing-row-action editing-lemma-edit"); pencil.type = "button";
+      pencil.hidden = current.showLemma === false; pencil.setAttribute("aria-label", `Edit ${label}`); pencil.title = `Edit ${label}`;
+      pencil.addEventListener("click", () => {
+        const input = inlineInput(lemma, label, edit, `edit:${label}`, "editing-lemma-input");
+        wrap.replaceChildren(input); input.focus();
+        input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); render(); } });
+        input.addEventListener("blur", () => { if (input.isConnected) wrap.replaceChildren(lemmaControl(input.value, edit, label, current)); });
+      });
+      wrap.appendChild(pencil);
+    }
+    wrap.appendChild(gloss);
+    if (current.showGloss) loadHint();
+    return wrap;
+  }
+  function candidatePanel(candidates, apply, label, current, key = null) {
+    const panel = details(key ? "Candidates" : `Candidates: ${label}`, false, key ? `candidates:${key}` : null); panel.className = "editing-candidates";
+    if (!candidates.length) panel.appendChild(el("p", "No attested analysis. Tag and lemma may remain unresolved in this draft.", "editing-hint"));
     candidates.forEach(c => {
       const row = el("div", undefined, "editing-candidate");
-      row.append(el("p", `${c.pattern.category || "Category needed"} ${c.pattern.lemma || "Lemma needed"} — ${c.count} occurrences / ${c.texts} Texts (${(c.support * 100).toFixed(1)}%)${c.default ? " · dominant default" : ""}`),
-        el("pre", patternOutline(c.pattern)));
-      if (c.dictionary) row.appendChild(el("p", [c.dictionary.gloss, ...c.dictionary.meanings].join(" · ")));
-      const use = button("Accept this candidate", () => apply(c));
-      use.setAttribute("aria-label", `Accept ${c.pattern.category || "unclassified"} ${c.pattern.lemma || "unassigned"} for ${label}`);
+      row.appendChild(el("strong", c.pattern.category || "Tag unresolved"));
+      if (current.showLemma !== false || current.showGloss) row.appendChild(lemmaControl(c.pattern.lemma, null, `Candidate lemma ${c.pattern.lemma || "unresolved"}`, current, c.dictionary));
+
+      row.appendChild(el("small", `${c.count} attestations`, "editing-attestation-count"));
+      const use = button("Use", () => apply(c)); use.className = "editing-candidate-use";
+      use.setAttribute("aria-label", `Use ${c.pattern.category || "unclassified"} ${c.pattern.lemma || "unassigned"} for ${label}`);
       use.disabled = !c.eligible && !c.id.startsWith("dictionary:"); row.appendChild(use);
       analysisCandidateButtons.push([use, !use.disabled]);
-      if (c.pattern.lemma) row.appendChild(button("Dictionary", () => openDictionaryPopupEntry(c.pattern.lemma)));
-      const sources = details(`Evidence: ${c.count} occurrences (${c.domains.ordinary} ordinary, ${c.domains["EN/SM"]} EN/SM)`);
-      c.evidence.forEach(e => sources.appendChild(el("p", `${e.text_id} · ${e.source} · block ${e.ordinal + 1} · node ${e.address} · ${e.domain} · revision ${e.revision.slice(0, 12)}`)));
-      if (!c.eligible) sources.appendChild(el("p", c.id.startsWith("dictionary:") ? "Dictionary association only; no inferred category or morphology." : "Incomplete or unsupported corpus pattern; preserved as evidence."));
-      else if (c.complete === false) sources.appendChild(el("p", "Incomplete lemma evidence: selectable as a draft, excluded from dominant defaults."));
-      row.appendChild(sources); panel.appendChild(row);
+      if (c.pattern.children.length) {
+        const structure = el("details", undefined, "editing-candidate-structure"); structure.append(el("summary", "Structure"), el("pre", patternOutline(c.pattern, 0, current.showLemma !== false))); row.appendChild(structure);
+      }
+      if (!c.eligible && !c.id.startsWith("dictionary:")) row.appendChild(el("small", "Unsupported pattern; retained for review."));
+      else if (c.complete === false || c.id.startsWith("dictionary:")) row.appendChild(el("small", "Incomplete draft suggestion"));
+      panel.appendChild(row);
     });
     return panel;
   }
-  function renderScripts(parent, current) {
-    const panel = details("Batch script annotation"), scope = el("select"), value = el("select");
-    scope.setAttribute("aria-label", "Script scope"); value.setAttribute("aria-label", "Batch script value");
-    [["text", "Unannotated units in this Text"], ["selection", "Selected subtrees / units"], ...state.text.passage_order.map((id, i) => [id, `Source line ${i + 1}`])].forEach(([v, label]) => {
-      const option = el("option", label); option.value = v; scope.appendChild(option);
-    });
-    scope.value = current.scriptScope || "text";
-    (current.plan?.scripts || ["PHON", "LOG", "NLOG", "PHON-KUN", "PHON-ON", "PLOG", "BPHON", "ILL", "ORDLOG", "NLPOG"]).forEach(v => { const option = el("option", v); option.value = v; value.appendChild(option); });
-    value.value = current.scriptValue || "PHON";
-    const override = el("input"); override.type = "checkbox"; override.checked = current.override || false;
-    override.setAttribute("aria-label", "Override existing script values");
-    const label = el("label", "Explicitly override existing values "); label.appendChild(override);
-    function targets() {
-      const spec = scope.value === "text" ? {} : scope.value === "selection" ? {nodes: [...current.selected].filter(id => state.text.nodes[id]),
-        parts: [...current.selectedParts.values()].filter(p => state.text.nodes[p.node]?.parts.some(u => u.id === p.part))} : {passage: scope.value};
-      return COJAnalysis.scriptTargets(state.text, spec);
-    }
-    const preview = el("div", undefined, "editing-script-preview");
-    function refresh() {
-      const ts = targets(); preview.replaceChildren(el("p", `${ts.length} applicable units; ${ts.filter(t => !t.script).length} empty. Existing values are preserved unless explicitly overridden.`));
-      ts.forEach(t => preview.appendChild(el("span", `${t.form}: ${t.script || "empty"} → ${override.checked || !t.script ? value.value : t.script}; `)));
-      if (!["text", "selection"].includes(scope.value)) preview.appendChild(el("p", "Unresolved or cross-line units are excluded; review their alignment before assigning a line scope."));
-    }
-    scope.addEventListener("change", () => { current.scriptScope = scope.value; refresh(); });
-    value.addEventListener("change", () => { current.scriptValue = value.value; refresh(); });
-    override.addEventListener("change", () => { current.override = override.checked; refresh(); });
-    panel.append(scope, value, label, preview, button("Apply script batch", () => COJAnalysis.batch(state, targets(), value.value, override.checked)));
-    refresh(); parent.appendChild(panel);
-  }
   function renderAnalysis(parent) {
     if (typeof COJAnalysis === "undefined") return;
-    const current = analysisSession(), analysis = details("Analysis", true);
-    analysis.appendChild(button("Analyse", analyse, true));
+    const current = analysisSession(), analysis = details("Analysis", true), controls = el("div", undefined, "editing-analysis-controls");
+    controls.appendChild(button("Analyse", analyse, true));
     const settings = details("Suggestion settings");
     settings.append(field("Minimum support (%)", current.support * 100, value => { current.support = Number(value) / 100; }, "support"),
       field("Minimum distinct Texts", current.minTexts, value => { current.minTexts = Number(value); }, "min-texts"),
-      el("p", "Suggestion thresholds are configurable; they are not annotation rules. Changes take effect on Analyse."));
-    analysis.appendChild(settings);
+      el("p", "Suggestion thresholds apply on Analyse; they are not annotation rules.")); controls.appendChild(settings);
     analysisUndoButton = button("Undo analysis edit", () => COJAnalysis.undo(state));
-    analysisRedoButton = button("Redo analysis edit", () => COJAnalysis.undo(state, true));
-    analysis.append(analysisUndoButton, analysisRedoButton);
-    const plan = current.plan, fresh = plan?.source === COJAnalysis.sourceKey(state.text);
-    if (plan) { analysisPlanNotice = el("p"); analysis.appendChild(analysisPlanNotice); }
-    if (fresh) {
-      const spans = details("Source span candidates");
-      plan.spans.filter(s => s.last - s.first > 1 && s.candidates.length).forEach(span => spans.appendChild(candidatePanel(span.candidates,
-        c => COJAnalysis.chooseSpan(state, plan, span, c), span.form)));
-      analysis.appendChild(spans);
+    analysisRedoButton = button("Redo analysis edit", () => COJAnalysis.undo(state, true)); controls.append(analysisUndoButton, analysisRedoButton);
+    const views = el("span", undefined, "editing-view-controls");
+    for (const [key, label] of [["showLemma", "Lemma"], ["showScript", "Script"], ["showGloss", "Gloss"]]) {
+      const wrap = el("label", label), box = el("input"); box.type = "checkbox";
+      box.checked = key === "showGloss" ? !!current[key] : current[key] !== false; box.setAttribute("aria-label", `Show ${label}`);
+      box.addEventListener("change", () => { current[key] = box.checked; render(); }); wrap.appendChild(box); views.appendChild(wrap);
     }
-    const tree = el("div", undefined, "editing-analysis-tree"); tree.setAttribute("role", "tree");
-    // Nested containers draw guides from the hierarchy; no connector text is stored.
+    controls.appendChild(views); analysis.appendChild(controls);
+    const plan = current.plan, fresh = planFresh(plan);
+    if (plan) { analysisPlanNotice = el("p", undefined, "editing-hint"); analysis.appendChild(analysisPlanNotice); }
+    const toolbar = el("div", undefined, "editing-script-tools"), scope = el("select"), script = el("select"), override = el("input");
+    scope.setAttribute("aria-label", "Script scope"); script.setAttribute("aria-label", "Scope Script"); override.type = "checkbox";
+    override.setAttribute("aria-label", "Replace existing Script"); override.checked = current.override || false;
+    for (const [value, label] of [["selection", "Selection / subtree"], ["empty", "Unannotated in Text"], ["text", "Whole Text"], ...state.text.passage_order.map((id, i) => [id, `Source line ${i + 1}`])]) {
+      const option = el("option", label); option.value = value; scope.appendChild(option);
+    }
+    scope.value = current.scriptScope || "empty";
+    const scripts = current.plan?.scripts || ["PHON", "LOG", "NLOG", "PHON-KUN", "PHON-ON", "PLOG", "BPHON", "ILL", "ORDLOG", "NLPOG"];
+    function scriptSelect(value, label, change) {
+      const select = el("select", undefined, "editing-inline-script"); select.setAttribute("aria-label", label);
+      for (const v of ["", ...new Set([...scripts, ...(value ? [value] : [])])]) { const option = el("option", v || "—"); option.value = v; select.appendChild(option); }
+      select.value = value || ""; select.addEventListener("change", () => run(() => change(select.value))); return select;
+    }
+    for (const value of scripts) { const option = el("option", value); option.value = value; script.appendChild(option); }
+    script.value = current.scriptValue || "PHON";
+    const replaceLabel = el("label", "Replace existing "); replaceLabel.appendChild(override);
+    const count = el("small"), preview = el("details", undefined, "editing-script-targets"), previewRows = el("div");
+    preview.append(el("summary", "Targets"), previewRows);
+    const rows = [];
+    function targets() {
+      const spec = scope.value === "empty" || scope.value === "text" ? {} : scope.value === "selection" ? {
+        nodes: [...current.selected].filter(id => state.text.nodes[id]), parts: [...current.selectedParts.values()].filter(p => state.text.nodes[p.node]?.parts.some(u => u.id === p.part))} : {passage: scope.value};
+      const values = COJAnalysis.scriptTargets(state.text, spec); return scope.value === "empty" ? values.filter(t => !t.script) : values;
+    }
+    const apply = button("Fill Script", () => COJAnalysis.batch(state, targets(), script.value, override.checked));
+    function refreshSelection() {
+      rows.forEach(r => { const selected = r.part ? current.selectedParts.has(r.part) : current.selected.has(r.id);
+        r.element.className = `editing-tree-row${r.part ? " editing-part-row" : ""}${selected ? " is-selected" : ""}`; r.element.setAttribute("aria-selected", String(selected)); });
+      const values = targets(), changed = values.filter(t => override.checked || !t.script).length;
+      count.textContent = `${changed} to assign · ${values.length - changed} preserved`;
+      apply.disabled = busy || !changed; apply.textContent = override.checked ? "Replace Script" : "Fill Script";
+      previewRows.replaceChildren(); values.forEach(t => previewRows.appendChild(el("div", `${t.form}  ${t.script || "—"} → ${override.checked || !t.script ? script.value : t.script}`)));
+      if (!["selection", "empty", "text"].includes(scope.value)) previewRows.appendChild(el("p", "Unresolved or cross-line units are excluded."));
+    }
+    scope.addEventListener("change", () => { current.scriptScope = scope.value; refreshSelection(); });
+    script.addEventListener("change", () => { current.scriptValue = script.value; refreshSelection(); });
+    override.addEventListener("change", () => { current.override = override.checked; refreshSelection(); });
+    toolbar.append(el("span", "Script"), scope, script, apply, replaceLabel, count, preview,
+      button("Clear selection", () => { current.selected.clear(); current.selectedParts.clear(); refreshSelection(); }));
+    toolbar.hidden = current.showScript === false; analysis.appendChild(toolbar);
+    const tree = el("div", undefined, "editing-analysis-tree"); tree.setAttribute("role", "tree"); tree.setAttribute("aria-multiselectable", "true");
+    function selectable(row, id, part = null) {
+      const descriptor = {key: part ? `part:${part}` : id, id, part, element: row}; rows.push(descriptor);
+      row.className = "editing-tree-row"; row.tabIndex = 0;
+      row.setAttribute("aria-label", part ? `Writing part ${part}` : `Analysis row ${id}`);
+      row.addEventListener("click", event => {
+        if (["INPUT", "SELECT", "BUTTON", "A", "SUMMARY"].includes(event.target.tagName) || event.target.closest?.(".editing-candidates")) return;
+        COJAnalysis.selectRows(current, rows, descriptor.key, event); scope.value = "selection"; current.scriptScope = "selection"; refreshSelection();
+      });
+      row.addEventListener("keydown", event => {
+        if (event.target !== row) return;
+        const i = rows.indexOf(descriptor);
+        if ([" ", "ArrowDown", "ArrowUp"].includes(event.key)) {
+          event.preventDefault(); const next = event.key === " " ? descriptor : rows[Math.max(0, Math.min(rows.length - 1, i + (event.key === "ArrowDown" ? 1 : -1)))];
+          COJAnalysis.selectRows(current, rows, next.key, event); next.element.focus(); scope.value = "selection"; current.scriptScope = "selection"; refreshSelection();
+        }
+      });
+    }
+    const lexical = tag => (plan?.lexical_categories || ["VB", "ADJ", "WH-ADJ", "COP", "N", "DVN", "PEN", "PLN", "PRO-N", "WH-N", "ADV", "PRO-ADV", "WH-ADV", "INTJ", "NUM", "WH-NUM", "P", "XTN", "MK", "WORD", "ACP", "VAX", "PFX", "SFX", "CL"]).some(t => tag === t || tag?.startsWith(t + "-"));
     const stack = state.text.roots.slice().reverse().map(id => [id, tree]);
     while (stack.length) {
-      const [id, container] = stack.pop(), node = state.text.nodes[id], item = el("div", undefined, "editing-analysis-node");
-      item.setAttribute("role", "treeitem");
-      const row = el("div", undefined, "editing-analysis-label"), selected = el("input"); selected.type = "checkbox";
-      selected.checked = current.selected.has(id); selected.setAttribute("aria-label", `Select analysis ${id}`);
-      selected.addEventListener("change", () => { if (selected.checked) current.selected.add(id); else current.selected.delete(id); render(); });
-      row.append(selected, el("span", COJAnalysis.material(state.text, id)));
-      row.append(field("Category", node.category, v => COJAnalysis.edit(state, id, "category", v), `category:${id}`, false, `Category ${id}`),
-        field("Lemma", node.lemma, v => COJAnalysis.edit(state, id, "lemma", v), `lemma:${id}`, false, `Lemma ${id}`));
-      row.appendChild(button("Dictionary", () => {
-        const currentNode = state.text.nodes[id];
-        if (currentNode.lemma) openDictionaryPopupEntry(currentNode.lemma);
-        else openDictionaryPopupLookup(COJAnalysis.material(state.text, id));
-      }));
-      if (!node.children.length && (!node.lemma || !node.category)) row.appendChild(el("span", !node.form || node.category === "*T*" ? "Special/empty material: review separately" : "Incomplete draft", "editing-hint"));
-      if (node.parts.length) node.parts.forEach(part => {
-        const label = el("label", `${part.form}/${part.script || "empty"} `), box = el("input"); box.type = "checkbox";
-        box.checked = current.selectedParts.has(part.id); box.setAttribute("aria-label", `Select writing part ${part.id}`);
-        box.addEventListener("change", () => { if (box.checked) current.selectedParts.set(part.id, {node: id, part: part.id}); else current.selectedParts.delete(part.id); render(); });
-        label.appendChild(box); row.appendChild(label);
-      });
-      else if (node.script) row.appendChild(el("span", node.script));
-      item.appendChild(row);
+      const [id, container] = stack.pop(), node = state.text.nodes[id], item = el("div", undefined, "editing-analysis-node"); item.setAttribute("role", "treeitem");
+      const row = el("div"); selectable(row, id);
+      const tagInput = inlineInput(node.category, `Tag ${id}`, v => COJAnalysis.edit(state, id, "category", v), `tag:${id}`, "editing-inline-tag");
+      tagInput.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); render(); } }); row.appendChild(tagInput);
+      if (node.annotations.index && !node.annotations.inferred_index) row.appendChild(el("small", `;@${node.annotations.index}`, "editing-distinction"));
+      const terminal = !node.children.length, lexicalWhole = !terminal && lexical(node.category);
+      const owned = terminal && !node.parts.length && (node.form || node.annotations.owns_form || !state.text.compatibility.original_block_xml);
+      if (owned) row.appendChild(inlineInput(node.form, `Form ${id}`, v => COJAnalysis.editForm(state, id, v), `form:${id}`, "editing-inline-form"));
+      else if (terminal || lexicalWhole) {
+        const form = el("span", COJAnalysis.material(state.text, id) || "∅", "editing-derived-form");
+        row.appendChild(form); analysisDerivedForms.set(id, form);
+      }
       const span = node.annotations.input_span;
       const candidates = fresh ? (plan.nodes[id] || (span && plan.spans.find(s => s.first === span.first && s.last === span.last)?.candidates) || []) : [];
-      if (fresh && (Object.hasOwn(plan.nodes, id) || span)) {
-        const panel = candidatePanel(candidates, c => COJAnalysis.chooseNode(state, plan, id, c), COJAnalysis.material(state.text, id));
-        panel.appendChild(el("p", "Acceptance changes this occurrence. Its whole identity and material are retained; descendants may be replaced with fresh identities. Existing scripts and known alignment references must transfer safely or the change is rejected."));
-        item.appendChild(panel);
+      if ((current.showLemma !== false || current.showGloss) && (terminal || lexicalWhole || node.lemma)) row.appendChild(lemmaControl(node.lemma, v => COJAnalysis.edit(state, id, "lemma", v), `Lemma ${id}`, current,
+        candidates.find(c => c.pattern.lemma === node.lemma)?.dictionary));
+      if (current.showScript !== false && owned) {
+        const control = scriptSelect(node.script, `Script ${id}`, v => COJAnalysis.editScript(state, id, v));
+        row.appendChild(control); analysisScriptControls.push({element: control, id, part: null});
       }
-      if (node.annotations.suggestion) item.appendChild(el("small", `${node.annotations.suggestion.status}; ${node.annotations.suggestion.count} attested occurrences`));
+      if (terminal && node.form && (!node.lemma || !node.category)) { const marker = el("small", "·", "editing-incomplete"); marker.title = "Incomplete draft annotation"; row.appendChild(marker); }
+      item.appendChild(row);
+      if (terminal && node.parts.length) {
+        const parts = el("div", undefined, "editing-writing-parts");
+        node.parts.forEach(part => {
+          const partRow = el("div"); selectable(partRow, id, part.id);
+          partRow.appendChild(inlineInput(part.form, `Part Form ${part.id}`, v => COJAnalysis.editForm(state, id, v, part.id), `part-form:${part.id}`, "editing-inline-form"));
+          if (current.showScript !== false) {
+            const control = scriptSelect(part.script, `Part Script ${part.id}`, v => COJAnalysis.editScript(state, id, v, part.id));
+            partRow.appendChild(control); analysisScriptControls.push({element: control, id, part: part.id});
+          }
+          parts.appendChild(partRow);
+        }); item.appendChild(parts);
+      }
+      if (fresh && (Object.hasOwn(plan.nodes, id) || span)) row.appendChild(candidatePanel(candidates, c => COJAnalysis.chooseNode(state, plan, id, c), COJAnalysis.material(state.text, id), current, id));
       if (node.children.length) {
-        item.setAttribute("aria-expanded", "true");
-        const children = el("div", undefined, "editing-analysis-children"); children.setAttribute("role", "group"); item.appendChild(children);
+        item.setAttribute("aria-expanded", "true"); const children = el("div", undefined, "editing-analysis-children"); children.setAttribute("role", "group"); item.appendChild(children);
         for (const child of node.children.slice().reverse()) stack.push([child, children]);
       }
       container.appendChild(item);
     }
-    if (state.text.historical_header !== null) analysis.appendChild(el("p", `Historical header: ${state.text.historical_header}`));
-    analysis.appendChild(tree); renderScripts(analysis, current); parent.appendChild(analysis);
+    analysis.appendChild(tree); analysisSelectionRefresh = refreshSelection; refreshSelection();
+    if (fresh) {
+      const spans = details("Source span candidates");
+      plan.spans.filter(s => s.last - s.first > 1 && s.candidates.length).forEach(span => spans.appendChild(candidatePanel(span.candidates,
+        c => COJAnalysis.chooseSpan(state, plan, span, c), span.form, current))); analysis.appendChild(spans);
+    }
+    if (state.text.historical_header !== null) { const header = details("Historical header"); header.appendChild(el("p", state.text.historical_header)); analysis.appendChild(header); }
+    analysis.appendChild(el("small", "Click row space to select; Ctrl/Cmd-click adds rows; Shift-click selects a range.", "editing-selection-help"));
+    parent.appendChild(analysis);
   }
   function render() {
-    analysisUndoButton = null; analysisRedoButton = null;
-    analysisPlanNotice = null; analysisCandidateButtons = [];
+    analysisUndoButton = null; analysisRedoButton = null; analysisSelectionRefresh = null;
+    analysisPlanNotice = null; analysisCandidateButtons = []; analysisDerivedForms = new Map(); analysisScriptControls = [];
     fields.clear(); page.replaceChildren(); const controls = el("fieldset", undefined, "editing-workspace"); controls.disabled = busy;
     statusNode = el("p", undefined, "editing-status"); statusNode.setAttribute("role", "status"); saveButton = null; warnings = null;
     controls.appendChild(statusNode);

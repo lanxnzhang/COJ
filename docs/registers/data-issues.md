@@ -2,7 +2,7 @@
 
 This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
-Revalidated 13 October 2026 at `3b8d060` after the latest ONCOJ import. Counts below distinguish this read-only scan from historical audits. [Complete source evidence](data-investigation-2026-10-13.json) retains file/physical line, source ID, original line and adjacent context for every requested inventory; no source data was changed. Findings are not correction authorization.
+Revalidated 14 October 2026 against current TXT and XML at `745d5d0`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no source data was modified.
 
 ## Confirmed data errors
 
@@ -18,23 +18,7 @@ Revalidated 13 October 2026 at `3b8d060` after the latest ONCOJ import. Counts b
 - **Related question:** PAQ-011.
 - **Author position (PAQ-009/PAQ-011):** keep open; SM editing and final identifier design are incomplete. Do not allocate a replacement ID. Dotted SM IDs are provisional, not a final naming policy.
 - **Current SYN behavior:** the read-only corpus adapter preserves both blocks under separate hidden Text identities. This resolves internal identity collapse in the draft adapter, not the scholarly-ID or legacy-lookup collision.
-
-### DI-003 — Truncated multiline note for `L051953`
-
-- **Status:** Open
-- **Category:** data loss during TXT parsing
-- **Source:** `data/txt/dict/dictionary.txt:47925-47926`
-
-```txt
-.NOTE	Shinano Province corresponds to Nagano prefecture (Nakanishi 1985: 452 in Vovin 2012: 32). Shinanwo shore is likely near Fushiki-Toyama Port (Omodaka 1984.17:
-217-218, Nakanishi 1985: 452, Hashimoto 1985: 293 in Vovin 2015: 191).
-```
-
-- **Current implementation:** the field regex reads only the first physical line. The continuation does not begin with a recognized tag and is silently skipped. Current XML `<note>` ends at `Omodaka 1984.17:`.
-- **Effect:** bibliographic/editorial content is lost without an error.
-- **Related question:** PAQ-013.
-- **Author decision (PAQ-013):** the continuation belongs to the same NOTE value; the physical line break is an error, not evidence for a multiline TXT syntax. The author will correct it later; no correction is authorized here.
-- **Recheck:** this is the only untagged nonempty dictionary-entry line in the current scan. Parser and importer still do not diagnose its skipped text. The 6,498 parsed-entry field roundtrip checks do not account for this unparsed content; see PAQ-019.
+- **14 October recheck:** unchanged: both TXT IDs remain at lines 108/192 and two XML blocks still have SM.15.1. This identity collision is not fixed; the author's identifier review remains deferred under PAQ-009/PAQ-011.
 
 ## Parser limitations
 
@@ -70,19 +54,18 @@ Revalidated 13 October 2026 at `3b8d060` after the latest ONCOJ import. Counts b
 | `data/txt/trees/MYS_16.txt:568` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,所為故為` | `所為故為` / no |
 
 Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. No form, tag or annotation was changed.
+- **14 October recheck:** all 20 source lines and recorded locations are unchanged; five ASCII forms are recognized and fifteen non-ASCII forms remain misclassified. Parser/model and chief-editor questions remain Open.
 
 ## Unresolved semantic questions
 
 ### DI-005 — Ambiguous `NULL,*` lines
 
-- **Status:** Pending chief-editor answer
+- **Status:** Open; chief-editor answer pending
 - **Category:** unclear semantic/structural role
 - **Extent:** 347 lines in 300 texts across 45 documents (65 under `data/txt/text`, 282 under `data/txt/trees`).
 - **Examples:**
 
 ```txt
-- **13 October recheck:** unchanged: 347 lines, 300 source texts, 45 documents. SYN retains original XML/TXT and raw comments rather than inventing empty terminals. CEQ-005 remains unanswered; current omission is not a semantic decision.
-
 # data/txt/text/EN_01.txt, source ID 3_EN_01 (current XML ID EN.1.3)
 IP-MAT,IP-ADV,IP-ADV,NP-PRD,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
 
@@ -96,24 +79,25 @@ multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
 - **Current implementation:** every line ends with `*`, so it is classified as `CommentLine`, stored only as a positioned roundtrip comment, excluded from the syntax tree, and excluded from derived raw-text sentences.
 - **Interpretive risk:** if these are empty terminals, the computational tree omits them; if they are source-format annotations, turning them into nodes would invent structure.
 - **Chief-editor question:** CEQ-005.
+- **14 October recheck:** unchanged: 347 lines in 300 texts/45 documents. SYN retains original XML/TXT and comments; the data does not establish their intended terminal/annotation semantics. CEQ-005 remains pending.
 
 ## Anomalies
 
 ### DI-006 — Two anomalous marker-like lines
 
 - **Status:** MYS.19.4220 attached-marker case Resolved; SM.29.2 bare-star case Open.
-- **Evidence scope:** the 13 October COJ scan found one malformed numeric-@ marker and one bare-star anomaly after excluding the separately registered NULL,* lines. Source synchronization status is distinct from author-decision status.
+- **14 October evidence scope:** zero malformed numeric-@ marker lines remain. One bare-star anomaly remains after excluding the separately registered 347 NULL,* lines. The attached-marker correction is now verified in COJ TXT and XML.
 
 #### MYS.19.4220 - attached marker (Resolved)
 
 ```txt
 # data/txt/trees/MYS_19.txt:3839
 IP-MAT,IP-ADV,NP-SBJ,N,L050918,PHON,maywobiki
-IP-MAT,IP-ADV,IP-ADV,IP-EPT.18@於保夫祢能,*
+IP-MAT,IP-ADV,IP-ADV,IP-EPT,18@於保夫祢能,*
 IP-MAT,IP-ADV,IP-ADV,IP-EPT,MK,L020022,N,L050510,ADJ-STM,L007009a,PHON,opo
 ```
 
-The project author reports that this typo has already been corrected in ONCOJ (PAQ-004): the period between IP-EPT and the numeric marker is replaced by a comma. It is awaiting normal ONCOJ to COJ synchronization. The old malformed line remains in this COJ checkout; that is not an unresolved author decision or permission to edit COJ source directly. The inventory retains the original line and its context. Its missing recognized marker 18 contributes to DI-009's current-checkout diagnostic; that observation does not reopen the resolved source correction.
+The earlier ONCOJ correction is now synchronized into COJ in 745d5d0. TXT MYS_19.txt:3839 and the XML roundtrip comment both contain `IP-MAT,IP-ADV,IP-ADV,IP-EPT,18@於保夫祢能,*`. XML raw-text row 19 contains source `於保夫祢能` with transcription `opo bune no`; the numbered marker and its boundary are recognized. This subcase remains **Resolved**, with no synchronization pending. The original malformed line remains only in the historical inventory. DI-009's associated numbering gap is also fixed. No COJ data was edited during revalidation.
 
 #### Source 2_SM_29 / XML SM.29.2 - bare star (Open)
 
@@ -131,7 +115,7 @@ The investigation is complete, but intended content remains unknown (PAQ-005). K
 ### DI-007 — Header and tree-derived transcription content discrepancies
 
 - **Status:** Open; source-side authority/corrections still require review.
-- **Current extent:** 5,665 texts; 640 exact matches, 5,013 segmentation-only differences, 12 content discrepancies.
+- **Current extent (14 October):** 5,665 texts; 640 exact matches, 5,013 segmentation-only differences, 12 content discrepancies.
 - **Method:** current XML block@header vs ordered recognized CorpusLine.word_form values, ignoring whitespace only. Multipart pieces are included. This diagnostic is not a decision to replace either layer. DI-004 non-ASCII forms remain absent from recognized transcription.
 - **Author policy (PAQ-006 and 13 October scope clarification):** **TXT → XML only** must report/register header/tree discrepancies and continue; do not silently choose a side or modify data. This does not specify XML → TXT policy. SYN reviewed write-back/export keeps its existing blocking rules for unresolved discrepancies. Automatic legacy converter reporting remains unimplemented. SYN opening already records historical-header/passage or passage/hierarchy disagreements.
 
@@ -196,7 +180,9 @@ The older 30-case list is retained below to preserve audit history. Its spelling
 
 </details>
 
-The concise descriptions are mechanical character-level differences after removing spaces; they are not editorial diagnoses. CEQ-002 addresses segmentation generally. PAQ-006 asks how content discrepancies should be validated and resolved.
+The concise descriptions are mechanical character-level differences after removing spaces; they are not editorial diagnoses. CEQ-002 addresses segmentation generally. PAQ-006 records the scoped TXT-to-XML discrepancy policy.
+
+- **14 October recheck:** all 12 complete header/transcription pairs are unchanged from the 13 October snapshot; none of these current discrepancies has disappeared. The 5,013 spacing-only cases are distinct from the 12 content mismatches. Keep the content issue Open; unresolved source-character interpretation and other content differences are not automatically attributed to one cause.
 
 ## Terminology ambiguity
 
@@ -204,33 +190,15 @@ The concise descriptions are mechanical character-level differences after removi
 
 - **Status:** Open terminology/schema issue; data not to be “fixed” automatically
 - **Category:** representation naming mismatch
-- **Evidence:** the current marker corpus contains placeholder payloads, including `x`-based source strings in `BS.20`, while XML stores every payload under `<kanji>`.
+- **Evidence:** the current marker corpus contains placeholder payloads, including source `x?xxx` in `BS.21`, while XML stores every payload under `<kanji>`.
 - **Current implementation:** `treditor` labels/displays the field as kanji in several places; search indexes it as the `kanji` field.
 - **Project-author decision:** conceptually this may be source/original text, but the XML tag must not be renamed now.
 - **Chief-editor question:** CEQ-003.
 - **Current architecture:** source-first SYN stores numbered passages with an original-source string and independently entered transcription. Historical XML still uses kanji; no current tag rename is implied. Terminology remains CEQ-003, and uncertain source-character forms are recorded under DI-004/DI-012.
 
+- **14 October recheck:** six recognized marker payloads contain x-based placeholders across BS.10, BS.11, BS.12 and BS.21. The placeholder content is still present; terminology/schema status cannot be resolved from a data scan. The historical BS.20 example was inaccurate and has been replaced with a verified current example.
+
 ## Additional current investigations
-
-### DI-009 — Numbered-marker sequence irregularities
-
-- **Status:** Open for author review; labels are nonsemantic under PAQ-003.
-- **Method/extent:** scan all 37,707 recognized markers across 5,665 TXT blocks. Ten sequences differ from diagnostic 0-based consecutive numbering. Gaps/restarts/swaps are observations, not automatic error classifications. Source order, payload and structural boundaries must remain unchanged.
-
-| Text ID | TXT file | First-last marker line | Complete observed sequence |
-|---|---|---|---|
-| `MYS.3.276b` | `data/txt/trees/MYS_03.txt` | 1470–1489 | `0,3,4,0,1` |
-| `MYS.3.319` | `data/txt/trees/MYS_03.txt` | 2750–2914 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,35,33,34,36` |
-| `MYS.6.920` | `data/txt/trees/MYS_06.txt` | 490–588 | `0,1,2,3,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23` |
-| `MYS.6.923` | `data/txt/trees/MYS_06.txt` | 648–723 | `0,1,2,3,4,5,6,7,8,9,10,11,12,14,13,15,16,17,18` |
-| `MYS.6.1053` | `data/txt/trees/MYS_06.txt` | 5677–5796 | `0,1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27` |
-| `MYS.9.1759` | `data/txt/trees/MYS_09.txt` | 3469–3548 | `0,1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19` |
-| `MYS.16.3867` | `data/txt/trees/MYS_16.txt` | 2729–2748 | `0,1,2,4,3` |
-| `MYS.17.4006` | `data/txt/trees/MYS_17.txt` | 4801–5016 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,34,37,36,38,39,40,41,42,43,44,45,46,48,47,49,50,51,52` |
-| `MYS.19.4220` | `data/txt/trees/MYS_19.txt` | 3765–3862 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24` |
-| `MYS.20.4398` | `data/txt/trees/MYS_20.txt` | 3174–3360 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45` |
-
-Every marker's exact raw line and neighboring context are inventory.marker_sequences. For MYS.3.276b only, the author believes 0,1,2,3,4 intended; source correction still requires explicit confirmation. MYS.19.4220 shares the malformed-marker cause recorded once in DI-006. No labels were renumbered.
 
 ### DI-010 — Writing-mode distinction suffix `LOG;@2`
 
@@ -256,37 +224,41 @@ Every marker's exact raw line and neighboring context are inventory.marker_seque
 | `data/txt/trees/MYS_13.txt:4233` | `MYS.13.3291b` | `multi-sentence,IP-MAT;@2,IP-ADV,COP-CND,L031966,LOG;@2,araba` |
 
 No occurrence was modified or reinterpreted.
+- **14 October recheck:** all 14 exact source lines and locations remain unchanged. Their formal suffix meaning is still unknown; completed inventory is not semantic resolution.
 
 ### DI-011 — Dictionary field presence and preservation limitations
 
-- **Status:** Author semantic policy answered (PAQ-014); implementation gaps and source cases await review.
+- **Status:** Open; semantic policy answered (PAQ-014), but current source cases and preservation gaps remain.
 - **Policy:** missing and explicitly blank are distinct. Do not fill/remove source fields during this investigation.
 - **Current source blanks:** exactly two, both MEANING; both survive the current XML mapping.
 
 | Entry | Source line | Original field | Adjacent content |
 |---|---|---|---|
-| `L080104` | `data/txt/dict/dictionary.txt:48838` | `.MEANING<TAB>` (empty value) | `.GLOSS	EPITHET`; `.FORM	yapotadewo` |
-| `L091024` | `data/txt/dict/dictionary.txt:54326` | `.MEANING<TAB>` (empty value) | `.GLOSS	EPITHET`; `.FORM	takakurano` |
+| `L080104` | `data/txt/dict/dictionary.txt:48837` | `.MEANING<TAB>` (empty value) | `.GLOSS	EPITHET`; `.FORM	yapotadewo` |
+| `L091024` | `data/txt/dict/dictionary.txt:54325` | `.MEANING<TAB>` (empty value) | `.GLOSS	EPITHET`; `.FORM	takakurano` |
 
 - **Missing required fields:** L050830 lacks GLOSS/MEANING/FORM/KANA/POS; L080156 and L099997 lack POS. Other absent optional-field counts are inventory.dictionary.field_absent_entries. Absence is not labeled a source error here.
-- **Current-data roundtrip probe:** all 6,498 parsed entry field maps survive TXT model → XML → model, including these blanks. This does not cover skipped untagged content (DI-003) or physical syntax/order identity.
+- **Current-data roundtrip probe:** all 6,498 parsed entry field maps survive TXT model → XML → model, including these blanks. The current scan finds zero untagged nonempty entry lines after DI-003's correction; this value/presence probe still does not prove exact physical syntax/order identity.
 - **Normalization probe, on copies only:** three entries change semantic presence states. L080156/L099997 gain POS=[]; L050830 gains GLOSS="", MEANING=[], FORM=[], KANA=[""] and POS=[]. Empty repeated lists emit no TXT occurrence; a bare blank KANA without FORM is not serialized to XML.
 - **Synthetic mapping probes:** blank optional singular CORRESP disappears; orphan/extra KANA values disappear; FORM without KANA gains a blank KANA; unmapped fields disappear. These are implementation counterexamples, not claims that those fixtures occur in current source. Indexed field values are reordered by explicit index and duplicate singular occurrences overwrite.
 - **Current architecture:** no SYN dictionary codec exists; generic corpus compatibility snapshots do not resolve these dictionary mappings. PAQ-019 owns unsupported-formal-data policy. Full field/order/model/normalization evidence is inventory.dictionary.
 
+- **14 October recheck:** both explicitly blank MEANING values remain (L080104:48837; L091024:54325), and the same required fields remain absent in L080156, L099997 and L050830. All 6,498 current parsed field value/presence maps survive the XML roundtrip probe, but documented normalization/synthetic mapping limitations are unchanged. Blank values are not declared erroneous merely because they are blank.
+
 ### DI-012 — Nonalphabetic syntax/form candidates and provisional trace notation
 
-- **Status:** Formal repertoire/categories open (PAQ-007/PAQ-018); no validator or source change authorized.
+- **Status:** Open; formal repertoire/categories pending (PAQ-007/PAQ-018); no validator or source change authorized.
 - **Complete extent:** 258 nonalphabetic final-field candidates: 243 *T* lines in 182 texts/25 documents and 15 non-ASCII ILL lines. The ILL issue/examples are owned by DI-004, not a second data-error list. All five x-based ILL forms are ASCII and remain in DI-004's inventory. An independent scan of every non-comment/nonheader/non-ID tree line found no other nonalphabetic final field.
 - **Evidence:** inventory.outside_ascii_forms records actual final strings, every Unicode character/code point, file/line, source ID and neighbors; inventory.traces retains every complete *T* line. Candidate location does not prove a formally permitted word form.
 - **Current representation:** *T* becomes `_T_` with raw_tag=*T*, empty form/phon; XML → TXT restores the literal tag. It participates in the tree tag payload, not ordinary recognized transcription/form search. SYN keeps the category and original snapshots but supplies no finalized trace semantics. Author's trace interpretation is provisional and awaits chief-editor confirmation sought by the author.
 - **Source-character understanding:** author explains some characters as uncertain/untranscribed source information; do not classify all observed forms by guess or broaden the alphabetic validator indiscriminately. Meaningful information must be retained while the formal category design remains open.
+- **14 October recheck:** unchanged: 258 candidates (243 trace-like lines in 182 texts/25 documents and 15 non-ASCII ILL lines). Formal repertoire/category decisions remain Open; observed source usage alone does not settle them.
 
 # Resolved / closed data issues
 
 ### DI-002 — Duplicate dictionary ID `L080539`
 
-- **Status:** Resolved in current imported data; historical parser risk retained
+- **Status:** Resolved
 - **Category:** data loss during TXT parsing
 - **Historical evidence:** two consecutive entries occurred in `data/txt/dict/dictionary.txt`:
 
@@ -311,3 +283,63 @@ No occurrence was modified or reinterpreted.
 - **Related question:** PAQ-012.
 
 - **13 October verified resolution:** `dictionary.txt:47697` is L080725/Shibi/sibi; :47705 is L080539/Hegomori/pyegomori. Both entries are present in XML. The allocation was already imported in 5558e2a; this investigation allocated no ID and changed no dictionary data. No duplicate headings remain among 6,498 current entries. TXT duplicate parsing still uses last-write replacement if future collisions occur; this residual behavior is not resolved by the data correction. See PAQ-012.
+
+- **14 October recheck:** both distinct entries remain present; 6,498 source headings produce 6,498 parsed entries, with no duplicate dictionary IDs. The historical collision has not recurred.
+
+### DI-003 — Truncated multiline note for `L051953`
+
+- **Status:** Resolved
+- **Category:** data loss during TXT parsing
+- **Historical source (before 745d5d0):** `data/txt/dict/dictionary.txt:47925-47926`
+
+```txt
+.NOTE	Shinano Province corresponds to Nagano prefecture (Nakanishi 1985: 452 in Vovin 2012: 32). Shinanwo shore is likely near Fushiki-Toyama Port (Omodaka 1984.17:
+217-218, Nakanishi 1985: 452, Hashimoto 1985: 293 in Vovin 2015: 191).
+```
+
+- **14 October verified correction:** dictionary.txt:47925 now contains the entire note on one physical NOTE line:
+
+```txt
+.NOTE	Shinano Province corresponds to Nagano prefecture (Nakanishi 1985: 452 in Vovin 2012: 32). Shinanwo shore is likely near Fushiki-Toyama Port (Omodaka 1984.17: 217-218, Nakanishi 1985: 452, Hashimoto 1985: 293 in Vovin 2015: 191).
+```
+
+- **Current XML:** L051953/notes/note exactly matches this complete source value, including the former continuation. The current dictionary has zero untagged nonempty entry lines. The correction is present in both representations and was imported in 745d5d0; no pending source correction remains for this case.
+- **Resolution scope:** the accidental line break and truncated note are fixed. General parser behavior for hypothetical future untagged input is unchanged and remains a separate PAQ-019 implementation concern, not an unresolved L051953 data issue. See PAQ-013.
+
+### DI-009 — Numbered-marker sequence irregularities
+
+- **Status:** Resolved
+- **14 October method/results:** scanned all 37,708 recognized numbered markers across 5,665 TXT blocks. Zero sequences now have gaps, restarts or out-of-order labels under the same zero-based consecutive-number diagnostic. All ten previously listed texts now have consecutive labels; their XML roundtrip marker labels and derived row numbers were also checked. TXT and XML both contain 37,708 source rows after DI-006's corrected marker was recognized.
+- **Resolution scope:** the documented numbering irregularities are fixed in current imported data. Marker labels remain nonsemantic under PAQ-003; this does not independently approve linguistic content or infer the intent of any other issue. Some source payload/order details changed along with numbering; original evidence is retained as history, not described as unchanged.
+
+#### Current corrected sequences
+
+| Text ID | TXT file | Marker line range | Current labels |
+|---|---|---|---|
+| `MYS.3.276b` | `data/txt/trees/MYS_03.txt` | 1470-1489 | 0-4 (consecutive) |
+| `MYS.3.319` | `data/txt/trees/MYS_03.txt` | 2750-2914 | 0-36 (consecutive) |
+| `MYS.6.920` | `data/txt/trees/MYS_06.txt` | 490-588 | 0-22 (consecutive) |
+| `MYS.6.923` | `data/txt/trees/MYS_06.txt` | 648-723 | 0-18 (consecutive) |
+| `MYS.6.1053` | `data/txt/trees/MYS_06.txt` | 5677-5796 | 0-26 (consecutive) |
+| `MYS.9.1759` | `data/txt/trees/MYS_09.txt` | 3469-3548 | 0-18 (consecutive) |
+| `MYS.16.3867` | `data/txt/trees/MYS_16.txt` | 2729-2748 | 0-4 (consecutive) |
+| `MYS.17.4006` | `data/txt/trees/MYS_17.txt` | 4801-5016 | 0-52 (consecutive) |
+| `MYS.19.4220` | `data/txt/trees/MYS_19.txt` | 3765-3862 | 0-24 (consecutive) |
+| `MYS.20.4398` | `data/txt/trees/MYS_20.txt` | 3174-3360 | 0-44 (consecutive) |
+
+#### Historical numbering evidence (13 October)
+
+| Text ID | TXT file | First-last marker line | Complete observed sequence |
+|---|---|---|---|
+| `MYS.3.276b` | `data/txt/trees/MYS_03.txt` | 1470–1489 | `0,3,4,0,1` |
+| `MYS.3.319` | `data/txt/trees/MYS_03.txt` | 2750–2914 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,35,33,34,36` |
+| `MYS.6.920` | `data/txt/trees/MYS_06.txt` | 490–588 | `0,1,2,3,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23` |
+| `MYS.6.923` | `data/txt/trees/MYS_06.txt` | 648–723 | `0,1,2,3,4,5,6,7,8,9,10,11,12,14,13,15,16,17,18` |
+| `MYS.6.1053` | `data/txt/trees/MYS_06.txt` | 5677–5796 | `0,1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27` |
+| `MYS.9.1759` | `data/txt/trees/MYS_09.txt` | 3469–3548 | `0,1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19` |
+| `MYS.16.3867` | `data/txt/trees/MYS_16.txt` | 2729–2748 | `0,1,2,4,3` |
+| `MYS.17.4006` | `data/txt/trees/MYS_17.txt` | 4801–5016 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,34,37,36,38,39,40,41,42,43,44,45,46,48,47,49,50,51,52` |
+| `MYS.19.4220` | `data/txt/trees/MYS_19.txt` | 3765–3862 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24` |
+| `MYS.20.4398` | `data/txt/trees/MYS_20.txt` | 3174–3360 | `0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45` |
+
+The historical table and inventory preserve the earlier sequences/context. The then-proposed MYS.3.276b correction is now present as 0,1,2,3,4; no additional source edits were made by this task.

@@ -31,8 +31,13 @@
     }
     return `${value}.syn.json`;
   }
+  function linkMaterial(text, link) {
+    if (link.part !== null) return text.nodes[link.node].parts.find(p => p.id === link.part).form;
+    function material(id) { const n = text.nodes[id]; return n.children.length ? n.children.map(material).join("") : n.form || ""; }
+    return material(link.node);
+  }
   function reconcile(text) {
-    Object.values(text.links).forEach(link => {
+    Object.entries(text.links).forEach(([id, link]) => {
       const passage = text.passages[link.passage], evidence = link.evidence;
       let reason = "";
       if (!passage) reason = "Source passage removed; analysis retained.";
@@ -40,6 +45,11 @@
       else if (compact(passage.transcription) !== compact(evidence.transcription)) reason = "Transcription changed; analysis needs review.";
       link.status = reason ? "unresolved" : evidence.status;
       link.reason = reason || evidence.reason;
+      const analysis = text.annotations.analysis_form_evidence?.[id];
+      if (analysis && compact(linkMaterial(text, link)) !== compact(analysis.form)) {
+        link.status = "unresolved";
+        link.reason = [link.reason, "Analysed form changed; input-to-analysis alignment needs review."].filter(Boolean).join("; ");
+      }
     });
   }
   function parsePairs(value) {
@@ -151,7 +161,7 @@
     }
     get hasUnsaved() { return this.drafts.some(d => d.state.dirty || [...d.inputs.values()].some(i => i.value.length)); }
   }
-  const api = {State, Session, newDocument, newText, newPassage, filenameForDocument, parsePairs, units, compact, reconcile};
+  const api = {State, Session, newDocument, newText, newPassage, filenameForDocument, parsePairs, units, compact, reconcile, linkMaterial};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.COJEditing = api;
 })(typeof window !== "undefined" ? window : globalThis);

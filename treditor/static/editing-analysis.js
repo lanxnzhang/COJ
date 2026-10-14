@@ -14,7 +14,10 @@
     const h = history(s), from = redo ? h.redo : h.undo, to = redo ? h.undo : h.redo;
     if (from.length) { to.push(clone(s.document)); s.document = from.pop(); s.dirty = true; s.removal = null; }
   }
-  function check(s, p) { if (p.source !== sourceKey(s.text)) throw new Error("Source or Text identity changed. Invoke Analyse again."); }
+  function check(s, p) {
+    if (p.source !== sourceKey(s.text)) throw new Error("Source or Text identity changed. Invoke Analyse again.");
+    if (p.material !== undefined && p.material !== s.text.roots.map(id => material(s.text, id)).join("")) throw new Error("Analysed Form changed. Invoke Analyse again.");
+  }
   const provenance = (c, revision) => ({candidate: c.id, revision, count: c.count, texts: c.texts,
     support: c.support, domains: c.domains, evidence: clone(c.evidence), status: "suggested"});
   function instantiate(s, p, c, revision, retained = null) {
@@ -76,10 +79,11 @@
     if (mentionsIdentity(s.document.annotations) || mentionsIdentity(t.annotations)
       || Object.entries(t.nodes).some(([id, n]) => !set.has(id) && (mentionsIdentity(n.annotations) || n.parts.some(p => mentionsIdentity(p.annotations)))))
       throw new Error("An additional annotation may reference affected identities. Resolve its impact explicitly; existing analysis was preserved.");
-    if (old.some(id => Object.keys(t.nodes[id].annotations).some(k => !["index", "inferred_index", "raw_tag", "suggestion", "input_span"].includes(k))))
+    if (old.some(id => Object.keys(t.nodes[id].annotations).some(k => !["index", "inferred_index", "raw_tag", "suggestion", "input_span", "owns_form"].includes(k))))
       throw new Error("Additional annotations need transfer review; existing analysis was preserved.");
     const links = Object.entries(t.links).filter(([, l]) => set.has(l.node));
     instantiate(s, c.pattern, c, revision, retained); t.nodes[retained].annotations = {...prior.annotations, ...t.nodes[retained].annotations};
+    if (t.nodes[retained].children.length) delete t.nodes[retained].annotations.owns_form;
     let position = 0; const destinations = [];
     for (const nid of leaves(t, [retained])) {
       const n = t.nodes[nid], start = position, end = start + Array.from(n.form || "").length; position = end;
@@ -123,17 +127,19 @@
     const targets = new Map();
     for (const id of leaves(t, ids)) {
       const n = t.nodes[id];
-      if (!n.form || !/^(?:VB|ADJ|WH-ADJ|COP|N|DVN|PEN|PLN|PRO-N|WH-N|ADV|PRO-ADV|WH-ADV|INTJ|NUM|WH-NUM|P|XTN|MK|ACP|VAX|PFX|SFX|CL)(?:-|$)/.test(n.category || "")) continue;
-      if (n.parts.length) n.parts.forEach(p => targets.set(p.id, {node: id, part: p.id, form: p.form, script: p.script}));
-      else targets.set(id, {node: id, part: null, form: n.form, script: n.script});
+      if (n.parts.length) n.parts.filter(p => root.COJEditing.compact(p.form)).forEach(p => targets.set(p.id, {node: id, part: p.id, form: p.form, script: p.script}));
+      else if (n.form && root.COJEditing.compact(n.form)) targets.set(id, {node: id, part: null, form: n.form, script: n.script});
     }
     if (scope.parts) for (const [key, target] of targets) {
       const covered = (scope.nodes || []).some(id => descendants(t, id).includes(target.node));
       if (!covered && !scope.parts.some(p => p.node === target.node && p.part === target.part)) targets.delete(key);
     }
     if (scope.passage) for (const [key, target] of targets) {
-      const linked = Object.values(t.links).filter(l => l.node === target.node || descendants(t, l.node).includes(target.node));
+      const exact = Object.values(t.links).filter(l => l.node === target.node && l.part === target.part);
+      const linked = exact.length ? exact : Object.values(t.links).filter(l =>
+        l.part === null && (l.node === target.node || descendants(t, l.node).includes(target.node)));
       if (linked.some(l => l.status !== "valid" || l.passage !== scope.passage)) targets.delete(key);
+      if (!linked.length) targets.delete(key);
     }
     return [...targets.values()];
   }
@@ -141,7 +147,44 @@
     transact(s, () => targets.forEach(t => { const n = s.text.nodes[t.node], u = t.part ? n.parts.find(p => p.id === t.part) : n;
       if (u && (override || !u.script)) u.script = value; }));
   }
-  const api = {material, sourceKey, initial, chooseNode, chooseSpan, edit, scriptTargets, batch, undo,
+  function editForm(s, id, value, part = null) {
+    transact(s, () => {
+      const n = s.text.nodes[id];
+      if (n.children.length || (part === null && n.parts.length)) throw new Error("Edit owned terminal material or its writing parts, not a derived form.");
+      const unit = part === null ? n : n.parts.find(p => p.id === part);
+      if (!unit) throw new Error("Writing part not found.");
+      if (unit.form === value) return;
+      for (const [lid, link] of Object.entries(s.text.links)) {
+        if (!descendants(s.text, link.node).includes(id) || (link.part !== null && link.part !== part)) continue;
+        s.text.annotations.analysis_form_evidence ||= {};
+        s.text.annotations.analysis_form_evidence[lid] ||= {form: root.COJEditing.linkMaterial(s.text, link)};
+      }
+      unit.form = value;
+      if (part === null) n.annotations.owns_form = true;
+      if (part !== null) n.form = n.parts.map(p => p.form).join("");
+      root.COJEditing.reconcile(s.text);
+    });
+  }
+  function editScript(s, id, value, part = null) {
+    const targets = scriptTargets(s.text, part === null ? {nodes: [id]} : {nodes: [], parts: [{node: id, part}]});
+    if (targets.length !== 1 || targets[0].node !== id || targets[0].part !== part) throw new Error("Script belongs to a form-bearing terminal or writing part.");
+    batch(s, targets, value || null, true);
+  }
+  function selectRows(selection, rows, key, event = {}) {
+    const index = rows.findIndex(r => r.key === key), anchor = rows.findIndex(r => r.key === selection.anchor);
+    if (index < 0) return;
+    const extend = event.shiftKey && anchor >= 0, additive = event.ctrlKey || event.metaKey;
+    if (!additive) { selection.selected.clear(); selection.selectedParts.clear(); }
+    const choices = extend ? rows.slice(Math.min(index, anchor), Math.max(index, anchor) + 1) : [rows[index]];
+    for (const r of choices) {
+      if (r.part) { if (additive && !extend && selection.selectedParts.has(r.part)) selection.selectedParts.delete(r.part);
+        else selection.selectedParts.set(r.part, {node: r.id, part: r.part}); }
+      else if (additive && !extend && selection.selected.has(r.id)) selection.selected.delete(r.id);
+      else selection.selected.add(r.id);
+    }
+    if (!extend) selection.anchor = key;
+  }
+  const api = {material, sourceKey, initial, chooseNode, chooseSpan, edit, editForm, editScript, selectRows, scriptTargets, batch, undo,
     clearHistory: s => histories.delete(s), canUndo: s => !!history(s).undo.length, canRedo: s => !!history(s).redo.length};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.COJAnalysis = api;

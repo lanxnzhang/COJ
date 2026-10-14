@@ -145,13 +145,28 @@ below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
 press **Analyse**; scratch Text Input is not analysed until added to Source.
 For a new unanalysed Text, eligible dominant candidates are pre-filled and
 unsupported/non-dominant units remain editable incomplete drafts. Inspect
-**Candidates** for complete recursive patterns, counts, glosses, source addresses
-and revisions, then select **Accept this candidate** to switch directly.
+**Candidates** for tag/lemma choices, optional glosses and small attestation
+counts; select **Use** to switch directly. **Structure** expands a recursive
+pattern when needed. Detailed paths, addresses, hashes and domain labels stay
+internally retained rather than occupying the editing UI.
 **Source span candidates** offers supported lexical combinations across initial
 space units; accepting one changes that span in the same hierarchy. Existing
 imported/authored hierarchy remains unchanged by Analyse until a candidate is
-explicitly accepted. Category and lemma fields support inline correction;
-**Dictionary** opens the existing quick-reference popup.
+explicitly accepted. The compact tree uses parallel tag, owned Form, lemma and
+Script information, with indentation and connector guides. High syntactic rows
+show tags without concatenated descendant text. Edit a tag directly. Click a
+lemma to open the existing dictionary popup; hover for identification/gloss, or
+use its small pencil to edit the ID (Enter finishes). **Lemma**, **Script** and
+**Gloss** view switches change display only.
+
+Owned terminal Forms are editable; multipart material is edited through its
+individual **Part Form** fields and the aggregate is derived. Internal lexical
+forms are derived, and higher structural nodes have no independently editable
+Form. Form edits preserve Source and original alignment evidence. Affected
+relationships become unresolved if the material no longer agrees; such drafts
+remain saveable. Reverting material restores only its originally supported
+alignment status, including any prior uncertainty. Spacing-only Form changes
+retain supported alignment under the existing compacted-range convention.
 
 **Suggestion settings** defaults to 95% support and three distinct Text records.
 Changing settings takes effect on the next Analyse. Ordinary and unnamed Texts
@@ -169,13 +184,24 @@ redistribution is guessed. General whole-refinement withdrawal is deferred.
 identities. Source edits clear this analysis history to prevent undo from
 unexpectedly reverting subsequently edited Source.
 
-**Batch script annotation** supports the Text, selected subtrees/writing parts,
-or a Source line with demonstrable coverage. Check node/part selection boxes,
-choose a scope and script, inspect the target preview, then apply. Default batches
-fill empty applicable values and preserve existing values. **Explicitly override
-existing values** authorizes replacement. Multipart parent fields are not targets;
-traces/special malformed units are excluded. Unresolved/cross-line scope coverage
-is excluded and reported. Script changes have session undo/redo.
+**Script** sits inline beside each applicable terminal or writing part. Choosing
+a value there is an explicit single-unit edit, including replacement or clearing.
+Targets depend on nonempty represented material, not on whether the tag/lemma is
+resolved: WORD, unresolved-tag drafts and material with malformed tags remain
+eligible. Multipart aggregates, higher nodes, empty traces and missing-form
+artifacts are not direct targets.
+
+For efficient fills, click row space to select a node/subtree or writing part;
+Ctrl/Cmd-click adds/removes rows, and Shift-click selects a range. Focused rows
+also support Up/Down and Shift navigation. The nearby Script controls offer
+**Selection / subtree**, **Unannotated in Text**, **Whole Text**, and Source-line
+scopes. Choose a Script, inspect **Targets** if useful, then **Fill Script**.
+Every existing nonempty value is preserved. **Replace existing** changes the
+operation to **Replace Script**, explicitly authorizing replacements in its
+scope. Source-line scopes exclude unresolved or cross-line coverage; exact
+valid part links can still support unaffected writing parts. Script edits and
+fills have session undo/redo. There are no permanent per-node checkboxes or
+remote Batch script annotation section.
 
 Changing imported source content never rewrites/deletes its hierarchy.
 Whitespace-only transcription changes with unchanged original text retain

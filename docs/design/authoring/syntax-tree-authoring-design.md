@@ -1339,6 +1339,38 @@ Source edits invalidate suggestions and clear analysis undo history without
 changing annotated nodes. Full tree construction, reviewed export, automatic
 synchronization, dictionary mutation and corpus migration remain outside Stage 3.
 
+The After commit 745d5d0 (2) redesign keeps the evidence index and candidate
+ranking intact. Structural rows normally display tags only; lexical/material
+rows show compact parallel annotations. Lemma links reuse the dictionary popup
+and hover identification, with a small inline edit action. Lemma/Script/gloss
+visibility is independent of persisted annotation. Candidate cards show choices,
+optional gloss and quiet counts; detailed evidence remains internal. Exact
+candidate-pattern inspection is not added to the dictionary interface.
+
+Script targeting now follows material rather than category completeness. Nonempty
+owned terminals (including WORD, unresolved drafts and malformed-category material)
+and their writing parts are applicable. Multipart aggregates and higher nodes
+are not additional units; empty traces/missing-form artifacts are excluded.
+Transient click/Ctrl/Cmd/Shift row selection and nearby scope controls replace
+per-row checkboxes. Fill preserves all nonempty values; a direct inline edit or
+explicit scope override is required for replacement.
+
+The author also confirmed editable owned Forms. Multipart parts are edited
+explicitly and derive the aggregate; structural/internal lexical forms are not
+independent editable strings. Source and its immutable evidence are retained.
+The optional version-2 Text annotation `analysis_form_evidence` maps affected
+link IDs to the original analysed target material (`{form: ...}`), separately
+from Source evidence. Both server and browser reconciliation keep a link
+unresolved while its compacted target material differs from that baseline, combined with
+any Source mismatch or prior uncertainty. Reverting restores the original
+supported status rather than declaring an uncertain link resolved. Spacing-only
+Form edits retain supported alignment because ranges address compacted material. This is
+alignment evidence, not persisted undo/redo. A terminal ownership annotation
+`owns_form` keeps deliberately emptied owned forms editable; it does not turn
+empty traces/parser artifacts into material. Changed drafts remain saveable and
+must not be silently synchronized or later treated as export-ready. Suggestions
+are invalidated on material changes as well as Source changes.
+
 See the [current workflow guide](../../guides/current-workflows.md#source-first-drafts-in-editing)
 for the UI sequence. Acceptance tests cover attested lexical/MK alternatives,
 domain exclusion, no evidence-source mutation, refinement identities, scripts,

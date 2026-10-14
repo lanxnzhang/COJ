@@ -2205,6 +2205,62 @@ Add focused tests using the established cases such as taka, yuku, paruyama, titi
 After implementation, give me a concise summary of what changed and a practical workflow for testing Stage 3 in the UI.
 If implementation requires any linguistic/workflow behavior not determined by the current design or repository evidence, stop and ask me before deciding. Do not guess or silently introduce a new annotation rule.
 
+### After commit 745d5d0
+Before changing the Stage 3 UI, please inspect the current implementation and clarify a few things. Do not change code yet.
+1. What exactly is revision 7b7e5d7b02c9 in Candidate evidence such as NSK.1 · xml/trees/NSK.xml · block 1 · node 0.0.3 · ordinary · revision 7b7e5d7b02c9? Where is it generated, what does it identify, and what is it used for?
+2. Confirm from the current corpus/model exactly which nodes or writing parts are valid Script tag targets. My intended UI is for Script to appear/edit alongside the other lexical annotations, e.g.
+   N  titi  L050641  PHON
+   
+   rather than through permanent per-node checkboxes and a remote “Batch script annotation” section. I also need efficient ways to assign the same Script to multiple applicable words/parts without clicking a checkbox on every row. Existing non-empty Script values must not be silently overwritten.
+3. Review the current hierarchy UI. It currently renders long concatenated descendant strings on high nodes and repeats large Category, Lemma, Dictionary, and checkbox controls on nearly every branch. Confirm which of these are required by the model versus merely current UI choices. In particular, check whether high syntactic nodes need any displayed descendant form at all, and whether tag/lemma/script can instead use a compact inline tree representation.
+4. Candidate selection itself is useful, but detailed provenance such as source paths, block/node addresses, revision hashes, and ordinary/EN-SM labels should not occupy the normal editing UI. At most, a low-emphasis attestation count is useful. Detailed attestations/context can be inspected through the existing dictionary interface when needed. Confirm whether removing this provenance from the visible Candidate UI affects any underlying functionality.
+Please report your findings and identify any genuine implementation constraint before we redesign this UI. Do not guess. If the repository or current model leaves something unclear, ask me. Do not implement changes yet.
+
+#### After commit 745d5d0 (2)
+Please redesign the current Stage 3 Editing UI based on the findings we just confirmed. Keep the underlying model, evidence index and candidate logic unless required by the UI changes below.
+1. Make the hierarchy a compact tree editor, not a form for every node
+The current hierarchy is too verbose and obscures the tree structure.
+- Higher structural nodes such as CP-FINAL, IP-SUB, NP, PP, etc. should normally display only their tag and relevant structural information. Do not show concatenated descendant forms on them.
+- Form-bearing lexical/terminal nodes should use a compact inline representation, conceptually like:
+  N          titi      L050641    PHON
+  VB-ADC     yuku      L031840a   PHON
+  P-CASE-GEN no        L000520    PHON
+- Tag, form, lemma and Script should feel like parallel editable information rather than separate large Category / Lemma form sections.
+- Remove repeated Category and Lemma labels where the meaning is already clear. Do not call the node tag “Category” in the ordinary tree UI.
+- Preserve clear indentation/tree connector guides so hierarchy is immediately readable and suitable for later Stage 4 structural editing.
+2. Simplify lemma/dictionary interaction
+Remove the large repeated Dictionary button from every node.
+Keep lemma IDs compact. Make the associated dictionary entry/gloss easy to identify through lightweight hover information, and clicking the lemma should reuse the existing treditor dictionary popup/entry interface.
+Allow lemma/script/gloss information to be shown or hidden when useful without changing the underlying annotation.
+3. Completely redesign Script editing
+Remove the permanent checkbox on every branch and the current remote Batch script annotation UI. Script should appear alongside the other editable lexical information, not as a separate afterthought.
+Use the verified target rule:
+- form-bearing terminals are Script targets regardless of whether Category or lemma is resolved, including WORD;
+- multipart terminals target their individual form-bearing writing parts, not the aggregate parent;
+- higher structural nodes are not Script targets themselves;
+- empty traces and missing-form parser artifacts are excluded;
+- unusual/malformed categories do not invalidate represented form material.
+Support efficient assignment of the same Script to multiple applicable units without requiring one checkbox click per word. Suitable interactions may include ordinary multi-selection and convenient scopes such as a selected subtree, source line, or all currently unannotated applicable units in the Text.
+Fill empty Script values by default and preserve every existing non-empty value. Replacing an existing PHON/LOG/NLOG/PHON-KUN/PHON-ON/etc. value must be an explicit edit/override, never a side effect of filling a range.
+This is an editing convenience, not parent→child Script inheritance.
+4. Keep Candidates, but remove evidence noise
+The Candidates interaction is useful and should remain.
+Make each candidate primarily useful for the human decision: tag, lemma ID, useful gloss/dictionary identification, and optionally a low-emphasis attestation count.
+Remove detailed provenance from the normal Candidates UI:
+- XML paths;
+- block/node addresses;
+- source revision hashes;
+- index/debug identifiers;
+- ordinary/EN-SM provenance labels.
+Retain that information internally where required for evidence/provenance and ranking. It does not need to be visible during ordinary editing.
+Do not implement exact candidate-pattern evidence inspection in the dictionary UI now. Existing dictionary/corpus inspection is sufficient for this stage; attestation counts are only a lightweight editing reference.
+5. Preserve the useful Stage 3 behavior
+Do not regress candidate alternatives, dominant editable pre-fill, recursive subtree suggestions, MK handling, Source links, persistent identities, save/reopen, or the Stage 1+2 workflow.
+This is primarily a presentation and editing-interaction redesign. Do not begin Stage 4 upward syntax construction or Stage 5 export work.
+Please test the redesigned hierarchy with ordinary terminals, high syntactic nodes, compounds/refined nodes, multipart ipaku, WORD, unresolved-category drafts, traces, and existing mixed Script values.
+If any requested behavior is unclear or requires an assumption not established by the current design/repository, ask me before deciding or implementing it. Do not guess.
+After implementation, briefly summarize the UI changes and how I should test the new Script and Candidates workflows.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

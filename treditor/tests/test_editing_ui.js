@@ -18,6 +18,7 @@ class Element {
 }
 function all(node, predicate) { return [...(predicate(node) ? [node] : []), ...node.children.flatMap(child => all(child, predicate))]; }
 const clone = value => JSON.parse(JSON.stringify(value)), disk = new Map();
+const dictionaryOpens = [];
 let revision = 0, identity = 0;
 const imported = new editing.State(() => `corpus-${++identity}`);
 imported.document.name = "KK"; imported.addText("KK.67"); const p = imported.addPassage("多迦由久夜", "taka yuku ya");
@@ -26,6 +27,7 @@ imported.text.nodes.root = {...imported.text.nodes.n, category: "IP-MAT", form: 
 imported.text.links.l = {node: "n", passage: p, part: null, start: 0, end: 10, status: "valid", reason: "",
   evidence: {original: "多迦由久夜", transcription: "taka yuku ya", status: "valid", reason: ""}};
 async function apiFetch(url, options = {}) {
+  if (url.startsWith("/api/dictionary/")) return {fields: [{tag: ".GLOSS", values: ["test gloss"]}]};
   if (url === "/api/authoring/analyse") {
     const data = JSON.parse(options.body), text = data.document.texts[data.text_key];
     const pattern = {category: "N", lemma: "L090723", form: null, annotations: {}, children: [
@@ -61,7 +63,7 @@ async function session(options = {}) {
   const detail = new Element("div"), sidebar = new Element("div"), events = {};
   const context = vm.createContext({document: {createElement: tag => new Element(tag), querySelector: selector => selector === ".detail-pane" ? detail : sidebar},
     window: {addEventListener: (name, action) => { events[name] = action; }, confirm: options.confirm || (() => true), prompt: () => "copy"},
-    requestAnimationFrame: action => action(), COJAnalysis: analysis, COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
+    requestAnimationFrame: action => action(), openDictionaryPopupEntry: id => dictionaryOpens.push(id), COJAnalysis: analysis, COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../static/editing.js"), "utf8"), context);
   const page = detail.children[0];
   const root = new Element("div"); root.append(page, sidebar);
@@ -211,13 +213,20 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   await type(ui.input("Text Input"), "春山\nparuyama");
   await ui.button("Preview").dispatch("click"); await ui.button("Add to Source").dispatch("click");
   assert.equal(disk.size, 0); await ui.button("Analyse").dispatch("click");
-  assert.ok(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.value === "L090723").length);
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
-  await ui.button("Accept this candidate").dispatch("click");
-  const lemmaInput = all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.value === "L051724")[0];
+  assert.ok(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L090723").length);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  await ui.button("Use").dispatch("click");
+  const lemmaButton = all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L051724")[0];
+  await ui.label(`Edit ${lemmaButton.attributes["aria-label"]}`).dispatch("click");
+  const lemmaInput = ui.input(lemmaButton.attributes["aria-label"]);
   await type(lemmaInput, "L999"); await ui.button("Undo analysis edit").dispatch("click");
-  assert.ok(all(ui.page, n => n.value === "L051724").length);
-  await ui.button("Apply script batch").dispatch("click");
+  assert.ok(all(ui.page, n => n.textContent === "L051724").length);
+  const childId = lemmaButton.attributes["aria-label"].slice("Lemma ".length);
+  await type(ui.input(`Form ${childId}`), "paruX"); assert.ok(ui.button("Use").disabled);
+  assert.equal(ui.input("Transcription 1").value, "paruyama");
+  await type(ui.input(`Form ${childId}`), "paru"); assert.ok(!ui.button("Use").disabled);
+  assert.ok(!ui.page.textContent.includes("xml/trees/") && !ui.page.textContent.includes("evidence-revision"));
+  await ui.button("Fill Script").dispatch("click");
   await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Stage3-check"); await ui.button("Confirm Save").dispatch("click");
   const savedAnalysis = clone(disk.get("Stage3-check.syn.json").document), savedText = Object.values(savedAnalysis.texts)[0];
   assert.equal(Object.keys(savedText.nodes).length, 3); assert.equal(savedText.nodes[savedText.roots[0]].form, null);
@@ -225,12 +234,59 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.ok(Object.values(savedText.nodes).filter(n => !n.children.length).every(n => n.script === "PHON"));
   ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Stage3-check (saved)").dispatch("click");
   await ui.label("Open Untitled Text 1 in Stage3-check, 1").dispatch("click");
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
   assert.ok(ui.button("Undo analysis edit").disabled); // History is never saved.
   await ui.button("Analyse").dispatch("click");
   await type(ui.input("Transcription 1"), "paruyamaX");
   assert.ok(all(ui.page, n => n.textContent.includes("Analyse again to refresh candidates")).length);
-  assert.ok(ui.button("Accept this candidate").disabled);
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Category ")).length, 3);
+  assert.ok(ui.button("Use").disabled);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  // Compact structural rows, material-based Script targets and ordinary range selection.
+  const compact = new editing.State(() => `compact-${++identity}`); compact.document.name = "Compact"; compact.addText("Compact.1");
+  const line = compact.addPassage("source", "titi papa paru yama ipaku ukwi yuku");
+  const node = (form, category = "N", script = null, lemma = "L1") => ({form, category, script, lemma, children: [], parts: [], annotations: {}});
+  compact.text.nodes = {r: {...node(null, "CP-FINAL", null, null), children: ["a", "b", "q", "m", "w", "u", "t", "f"]},
+    a: node("titi", "N", "PHON"), b: node("papa", "N", "LOG"),
+    q: {...node(null), children: ["c", "d"]}, c: node("paru"), d: node("yama"),
+    m: {...node("ipaku", "VB-NML", null, "L030199a"), parts: [
+      {id: "ipa", form: "ipa", script: "LOG", annotations: {}}, {id: "ku", form: "ku", script: "PHON-ON", annotations: {}}]},
+    w: node("ukwi", "WORD", null), u: node("yuku", null, null, null),
+    t: node("", "*T*", null, null), f: node("", "____", null, null)};
+  compact.text.roots = ["r"]; compact.text.compatibility.original_block_xml = "<block/>";
+  compact.text.links.whole = {node: "r", passage: line, part: null, start: 0, end: 29, status: "valid", reason: "",
+    evidence: {original: "source", transcription: "titi papa paru yama ipaku ukwi yuku", status: "valid", reason: ""}};
+  disk.set("Compact.syn.json", {filename: "Compact.syn.json", revision: "compact-rev", document: clone(compact.document)});
+  ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Compact (saved)").dispatch("click"); await ui.label("Open Compact.1 in Compact, 1").dispatch("click");
+  const high = ui.label("Analysis row r");
+  assert.equal(all(high, n => n.attributes["aria-label"]?.startsWith("Form ")).length, 0);
+  assert.equal(all(high, n => n.className === "editing-derived-form").length, 0);
+  assert.equal(all(ui.page, n => n.tag === "input" && n.type === "checkbox" && n.attributes["aria-label"]?.startsWith("Select")).length, 0);
+  assert.ok(ui.input("Script w") && ui.input("Script u")); assert.equal(ui.input("Script r"), undefined); assert.equal(ui.input("Script m"), undefined);
+  assert.equal(ui.input("Script t"), undefined); assert.equal(ui.input("Script f"), undefined);
+  assert.ok(ui.input("Part Script ipa") && ui.input("Part Script ku"));
+  assert.equal(ui.button("Dictionary"), undefined); await ui.input("Lemma a").dispatch("click"); assert.equal(dictionaryOpens.at(-1), "L1");
+  await ui.input("Lemma a").dispatch("pointerenter"); assert.equal(ui.input("Lemma a").title, "test gloss");
+  await ui.label("Analysis row c").dispatch("click"); await ui.label("Analysis row u").dispatch("click", {shiftKey: true});
+  assert.equal(ui.input("Script scope").value, "selection"); assert.ok(ui.page.textContent.includes("4 to assign · 2 preserved"));
+  await ui.button("Fill Script").dispatch("click");
+  assert.equal(ui.input("Script c").value, "PHON"); assert.equal(ui.input("Script u").value, "PHON");
+  assert.equal(ui.input("Part Script ipa").value, "LOG"); assert.equal(ui.input("Part Script ku").value, "PHON-ON");
+  const partScript = ui.input("Part Script ku"); partScript.value = "NLOG"; await partScript.dispatch("change");
+  assert.equal(ui.input("Part Script ku").value, "NLOG"); assert.equal(ui.input("Part Script ipa").value, "LOG");
+  await ui.label("Analysis row a").dispatch("click"); await ui.label("Analysis row b").dispatch("click", {ctrlKey: true});
+  assert.ok(ui.button("Fill Script").disabled);
+  const replace = ui.input("Replace existing Script"); replace.checked = true; await replace.dispatch("change"); await ui.button("Replace Script").dispatch("click");
+  assert.equal(ui.input("Script b").value, "PHON"); await ui.button("Undo analysis edit").dispatch("click"); assert.equal(ui.input("Script b").value, "LOG");
+  const show = ui.input("Show Script"); show.checked = false; await show.dispatch("change"); assert.equal(ui.input("Script a"), undefined);
+  ui.input("Show Script").checked = true; await ui.input("Show Script").dispatch("change"); assert.equal(ui.input("Script a").value, "PHON");
+  await type(ui.input("Form a"), "titiX"); assert.equal(ui.input("Transcription 1").value, "titi papa paru yama ipaku ukwi yuku");
+  await type(ui.input("Part Form ku"), "kuX");
+  assert.ok(all(ui.label("Analysis row m"), n => n.className === "editing-derived-form" && n.textContent === "ipakuX").length);
+  await ui.button("Save").dispatch("click");
+  const changedText = Object.values(disk.get("Compact.syn.json").document.texts)[0];
+  assert.equal(changedText.nodes.m.form, "ipakuX"); assert.equal(changedText.links.whole.status, "unresolved");
+  assert.equal(changedText.links.whole.evidence.transcription, "titi papa paru yama ipaku ukwi yuku");
+  assert.equal(changedText.annotations.analysis_form_evidence.whole.form, "titipapaparuyamaipakuukwiyuku");
+  assert.equal(changedText.nodes.u.category, null); assert.equal(changedText.nodes.u.script, "PHON");
   console.log("Stage 1–3 UI flows, explicit Analyse/correction, script batches, saved identities and stale-source preservation passed.");
 })().catch(error => { console.error(error); process.exitCode = 1; });

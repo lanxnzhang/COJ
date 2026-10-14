@@ -65,6 +65,12 @@ assert.equal(s.text.links.ku.node, s.text.nodes.n.children[1]); assert.equal(s.t
 A.undo(s); const intact = clone(s.document);
 const crossing = candidate({...finer.pattern, children: [leaf("ipak", "L1"), leaf("u", "L2")]});
 assert.throws(() => A.chooseNode(s, p, "n", crossing), /writing boundaries/); assert.deepEqual(s.document, intact);
+const ipakuSource = clone(s.text.passages), ipakuEvidence = clone(s.text.links.ipa.evidence);
+A.editForm(s, "n", "ipaX", "ipa"); assert.equal(s.text.nodes.n.form, "ipaXku");
+assert.deepEqual(s.text.passages, ipakuSource); assert.deepEqual(s.text.links.ipa.evidence, ipakuEvidence);
+assert.equal(s.text.links.ipa.status, "unresolved"); assert.equal(s.text.links.ku.status, "valid");
+assert.deepEqual(A.scriptTargets(s.text, {passage: pid}).map(t => t.part), ["ku"]);
+A.editForm(s, "n", "ipa", "ipa"); assert.equal(A.scriptTargets(s.text, {passage: pid}).length, 2);
 // Explicit multi-unit selection merges only the accepted lexical span.
 s = makeState(); const source = s.addPassage("高行", "taka yuku");
 const tk = candidate({category: "VB-ADC", lemma: "L030996a", form: null, children: [leaf("taka", "L007005", "ADJ-STM"), leaf("yuku", "L031840a", "VB-ADC")], annotations: {}}, false);
@@ -72,5 +78,28 @@ p = {source: A.sourceKey(s.text), revision: "rev", units: [{form: "taka", passag
   spans: [{first: 0, last: 1, form: "taka", candidates: []}, {first: 1, last: 2, form: "yuku", candidates: []}, {first: 0, last: 2, form: "takayuku", candidates: [tk]}], nodes: {}};
 A.initial(s, p); const originalRoot = s.text.roots[0]; A.chooseSpan(s, p, p.spans[2], tk);
 assert.deepEqual(s.text.roots, [originalRoot]); assert.equal(A.material(s.text, originalRoot), "takayuku"); assert.ok(Object.values(s.text.links).every(l => l.node === originalRoot));
+// Editable owned forms preserve Source and immutable alignment evidence.
+const sourceBefore = clone(s.text.passages), evidenceBefore = clone(Object.values(s.text.links).map(l => l.evidence));
+const editedChild = s.text.nodes[originalRoot].children[0];
+A.editForm(s, editedChild, "takaX");
+assert.deepEqual(s.text.passages, sourceBefore); assert.deepEqual(Object.values(s.text.links).map(l => l.evidence), evidenceBefore);
+assert.ok(Object.values(s.text.links).every(l => l.status === "unresolved"));
+const changed = clone(s.document); const restored = makeState(); restored.open(changed, "changed.syn.json", "rev"); E.reconcile(restored.text);
+assert.ok(Object.values(restored.text.links).every(l => l.status === "unresolved"));
+A.editForm(s, editedChild, "taka"); assert.ok(Object.values(s.text.links).every(l => l.status === "valid"));
+A.editForm(s, editedChild, "ta ka"); assert.ok(Object.values(s.text.links).every(l => l.status === "valid"));
+A.editForm(s, editedChild, "taka");
+assert.throws(() => A.editForm(s, originalRoot, "derived"), /derived form/);
+// Targeting depends on real material, not a resolved lexical category.
+s.text.nodes[editedChild].category = "WORD"; A.editScript(s, editedChild, "LOG");
+s.text.nodes[editedChild].category = null; A.editScript(s, editedChild, "PHON");
+s.text.nodes[editedChild].category = "NL000033"; assert.ok(A.scriptTargets(s.text).some(t => t.node === editedChild));
+const empty = s.makeId(); s.text.nodes[empty] = {category: "*T*", lemma: null, form: "", children: [], parts: [], script: null, annotations: {}}; s.text.roots.push(empty);
+assert.ok(!A.scriptTargets(s.text).some(t => t.node === empty));
+// Pointer/keyboard range selection is transient and avoids per-row checkboxes.
+const selection = {selected: new Set(), selectedParts: new Map()}, rows = [{key: "a", id: "a"}, {key: "b", id: "b"}, {key: "p", id: "n", part: "p"}];
+A.selectRows(selection, rows, "a"); A.selectRows(selection, rows, "p", {shiftKey: true});
+assert.deepEqual([...selection.selected], ["a", "b"]); assert.equal(selection.selectedParts.get("p").node, "n");
+A.selectRows(selection, rows, "a", {ctrlKey: true}); assert.ok(!selection.selected.has("a"));
 console.log("Stage 3 defaults, explicit review, fresh IDs, refinement, scripts, preservation, undo/redo and reopen passed.");
 if (process.argv.includes("--document")) console.log(JSON.stringify(s.document));

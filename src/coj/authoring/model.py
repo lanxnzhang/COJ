@@ -32,13 +32,23 @@ def compact(value):
     return "".join(value.split())
 
 
+def link_material(text, link):
+    node = text["nodes"][link["node"]]
+    if link["part"] is not None:
+        return next(p["form"] for p in node["parts"] if p["id"] == link["part"])
+    def material(node_id):
+        record = text["nodes"][node_id]
+        return "".join(material(c) for c in record["children"]) if record["children"] else record["form"] or ""
+    return material(link["node"])
+
+
 def reconcile_links(text):
     """Only provable spacing-only changes retain validity; never edit nodes.
 
     Ranges address compacted transcription in immutable original evidence.
     Uncertain changes keep that evidence and become saveable unresolved links.
     """
-    for link in text["links"].values():
+    for link_id, link in text["links"].items():
         passage = text["passages"].get(link["passage"])
         evidence = link["evidence"]
         if passage is None:
@@ -49,6 +59,10 @@ def reconcile_links(text):
             link.update(status="unresolved", reason="Transcription changed; analysis needs review.")
         else:
             link.update(status=evidence["status"], reason=evidence["reason"])
+        analysis = text.get("annotations", {}).get("analysis_form_evidence", {}).get(link_id)
+        if analysis is not None and compact(link_material(text, link)) != compact(analysis["form"]):
+            reason = "Analysed form changed; input-to-analysis alignment needs review."
+            link.update(status="unresolved", reason="; ".join(filter(None, [link["reason"], reason])))
     return text
 
 
@@ -95,6 +109,13 @@ def validate(document):
         string(text["historical_header"], "Historical header", True)
         for name in ("passages", "nodes", "links"):
             table(text[name], name)
+        require(isinstance(text["annotations"], dict), "Text annotations must be an object.")
+        form_evidence = text["annotations"].get("analysis_form_evidence", {})
+        table(form_evidence, "analysis form evidence")
+        for link_id, record in form_evidence.items():
+            require(link_id in text["links"], "Dangling analysis form evidence.")
+            fields(record, ("form",))
+            string(record["form"], "Original analysed material")
         references(text["passage_order"], text["passages"], "passage")
         require(set(text["passage_order"]) == set(text["passages"]), "Every passage must be ordered.")
         for passage in text["passages"].values():
