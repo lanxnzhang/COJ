@@ -14,18 +14,6 @@ Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN auth
 - **Answer:**
 - **Status:** Pending
 
-## CEQ-002 — Header segmentation versus tree segmentation
-
-- **Question:** Should the manually segmented header and tree-level word-form segmentation remain independently meaningful, or should they eventually be standardized?
-- **Context:** both layers are meaningful and must not silently replace each other. In 5,013 of 5,665 current texts their content matches after spaces are removed but their segmentation differs.
-- **Example (`BS.1`):**
-  - header: `miato tukuru isi no pibiki pa ame ni itari tuti sape yusure titipapa ga tameni moropito no tameni`
-  - tree: `mi ato tukuru isi no pibiki pa ame ni itari tuti sape yusure titi papa ga tameni moro pito no tameni`
-- **Current implementation:** legacy block@header and leaf forms retain separate layers. SYN imports historical_header, independently entered/source-derived passages and persistent passage-to-node links, reporting unresolved disagreements. For new SYN Texts, the authoring design uses entered spaced transcription and derived views rather than routine independent header entry; historical header preservation remains required. The linguistic relationship of historical segmentation layers is still pending this chief-editor question.
-- **Project-author notes:** content should not normally differ; DI-007 now has 12 content discrepancies. PAQ-006 establishes report-and-continue only for TXT → XML; this is not a chief-editor answer about segmentation, nor a relaxation of SYN reviewed-export blocking.
-- **Answer:**
-- **Status:** Pending
-
 ## CEQ-003 — Terminology for `<raw-text>/<kanji>` values
 
 - **Question:** Because `<kanji>` sometimes contains placeholders rather than kanji, should the conceptual field be called **source text** or **original text** (or another term)?
@@ -65,4 +53,16 @@ multi-sentence,IP-MAT,IP-ADV,PP-OB1,NP,IP-REL,ADJ-CLS,ACP-CLS,L000033,NULL,*
 
 # Resolved / answered questions
 
-No chief-editor questions have an explicit answer yet.
+## CEQ-002 — Header segmentation versus tree segmentation
+
+- **Question:** Should the manually segmented header and tree-level word-form segmentation remain independently meaningful, or should they eventually be standardized?
+- **Context:** both layers are meaningful and must not silently replace each other. In 5,013 of 5,665 current texts their content matches after spaces are removed but their segmentation differs.
+- **Example (`BS.1`):**
+  - header: `miato tukuru isi no pibiki pa ame ni itari tuti sape yusure titipapa ga tameni moropito no tameni`
+  - tree: `mi ato tukuru isi no pibiki pa ame ni itari tuti sape yusure titi papa ga tameni moro pito no tameni`
+- **Current implementation:** legacy block@header and leaf forms retain separate layers. SYN imports historical_header, independently entered/source-derived passages and persistent passage-to-node links, reporting unresolved disagreements. For new SYN Texts, the authoring design uses entered spaced transcription and derived views rather than routine independent header entry; historical header preservation remains required. This preserves the historical layers; full reviewed legacy export remains later implementation work, not an unresolved decision to standardize their segmentation.
+- **Project-author notes:** content should not normally differ; DI-007 now has 12 content discrepancies. PAQ-006 establishes report-and-continue only for TXT → XML; this is not a chief-editor answer about segmentation, nor a relaxation of SYN reviewed-export blocking.
+- **Answer:** historical header and tree-level forms remain distinct meaningful layers. Their segmentation may differ; underlying content should not normally differ, and neither layer silently replaces the other. Preserve imported historical headers for compatibility, roundtripping and discrepancy checking rather than standardizing them to a generated tree view. For new Texts, derive header-like word segmentation from underlying annotation instead of routinely authoring a separate header.
+- **Resolution authority:** existing project-author requirements in [TODO: After commit 023a10c (4)](../../TODO.md), [REP-01](../reference/annotation-guidelines.md#rep-01--textual-layers), and the [current authoring design](../design/authoring/syntax-tree-authoring-design.md#header-like-output-and-historical-headers), reviewed at the author's request. This records the established project decision, not a newly inferred chief-editor answer.
+- **Scope:** the later choice of which historical header to emit after reviewed changes remains unspecified in the design; this resolution does not decide it or authorize any corpus change.
+- **Status:** Resolved
