@@ -109,11 +109,30 @@
     t.nodes[retained].annotations.suggestion.status = "accepted"; return retained;
   }
   function chooseNode(s, p, id, c) { check(s, p); if (!s.text.nodes[id]) throw new Error("Node changed; invoke Analyse again."); transact(s, () => replace(s, [id], c, p.revision)); }
-  function chooseSpan(s, p, span, c) {
-    check(s, p);
+  function spanRoots(s, span) {
     const ids = s.text.roots.filter(id => { const r = s.text.nodes[id].annotations.input_span; return r && r.first >= span.first && r.last <= span.last; });
     if (!ids.length || s.text.nodes[ids[0]].annotations.input_span.first !== span.first || s.text.nodes[ids.at(-1)].annotations.input_span.last !== span.last)
-      throw new Error("Span overlaps existing analysis. Choose candidates on its current node.");
+      return [];
+    return ids;
+  }
+  function canChooseSpan(s, span, c = null, revision = "") {
+    const ids = spanRoots(s, span);
+    if (!ids.length) return false;
+    if (!c) return true;
+    // Test the existing operation on a disposable copy. Imported regrouping has
+    // no input_span mapping and remains deferred to Stage 4 structural commands.
+    const text = clone(s.text); let serial = 0;
+    try {
+      replace({text, document: clone(s.document), makeId: () => {
+        let id; do { id = `candidate-preview-${++serial}`; } while (text.nodes[id]); return id;
+      }}, ids, c, revision);
+      return true;
+    } catch (_) { return false; }
+  }
+  function chooseSpan(s, p, span, c) {
+    check(s, p);
+    const ids = spanRoots(s, span);
+    if (!ids.length) throw new Error("Span overlaps existing analysis. Choose candidates on its current node.");
     transact(s, () => { const id = replace(s, ids, c, p.revision); s.text.nodes[id].annotations.input_span = {first: span.first, last: span.last}; });
   }
   function edit(s, id, field, value) {
@@ -184,7 +203,7 @@
     }
     if (!extend) selection.anchor = key;
   }
-  const api = {material, sourceKey, initial, chooseNode, chooseSpan, edit, editForm, editScript, selectRows, scriptTargets, batch, undo,
+  const api = {material, sourceKey, initial, chooseNode, chooseSpan, canChooseSpan, edit, editForm, editScript, selectRows, scriptTargets, batch, undo,
     clearHistory: s => histories.delete(s), canUndo: s => !!history(s).undo.length, canRedo: s => !!history(s).redo.length};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.COJAnalysis = api;

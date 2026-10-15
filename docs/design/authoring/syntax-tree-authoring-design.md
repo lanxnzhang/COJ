@@ -1356,6 +1356,30 @@ visibility is independent of persisted annotation. Candidate cards show choices,
 optional gloss and quiet counts; detailed evidence remains internal. Exact
 candidate-pattern inspection is not added to the dictionary interface.
 
+After commit 47b375a (3) retains the same hierarchy, evidence index and ranking.
+Candidate cards are selected by clicking or Enter/Space, show gloss-only dictionary
+information plus counts/support from the existing denominator, and initially
+expand recursive structures in the compact tree style. Missing-dictionary corpus
+annotations and dictionary-only unresolved-tag lookups have distinct short notes;
+the generic incomplete-suggestion label is removed. Dictionary lookup still adds
+no corpus votes or categories. Ordinary lemma hover shows gloss only.
+
+Multi-unit proposals use the same Candidates interaction. Existing parents use
+node Candidates; otherwise only applicable initial-root spans are offered.
+Applicability is checked on a disposable model copy through the same replacement
+operation used for acceptance. Imported nodes have no initial `input_span`
+bookkeeping, even when valid Source links exist. This pass neither infers that
+mapping nor adds imported regrouping: later Stage 4 identity-preserving structural
+operations must supply it. Empty multi-unit sections are omitted.
+
+Trace/NULL terminals display only their tags, with no material placeholder or
+lemma control. Their stored single empty leaves remain unchanged. Literal `;@N`
+is hidden; `annotations.index`/`inferred_index` and compatibility evidence remain
+preserved. This changes neither missing-lemma policy nor draft validation:
+internal lexical lemma absence is legitimate, traces/NULL need no lemma, and
+ordinary lexical omissions remain distinct from these cases. No export readiness
+checker or Stage 5 workflow is introduced.
+
 Script targeting now follows material rather than category completeness. Nonempty
 owned terminals (including WORD, unresolved drafts and malformed-category material)
 and their writing parts are applicable. Multipart aggregates and higher nodes
@@ -1363,6 +1387,10 @@ are not additional units; empty traces/missing-form artifacts are excluded.
 Transient click/Ctrl/Cmd/Shift row selection and nearby scope controls replace
 per-row checkboxes. Fill preserves all nonempty values; a direct inline edit or
 explicit scope override is required for replacement.
+Inline Script fields accept typed values with registered-value datalist help.
+The adjacent ellipsis opens local range controls; no permanent remote assignment
+toolbar is displayed. Selection, Source-line and Text scopes retain the existing
+material-based target rules and explicit replacement policy.
 
 The author also confirmed editable owned Forms. Multipart parts are edited
 explicitly and derive the aggregate; structural/internal lexical forms are not

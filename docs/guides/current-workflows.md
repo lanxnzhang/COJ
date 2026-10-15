@@ -145,19 +145,29 @@ below **Workbench**. Save writes complete multi-Text `.syn.json` Documents in
 press **Analyse**; scratch Text Input is not analysed until added to Source.
 For a new unanalysed Text, eligible dominant candidates are pre-filled and
 unsupported/non-dominant units remain editable incomplete drafts. Inspect
-**Candidates** for tag/lemma choices, optional glosses and small attestation
-counts; select **Use** to switch directly. **Structure** expands a recursive
-pattern when needed. Detailed paths, addresses, hashes and domain labels stay
+**Candidates** for clickable tag/lemma cards, concise glosses, quiet attestation
+counts and support percentages from the ranking evidence scope. Click a card
+or focus it and press Enter/Space to select it. Recursive **Structure** is
+expanded initially and uses the same compact tree presentation.
+Detailed paths, addresses, hashes and domain labels stay
 internally retained rather than occupying the editing UI.
-**Source span candidates** offers supported lexical combinations across initial
-space units; accepting one changes that span in the same hierarchy. Existing
+Multi-unit choices appear as **Candidates: taka yuku**, for example, using the
+same cards. Once a parent exists, its ordinary Candidates provides the choices.
+Only proposals applicable through the existing initial-root operation appear;
+imported regrouping is deferred to Stage 4 structural operations, without guessed
+Source-unit mappings. No empty multi-unit section is shown. Existing
 imported/authored hierarchy remains unchanged by Analyse until a candidate is
 explicitly accepted. The compact tree uses parallel tag, owned Form, lemma and
 Script information, with indentation and connector guides. High syntactic rows
 show tags without concatenated descendant text. Edit a tag directly. Click a
-lemma to open the existing dictionary popup; hover for identification/gloss, or
+lemma to open the existing dictionary popup; hover for gloss only, or
 use its small pencil to edit the ID (Enter finishes). **Lemma**, **Script** and
-**Gloss** view switches change display only.
+**Gloss** view switches change display only. Trace and NULL terminals show their
+tags alone, without empty-material or unresolved-lemma controls. Literal `;@N`
+notation is hidden while distinction metadata remains preserved. Corpus
+candidates with missing dictionary entries are distinguished from dictionary-only
+form/lemma suggestions; the latter have unresolved tags and zero matching
+corpus-pattern attestations. Neither is automatically promoted to a default.
 
 Owned terminal Forms are editable; multipart material is edited through its
 individual **Part Form** fields and the aggregate is derived. Internal lexical
@@ -184,8 +194,10 @@ redistribution is guessed. General whole-refinement withdrawal is deferred.
 identities. Source edits clear this analysis history to prevent undo from
 unexpectedly reverting subsequently edited Source.
 
-**Script** sits inline beside each applicable terminal or writing part. Choosing
-a value there is an explicit single-unit edit, including replacement or clearing.
+**Script** sits inline beside each applicable terminal or writing part. Type a
+value directly or use registered-value suggestions; commit with Enter or by
+leaving the field. This is an explicit single-unit edit, including replacement
+or clearing.
 Targets depend on nonempty represented material, not on whether the tag/lemma is
 resolved: WORD, unresolved-tag drafts and material with malformed tags remain
 eligible. Multipart aggregates, higher nodes, empty traces and missing-form
@@ -193,9 +205,10 @@ artifacts are not direct targets.
 
 For efficient fills, click row space to select a node/subtree or writing part;
 Ctrl/Cmd-click adds/removes rows, and Shift-click selects a range. Focused rows
-also support Up/Down and Shift navigation. The nearby Script controls offer
+also support Up/Down and Shift navigation. Open **…** beside a Script field for
+local range controls offering
 **Selection / subtree**, **Unannotated in Text**, **Whole Text**, and Source-line
-scopes. Choose a Script, inspect **Targets** if useful, then **Fill Script**.
+scopes. Type or choose a Script, inspect **Targets** if useful, then **Fill Script**.
 Every existing nonempty value is preserved. **Replace existing** changes the
 operation to **Replace Script**, explicitly authorizing replacements in its
 scope. Source-line scopes exclude unresolved or cross-line coverage; exact

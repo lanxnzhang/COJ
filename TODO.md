@@ -2296,6 +2296,166 @@ Finally, report:
 - whether any corpus data or XML was changed;
 - any remaining deferred or unresolved questions.
 
+### After commit 47b375a
+Before I give you the next UI revision, please clarify two current Stage 3 behaviors. Do not change code yet.
+1. What exactly is an Incomplete draft suggestion? Trace how these candidates are generated and explain why the UI can show examples such as a lemma ID that does not appear to have a corresponding dictionary entry, or even a Tag unresolved candidate with 0 attestations. Distinguish corpus-attested missing-dictionary data from anything synthesized by the suggestion engine. I need to know whether these are legitimate evidence candidates, incomplete imported annotations, fallback suggestions, or a bug before deciding how they should appear.
+2. What exactly is Source span candidates for? Under what concrete conditions does it contain anything, what authoring problem is it intended to solve, and is there a real current corpus/Stage 3 example that uses it? In my current test it expands to nothing. If it is only an unused/unfinished UI surface, say so; do not preserve it merely because the underlying alignment model has source spans.
+Please answer from the current implementation, design and repository evidence. Do not guess, and do not change anything yet. If the behavior reflects an unresolved semantic decision, tell me rather than choosing one.
+
+#### After commit 47b375a (2)
+Before the Stage 3 UI redesign, please investigate three representation/UI issues. Do not change code yet.
+1. Multi-unit candidates / Source span candidates
+Please clarify why multi-unit analysis currently needs a separate Source span candidates UI at all.
+For example, both of these span multiple initial Source transcription units:
+mi ato
+  → N miato
+      PFX-HON mi
+      N ato
+
+taka yuku
+  → VB-ADC takayuku
+      ADJ-STM taka
+      VB-ADC yuku
+
+In the imported miato example, I can already inspect/select its recursive analysis through the ordinary Candidates UI under the existing miato node. Please explain the actual implementation/data-model distinction between this and the separate span-candidate workflow for fresh Source.
+In particular:
+- Is the separate panel mainly present because fresh taka yuku has no parent analysis node yet to attach ordinary Candidates to, whereas imported miato already has one?
+- Is there any semantic/data-model reason these must remain separate user-facing concepts?
+- Could both use the same Candidates interaction, while multi-unit Source coverage remains an internal alignment detail?
+- Explain the reported imported-hierarchy input_span limitation: exactly what information is missing, whether equivalent evidence already exists elsewhere in imported data, and what would be required to apply such candidates safely.
+Do not introduce string/position heuristics merely to make acceptance succeed. Also, regardless of the eventual UI, an empty multi-unit candidate section should not be shown when no such candidate exists.
+2. ;@N representation
+Please trace ;@2 / ;@N through the current formats and implementation.
+Verify:
+- whether ;@N originates as TXT serialization/technical bookkeeping for distinguishing otherwise identical nodes;
+- whether XML preserves the same distinction, and if so in what representation;
+- how .syn.json currently stores it;
+- why Editing currently displays ;@2 as visible tree content.
+I remember ;@N as a legacy TXT mechanism rather than an ordinary linguistic node label, but verify this from the repository rather than assuming my recollection is exact.
+I need to know whether the underlying distinction must be preserved for round-trip while the literal ;@N syntax can remain hidden from ordinary Editing, or whether there is some annotation meaning the user must see in another form.
+3. Trace / NULL representation and lemma completeness
+Please investigate why a trace such as *T* currently appears in Editing with an additional empty-set/empty node and lemma unresolved.
+Trace the exact representation through:
+- TXT;
+- XML;
+- legacy → authoring import;
+- .syn.json;
+- validation/completeness logic;
+- the current hierarchy renderer.
+Determine whether the extra empty node and lemma requirement are actually stored in the model or are being introduced by an adapter/UI transformation.
+My intended interpretation is that a trace such as *T* is itself a terminal annotation and does not require a lemma ID. Do not create another empty child merely to represent it.
+More generally, do not treat all missing lemmas alike:
+- ordinary lowest-level lexical material is normally expected to have a lemma, subject to documented exceptions;
+- traces do not require lemmas;
+- internal lexical nodes may legitimately have no lemma;
+- higher syntactic nodes generally do not require lexical lemmas.
+Please check whether this matches the decisions already recorded in the design and tests, and whether the current problem is in the stored representation, validation, import adapter, or UI. Do not merely hide the warning if the underlying representation is wrong.
+Report your findings concisely and identify what actually needs correction before I send the UI-redesign instructions.
+Do not change anything yet. Do not guess unresolved semantics. If repository evidence conflicts with my interpretation or leaves a required decision unclear, ask me before deciding.
+
+#### After commit 47b375a (3)
+Please now implement the Stage 3 UI redesign based on the confirmed findings. Keep the underlying hierarchy/evidence model and ranking behavior unchanged unless explicitly required below. Do not begin general Stage 4 tree construction.
+1. Make the hierarchy compact and structurally readable
+Replace the current form-like layout with a compact tree presentation.
+For form-bearing lexical/terminal nodes, keep the editable information on one horizontal row where applicable:
+ADJ-STM   moro   L007011   PHON
+
+Tag, form, lemma and Script should appear as parallel editable information, rather than Category, form, Lemma, and Script being spread across several lines.
+Higher structural nodes such as CP-FINAL, IP-SUB, NP, PP, etc. should normally display only their tag and genuinely applicable annotations. Do not display concatenated descendant yields on high nodes.
+Internal lexical nodes may show a derived form where useful, for example:
+N   moropito   L050486
+│
+├─ ADJ-STM   moro   L007011   PHON
+└─ N         pito   L050046   PHON
+
+Preserve clear indentation/connectors so the hierarchy itself is visually obvious.
+Remove repetitive Category / Lemma labels from ordinary rows. Do not call the node tag “Category” in the normal tree UI.
+2. Simplify lemma and dictionary interaction
+Remove the large repeated Dictionary button from every node.
+Lemma hover in Editing should show gloss only. Do not include Meaning, POS, provenance or other unrelated information there.
+Clicking the lemma should continue to open the existing treditor dictionary interface.
+3. Redesign Script editing
+Remove the permanent checkbox on every branch and the current separate/remote Script-assignment UI.
+Script should appear and be editable alongside tag/form/lemma:
+N   titi   L050641   PHON
+
+Script must support direct typing/editing, with registered values available through autocomplete/dropdown assistance; do not make dropdown selection mandatory.
+Use the verified target rule:
+- form-bearing terminals are Script targets regardless of resolved Category/lemma, including WORD;
+- multipart terminals target their individual form-bearing writing parts;
+- higher structural nodes are not themselves Script targets;
+- traces and missing-form artifacts are excluded;
+- malformed/unusual Categories do not invalidate represented material.
+Provide efficient ways to assign the same Script to multiple applicable units without permanent checkboxes—for example ordinary multi-selection and useful ranges/scopes such as a source line, subtree, or all unannotated applicable units in the Text.
+Filling a range should fill empty Script values by default and preserve every existing non-empty value. Replacement of an existing value must be explicit.
+This is an editing convenience, not Script inheritance from parent nodes.
+4. Correct trace / NULL presentation
+The underlying trace/NULL representation is already correct; fix the renderer rather than the corpus/model.
+A trace should simply appear as:
+*T*
+
+and NULL as:
+NULL
+
+Do not display a redundant ∅ material label, lemma editor, or lemma unresolved warning for these terminals.
+More generally, keep completeness semantics distinct:
+- ordinary lowest-level lexical material normally expects a lemma, subject to documented exceptions;
+- traces/NULL do not;
+- internal lexical nodes may legitimately lack a lemma;
+- higher syntax nodes generally do not require lexical lemmas.
+Missing lemma on an internal lexical node may remain a lightweight reminder where useful, but it must not by itself make the draft unsaveable or block later export.
+5. Hide literal ;@N notation
+Preserve the existing distinction metadata internally:
+TXT:       N;@2
+XML:       index="2"
+.syn.json: annotations.index
+
+but do not display literal ;@2 / ;@N serialization notation in the ordinary Editing hierarchy. It is compatibility bookkeeping, not part of the visible linguistic tag.
+6. Redesign Candidates as lightweight selectable cards
+Keep the Candidates functionality, but make it visually simple and quick to operate.
+The whole card/row should be clickable to select the candidate. Remove the repeated Use button.
+Show only information useful for the editing decision:
+- tag;
+- lemma ID;
+- concise gloss where available;
+- a low-emphasis gray attestation count;
+- beside it, an equally low-emphasis gray support percentage using the same denominator/evidence scope as the ranking policy.
+Keep these cards lightweight. Do not turn them into evidence/debug panels.
+Do not show XML paths, block/node addresses, revision hashes, candidate IDs or evidence-domain provenance in ordinary Candidates.
+Remove the generic Incomplete draft suggestion label. Distinguish minimally between:
+- a real corpus-attested annotation whose lemma ID is missing from the dictionary;
+- a dictionary-only form/lemma suggestion whose tag remains unresolved and which has no matching corpus-pattern attestations.
+Do not imply that either is fabricated corpus evidence.
+Exact candidate-pattern evidence inspection through Dictionary is deferred; it is not needed for this UI pass.
+7. Show candidate structures immediately
+If a candidate proposes recursive structure, show Structure expanded by default. The user should not need an extra click just to see what structure the candidate would apply.
+Use the same compact tree language inside the candidate card.
+8. Unify multi-unit analysis with Candidates
+Do not treat Source span candidates as a separate linguistic/user-facing concept.
+Cases such as:
+mi ato
+  → N miato
+      PFX-HON mi
+      N ato
+
+and:
+taka yuku
+  → VB-ADC takayuku
+      ADJ-STM taka
+      VB-ADC yuku
+
+are both analysis candidates covering multiple initial Source units. The distinction between an existing parent and a candidate proposing a new parent is an implementation/state distinction, not a separate annotation concept.
+Present multi-unit proposals through the same Candidates visual/interaction language where possible. Preserve their multi-unit Source coverage internally.
+Do not show an empty multi-unit candidate section when no such candidate exists.
+For imported hierarchies, do not invent string/position heuristics or a second regrouping implementation merely to make a multi-unit candidate applicable. Safe regrouping of existing nodes should later reuse the general structural operations developed in Stage 4 (e.g. identity-preserving Wrap/regroup), rather than duplicating that logic in Stage 3.
+It is acceptable for the current Stage 3 UI to expose only candidates that can be safely applied with the operations currently available. Keep the imported-regrouping limitation explicit in the implementation/design rather than silently guessing.
+9. Preserve existing behavior
+Do not regress dominant editable pre-fill, alternative candidates, MK handling, Source/alignment evidence, persistent identities, save/reopen, or Stage 1+2 workflows.
+Do not implement general Stage 4 upward syntax construction or Stage 5 export work in this pass.
+Test the redesigned UI with high syntactic nodes, ordinary lexical terminals, moropito/titipapa, traces and NULL, multipart material, WORD, unresolved-category drafts, mixed existing Script values, missing-dictionary corpus candidates, dictionary-only candidates, and taka yuku-style multi-unit analysis.
+If anything here requires a linguistic/workflow assumption not established by the current design or repository evidence, ask me before deciding or implementing it. Do not guess.
+After implementation, briefly summarize the changes and tell me how to test the hierarchy, Script editing, Candidates and multi-unit analysis workflows.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

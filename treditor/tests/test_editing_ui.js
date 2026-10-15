@@ -20,6 +20,7 @@ function all(node, predicate) { return [...(predicate(node) ? [node] : []), ...n
 const clone = value => JSON.parse(JSON.stringify(value)), disk = new Map();
 const dictionaryOpens = [];
 let revision = 0, identity = 0;
+let analysisOverride = null;
 const imported = new editing.State(() => `corpus-${++identity}`);
 imported.document.name = "KK"; imported.addText("KK.67"); const p = imported.addPassage("多迦由久夜", "taka yuku ya");
 imported.text.nodes.n = {category: "VB", lemma: "L1", form: "takayukuya", children: [], parts: [], script: null, annotations: {}};
@@ -27,13 +28,14 @@ imported.text.nodes.root = {...imported.text.nodes.n, category: "IP-MAT", form: 
 imported.text.links.l = {node: "n", passage: p, part: null, start: 0, end: 10, status: "valid", reason: "",
   evidence: {original: "多迦由久夜", transcription: "taka yuku ya", status: "valid", reason: ""}};
 async function apiFetch(url, options = {}) {
-  if (url.startsWith("/api/dictionary/")) return {fields: [{tag: ".GLOSS", values: ["test gloss"]}]};
+  if (url.startsWith("/api/dictionary/")) return {fields: [{tag: ".GLOSS", values: ["test gloss"]},
+    {tag: ".MEANING", values: ["meaning must not appear on hover"]}, {tag: ".POS", values: ["NOUN"]}]};
   if (url === "/api/authoring/analyse") {
     const data = JSON.parse(options.body), text = data.document.texts[data.text_key];
     const pattern = {category: "N", lemma: "L090723", form: null, annotations: {}, children: [
       {category: "N", lemma: "L051724", form: "paru", children: [], annotations: {}},
       {category: "N", lemma: "L050034", form: "yama", children: [], annotations: {}}]};
-    const candidate = {id: "paruyama", pattern, eligible: true, default: true, count: 8, texts: 8, support: 1,
+    const candidate = {id: "paruyama", pattern, dictionary: {gloss: "spring mountain"}, eligible: true, default: true, count: 8, texts: 8, support: 1,
       domains: {ordinary: 8, "EN/SM": 0}, evidence: [{text_id: "MYS.8.1421", source: "xml/trees/MYS_08.xml", ordinal: 0, address: "0", domain: "ordinary", revision: "evidence-revision"}]};
     const units = text.passage_order.flatMap(passage => {
       let offset = 0;
@@ -42,6 +44,7 @@ async function apiFetch(url, options = {}) {
         return {form, passage, start, end: offset};
       });
     });
+    if (analysisOverride) return analysisOverride(text, units);
     return {revision: "evidence-revision", domain: "ordinary", units,
       spans: units.map((u, i) => ({first: i, last: i + 1, form: u.form, candidates: u.form === "paruyama" ? [candidate] : []})),
       nodes: {}, scripts: ["LOG", "PHON", "NLOG"]};
@@ -215,17 +218,22 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.equal(disk.size, 0); await ui.button("Analyse").dispatch("click");
   assert.ok(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L090723").length);
   assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
-  await ui.button("Use").dispatch("click");
+  assert.equal(ui.button("Use"), undefined);
+  assert.ok(ui.page.textContent.includes("8 attestations · 100.0% support"));
+  assert.ok(all(ui.page, n => n.className === "editing-candidate-structure").every(n => n.open));
+  assert.ok(!ui.page.textContent.includes("Source span candidates"));
+  await ui.label("Choose N L090723 for paruyama").dispatch("click");
   const lemmaButton = all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L051724")[0];
   await ui.label(`Edit ${lemmaButton.attributes["aria-label"]}`).dispatch("click");
   const lemmaInput = ui.input(lemmaButton.attributes["aria-label"]);
   await type(lemmaInput, "L999"); await ui.button("Undo analysis edit").dispatch("click");
   assert.ok(all(ui.page, n => n.textContent === "L051724").length);
   const childId = lemmaButton.attributes["aria-label"].slice("Lemma ".length);
-  await type(ui.input(`Form ${childId}`), "paruX"); assert.ok(ui.button("Use").disabled);
+  await type(ui.input(`Form ${childId}`), "paruX"); assert.ok(ui.label("Choose N L090723 for paruyama").disabled);
   assert.equal(ui.input("Transcription 1").value, "paruyama");
-  await type(ui.input(`Form ${childId}`), "paru"); assert.ok(!ui.button("Use").disabled);
+  await type(ui.input(`Form ${childId}`), "paru"); assert.ok(!ui.label("Choose N L090723 for paruyama").disabled);
   assert.ok(!ui.page.textContent.includes("xml/trees/") && !ui.page.textContent.includes("evidence-revision"));
+  await ui.label(`Script range ${childId}`).dispatch("click");
   await ui.button("Fill Script").dispatch("click");
   await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Stage3-check"); await ui.button("Confirm Save").dispatch("click");
   const savedAnalysis = clone(disk.get("Stage3-check.syn.json").document), savedText = Object.values(savedAnalysis.texts)[0];
@@ -239,30 +247,42 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   await ui.button("Analyse").dispatch("click");
   await type(ui.input("Transcription 1"), "paruyamaX");
   assert.ok(all(ui.page, n => n.textContent.includes("Analyse again to refresh candidates")).length);
-  assert.ok(ui.button("Use").disabled);
+  assert.ok(ui.label("Choose N L090723 for paruyama").disabled);
   assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
   // Compact structural rows, material-based Script targets and ordinary range selection.
   const compact = new editing.State(() => `compact-${++identity}`); compact.document.name = "Compact"; compact.addText("Compact.1");
-  const line = compact.addPassage("source", "titi papa paru yama ipaku ukwi yuku");
+  const line = compact.addPassage("source", "titi papa moro pito ipaku ukwi yuku");
   const node = (form, category = "N", script = null, lemma = "L1") => ({form, category, script, lemma, children: [], parts: [], annotations: {}});
-  compact.text.nodes = {r: {...node(null, "CP-FINAL", null, null), children: ["a", "b", "q", "m", "w", "u", "t", "f"]},
+  compact.text.nodes = {r: {...node(null, "CP-FINAL", null, null), children: ["h", "q", "m", "w", "u", "t", "z", "f"]},
+    h: {...node(null, "N", null, "L050402"), children: ["a", "b"]},
     a: node("titi", "N", "PHON"), b: node("papa", "N", "LOG"),
-    q: {...node(null), children: ["c", "d"]}, c: node("paru"), d: node("yama"),
+    q: {...node(null, "N", null, null), children: ["c", "d"]},
+    c: node("moro", "ADJ-STM", null, "L007011"), d: node("pito", "N", null, "L050046"),
     m: {...node("ipaku", "VB-NML", null, "L030199a"), parts: [
       {id: "ipa", form: "ipa", script: "LOG", annotations: {}}, {id: "ku", form: "ku", script: "PHON-ON", annotations: {}}]},
     w: node("ukwi", "WORD", null), u: node("yuku", null, null, null),
-    t: node("", "*T*", null, null), f: node("", "____", null, null)};
+    t: node("", "*T*", null, null), z: node("", "NULL", null, null), f: node("", "____", null, null)};
+  compact.text.nodes.b.annotations.index = "2";
   compact.text.roots = ["r"]; compact.text.compatibility.original_block_xml = "<block/>";
   compact.text.links.whole = {node: "r", passage: line, part: null, start: 0, end: 29, status: "valid", reason: "",
-    evidence: {original: "source", transcription: "titi papa paru yama ipaku ukwi yuku", status: "valid", reason: ""}};
+    evidence: {original: "source", transcription: "titi papa moro pito ipaku ukwi yuku", status: "valid", reason: ""}};
   disk.set("Compact.syn.json", {filename: "Compact.syn.json", revision: "compact-rev", document: clone(compact.document)});
   ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Compact (saved)").dispatch("click"); await ui.label("Open Compact.1 in Compact, 1").dispatch("click");
+  await ui.label("Script range c").dispatch("click");
   const high = ui.label("Analysis row r");
   assert.equal(all(high, n => n.attributes["aria-label"]?.startsWith("Form ")).length, 0);
   assert.equal(all(high, n => n.className === "editing-derived-form").length, 0);
   assert.equal(all(ui.page, n => n.tag === "input" && n.type === "checkbox" && n.attributes["aria-label"]?.startsWith("Select")).length, 0);
   assert.ok(ui.input("Script w") && ui.input("Script u")); assert.equal(ui.input("Script r"), undefined); assert.equal(ui.input("Script m"), undefined);
   assert.equal(ui.input("Script t"), undefined); assert.equal(ui.input("Script f"), undefined);
+  for (const id of ["t", "z"]) {
+    assert.equal(ui.input(`Lemma ${id}`), undefined); assert.equal(ui.input(`Form ${id}`), undefined);
+    assert.equal(all(ui.label(`Analysis row ${id}`), n => n.className === "editing-derived-form").length, 0);
+  }
+  assert.ok(!ui.page.textContent.includes(";@2"));
+  assert.equal(all(ui.label("Analysis row h"), n => n.className === "editing-derived-form")[0].textContent, "titipapa");
+  assert.equal(all(ui.label("Analysis row q"), n => n.className === "editing-derived-form")[0].textContent, "moropito");
+  assert.equal(all(ui.label("Analysis row q"), n => n.className === "editing-incomplete").length, 0);
   assert.ok(ui.input("Part Script ipa") && ui.input("Part Script ku"));
   assert.equal(ui.button("Dictionary"), undefined); await ui.input("Lemma a").dispatch("click"); assert.equal(dictionaryOpens.at(-1), "L1");
   await ui.input("Lemma a").dispatch("pointerenter"); assert.equal(ui.input("Lemma a").title, "test gloss");
@@ -273,20 +293,70 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.equal(ui.input("Part Script ipa").value, "LOG"); assert.equal(ui.input("Part Script ku").value, "PHON-ON");
   const partScript = ui.input("Part Script ku"); partScript.value = "NLOG"; await partScript.dispatch("change");
   assert.equal(ui.input("Part Script ku").value, "NLOG"); assert.equal(ui.input("Part Script ipa").value, "LOG");
+  assert.equal(ui.input("Part Script ku").tag, "input");
+  assert.equal(ui.input("Part Script ku").attributes.list, "editing-script-values");
+  const typed = ui.input("Script w"); typed.value = "CUSTOM-SCRIPT"; await typed.dispatch("keydown", {key: "Enter"});
+  assert.equal(ui.input("Script w").value, "CUSTOM-SCRIPT");
   await ui.label("Analysis row a").dispatch("click"); await ui.label("Analysis row b").dispatch("click", {ctrlKey: true});
   assert.ok(ui.button("Fill Script").disabled);
   const replace = ui.input("Replace existing Script"); replace.checked = true; await replace.dispatch("change"); await ui.button("Replace Script").dispatch("click");
   assert.equal(ui.input("Script b").value, "PHON"); await ui.button("Undo analysis edit").dispatch("click"); assert.equal(ui.input("Script b").value, "LOG");
   const show = ui.input("Show Script"); show.checked = false; await show.dispatch("change"); assert.equal(ui.input("Script a"), undefined);
   ui.input("Show Script").checked = true; await ui.input("Show Script").dispatch("change"); assert.equal(ui.input("Script a").value, "PHON");
-  await type(ui.input("Form a"), "titiX"); assert.equal(ui.input("Transcription 1").value, "titi papa paru yama ipaku ukwi yuku");
+  await type(ui.input("Form a"), "titiX"); assert.equal(ui.input("Transcription 1").value, "titi papa moro pito ipaku ukwi yuku");
   await type(ui.input("Part Form ku"), "kuX");
   assert.ok(all(ui.label("Analysis row m"), n => n.className === "editing-derived-form" && n.textContent === "ipakuX").length);
   await ui.button("Save").dispatch("click");
   const changedText = Object.values(disk.get("Compact.syn.json").document.texts)[0];
   assert.equal(changedText.nodes.m.form, "ipakuX"); assert.equal(changedText.links.whole.status, "unresolved");
-  assert.equal(changedText.links.whole.evidence.transcription, "titi papa paru yama ipaku ukwi yuku");
-  assert.equal(changedText.annotations.analysis_form_evidence.whole.form, "titipapaparuyamaipakuukwiyuku");
+  assert.equal(changedText.links.whole.evidence.transcription, "titi papa moro pito ipaku ukwi yuku");
+  assert.equal(changedText.annotations.analysis_form_evidence.whole.form, "titipapamoropitoipakuukwiyuku");
+  assert.equal(changedText.nodes.q.lemma, null); // Internal lexical absence remains saveable.
   assert.equal(changedText.nodes.u.category, null); assert.equal(changedText.nodes.u.script, "PHON");
+  assert.equal(changedText.nodes.b.annotations.index, "2");
+  assert.deepEqual(changedText.nodes.t.children, []); assert.equal(changedText.nodes.t.lemma, null);
+  // Corpus incompleteness and dictionary-only lookup are distinct, without evidence/debug clutter.
+  const choice = (pattern, overrides = {}) => ({id: "attested", pattern, eligible: true, complete: false, default: false,
+    count: 1, texts: 1, support: .25, evidence: [], domains: {ordinary: 1, "EN/SM": 0}, ...overrides});
+  const leafPattern = (form, category, lemma) => ({form, category, lemma, children: [], annotations: {}});
+  const missing = choice(leafPattern("no", "N", "L052548b"));
+  const lookup = choice(leafPattern("no", null, "L052548"), {id: "dictionary:L052548", eligible: false,
+    count: 0, texts: 0, support: 0, dictionary: {gloss: "baggage", meanings: ["hidden meaning"]}});
+  analysisOverride = (text, units) => ({revision: "rev", units, nodes: {}, scripts: ["PHON", "LOG"],
+    spans: [{first: 0, last: 1, form: "no", candidates: [missing, lookup]}]});
+  ui = await session(); await ui.button("New Text").dispatch("click");
+  await type(ui.input("Text Input"), "source\nno"); await ui.button("Preview").dispatch("click");
+  await ui.button("Add to Source").dispatch("click"); await ui.button("Analyse").dispatch("click");
+  assert.ok(ui.page.textContent.includes("Corpus annotation · lemma absent from dictionary"));
+  assert.ok(ui.page.textContent.includes("Dictionary only · tag unresolved"));
+  assert.ok(ui.page.textContent.includes("1 attestations · 25.0% support"));
+  assert.ok(ui.page.textContent.includes("0 attestations · 0.0% support"));
+  assert.ok(!ui.page.textContent.includes("Incomplete draft suggestion") && !ui.page.textContent.includes("hidden meaning"));
+  assert.equal(ui.button("Fill Script"), undefined); // Range editing is local and explicitly opened.
+  await ui.label("Choose unclassified L052548 for no").dispatch("keydown", {key: "Enter"});
+  await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Dictionary-choice"); await ui.button("Confirm Save").dispatch("click");
+  const dictionaryNode = Object.values(Object.values(disk.get("Dictionary-choice.syn.json").document.texts)[0].nodes)[0];
+  assert.equal(dictionaryNode.lemma, "L052548"); assert.equal(dictionaryNode.category, null);
+  // Multi-unit choices use the same cards, with the existing span operation only.
+  const takayuku = choice({category: "VB-ADC", lemma: "L030996a", form: null, annotations: {}, children: [
+    leafPattern("taka", "ADJ-STM", "L007005"), leafPattern("yuku", "VB-ADC", "L031840a")]},
+    {id: "takayuku", count: 2, texts: 2, support: 1, complete: true, dictionary: {gloss: "go high"}});
+  analysisOverride = (text, units) => ({revision: "rev", units, nodes: {}, scripts: ["PHON", "LOG"],
+    spans: [...units.map((u, i) => ({first: i, last: i + 1, form: u.form, candidates: []})),
+      {first: 0, last: 2, form: "takayuku", candidates: [takayuku]}]});
+  ui = await session(); await ui.button("New Text").dispatch("click");
+  await type(ui.input("Text Input"), "source\ntaka yuku"); await ui.button("Preview").dispatch("click");
+  await ui.button("Add to Source").dispatch("click"); await ui.button("Analyse").dispatch("click");
+  assert.ok(ui.summary("Candidates: taka yuku"));
+  await ui.label("Choose VB-ADC L030996a for taka yuku").dispatch("click");
+  assert.equal(ui.summary("Candidates: taka yuku"), undefined); // Existing parent now owns Candidates.
+  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Span-choice"); await ui.button("Confirm Save").dispatch("click");
+  const spanText = Object.values(disk.get("Span-choice.syn.json").document.texts)[0];
+  assert.equal(spanText.roots.length, 1); assert.deepEqual(spanText.nodes[spanText.roots[0]].annotations.input_span, {first: 0, last: 2});
+  assert.ok(Object.values(spanText.links).every(l => l.status === "valid"));
+  ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse KK (corpus)").dispatch("click");
+  await ui.label("Open KK.67 in KK, 1").dispatch("click"); await ui.button("Analyse").dispatch("click");
+  assert.equal(ui.summary("Candidates: taka yuku"), undefined); // No invented imported input_span mapping.
   console.log("Stage 1–3 UI flows, explicit Analyse/correction, script batches, saved identities and stale-source preservation passed.");
 })().catch(error => { console.error(error); process.exitCode = 1; });

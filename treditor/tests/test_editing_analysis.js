@@ -76,8 +76,20 @@ s = makeState(); const source = s.addPassage("高行", "taka yuku");
 const tk = candidate({category: "VB-ADC", lemma: "L030996a", form: null, children: [leaf("taka", "L007005", "ADJ-STM"), leaf("yuku", "L031840a", "VB-ADC")], annotations: {}}, false);
 p = {source: A.sourceKey(s.text), revision: "rev", units: [{form: "taka", passage: source, start: 0, end: 4}, {form: "yuku", passage: source, start: 4, end: 8}],
   spans: [{first: 0, last: 1, form: "taka", candidates: []}, {first: 1, last: 2, form: "yuku", candidates: []}, {first: 0, last: 2, form: "takayuku", candidates: [tk]}], nodes: {}};
-A.initial(s, p); const originalRoot = s.text.roots[0]; A.chooseSpan(s, p, p.spans[2], tk);
+A.initial(s, p); const originalRoot = s.text.roots[0];
+const beforeApplicability = clone(s.document);
+assert.ok(A.canChooseSpan(s, p.spans[2], tk, p.revision));
+assert.deepEqual(s.document, beforeApplicability); // Applicability consumes no real identities or edits.
+const unsafe = candidate({...tk.pattern, children: [leaf("different", "L1")]}, false);
+assert.ok(!A.canChooseSpan(s, p.spans[2], unsafe, p.revision));
+assert.deepEqual(s.document, beforeApplicability);
+A.chooseSpan(s, p, p.spans[2], tk);
 assert.deepEqual(s.text.roots, [originalRoot]); assert.equal(A.material(s.text, originalRoot), "takayuku"); assert.ok(Object.values(s.text.links).every(l => l.node === originalRoot));
+const importedSpan = clone(s.text.nodes[originalRoot].annotations.input_span);
+delete s.text.nodes[originalRoot].annotations.input_span;
+assert.ok(!A.canChooseSpan(s, p.spans[2], tk));
+assert.throws(() => A.chooseSpan(s, p, p.spans[2], tk), /Span overlaps/);
+s.text.nodes[originalRoot].annotations.input_span = importedSpan;
 // Editable owned forms preserve Source and immutable alignment evidence.
 const sourceBefore = clone(s.text.passages), evidenceBefore = clone(Object.values(s.text.links).map(l => l.evidence));
 const editedChild = s.text.nodes[originalRoot].children[0];
