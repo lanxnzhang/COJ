@@ -2456,6 +2456,106 @@ Test the redesigned UI with high syntactic nodes, ordinary lexical terminals, mo
 If anything here requires a linguistic/workflow assumption not established by the current design or repository evidence, ask me before deciding or implementing it. Do not guess.
 After implementation, briefly summarize the changes and tell me how to test the hierarchy, Script editing, Candidates and multi-unit analysis workflows.
 
+### After commit 8488dcb
+Before the next Stage 3 UI pass, please verify two implementation details. Do not change code yet.
+1. Tooltip IDs
+When hovering over controls such as the lemma edit pencil or the Script … control, the tooltip currently shows a normal label such as Edit lemma / Script range followed by a long alphanumeric string.
+Please identify exactly what that string is, where it comes from, and whether it has any user-facing purpose. My expectation is that persistent/internal IDs should remain in the model but should not appear in ordinary Editing tooltips unless there is a genuine annotation need.
+2. Candidate attestation counts and Search integration
+Please explain exactly how a Candidate's:
+3641 attestations · 60.9% support
+
+is currently calculated: what constitutes an attestation, what evidence set/domain is counted, and what denominator produces the percentage.
+I would like the UI eventually simplified to:
+3641 attestations · 60.9%
+
+with the attestation count clickable when it is nonzero.
+Please check whether the existing treditor Search/results infrastructure can be reused so clicking 3641 attestations opens a normal Search-style result list containing the same evidence set represented by that count, with useful corpus context. It is important that this not degrade into a generic lemma search whose result set differs from the displayed count.
+If exact reuse is possible, explain how. If the current Search infrastructure cannot express the same evidence query, explain what is missing rather than implementing a different-count approximation.
+0 attestations should remain non-clickable.
+For context, the next UI pass will also address node selection toggling, a single top-level Script range control, Candidate-card simplification, and an Auto-collapse option where opening one node's Candidates closes the previously open Candidates by default. Those behaviors are already decided; you do not need to investigate them now.
+Do not change anything yet. If either behavior is ambiguous, inspect the current implementation/repository rather than guessing.
+
+#### After commit 8488dcb (2)
+Before the next UI implementation pass, please clarify the revision requirement you mentioned for Candidate → attestation Search integration. Do not change code yet.
+You proposed resolving candidate ID + queried form + evidence domain + revision through the evidence index.
+1. What exactly does revision mean here: the overall evidence-index revision, individual source-file revision(s), or something else?
+2. Why is a pinned revision necessary for this user-facing workflow?
+3. Since attestation counts are primarily a current reference for human editing, could clicking 3641 attestations simply query/recompute against the latest current evidence data, so the count/results refresh when corpus data changes?
+4. What concrete consistency or correctness problem would that cause, if any?
+5. Distinguish what is needed for persistent suggestion provenance/audit from what is actually needed for an interactive “show me the current attestations for this candidate” Search result.
+I would prefer current/live evidence for the interactive Search view unless there is a concrete reason it would be unsafe or misleading.
+Also note for the upcoming UI pass: node selection should use simple click-to-toggle multi-selection. Clicking A, then B, then C selects all three; clicking an already selected node deselects it. Modifier keys should not be required for ordinary multi-selection. A range shortcut such as Shift-click may be added for convenience, but it should not be required.
+Do not implement anything yet. If there is a genuine data-integrity reason to retain revision pinning in the interactive Search workflow, explain the concrete case rather than assuming it is required.
+
+#### After commit 8488dcb (3)
+Please implement the next Stage 3 UI pass using the confirmed behavior below. Keep the underlying hierarchy/evidence model unchanged unless explicitly required. Do not begin Stage 4 tree construction.
+1. Simple click-to-toggle multi-selection
+Node selection should support easy multi-selection without modifier keys:
+- click A → A selected;
+- click B → A + B selected;
+- click C → A + B + C selected;
+- click selected B again → B deselected, leaving A + C.
+Do not require Ctrl/Cmd for ordinary multi-selection. A range shortcut such as Shift-click may exist as an additional convenience, but is not required for basic multi-selection.
+Keep the selection model suitable for later reuse by Stage 4 structural operations such as Wrap in Parent.
+2. Remove internal IDs from tooltips
+The long strings currently shown after Edit lemma and Script range are persistent internal node/part IDs. Keep those IDs internally, but remove them from ordinary tooltips and accessibility labels.
+Use concise human-facing labels such as:
+Edit lemma
+Script range
+
+3. One Script range tool for the hierarchy
+Do not open a separate Script-range panel beneath every node.
+Keep direct inline Script editing on applicable rows, but provide one compact Script range tool at the top of the hierarchy workspace for assigning the same Script to multiple selected/applicable units.
+It should operate on the current selection/scope using the already established represented-material target rules. Fill empty Script values by default; preserve existing non-empty values unless replacement is explicitly requested.
+Remove the redundant per-node Script-range … interaction if it is no longer needed.
+4. Simplify Candidate statistics
+Change:
+3641 attestations · 60.9% support
+
+to:
+3641 attestations · 60.9%
+
+Keep both values visually low-emphasis, e.g. gray secondary text. The percentage remains occurrence support under the existing evidence-domain/ranking definition; this is a display change, not a new confidence metric.
+5. Make nonzero attestation counts open current exact results
+A nonzero N attestations count should be clickable.
+Reuse the existing treditor Search-results presentation and context infrastructure, but resolve the exact current candidate pattern and permitted evidence domain through the evidence index. Do not substitute a generic lemma search if it would produce a different result set.
+The interaction should mean:
+show me the current attestations for this analysis
+
+not:
+reconstruct the historical evidence snapshot that originally produced this Candidate
+
+Therefore refresh/recompute against the current evidence data when the link is opened. If corpus evidence has changed, refresh the Candidate's count/percentage accordingly so the card and results remain coherent.
+Preserve historical suggestion provenance separately; opening live Search must not rewrite it.
+Handle changed files/pagination coherently as described in the investigation. 0 attestations remains plain, non-clickable text.
+This should reuse Search's existing contextual result cards, highlighting, tree opening and pagination rather than create a second results interface.
+6. Candidate Auto-collapse
+Add a compact Auto-collapse option beside the existing hierarchy display controls such as Lemma / Script / Gloss.
+Default: enabled.
+When enabled:
+- opening one node's Candidates automatically collapses the previously open node's Candidates;
+- selecting/applying a Candidate may also close that Candidate panel where appropriate;
+- this is based on opening another Candidates panel, not mouse-leave timing.
+When Auto-collapse is disabled, users may keep multiple Candidates panels open simultaneously for comparison.
+Manual expand/collapse must continue to work in either mode.
+7. Preserve the recent Stage 3 redesign
+Do not regress:
+- compact one-row hierarchy presentation;
+- inline tag/form/lemma/Script editing;
+- gloss-only lemma hover and dictionary navigation;
+- trace/NULL handling;
+- hidden literal ;@N notation;
+- lightweight clickable Candidate cards;
+- initially expanded recursive Candidate structures;
+- unified multi-unit Candidates;
+- dominant editable pre-fill and accessible alternatives;
+- Source/alignment identities and save/reopen behavior.
+Do not implement imported-tree regrouping as an ad-hoc Stage 3 operation; that should later reuse the safe structural operations from Stage 4.
+Add/update focused tests for toggle multi-selection, Script range behavior, Auto-collapse on/off, exact live attestation navigation, refreshed statistics, and zero-attestation behavior.
+If anything here requires a linguistic/workflow assumption not established by the current design or repository evidence, ask me before deciding or implementing it. Do not guess.
+After implementation, briefly summarize what changed and how I should test these interactions.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 

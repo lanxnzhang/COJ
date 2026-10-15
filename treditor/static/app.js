@@ -30,6 +30,7 @@ const corpusSearchState = {
   perPage: 25,
   lemmaId: "",
 };
+let attestationSearch = null;
 const openEditorPages = new Set();
 const collapsedNodeIds = new Set();
 const passageCache = new Map();
@@ -639,7 +640,8 @@ function renderCorpusSearchResults(payload) {
   const {results, query, total, page, pages, per_page: perPage} = payload;
   const container = $("search-results");
   container.innerHTML = "";
-  $("search-results-title").textContent = payload.lemma_id
+  $("search-results-title").textContent = payload.search_type === "attestations"
+    ? `Current attestations: ${query}` : payload.lemma_id
     ? `Occurrences: ${payload.lemma_id}`
     : payload.search_type === "tgrep2"
       ? `TGrep2: ${query}`
@@ -647,7 +649,9 @@ function renderCorpusSearchResults(payload) {
   $("search-result-count").textContent = searchCountSummary(payload);
   $("search-results-message").textContent = total
     ? "Select a result to open its syntax tree."
-    : payload.search_type === "tgrep2"
+    : payload.search_type === "attestations"
+      ? "No current attestations remain for this analysis."
+      : payload.search_type === "tgrep2"
       ? "No syntax tree matched this pattern."
       : "No corpus text matched this search.";
   results.forEach(result => {
@@ -700,6 +704,19 @@ function renderCorpusSearchResults(payload) {
       const documentData = findDocument(result.source, result.document_id);
       if (!documentData) {
         showError(new Error("This result's document is unavailable."));
+        return;
+      }
+      if (payload.search_type === "attestations") {
+        try {
+          const suffix = `?block=${result.block_ordinal}&revision=${encodeURIComponent(result.source_revision)}`;
+          const data = await apiFetch(`/api/utterances/${encodeURIComponent(result.source)}/${encodeURIComponent(result.document_id)}/${encodeURIComponent(result.sentence_id || "record")}/tree${suffix}`);
+          await selectDocument(documentData, null, null, result.tree_context,
+            {passage: {sentence_id: result.sentence_id, token_count: data.stats.leaves}, tree: data});
+        } catch (error) {
+          showError(error);
+          await performCandidateSearch(1);
+          $("search-results-message").textContent = "Current attestations were refreshed; select a result again.";
+        }
         return;
       }
       await selectDocument(
@@ -788,9 +805,40 @@ async function performTgrepSearch(query, page = 1) {
 }
 
 function performActiveSearch(page) {
+  if (corpusSearchState.mode === "attestations") return performCandidateSearch(page);
   return corpusSearchState.mode === "tgrep"
     ? performTgrepSearch(corpusSearchState.query, page)
     : performCorpusSearch(corpusSearchState.query, page, true);
+}
+
+async function openCandidateAttestations(query, update) {
+  attestationSearch = {query: {...query}, update};
+  corpusSearchState.mode = "attestations";
+  corpusSearchState.lemmaId = "";
+  return performCandidateSearch(1);
+}
+
+async function performCandidateSearch(page) {
+  const search = attestationSearch;
+  if (!search) return;
+  const sequence = search.sequence = (search.sequence || 0) + 1;
+  showEditorPage("search");
+  clearError();
+  $("search-results-message").textContent = "Reading current attestations…";
+  try {
+    const payload = await apiFetch("/api/authoring/attestations", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({...search.query, page, per_page: corpusSearchState.perPage})});
+    if (attestationSearch !== search || search.sequence !== sequence || corpusSearchState.mode !== "attestations") return;
+    search.query.revision = payload.revision;
+    search.update(payload);
+    renderCorpusSearchResults(payload);
+    if (payload.refreshed) $("search-results-message").textContent = "Evidence changed. Current results were refreshed from page 1.";
+    return payload;
+  } catch (error) {
+    if (attestationSearch !== search || search.sequence !== sequence || corpusSearchState.mode !== "attestations") return;
+    showError(error); $("search-results-message").textContent = "Current attestations could not be read. Try again.";
+    return null;
+  }
 }
 
 $("search-mode-text").addEventListener("click", () => setSearchMode("text"));
@@ -849,6 +897,7 @@ async function selectDocument(
   targetSentenceId = null,
   passageContainer = null,
   treeSearchContext = null,
+  currentResult = null,
 ) {
   clearError();
   const changedDocument = activeDocument?.id !== documentData.id;
@@ -885,7 +934,9 @@ async function selectDocument(
   try {
     currentPassages = await loadPassages(documentData);
     if (container) renderPassages(documentData, currentPassages, container);
-    if (targetSentenceId) {
+    if (currentResult) {
+      await selectPassage(currentResult.passage, treeSearchContext, currentResult.tree);
+    } else if (targetSentenceId) {
       const target = currentPassages.find(
         passage => passage.sentence_id === targetSentenceId
       );
@@ -998,7 +1049,7 @@ function calculateTreeStats(roots) {
   return {nodes, leaves};
 }
 
-async function selectPassage(passage, treeSearchContext = null) {
+async function selectPassage(passage, treeSearchContext = null, currentResultTree = null) {
   if (!activeDocument) return;
   clearError();
   setEditMode(false);
@@ -1023,7 +1074,7 @@ async function selectPassage(passage, treeSearchContext = null) {
   $("tree-container").innerHTML = '<div class="loading-card">Rendering syntax tree…</div>';
 
   try {
-    const data = await apiFetch(
+    const data = currentResultTree || await apiFetch(
       `/api/utterances/${encodeURIComponent(activeDocument.source)}/${encodeURIComponent(activeDocument.document_id)}/${encodeURIComponent(passage.sentence_id)}/tree`
     );
     collapsedNodeIds.clear();

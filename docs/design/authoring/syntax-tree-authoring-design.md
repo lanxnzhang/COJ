@@ -1384,13 +1384,35 @@ Script targeting now follows material rather than category completeness. Nonempt
 owned terminals (including WORD, unresolved drafts and malformed-category material)
 and their writing parts are applicable. Multipart aggregates and higher nodes
 are not additional units; empty traces/missing-form artifacts are excluded.
-Transient click/Ctrl/Cmd/Shift row selection and nearby scope controls replace
+Transient click-to-toggle selection, optional Shift ranges and hierarchy scope controls replace
 per-row checkboxes. Fill preserves all nonempty values; a direct inline edit or
 explicit scope override is required for replacement.
 Inline Script fields accept typed values with registered-value datalist help.
-The adjacent ellipsis opens local range controls; no permanent remote assignment
-toolbar is displayed. Selection, Source-line and Text scopes retain the existing
+One compact Script range tool above the hierarchy supplies range controls; per-row
+ellipsis controls are removed. Selection, Source-line and Text scopes retain the existing
 material-based target rules and explicit replacement policy.
+
+After commit 8488dcb (3) makes ordinary row clicks additive toggles, preserving
+separate node/part identities for future structural operations. Internal identities
+remain in control bookkeeping and the model, not ordinary tooltips/accessibility
+labels. Auto-collapse is a transient display option, enabled by default: opening
+another Candidates panel closes the previous panel; disabling it allows comparisons.
+
+Attestation counts link to the existing Search renderer via a read-only live
+evidence adapter. It refreshes the evidence index, resolves the same pattern ID,
+queried form and permitted Text-ID domain, and groups exact source/ordinal/address
+occurrences into contextual Text result cards. The displayed percentage retains
+the existing denominator. There is no lemma-search fallback if a pattern disappears.
+Counts, support and transient candidate evidence refresh together; already stored
+suggestion provenance stays unchanged. Future explicit acceptance of a refreshed
+candidate records its refreshed revision/evidence. Zero counts are non-clickable.
+
+Historical index revision equality is not required for this live view. A changed
+index restarts pagination with current totals. Source bytes are checked against
+the refreshed index when building context; a concurrent change triggers a rebuild.
+Tree opening uses block ordinal plus the result's file hash, rather than ambiguous
+scholarly ID lookup. Changed sources require refreshed results before old addresses
+are used. This guards address consistency without reconstructing historical files.
 
 The author also confirmed editable owned Forms. Multipart parts are edited
 explicitly and derive the aggregate; structural/internal lexical forms are not

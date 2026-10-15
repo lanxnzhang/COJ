@@ -67,8 +67,9 @@
     input.addEventListener("input", () => { change(input.value); resize(input); message = ""; updateStatus(); });
     wrap.append(el("span", label), input); return wrap;
   }
+  function sectionKey(label, uniqueKey = null) { return `${state.document.id}:${state.activeText || "document"}:${uniqueKey || label}`; }
   function details(label, defaultOpen = false, uniqueKey = null) {
-    const key = `${state.document.id}:${state.activeText || "document"}:${uniqueKey || label}`, node = el("details");
+    const key = sectionKey(label, uniqueKey), node = el("details");
     node.open = openSections.has(key) ? openSections.get(key) : defaultOpen;
     node.appendChild(el("summary", label));
     node.addEventListener("toggle", () => {
@@ -422,6 +423,7 @@
   function inlineInput(value, label, change, key, className) {
     const input = el("input", undefined, `editing-inline-input ${className || ""}`);
     input.type = "text"; input.value = value || ""; input.setAttribute("aria-label", label);
+    input.setAttribute("data-editing-key", key);
     input.setAttribute("spellcheck", "false"); fields.set(key, input);
     input.addEventListener("input", () => { change(input.value); message = ""; updateStatus(); });
     return input;
@@ -429,12 +431,13 @@
   function hintFromEntry(entry) {
     return entry.gloss || "";
   }
-  function lemmaControl(lemma, edit, label, current, dictionary) {
+  function lemmaControl(lemma, edit, label, current, dictionary, identity = null) {
     if (dictionary) dictionaryHints.set(lemma, hintFromEntry(dictionary));
     const wrap = el("span", undefined, "editing-inline-lemma"), link = button(lemma || "—", () => {
       if (lemma) openDictionaryPopupEntry(lemma);
     });
     link.className = "editing-lemma-link"; link.setAttribute("aria-label", label);
+    if (identity) link.setAttribute("data-editing-key", `lemma:${identity}`);
     link.hidden = current.showLemma === false; link.disabled = !lemma; link.title = dictionaryHints.get(lemma) || "";
     const gloss = el("span", dictionaryHints.get(lemma) || "", "editing-inline-gloss");
     gloss.hidden = !current.showGloss;
@@ -454,12 +457,13 @@
     wrap.appendChild(link);
     if (edit) {
       const pencil = el("button", "✎", "editing-row-action editing-lemma-edit"); pencil.type = "button";
-      pencil.hidden = current.showLemma === false; pencil.setAttribute("aria-label", `Edit ${label}`); pencil.title = `Edit ${label}`;
+      pencil.hidden = current.showLemma === false; pencil.setAttribute("aria-label", "Edit lemma"); pencil.title = "Edit lemma";
+      pencil.setAttribute("data-editing-key", `edit-lemma:${identity}`);
       pencil.addEventListener("click", () => {
-        const input = inlineInput(lemma, label, edit, `edit:${label}`, "editing-lemma-input");
+        const input = inlineInput(lemma, label, edit, `lemma:${identity}`, "editing-lemma-input");
         wrap.replaceChildren(input); input.focus();
         input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); render(); } });
-        input.addEventListener("blur", () => { if (input.isConnected) wrap.replaceChildren(lemmaControl(input.value, edit, label, current)); });
+        input.addEventListener("blur", () => { if (input.isConnected) wrap.replaceChildren(lemmaControl(input.value, edit, label, current, null, identity)); });
       });
       wrap.appendChild(pencil);
     }
@@ -469,6 +473,15 @@
   }
   function candidatePanel(candidates, apply, label, current, key = null) {
     const panel = details(key ? "Candidates" : `Candidates: ${label}`, false, key ? `candidates:${key}` : null); panel.className = "editing-candidates";
+    const panelKey = sectionKey(key ? "Candidates" : `Candidates: ${label}`, key ? `candidates:${key}` : null);
+    current.candidatePanels.set(panelKey, panel);
+    panel.addEventListener("toggle", () => {
+      if (!panel.isConnected || !panel.open) return;
+      current.lastCandidates = panelKey;
+      if (current.autoCollapse !== false) for (const [otherKey, other] of current.candidatePanels) {
+        if (other !== panel) { other.open = false; openSections.set(otherKey, false); }
+      }
+    });
     if (!candidates.length) panel.appendChild(el("p", "No attested analysis. Tag and lemma may remain unresolved in this draft.", "editing-hint"));
     candidates.forEach(c => {
       const row = el("div", undefined, "editing-candidate");
@@ -478,7 +491,10 @@
       row.disabled = !allowed; row.setAttribute("aria-disabled", String(!allowed));
       const choose = event => {
         if (row.disabled || ["BUTTON", "A", "SUMMARY"].includes(event.target.tagName)) return;
-        return run(() => apply(c));
+        return run(() => {
+          apply(c);
+          if (current.autoCollapse !== false) { panel.open = false; openSections.set(panelKey, false); }
+        });
       };
       row.addEventListener("click", choose);
       row.addEventListener("keydown", event => {
@@ -486,13 +502,32 @@
       });
       row.appendChild(el("strong", c.pattern.category || "Tag unresolved"));
       if (current.showLemma !== false || current.showGloss) row.appendChild(lemmaControl(c.pattern.lemma, null, `Candidate lemma ${c.pattern.lemma || "unresolved"}`, {...current, showGloss: true}, c.dictionary));
-      row.appendChild(el("small", `${c.count} attestations · ${(c.support * 100).toFixed(1)}% support`, "editing-attestation-count"));
+      const statistics = el("small", undefined, "editing-attestation-count");
+      if (c.count) {
+        const target = state, textKey = state.activeText, plan = current.plan;
+        const count = button(`${c.count} attestations`, () => openCandidateAttestations({candidate_id: c.id,
+          form: COJEditing.compact(label), text_id: target.document.texts[textKey].text_id,
+          support: plan.settings?.support ?? current.support, min_texts: plan.settings?.min_texts ?? current.minTexts}, payload => {
+          // Refresh transient candidates only. Already saved suggestion annotations stay historical.
+          const update = choices => choices.forEach(choice => {
+            if (choice.id !== c.id) return;
+            if (payload.candidate) Object.assign(choice, payload.candidate, {unattested: false});
+            else Object.assign(choice, {count: 0, texts: 0, support: 0, evidence: [], default: false, eligible: false, unattested: true, revision: payload.revision});
+          });
+          plan.spans.filter(span => COJEditing.compact(span.form) === COJEditing.compact(label)).forEach(span => update(span.candidates));
+          Object.values(plan.nodes).forEach(update);
+          if (state === target && state.activeText === textKey && current.plan === plan) render();
+        }));
+        count.className = "editing-attestation-link"; statistics.appendChild(count);
+      } else statistics.appendChild(el("span", "0 attestations"));
+      statistics.appendChild(el("span", ` · ${(c.support * 100).toFixed(1)}%`)); row.appendChild(statistics);
       analysisCandidateButtons.push([row, allowed]);
       if (c.pattern.children.length) {
         const structure = el("details", undefined, "editing-candidate-structure"); structure.open = true;
         structure.append(el("summary", "Structure"), patternTree(c.pattern, current)); row.appendChild(structure);
       }
-      if (!c.eligible && !c.id.startsWith("dictionary:")) row.appendChild(el("small", "Unsupported pattern; retained for review."));
+      if (c.unattested) row.appendChild(el("small", "No current corpus attestations", "editing-candidate-note"));
+      else if (!c.eligible && !c.id.startsWith("dictionary:")) row.appendChild(el("small", "Unsupported pattern; retained for review."));
       else if (c.id.startsWith("dictionary:")) row.appendChild(el("small", "Dictionary only · tag unresolved", "editing-candidate-note"));
       else if (c.pattern.lemma && !c.dictionary) row.appendChild(el("small", "Corpus annotation · lemma absent from dictionary", "editing-candidate-note"));
       panel.appendChild(row);
@@ -502,6 +537,7 @@
   function renderAnalysis(parent) {
     if (typeof COJAnalysis === "undefined") return;
     const current = analysisSession(), analysis = details("Analysis", true), controls = el("div", undefined, "editing-analysis-controls");
+    current.candidatePanels = new Map();
     controls.appendChild(button("Analyse", analyse, true));
     const settings = details("Suggestion settings");
     settings.append(field("Minimum support (%)", current.support * 100, value => { current.support = Number(value) / 100; }, "support"),
@@ -516,6 +552,14 @@
       box.addEventListener("change", () => { current[key] = box.checked; render(); }); wrap.appendChild(box); views.appendChild(wrap);
     }
     controls.appendChild(views); analysis.appendChild(controls);
+    const collapseLabel = el("label", "Auto-collapse "), collapse = el("input"); collapse.type = "checkbox";
+    collapse.setAttribute("aria-label", "Auto-collapse Candidates"); collapse.checked = current.autoCollapse !== false;
+    collapse.addEventListener("change", () => {
+      current.autoCollapse = collapse.checked;
+      if (collapse.checked) for (const [key, panel] of current.candidatePanels) {
+        if (key !== current.lastCandidates) { panel.open = false; openSections.set(key, false); }
+      }
+    }); collapseLabel.appendChild(collapse); views.appendChild(collapseLabel);
     const plan = current.plan, fresh = planFresh(plan);
     if (plan) { analysisPlanNotice = el("p", undefined, "editing-hint"); analysis.appendChild(analysisPlanNotice); }
     const toolbar = el("div", undefined, "editing-script-tools"), scope = el("select"), script = el("input"), override = el("input");
@@ -529,9 +573,10 @@
     const suggestions = el("datalist"); suggestions.id = "editing-script-values";
     for (const value of scripts) { const option = el("option"); option.value = value; suggestions.appendChild(option); }
     analysis.appendChild(suggestions); script.type = "text"; script.setAttribute("list", suggestions.id);
-    function scriptSelect(value, label, change) {
+    function scriptSelect(value, label, change, key) {
       const input = el("input", undefined, "editing-inline-script"); input.type = "text";
       input.setAttribute("aria-label", label); input.setAttribute("list", suggestions.id); input.value = value || "";
+      input.setAttribute("data-editing-key", key);
       input.addEventListener("change", () => run(() => change(input.value)));
       input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); return run(() => change(input.value)); } });
       return input;
@@ -562,15 +607,14 @@
     toolbar.append(el("span", "Script"), scope, script, apply, replaceLabel, count, preview,
       button("Clear selection", () => { current.selected.clear(); current.selectedParts.clear(); refreshSelection(); }));
     toolbar.hidden = current.showScript === false;
-    function scriptRange(row, key) {
-      row.appendChild(icon(`Script range ${key}`, "…", () => { current.scriptAnchor = current.scriptAnchor === key ? null : key; }));
-      if (current.scriptAnchor === key) row.appendChild(toolbar);
-    }
+    const range = details("Script range", false, "script-range"); range.appendChild(toolbar);
+    range.hidden = current.showScript === false; analysis.appendChild(range);
     const tree = el("div", undefined, "editing-analysis-tree"); tree.setAttribute("role", "tree"); tree.setAttribute("aria-multiselectable", "true");
     function selectable(row, id, part = null) {
       const descriptor = {key: part ? `part:${part}` : id, id, part, element: row}; rows.push(descriptor);
       row.className = "editing-tree-row"; row.tabIndex = 0;
-      row.setAttribute("aria-label", part ? `Writing part ${part}` : `Analysis row ${id}`);
+      row.setAttribute("aria-label", part ? "Writing part" : "Analysis node");
+      row.setAttribute("data-editing-key", part ? `part:${part}` : `node:${id}`);
       row.addEventListener("click", event => {
         if (["INPUT", "SELECT", "BUTTON", "A", "SUMMARY"].includes(event.target.tagName) || event.target.closest?.(".editing-candidates")) return;
         COJAnalysis.selectRows(current, rows, descriptor.key, event); scope.value = "selection"; current.scriptScope = "selection"; refreshSelection();
@@ -588,24 +632,23 @@
     while (stack.length) {
       const [id, container] = stack.pop(), node = state.text.nodes[id], item = el("div", undefined, "editing-analysis-node"); item.setAttribute("role", "treeitem");
       const row = el("div"); selectable(row, id);
-      const tagInput = inlineInput(node.category, `Tag ${id}`, v => COJAnalysis.edit(state, id, "category", v), `tag:${id}`, "editing-inline-tag");
+      const tagInput = inlineInput(node.category, "Tag", v => COJAnalysis.edit(state, id, "category", v), `tag:${id}`, "editing-inline-tag");
       tagInput.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); render(); } }); row.appendChild(tagInput);
       const terminal = !node.children.length, lexicalWhole = !terminal && lexicalTag(node.category, plan);
       const emptyAnnotation = terminal && ["*T*", "NULL"].includes(node.category) && !node.form;
       const owned = !emptyAnnotation && terminal && !node.parts.length && (node.form || node.annotations.owns_form || !state.text.compatibility.original_block_xml);
-      if (owned) row.appendChild(inlineInput(node.form, `Form ${id}`, v => COJAnalysis.editForm(state, id, v), `form:${id}`, "editing-inline-form"));
+      if (owned) row.appendChild(inlineInput(node.form, "Form", v => COJAnalysis.editForm(state, id, v), `form:${id}`, "editing-inline-form"));
       else if (!emptyAnnotation && (terminal || lexicalWhole)) {
         const form = el("span", COJAnalysis.material(state.text, id) || "∅", "editing-derived-form");
         row.appendChild(form); analysisDerivedForms.set(id, form);
       }
       const span = node.annotations.input_span;
       const candidates = fresh ? (plan.nodes[id] || (span && plan.spans.find(s => s.first === span.first && s.last === span.last)?.candidates) || []) : [];
-      if (!emptyAnnotation && (current.showLemma !== false || current.showGloss) && (terminal || lexicalWhole || node.lemma)) row.appendChild(lemmaControl(node.lemma, v => COJAnalysis.edit(state, id, "lemma", v), `Lemma ${id}`, current,
-        candidates.find(c => c.pattern.lemma === node.lemma)?.dictionary));
+      if (!emptyAnnotation && (current.showLemma !== false || current.showGloss) && (terminal || lexicalWhole || node.lemma)) row.appendChild(lemmaControl(node.lemma, v => COJAnalysis.edit(state, id, "lemma", v), "Lemma", current,
+        candidates.find(c => c.pattern.lemma === node.lemma)?.dictionary, id));
       if (current.showScript !== false && owned) {
-        const control = scriptSelect(node.script, `Script ${id}`, v => COJAnalysis.editScript(state, id, v));
+        const control = scriptSelect(node.script, "Script", v => COJAnalysis.editScript(state, id, v), `script:${id}`);
         row.appendChild(control); analysisScriptControls.push({element: control, id, part: null});
-        if (node.form && COJEditing.compact(node.form)) scriptRange(row, id);
       }
       if (terminal && node.form && (!node.lemma || !node.category)) { const marker = el("small", "·", "editing-incomplete"); marker.title = "Incomplete draft annotation"; row.appendChild(marker); }
       item.appendChild(row);
@@ -613,11 +656,10 @@
         const parts = el("div", undefined, "editing-writing-parts");
         node.parts.forEach(part => {
           const partRow = el("div"); selectable(partRow, id, part.id);
-          partRow.appendChild(inlineInput(part.form, `Part Form ${part.id}`, v => COJAnalysis.editForm(state, id, v, part.id), `part-form:${part.id}`, "editing-inline-form"));
+          partRow.appendChild(inlineInput(part.form, "Part Form", v => COJAnalysis.editForm(state, id, v, part.id), `part-form:${part.id}`, "editing-inline-form"));
           if (current.showScript !== false) {
-            const control = scriptSelect(part.script, `Part Script ${part.id}`, v => COJAnalysis.editScript(state, id, v, part.id));
+            const control = scriptSelect(part.script, "Part Script", v => COJAnalysis.editScript(state, id, v, part.id), `part-script:${part.id}`);
             partRow.appendChild(control); analysisScriptControls.push({element: control, id, part: part.id});
-            if (COJEditing.compact(part.form)) scriptRange(partRow, part.id);
           }
           parts.appendChild(partRow);
         }); item.appendChild(parts);
@@ -641,7 +683,7 @@
           c => COJAnalysis.chooseSpan(state, plan, span, c), plan.units.slice(span.first, span.last).map(u => u.form).join(" "), current));
       });
     if (state.text.historical_header !== null) { const header = details("Historical header"); header.appendChild(el("p", state.text.historical_header)); analysis.appendChild(header); }
-    analysis.appendChild(el("small", "Click row space to select; Ctrl/Cmd-click adds rows; Shift-click selects a range.", "editing-selection-help"));
+    analysis.appendChild(el("small", "Click row space to toggle selection; Shift-click adds a range.", "editing-selection-help"));
     parent.appendChild(analysis);
   }
   function render() {

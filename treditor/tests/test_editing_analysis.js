@@ -113,5 +113,10 @@ const selection = {selected: new Set(), selectedParts: new Map()}, rows = [{key:
 A.selectRows(selection, rows, "a"); A.selectRows(selection, rows, "p", {shiftKey: true});
 assert.deepEqual([...selection.selected], ["a", "b"]); assert.equal(selection.selectedParts.get("p").node, "n");
 A.selectRows(selection, rows, "a", {ctrlKey: true}); assert.ok(!selection.selected.has("a"));
+A.selectRows(selection, rows, "p"); assert.equal(selection.selectedParts.size, 0);
+selection.selected.clear();
+A.selectRows(selection, rows, "a"); A.selectRows(selection, rows, "b"); A.selectRows(selection, rows, "p");
+assert.deepEqual([...selection.selected], ["a", "b"]); assert.equal(selection.selectedParts.size, 1);
+A.selectRows(selection, rows, "b"); assert.deepEqual([...selection.selected], ["a"]);
 console.log("Stage 3 defaults, explicit review, fresh IDs, refinement, scripts, preservation, undo/redo and reopen passed.");
 if (process.argv.includes("--document")) console.log(JSON.stringify(s.document));

@@ -149,6 +149,14 @@ unsupported/non-dominant units remain editable incomplete drafts. Inspect
 counts and support percentages from the ranking evidence scope. Click a card
 or focus it and press Enter/Space to select it. Recursive **Structure** is
 expanded initially and uses the same compact tree presentation.
+Nonzero attestation counts open the existing Search result view for the exact
+current pattern and permitted evidence domain, with contextual text, matching
+nodes and tree navigation. Counts and percentages refresh on the originating
+cards; zero counts are plain text. Search is live, not a historical snapshot:
+changed evidence restarts pagination at page 1, and changed source files require
+refresh before opening old node addresses. Saved suggestion provenance is not
+rewritten by browsing. Repeated matches within a Text count separately even
+though Search groups them into one Text result card.
 Detailed paths, addresses, hashes and domain labels stay
 internally retained rather than occupying the editing UI.
 Multi-unit choices appear as **Candidates: taka yuku**, for example, using the
@@ -162,7 +170,9 @@ Script information, with indentation and connector guides. High syntactic rows
 show tags without concatenated descendant text. Edit a tag directly. Click a
 lemma to open the existing dictionary popup; hover for gloss only, or
 use its small pencil to edit the ID (Enter finishes). **Lemma**, **Script** and
-**Gloss** view switches change display only. Trace and NULL terminals show their
+**Gloss** view switches change display only. **Auto-collapse** defaults on:
+opening one Candidates panel closes the previous one. Turn it off to compare
+multiple panels; manual opening/closing works in either mode. Trace and NULL terminals show their
 tags alone, without empty-material or unresolved-lemma controls. Literal `;@N`
 notation is hidden while distinction metadata remains preserved. Corpus
 candidates with missing dictionary entries are distinguished from dictionary-only
@@ -203,10 +213,10 @@ resolved: WORD, unresolved-tag drafts and material with malformed tags remain
 eligible. Multipart aggregates, higher nodes, empty traces and missing-form
 artifacts are not direct targets.
 
-For efficient fills, click row space to select a node/subtree or writing part;
-Ctrl/Cmd-click adds/removes rows, and Shift-click selects a range. Focused rows
-also support Up/Down and Shift navigation. Open **…** beside a Script field for
-local range controls offering
+For efficient fills, click row space to toggle a node/subtree or writing part.
+Successive clicks add selections; clicking a selected row removes it. No modifier
+is required. Shift-click adds a range; focused rows also support Up/Down and Shift
+navigation. Open the single **Script range** tool above the hierarchy, offering
 **Selection / subtree**, **Unannotated in Text**, **Whole Text**, and Source-line
 scopes. Type or choose a Script, inspect **Targets** if useful, then **Fill Script**.
 Every existing nonempty value is preserved. **Replace existing** changes the

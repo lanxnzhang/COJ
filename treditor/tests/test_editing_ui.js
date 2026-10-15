@@ -21,6 +21,8 @@ const clone = value => JSON.parse(JSON.stringify(value)), disk = new Map();
 const dictionaryOpens = [];
 let revision = 0, identity = 0;
 let analysisOverride = null;
+const attestationRequests = [];
+let liveEvidence = null;
 const imported = new editing.State(() => `corpus-${++identity}`);
 imported.document.name = "KK"; imported.addText("KK.67"); const p = imported.addPassage("多迦由久夜", "taka yuku ya");
 imported.text.nodes.n = {category: "VB", lemma: "L1", form: "takayukuya", children: [], parts: [], script: null, annotations: {}};
@@ -66,14 +68,23 @@ async function session(options = {}) {
   const detail = new Element("div"), sidebar = new Element("div"), events = {};
   const context = vm.createContext({document: {createElement: tag => new Element(tag), querySelector: selector => selector === ".detail-pane" ? detail : sidebar},
     window: {addEventListener: (name, action) => { events[name] = action; }, confirm: options.confirm || (() => true), prompt: () => "copy"},
-    requestAnimationFrame: action => action(), openDictionaryPopupEntry: id => dictionaryOpens.push(id), COJAnalysis: analysis, COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
+    requestAnimationFrame: action => action(), openDictionaryPopupEntry: id => dictionaryOpens.push(id),
+    openCandidateAttestations: async (query, update) => { attestationRequests.push(query); if (liveEvidence) update(clone(liveEvidence)); },
+    COJAnalysis: analysis, COJEditing: {...editing, Session: class extends editing.Session { constructor() { super(() => `id-${++identity}`); } }, State: class extends editing.State { constructor() { super(() => `id-${++identity}`); } }}, apiFetch});
   vm.runInContext(fs.readFileSync(path.join(__dirname, "../static/editing.js"), "utf8"), context);
   const page = detail.children[0];
   const root = new Element("div"); root.append(page, sidebar);
+  function labelled(label) {
+    const direct = all(root, node => node.attributes["aria-label"] === label)[0]; if (direct) return direct;
+    const match = label.match(/^(Edit Lemma|Part Form|Part Script|Analysis row|Writing part|Tag|Form|Lemma|Script) (.+)$/);
+    if (!match) return;
+    const kind = {"Edit Lemma": "edit-lemma", "Part Form": "part-form", "Part Script": "part-script", "Analysis row": "node", "Writing part": "part"}[match[1]] || match[1].toLowerCase();
+    return all(root, node => node.attributes["data-editing-key"] === `${kind}:${match[2]}`)[0];
+  }
   return {page, sidebar, events,
     button: text => all(root, node => node.tag === "button" && node.textContent === text)[0],
-    input: label => all(root, node => node.attributes["aria-label"] === label)[0],
-    label: label => all(root, node => node.attributes["aria-label"] === label)[0],
+    input: labelled,
+    label: labelled,
     summary: label => all(root, node => node.tag === "summary" && node.textContent === label)[0],
     expand: async label => {
       const node = all(root, node => node.tag === "details" && node.children[0]?.textContent === label)[0];
@@ -216,24 +227,26 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   await type(ui.input("Text Input"), "春山\nparuyama");
   await ui.button("Preview").dispatch("click"); await ui.button("Add to Source").dispatch("click");
   assert.equal(disk.size, 0); await ui.button("Analyse").dispatch("click");
-  assert.ok(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L090723").length);
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  assert.ok(all(ui.page, n => n.attributes["aria-label"] === "Lemma" && n.textContent === "L090723").length);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"] === "Tag").length, 3);
   assert.equal(ui.button("Use"), undefined);
-  assert.ok(ui.page.textContent.includes("8 attestations · 100.0% support"));
+  assert.ok(ui.page.textContent.includes("8 attestations · 100.0%"));
+  assert.ok(!ui.page.textContent.includes("% support"));
   assert.ok(all(ui.page, n => n.className === "editing-candidate-structure").every(n => n.open));
   assert.ok(!ui.page.textContent.includes("Source span candidates"));
   await ui.label("Choose N L090723 for paruyama").dispatch("click");
-  const lemmaButton = all(ui.page, n => n.attributes["aria-label"]?.startsWith("Lemma ") && n.textContent === "L051724")[0];
-  await ui.label(`Edit ${lemmaButton.attributes["aria-label"]}`).dispatch("click");
-  const lemmaInput = ui.input(lemmaButton.attributes["aria-label"]);
+  const lemmaButton = all(ui.page, n => n.attributes["aria-label"] === "Lemma" && n.textContent === "L051724")[0];
+  const childId = lemmaButton.attributes["data-editing-key"].slice("lemma:".length);
+  assert.equal(ui.label(`Edit Lemma ${childId}`).title, "Edit lemma");
+  await ui.label(`Edit Lemma ${childId}`).dispatch("click");
+  const lemmaInput = ui.input(`Lemma ${childId}`);
   await type(lemmaInput, "L999"); await ui.button("Undo analysis edit").dispatch("click");
   assert.ok(all(ui.page, n => n.textContent === "L051724").length);
-  const childId = lemmaButton.attributes["aria-label"].slice("Lemma ".length);
   await type(ui.input(`Form ${childId}`), "paruX"); assert.ok(ui.label("Choose N L090723 for paruyama").disabled);
   assert.equal(ui.input("Transcription 1").value, "paruyama");
   await type(ui.input(`Form ${childId}`), "paru"); assert.ok(!ui.label("Choose N L090723 for paruyama").disabled);
   assert.ok(!ui.page.textContent.includes("xml/trees/") && !ui.page.textContent.includes("evidence-revision"));
-  await ui.label(`Script range ${childId}`).dispatch("click");
+  await ui.expand("Script range");
   await ui.button("Fill Script").dispatch("click");
   await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Stage3-check"); await ui.button("Confirm Save").dispatch("click");
   const savedAnalysis = clone(disk.get("Stage3-check.syn.json").document), savedText = Object.values(savedAnalysis.texts)[0];
@@ -242,13 +255,30 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.ok(Object.values(savedText.nodes).filter(n => !n.children.length).every(n => n.script === "PHON"));
   ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Stage3-check (saved)").dispatch("click");
   await ui.label("Open Untitled Text 1 in Stage3-check, 1").dispatch("click");
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"] === "Tag").length, 3);
   assert.ok(ui.button("Undo analysis edit").disabled); // History is never saved.
   await ui.button("Analyse").dispatch("click");
+  const historicalSuggestion = clone(savedText.nodes[savedText.roots[0]].annotations.suggestion);
+  liveEvidence = {revision: "live-revision", candidate: {id: "paruyama", count: 9, support: .9,
+    texts: 9, evidence: [{revision: "live-file"}], revision: "live-revision"}};
+  await ui.button("8 attestations").dispatch("click");
+  assert.equal(attestationRequests.at(-1).form, "paruyama");
+  assert.equal(attestationRequests.at(-1).candidate_id, "paruyama");
+  assert.ok(ui.page.textContent.includes("9 attestations · 90.0%"));
+  liveEvidence = {revision: "gone-revision", candidate: null};
+  await ui.button("9 attestations").dispatch("click");
+  assert.ok(ui.page.textContent.includes("0 attestations · 0.0%"));
+  assert.equal(ui.button("0 attestations"), undefined);
+  assert.ok(ui.label("Choose N L090723 for paruyama").disabled);
+  assert.ok(ui.page.textContent.includes("No current corpus attestations"));
+  await ui.button("Save").dispatch("click");
+  const afterLiveSearch = Object.values(disk.get("Stage3-check.syn.json").document.texts)[0];
+  assert.deepEqual(afterLiveSearch.nodes[afterLiveSearch.roots[0]].annotations.suggestion, historicalSuggestion);
+  liveEvidence = null;
   await type(ui.input("Transcription 1"), "paruyamaX");
   assert.ok(all(ui.page, n => n.textContent.includes("Analyse again to refresh candidates")).length);
   assert.ok(ui.label("Choose N L090723 for paruyama").disabled);
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"] === "Tag").length, 3);
   // Compact structural rows, material-based Script targets and ordinary range selection.
   const compact = new editing.State(() => `compact-${++identity}`); compact.document.name = "Compact"; compact.addText("Compact.1");
   const line = compact.addPassage("source", "titi papa moro pito ipaku ukwi yuku");
@@ -268,9 +298,9 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
     evidence: {original: "source", transcription: "titi papa moro pito ipaku ukwi yuku", status: "valid", reason: ""}};
   disk.set("Compact.syn.json", {filename: "Compact.syn.json", revision: "compact-rev", document: clone(compact.document)});
   ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse Compact (saved)").dispatch("click"); await ui.label("Open Compact.1 in Compact, 1").dispatch("click");
-  await ui.label("Script range c").dispatch("click");
+  await ui.expand("Script range");
   const high = ui.label("Analysis row r");
-  assert.equal(all(high, n => n.attributes["aria-label"]?.startsWith("Form ")).length, 0);
+  assert.equal(all(high, n => n.attributes["aria-label"] === "Form").length, 0);
   assert.equal(all(high, n => n.className === "editing-derived-form").length, 0);
   assert.equal(all(ui.page, n => n.tag === "input" && n.type === "checkbox" && n.attributes["aria-label"]?.startsWith("Select")).length, 0);
   assert.ok(ui.input("Script w") && ui.input("Script u")); assert.equal(ui.input("Script r"), undefined); assert.equal(ui.input("Script m"), undefined);
@@ -329,10 +359,11 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   await ui.button("Add to Source").dispatch("click"); await ui.button("Analyse").dispatch("click");
   assert.ok(ui.page.textContent.includes("Corpus annotation · lemma absent from dictionary"));
   assert.ok(ui.page.textContent.includes("Dictionary only · tag unresolved"));
-  assert.ok(ui.page.textContent.includes("1 attestations · 25.0% support"));
-  assert.ok(ui.page.textContent.includes("0 attestations · 0.0% support"));
+  assert.ok(ui.page.textContent.includes("1 attestations · 25.0%"));
+  assert.ok(ui.page.textContent.includes("0 attestations · 0.0%"));
   assert.ok(!ui.page.textContent.includes("Incomplete draft suggestion") && !ui.page.textContent.includes("hidden meaning"));
-  assert.equal(ui.button("Fill Script"), undefined); // Range editing is local and explicitly opened.
+  assert.ok(ui.summary("Script range"));
+  assert.equal(ui.button("0 attestations"), undefined);
   await ui.label("Choose unclassified L052548 for no").dispatch("keydown", {key: "Enter"});
   await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Dictionary-choice"); await ui.button("Confirm Save").dispatch("click");
   const dictionaryNode = Object.values(Object.values(disk.get("Dictionary-choice.syn.json").document.texts)[0].nodes)[0];
@@ -350,7 +381,7 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   assert.ok(ui.summary("Candidates: taka yuku"));
   await ui.label("Choose VB-ADC L030996a for taka yuku").dispatch("click");
   assert.equal(ui.summary("Candidates: taka yuku"), undefined); // Existing parent now owns Candidates.
-  assert.equal(all(ui.page, n => n.attributes["aria-label"]?.startsWith("Tag ")).length, 3);
+  assert.equal(all(ui.page, n => n.attributes["aria-label"] === "Tag").length, 3);
   await ui.button("Save").dispatch("click"); await type(ui.input("Document name"), "Span-choice"); await ui.button("Confirm Save").dispatch("click");
   const spanText = Object.values(disk.get("Span-choice.syn.json").document.texts)[0];
   assert.equal(spanText.roots.length, 1); assert.deepEqual(spanText.nodes[spanText.roots[0]].annotations.input_span, {first: 0, last: 2});
@@ -358,5 +389,32 @@ async function type(input, text) { input.value = text; await input.dispatch("inp
   ui = await session(); await ui.button("Open Text").dispatch("click"); await ui.label("Browse KK (corpus)").dispatch("click");
   await ui.label("Open KK.67 in KK, 1").dispatch("click"); await ui.button("Analyse").dispatch("click");
   assert.equal(ui.summary("Candidates: taka yuku"), undefined); // No invented imported input_span mapping.
+  // Click-toggle selection is additive without modifiers; Candidates collapse on opening, never on mouse-leave.
+  analysisOverride = (text, units) => ({revision: "rev", units, nodes: {}, scripts: ["PHON", "LOG"],
+    spans: units.map((u, i) => ({first: i, last: i + 1, form: u.form, candidates: [clone(missing)]}))});
+  ui = await session(); await ui.button("New Text").dispatch("click");
+  await type(ui.input("Text Input"), "source\nno no no"); await ui.button("Preview").dispatch("click");
+  await ui.button("Add to Source").dispatch("click"); await ui.button("Analyse").dispatch("click");
+  const nodeRows = all(ui.page, n => n.attributes["data-editing-key"]?.startsWith("node:"));
+  await nodeRows[0].dispatch("click"); await nodeRows[1].dispatch("click"); await nodeRows[2].dispatch("click");
+  assert.ok(nodeRows.every(n => n.attributes["aria-selected"] === "true"));
+  await nodeRows[1].dispatch("click");
+  assert.deepEqual(nodeRows.map(n => n.attributes["aria-selected"]), ["true", "false", "true"]);
+  assert.equal(all(ui.page, n => n.tag === "details" && n.children[0]?.textContent === "Script range").length, 1);
+  assert.ok(!all(ui.page, n => n.title?.includes("id-") || n.attributes["aria-label"]?.includes("id-")).length);
+  const panels = all(ui.page, n => n.className === "editing-candidates");
+  assert.ok(ui.input("Auto-collapse Candidates").checked);
+  panels[0].open = true; await panels[0].dispatch("toggle");
+  panels[1].open = true; await panels[1].dispatch("toggle");
+  assert.ok(!panels[0].open && panels[1].open);
+  await panels[1].dispatch("mouseleave"); assert.ok(panels[1].open);
+  ui.input("Auto-collapse Candidates").checked = false; await ui.input("Auto-collapse Candidates").dispatch("change");
+  panels[0].open = true; await panels[0].dispatch("toggle");
+  assert.ok(panels[0].open && panels[1].open);
+  panels[0].open = false; await panels[0].dispatch("toggle"); assert.ok(!panels[0].open && panels[1].open);
+  ui.input("Auto-collapse Candidates").checked = true; await ui.input("Auto-collapse Candidates").dispatch("change");
+  panels[2].open = true; await panels[2].dispatch("toggle"); assert.ok(!panels[1].open && panels[2].open);
+  await all(panels[2], n => n.className === "editing-candidate")[0].dispatch("click");
+  assert.ok(all(ui.page, n => n.className === "editing-candidates").every(n => !n.open));
   console.log("Stage 1–3 UI flows, explicit Analyse/correction, script batches, saved identities and stale-source preservation passed.");
 })().catch(error => { console.error(error); process.exitCode = 1; });

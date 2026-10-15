@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+from collections import defaultdict
 import re
 import sys
 import threading
@@ -1828,10 +1830,106 @@ def document_index(source: str, doc_id: str):
     ])
 
 
+def _candidate_attestations(evidence, data):
+    """Adapt live, exact index occurrences to the existing Search result format."""
+    from coj.authoring.evidence import legacy_domain
+    from coj.authoring.legacy import METADATA
+
+    form, candidate_id = data.get("form"), data.get("candidate_id")
+    text_id = data.get("text_id", "")
+    if (not isinstance(form, str) or not form or len(form) > 10000
+            or not isinstance(candidate_id, str) or not re.fullmatch(r"[a-f0-9]{64}", candidate_id)
+            or not isinstance(text_id, str)):
+        raise ValueError("Supply a candidate identity, form and target Text ID.")
+    page, per_page = data.get("page", 1), data.get("per_page", 25)
+    support, min_texts = data.get("support", .95), data.get("min_texts", 3)
+    if (type(page) is not int or page < 1 or type(per_page) is not int or per_page not in SEARCH_PAGE_SIZES
+            or type(support) not in (int, float) or not 0 < support <= 1
+            or type(min_texts) is not int or not 1 <= min_texts <= 100000):
+        raise ValueError("Invalid attestation pagination or suggestion settings.")
+    with evidence.lock:
+        # These are current reads, not a requirement to retain the clicked snapshot.
+        for _ in range(2):
+            evidence.refresh()
+            revision = evidence.revision
+            candidate = next((c for c in evidence.candidates(form, legacy_domain(text_id), support, min_texts)
+                              if c["id"] == candidate_id), None)
+            grouped = defaultdict(list)
+            for record in candidate["evidence"] if candidate else []:
+                grouped[(record["source"], record["ordinal"])].append(record)
+            groups = list(grouped.items())
+            changed = bool(data.get("revision") and data["revision"] != revision)
+            current_page = 1 if changed else page
+            total = len(groups)
+            pages = (total + per_page - 1) // per_page
+            current_page = min(current_page, pages) if pages else 1
+            start = (current_page - 1) * per_page
+            files, hits = {}, []
+            for (relative, ordinal), records in groups[start:start + per_page]:
+                if relative not in files:
+                    content = (evidence.root / relative).read_bytes()
+                    if hashlib.sha256(content).hexdigest() != records[0]["revision"]:
+                        break
+                    files[relative] = ET.fromstring(content)
+                root = files[relative]
+                block = root.findall("block")[ordinal]
+                source = Path(relative).parts[1]
+                roots = [_elem_to_node(child) for child in block if child.tag not in METADATA]
+                context = _tgrep_tree_context(roots)
+                addresses = {r["address"] for r in records}
+                nodes = [n for n in context["nodes"] if context["paths"][id(n)] in addresses]
+                if len(nodes) != len(addresses):
+                    break
+                segments = _block_raw_text(block)
+                passage = {"_roots": roots, "_text_segments": segments}
+                transcription = " ".join(s["transcription"] for s in segments)
+                hits.append({
+                    **_document_summary(source, evidence.root / relative, root),
+                    "sentence_id": block.get("id", ""), "block_ordinal": ordinal,
+                    "source_revision": records[0]["revision"], "header": block.get("header", ""),
+                    "preview": _search_preview(transcription or block.get("header", ""), form),
+                    "transcription": transcription, "kanji": "　".join(s["kanji"] for s in segments),
+                    "text_segments": segments, "display_roots": roots,
+                    "highlights": {"transcription": _word_span_highlights(passage, [
+                        span for n in nodes if (span := context["form_spans"].get(id(n))) is not None
+                    ], context), "kanji": [], "transcription_when_kanji_hidden": []},
+                    "tree_context": {"node_ids": sorted(addresses), "show_lemma": True,
+                                     "show_phon": False, "show_kanji": False, "show_null": False,
+                                     "part_indexes": {}, "kanji_ranges": []},
+                    "matching_fields": ["syntax_tree"], "highlight_terms": [form],
+                    "match_count": len(records),
+                })
+            else:
+                if candidate:
+                    candidate["revision"] = revision
+                return {"query": form, "search_type": "attestations", "candidate": candidate,
+                        "revision": revision, "refreshed": changed, "total": total, "text_total": total,
+                        "occurrence_total": candidate["count"] if candidate else 0,
+                        "page": current_page, "per_page": per_page, "pages": pages,
+                        "results": _search_page_hits(hits, 0, per_page)}
+            # A file changed during the read: rebuild, never use shifted old addresses.
+            evidence.stamp = None
+    abort(409, description="Corpus changed while reading attestations. Refresh the results.")
+
+
 @app.get("/api/utterances/<source>/<doc_id>/<path:sentence_id>/tree")
 def utterance_tree(
     source: str, doc_id: str, sentence_id: str
 ):
+    if "block" in request.args:
+        ordinal = request.args.get("block", type=int)
+        content = _document_path(source, doc_id).read_bytes()
+        if hashlib.sha256(content).hexdigest() != request.args.get("revision"):
+            abort(409, description="This result's source changed. Refresh current attestations.")
+        blocks = ET.fromstring(content).findall("block")
+        if ordinal is None or not 0 <= ordinal < len(blocks):
+            abort(404, description="Text record not found")
+        block = blocks[ordinal]
+        roots = [_elem_to_node(child, get_dictionary()) for child in block
+                 if child.tag not in {"comment", "roundtrip-data", "raw-text", "form-parts"}]
+        return jsonify({"source": source, "document_id": doc_id, "sentence_id": block.get("id", ""),
+                        "header": block.get("header", ""), "raw_text": _block_raw_text(block),
+                        "roots": roots, "stats": _tree_stats(roots)})
     document = get_document(source, doc_id)
     utterance = document.find_utterance(sentence_id)
     if utterance is None:
@@ -1988,7 +2086,7 @@ app.register_blueprint(create_blueprint(_workbench_resolve, _workbench_roots, RO
 
 from treditor.authoring import create_blueprint as create_authoring_blueprint
 
-app.register_blueprint(create_authoring_blueprint(ROOT / "data" / "authoring"))
+app.register_blueprint(create_authoring_blueprint(ROOT / "data" / "authoring", _candidate_attestations))
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ from coj.authoring.evidence import EvidenceIndex
 from coj.authoring.model import validate
 
 
-def create_blueprint(root):
+def create_blueprint(root, attestation_results=None):
     blueprint = Blueprint("authoring", __name__)
     store = AuthoringStore(root)
     corpus = LegacyCorpus(store.root.parent)
@@ -24,6 +24,15 @@ def create_blueprint(root):
         if not isinstance(value, dict):
             abort(400, description="Supply a JSON object.")
         return value
+
+    @blueprint.post("/api/authoring/attestations")
+    def attestations():
+        if attestation_results is None:
+            abort(404)
+        try:
+            return jsonify(attestation_results(evidence, body()))
+        except (ET.ParseError, ValueError, UnicodeError, OSError) as error:
+            abort(400, description=str(error))
 
     @blueprint.get("/api/authoring/files")
     def files():

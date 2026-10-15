@@ -18,7 +18,7 @@
     if (p.source !== sourceKey(s.text)) throw new Error("Source or Text identity changed. Invoke Analyse again.");
     if (p.material !== undefined && p.material !== s.text.roots.map(id => material(s.text, id)).join("")) throw new Error("Analysed Form changed. Invoke Analyse again.");
   }
-  const provenance = (c, revision) => ({candidate: c.id, revision, count: c.count, texts: c.texts,
+  const provenance = (c, revision) => ({candidate: c.id, revision: c.revision || revision, count: c.count, texts: c.texts,
     support: c.support, domains: c.domains, evidence: clone(c.evidence), status: "suggested"});
   function instantiate(s, p, c, revision, retained = null) {
     const id = retained || s.makeId();
@@ -192,13 +192,12 @@
   function selectRows(selection, rows, key, event = {}) {
     const index = rows.findIndex(r => r.key === key), anchor = rows.findIndex(r => r.key === selection.anchor);
     if (index < 0) return;
-    const extend = event.shiftKey && anchor >= 0, additive = event.ctrlKey || event.metaKey;
-    if (!additive) { selection.selected.clear(); selection.selectedParts.clear(); }
+    const extend = event.shiftKey && anchor >= 0;
     const choices = extend ? rows.slice(Math.min(index, anchor), Math.max(index, anchor) + 1) : [rows[index]];
     for (const r of choices) {
-      if (r.part) { if (additive && !extend && selection.selectedParts.has(r.part)) selection.selectedParts.delete(r.part);
+      if (r.part) { if (!extend && selection.selectedParts.has(r.part)) selection.selectedParts.delete(r.part);
         else selection.selectedParts.set(r.part, {node: r.id, part: r.part}); }
-      else if (additive && !extend && selection.selected.has(r.id)) selection.selected.delete(r.id);
+      else if (!extend && selection.selected.has(r.id)) selection.selected.delete(r.id);
       else selection.selected.add(r.id);
     }
     if (!extend) selection.anchor = key;
