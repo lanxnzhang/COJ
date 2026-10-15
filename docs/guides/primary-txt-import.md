@@ -206,7 +206,25 @@ reports, and apply backups. Only proposed replacement files are staged, and
 only files being replaced are backed up—not full source repositories. Old
 preview payloads and backups are not automatically deleted. They consume local
 storage but are not uploaded by ordinary Git commits. Keep them while reviewing
-or recovering an import; cleanup/retention is not implemented by this tool.
+or recovering an import.
+
+After reviewing an import, explicitly remove old local history with:
+
+```powershell
+python scripts/data_conversion/import_primary_txt.py --cleanup
+```
+
+Cleanup is never automatic. It keeps the completed transaction's preview and
+associated backup, plus any newer saved preview needed by a future apply. It
+leaves reports, transaction state, manifest and corpus data unchanged, and reports
+deleted directories and reclaimed bytes (sum of file sizes). It refuses if a
+transaction is unfinished, records are missing/inconsistent, retained artifacts
+are missing, or artifact trees contain unexpected entries or links/junctions.
+Older journals that do not identify a unique backup directory (for example, an
+initial import with no pre-existing files to back up) also cause refusal; cleanup
+does not guess from directory dates. A running importer or stale lock blocks
+cleanup just as it blocks preview/apply. Cleanup does not require a Git commit;
+reviewing and committing the import first is recommended.
 
 Exit status `0` means success; `2` means a blocked or failed import. The report
 describes the reason. Nothing writes back to either primary repository.

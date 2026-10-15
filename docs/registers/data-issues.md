@@ -2,13 +2,13 @@
 
 This is an evidence register, not a priority list. **Open** means that a data problem or interpretation still needs attention; it does not imply urgency or a parser failure.
 
-Revalidated 14 October 2026 against current TXT and XML at `4f1eada`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. The [pre-repair audit](../../reports/special-terminals-4f1eada-audit.json) records original counts and hashes. After explicit user approval, the verified [repair patch](../../reports/special-terminals-4f1eada-preview.patch) was applied through the guarded importer to 305 blocks in 45 XML files, with the corresponding import-manifest update. [The applied audit](../../reports/special-terminals-4f1eada-applied-audit.json) records current results. Applied files match staged payloads exactly; TXT/dictionary sources and unrelated XML remain unchanged. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. Unchanged cases were checked afresh; no TXT or dictionary source data was modified.
+Revalidated all twelve entries on 14 October 2026 against current data and implementation at `171c191`, including the approved repair following `4f1eada`, after the latest ONCOJ import (source commit `3d713178a2e65fd219eeee9324a5934ec00544d3`). Current results are recorded below. The [pre-repair audit](../../reports/special-terminals-4f1eada-audit.json) records original counts and hashes. After explicit user approval, the verified [repair patch](../../reports/special-terminals-4f1eada-preview.patch) was applied through the guarded importer to 305 blocks in 45 XML files, with the corresponding import-manifest update. [The applied audit](../../reports/special-terminals-4f1eada-applied-audit.json) records current results. Applied files match staged payloads exactly; TXT/dictionary sources and unrelated XML remain unchanged. [The 13 October inventory](data-investigation-2026-10-13.json) remains an unchanged historical snapshot: corrected marker sequences, malformed-marker evidence, the untagged note and dictionary line positions in it are not current. This register-only recheck also verified all 115 stored corpus documents against TXT reconstruction, marker rows/order, current dictionary field maps and in-memory preservation/normalization probes. No corpus data or implementation code was modified, and no new audit/report artifact was created.
 
 ## Anomalies
 
 ### DI-006 — Two anomalous marker-like lines
 
-- **Status:** MYS.19.4220 attached-marker case Resolved; SM.29.2 bare-star case Open.
+- **Status:** Partially resolved: MYS.19.4220 attached-marker case Resolved; SM.29.2 bare-star case remains Open.
 - **14 October evidence scope:** zero malformed numeric-@ marker lines remain. One bare-star anomaly remains after excluding the separately registered 347 NULL,* lines. The attached-marker correction is now verified in COJ TXT and XML.
 
 #### MYS.19.4220 - attached marker (Resolved)
@@ -31,18 +31,32 @@ IP-MAT,PP-TOP,NP,IP-REL,VB-ADC,*
 IP-MAT,PP-TOP,NP,9@許止方不得,*
 ```
 
-The investigation is complete, but intended content remains unknown (PAQ-005). Keep the substantive issue Open until reliable evidence or editorial review establishes it. Do not infer/reconstruct/propose a replacement or alter source data. The line is preserved as a raw comment without recognized source-segment/boundary semantics. Full original cases remain in inventory.malformed_markers / inventory.bare_stars.
+The investigation is complete, but intended content remains unknown (PAQ-005). Keep the substantive issue Open until reliable evidence or editorial review establishes it. Do not infer/reconstruct/propose a replacement or alter source data. The current parser explicitly distinguishes NULL,* from numbered markers and other bare-star evidence. This unexplained line remains an opaque CommentLine, survives stored XML → TXT reconstruction, and is not recognized by `is_inline_comment` as a numbered marker; it establishes no source-segment/boundary or null-terminal semantics. Full original cases remain in inventory.malformed_markers / inventory.bare_stars.
 
 ## Cross-layer discrepancies
 
 ### DI-007 — Header and tree-derived transcription content discrepancies
 
-- **Status:** Open; source-side authority/corrections still require review.
-- **Current extent after approved DI-004 repair (14 October):** 5,665 texts and seven content discrepancies. The historical pre-repair comparison below had 640 exact matches, 5,013 segmentation-only differences and twelve content discrepancies. Five discrepancy cases were solely omitted ILL material and are now resolved by faithful conversion; MYS.16.3791 retains other content differences.
+- **Status:** Partially resolved; seven content discrepancies and the legacy converter reporting gap remain Open. Source-side authority/corrections still require review.
+- **Current extent after approved DI-004 repair (fresh 14 October recheck):** 5,665 texts: **640 exact matches, 5,018 spacing-only differences, seven content discrepancies**. The historical pre-repair comparison below had 640 exact matches, 5,013 segmentation-only differences and twelve content discrepancies. Five discrepancy cases were solely omitted ILL material and are now resolved by faithful conversion; MYS.16.3791 retains other content differences.
 - **Method:** current XML block@header vs ordered recognized CorpusLine.word_form values, ignoring whitespace only. Multipart pieces are included. This diagnostic is not a decision to replace either layer. DI-004 non-ASCII forms now participate in recognized transcription; no historical header was replaced.
-- **Author policy (PAQ-006 and 13 October scope clarification):** **TXT → XML only** must report/register header/tree discrepancies and continue; do not silently choose a side or modify data. This does not specify XML → TXT policy. SYN reviewed write-back/export keeps its existing blocking rules for unresolved discrepancies. Automatic legacy converter reporting remains unimplemented. SYN opening already records historical-header/passage or passage/hierarchy disagreements.
+- **Author policy (PAQ-006 and 13 October scope clarification):** **TXT → XML only** must report/register header/tree discrepancies and continue; do not silently choose a side or modify data. This does not specify XML → TXT policy. The SYN design requires unresolved discrepancies to block reviewed write-back/export; general SYN legacy export is not implemented yet. Automatic legacy converter discrepancy reporting remains unimplemented: the importer currently warns about dictionary duplicate/count problems, not these seven header differences. Fresh SYN imports explicitly flag the historical-header/passage mismatch in all seven current cases and preserve both layers; their passage/hierarchy material agrees, so these are not seven unresolved token-alignment cases.
 
 - **Current remaining discrepancy IDs:** SM.45.20, SM.61.11, MYS.7.1306, MYS.9.1740, MYS.11.2793, MYS.16.3791 and NSK.40. MYS.1.9, MYS.2.156, MYS.4.655, MYS.13.3242 and MYS.14.3419;azuma_uta now agree in content after their source-character ILL material was restored. This is a converter repair, not a source/header editorial change. DI-007 remains Open.
+
+#### Current remaining discrepancies
+
+| XML file | Text ID | Mechanical header → tree differences |
+|---|---|---|
+| `data/xml/text/SM_45.xml` | `SM.45.20` | `i` → `a` (`tamapi` / `tamapa`). |
+| `data/xml/text/SM_61.xml` | `SM.61.11` | Header `w` absent from tree (`kamwi` / `kami`). |
+| `data/xml/trees/MYS_07.xml` | `MYS.7.1306` | Tree adds literal `N`; this remains material in the current permissive parser, not an automatically corrected category/form error. |
+| `data/xml/trees/MYS_09.xml` | `MYS.9.1740` | Header `a` absent from tree; tree adds `bu`. |
+| `data/xml/trees/MYS_11.xml` | `MYS.11.2793` | `s` → `ar`. |
+| `data/xml/trees/MYS_16.xml` | `MYS.16.3791` | All eight ILL rows are now present as forms, but 18 mechanical difference spans remain: romanized insertions/deletions/substitutions and source-character differences `爲` / `為`, `經` / `経`. No character normalization or editorial choice is inferred. |
+| `data/xml/trees/NSK.xml` | `NSK.40` | `t` → `d`. |
+
+These differences compare complete strings with whitespace removed, using exact character identity. They are evidence for review, not diagnoses of which layer is correct. The five repaired cases moved into the spacing-only group; none became an exact segmentation match. Of the older 30-case audit, four cases remain (SM.45.20, SM.61.11, MYS.16.3791 and NSK.40), plus the three cases first recorded in the pre-repair twelve-case scan.
 
 #### Pre-repair discrepancy list (historical evidence)
 
@@ -61,7 +75,7 @@ The investigation is complete, but intended content remains unknown (PAQ-005). K
 | `data/xml/trees/MYS_16.xml` | `MYS.16.3791` | `m` -> `<empty>`; `<empty>` -> `k`; `na` -> `bi`; `<empty>` -> `w`; `e` -> `i`; `<empty>` -> `ni`; additional differences in full inventory |
 | `data/xml/trees/NSK.xml` | `NSK.40` | `t` -> `d` |
 
-The inventory retains complete headers and transcriptions for all 12 cases. Nine historical IDs remain discrepant; 21 no longer fail this same check: `KK.4`, `MYS.10.2011`, `MYS.10.2026`, `MYS.11.2386`, `MYS.11.2478`, `MYS.12.2850`, `MYS.12.2922`, `MYS.12.3077`, `MYS.13.3289`, `MYS.15.3589`, `MYS.15.3625`, `MYS.16.3827b`, `MYS.17.4000`, `MYS.17.4023`, `MYS.19.4177`, `MYS.2.121`, `MYS.3.483`, `MYS.4.531`, `MYS.4.744`, `MYS.7.1101`, `MYS.7.1373`. Three current cases were not in the old list: MYS.7.1306, MYS.9.1740 and MYS.11.2793. Absence from the current diagnostic does not approve a linguistic correction.
+The pre-repair inventory retains complete headers and transcriptions for all 12 cases. **Historical pre-repair comparison:** nine older-audit IDs remained discrepant; 21 no longer fail this same check: `KK.4`, `MYS.10.2011`, `MYS.10.2026`, `MYS.11.2386`, `MYS.11.2478`, `MYS.12.2850`, `MYS.12.2922`, `MYS.12.3077`, `MYS.13.3289`, `MYS.15.3589`, `MYS.15.3625`, `MYS.16.3827b`, `MYS.17.4000`, `MYS.17.4023`, `MYS.19.4177`, `MYS.2.121`, `MYS.3.483`, `MYS.4.531`, `MYS.4.744`, `MYS.7.1101`, `MYS.7.1373`. Three pre-repair cases were not in the older 30-case list: MYS.7.1306, MYS.9.1740 and MYS.11.2793. Absence from the current diagnostic does not approve a linguistic correction.
 
 #### Historical audit evidence
 
@@ -107,7 +121,7 @@ The older 30-case list is retained below to preserve audit history. Its spelling
 
 The concise descriptions are mechanical character-level differences after removing spaces; they are not editorial diagnoses. CEQ-002 addresses segmentation generally. PAQ-006 records the scoped TXT-to-XML discrepancy policy.
 
-- **14 October recheck:** all 12 complete header/transcription pairs are unchanged from the 13 October snapshot; none of these current discrepancies has disappeared. The 5,013 spacing-only cases are distinct from the 12 content mismatches. Keep the content issue Open; unresolved source-character interpretation and other content differences are not automatically attributed to one cause.
+- **Historical pre-repair recheck:** all twelve header/transcription pairs matched the preceding snapshot; the 5,013 spacing-only cases were separate. **Current result:** DI-004 conversion restored missing material, resolving five complete content cases and only part of MYS.16.3791. Seven content cases and automatic legacy reporting remain Open. Known-source ILL semantics are now confirmed; remaining header/tree character differences are not assigned a common cause or silently normalized.
 
 ## Terminology ambiguity
 
@@ -115,13 +129,13 @@ The concise descriptions are mechanical character-level differences after removi
 
 - **Status:** Open terminology/schema issue; data not to be “fixed” automatically
 - **Category:** representation naming mismatch
-- **Evidence:** the current marker corpus contains placeholder payloads, including source `x?xxx` in `BS.21`, while XML stores every payload under `<kanji>`.
+- **Evidence:** the current marker corpus contains placeholder payloads, including source `x都xxx` in `BS.21`, while XML stores every payload under `<kanji>`.
 - **Current implementation:** `treditor` labels/displays the field as kanji in several places; search indexes it as the `kanji` field.
 - **Project-author decision:** conceptually this may be source/original text, but the XML tag must not be renamed now.
 - **Chief-editor question:** CEQ-003.
 - **Current architecture:** source-first SYN stores numbered passages with an original-source string and independently entered transcription. Historical XML still uses kanji; no current tag rename is implied. Terminology remains CEQ-003, and uncertain source-character forms are recorded under DI-004/DI-012.
 
-- **14 October recheck:** six recognized marker payloads contain x-based placeholders across BS.10, BS.11, BS.12 and BS.21. The placeholder content is still present; terminology/schema status cannot be resolved from a data scan. The historical BS.20 example was inaccurate and has been replaced with a verified current example.
+- **Fresh 14 October recheck:** six source/XML marker payloads contain x placeholders: BS.10 `麻多乃与乃xx`, BS.11 `美阿止xxxx`, BS.12 `阿止乃止毛志x`, and BS.21 `x都xxx`, `xxxx比多留`, `xx乃多爾`. All are retained under XML `<kanji>`; the browsing UI/search still uses Kanji/kanji, while SYN authoring uses original Source. The ILL and NULL fixes do not resolve CEQ-003 terminology/schema decisions, which remain Open. The historical BS.20 example was inaccurate and has been replaced with a verified current example.
 
 ## Additional current investigations
 
@@ -149,7 +163,7 @@ The concise descriptions are mechanical character-level differences after removi
 | `data/txt/trees/MYS_13.txt:4233` | `MYS.13.3291b` | `multi-sentence,IP-MAT;@2,IP-ADV,COP-CND,L031966,LOG;@2,araba` |
 
 No occurrence was modified or reinterpreted.
-- **14 October recheck:** all 14 exact source lines and locations remain unchanged. Their formal suffix meaning is still unknown; completed inventory is not semantic resolution.
+- **Fresh 14 October recheck:** all fourteen exact source lines and locations remain unchanged. Stored XML → TXT reproduces all fourteen LOG;@2 values, and SYN imports retain LOG with phon_index=2 on the applicable node/part annotation. The formal suffix meaning is still unknown; preservation and the ILL/NULL repair do not resolve PAQ-008 semantics.
 
 ### DI-011 — Dictionary field presence and preservation limitations
 
@@ -168,7 +182,7 @@ No occurrence was modified or reinterpreted.
 - **Synthetic mapping probes:** blank optional singular CORRESP disappears; orphan/extra KANA values disappear; FORM without KANA gains a blank KANA; unmapped fields disappear. These are implementation counterexamples, not claims that those fixtures occur in current source. Indexed field values are reordered by explicit index and duplicate singular occurrences overwrite.
 - **Current architecture:** no SYN dictionary codec exists; generic corpus compatibility snapshots do not resolve these dictionary mappings. PAQ-019 owns unsupported-formal-data policy. Full field/order/model/normalization evidence is inventory.dictionary.
 
-- **14 October recheck:** both explicitly blank MEANING values remain (L080104:48837; L091024:54325), and the same required fields remain absent in L080156, L099997 and L050830. All 6,498 current parsed field value/presence maps survive the XML roundtrip probe, but documented normalization/synthetic mapping limitations are unchanged. Blank values are not declared erroneous merely because they are blank.
+- **Fresh 14 October recheck:** both explicitly blank MEANING values remain (L080104:48837; L091024:54325), and the same required fields remain absent in L080156, L099997 and L050830. All 6,498 current parsed field value/presence maps match the stored dictionary XML and survive fresh XML roundtrip, but all three normalization presence changes and the five synthetic preservation counterexamples remain reproducible in memory. Indexed MEANING values still reorder by index and duplicate singular GLOSS values still overwrite. None of these dictionary gaps was addressed by the corpus parser/XML repair. Blank values are not declared erroneous merely because they are blank.
 
 # Resolved / closed data issues
 
@@ -182,7 +196,7 @@ No occurrence was modified or reinterpreted.
 - **Applied stored-data correction:** all fifteen non-ASCII records across six texts/six documents are now WORD form material with the original ILL and L099997 assignments; zero non-ASCII syntax-path artifacts remain. Thirteen distinct strings cover the fifteen occurrences, and all are found by corpus form search. Fifteen derived transcription rows now include their retained material. Headers, source rows, marker order and original TXT encoding are unchanged. All five ASCII ILL rows remain intact.
 - **Historical table:** source lines/locations below remain current; its recognition column describes the pre-fix parser/stored-XML state, not corrected TXT parsing.
 
-| Source and line | Source text ID | Complete source line | Final form / recognized |
+| Source and line | Source text ID | Complete source line | Final form / pre-fix recognition |
 |---|---|---|---|
 | `data/txt/trees/BS.txt:331` | `BS.11` | `FRAG,WORD,L099997,ILL,xxx` | `xxx` / yes |
 | `data/txt/trees/BS.txt:622` | `BS.21` | `multi-sentence,IP-MAT,FRAG,WORD,L099997,ILL,x` | `x` / yes |
@@ -205,7 +219,7 @@ No occurrence was modified or reinterpreted.
 | `data/txt/trees/MYS_16.txt:566` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,如是` | `如是` / no |
 | `data/txt/trees/MYS_16.txt:568` | `MYS.16.3791` | `multi-sentence,IP-MAT;@4,WORD,L099997,ILL,所為故為` | `所為故為` / no |
 
-Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. No form, tag or annotation was changed.
+Exact neighboring source context is in inventory.ill_lines. Non-ASCII code points are in inventory.outside_ascii_forms, cross-referenced by DI-012. TXT occurrence forms/tag assignments are unchanged; the approved repair corrected their XML representation, not their editorial content.
 - **Approved repair verification:** all twenty TXT source rows remain unchanged. Corrected conversions and stored XML preserve forms, annotations and exact TXT roundtrip. Applied XML is byte-identical to the reviewed staged output. DI-004 is Resolved because its actual parser and stored-data defects are repaired; no new tag is introduced and future retagging remains Deferred.
 
 ### DI-005 — `NULL,*` terminal representation
@@ -223,7 +237,8 @@ Exact neighboring source context is in inventory.ill_lines. Non-ASCII code point
 - **Confirmed trace semantics:** *T* marks the syntactic position and grammatical function of the associated element. In BS.3, the NP-SBJ trace indicates subject function within the modifying clause. This supersedes the previous provisional interpretation (PAQ-007).
 - **Verified representation:** all 243 traces remain genuine empty terminals, XML `_T_` with raw_tag=*T*, empty form/phon; SYN imports category *T* and empty form. Tag queries find traces; form queries do not. Regression tests preserve exact TXT roundtrip and zero normal transcription yield. No trace data correction is required.
 - **ILL subcase:** all fifteen known-source-character forms are now correctly stored as genuine special forms under current ILL, retaining undetermined-transcription status. DI-004 is Resolved for current parser/XML behavior; possible future retagging remains Deferred. No ordinary character repertoire beyond the explicitly confirmed cases is inferred.
-- **Historical evidence:** the unchanged 13 October inventory retains code points, neighbors and exact lines. Current counts and source hashes are in the [4f1eada audit](../../reports/special-terminals-4f1eada-audit.json).
+- **Fresh scope verification:** outside ordinary alphabetic forms, the source contains exactly 243 traces and fifteen non-ASCII ILL rows, plus the 347 explicitly encoded empty NULL terminals owned by DI-005. The sole other bare-star line is the unresolved opaque DI-006 record. No additional special final-field case was found. All 115 stored XML documents reconstruct the same source tokens and order, subject to the existing canonical whitespace serialization. This is not an unrestricted ordinary-character repertoire decision.
+- **Historical evidence:** the unchanged 13 October inventory retains code points, neighbors and exact lines. Current post-repair counts and source hashes are in the existing [applied audit](../../reports/special-terminals-4f1eada-applied-audit.json); the earlier audit is pre-repair history.
 
 ### DI-001 — Duplicate text ID `1_SM_15`
 
@@ -232,12 +247,12 @@ Exact neighboring source context is in inventory.ill_lines. Non-ASCII code point
 - **Historical evidence (before 4f1eada):** `data/txt/text/SM_15.txt:108` and `:192` both end different blocks with `ID,1_SM_15`. They become two `<block id="SM.15.1">` elements in `data/xml/text/SM_15.xml` (near lines 3 and 485).
 - **First text header:** `sumyera ga opo mikoto ni imase mawosi tamapu ... kanarazu nasi matura mu`
 - **Second text header:** `sikaredomo napo yamu koto e zu si te ... kasikwo mi mo mawosi tamapa ku to mawosu`
-- **Current implementation:** parsing retains both ordered blocks, but ID lookup returns the first matching text. XML does not enforce uniqueness.
-- **Effect:** direct opening, lookup, and future change references cannot distinguish the two blocks reliably.
+- **Historical lookup behavior:** when duplicate IDs existed, parsing retained both ordered blocks but ID lookup returned the first matching text. Current XML still does not enforce uniqueness in general; this is a potential recurrence risk, not a current collision.
+- **Historical effect:** direct opening, lookup and change references could not distinguish the colliding blocks reliably. Current distinct IDs remove that ambiguity.
 - **Related question:** PAQ-011.
-- **Author position (PAQ-009/PAQ-011):** keep open; SM editing and final identifier design are incomplete. Do not allocate a replacement ID. Dotted SM IDs are provisional, not a final naming policy.
-- **Current SYN behavior:** the read-only corpus adapter preserves both blocks under separate hidden Text identities. This resolves internal identity collapse in the draft adapter, not the scholarly-ID or legacy-lookup collision.
-- **14 October recheck:** unchanged: both TXT IDs remain at lines 108/192 and two XML blocks still have SM.15.1. This identity collision is not fixed; the author's identifier review remains deferred under PAQ-009/PAQ-011.
+- **Separate author decision (PAQ-009/PAQ-011):** final identifier design remains Deferred; the documented data collision itself is Resolved. Do not allocate a replacement ID. Dotted SM IDs are provisional, not a final naming policy.
+- **Current SYN behavior:** the read-only adapter retains all three SM.15 blocks as separate Text identities with scholarly IDs SM.15.1, SM.15.2 and SM.15.3. Its ability to retain duplicate-ID blocks is separate from the now-corrected legacy IDs.
+- **Historical pre-4f1eada recheck:** the collision was still present; this observation is superseded by the verified correction below. The broader identifier review remains Deferred.
 
 - **After 4f1eada recheck:** SM_15.txt:108/:161/:192 now have `1_SM_15`, `2_SM_15`, `3_SM_15`; XML has SM.15.1/.2/.3 with corresponding distinct roundtrip source IDs. No duplicate Text IDs remain within any of the 115 TXT or XML documents. This fixes the actual collision. General final identifier design remains Deferred (PAQ-009/011); no new ID was allocated by this implementation task.
 
@@ -269,7 +284,7 @@ Exact neighboring source context is in inventory.ill_lines. Non-ASCII code point
 
 - **13 October verified resolution:** `dictionary.txt:47697` is L080725/Shibi/sibi; :47705 is L080539/Hegomori/pyegomori. Both entries are present in XML. The allocation was already imported in 5558e2a; this investigation allocated no ID and changed no dictionary data. No duplicate headings remain among 6,498 current entries. TXT duplicate parsing still uses last-write replacement if future collisions occur; this residual behavior is not resolved by the data correction. See PAQ-012.
 
-- **14 October recheck:** both distinct entries remain present; 6,498 source headings produce 6,498 parsed entries, with no duplicate dictionary IDs. The historical collision has not recurred.
+- **Fresh full-register recheck:** both distinct entries remain present in TXT and stored XML: L080725/Shibi/sibi and L080539/Hegomori/pyegomori. All 6,498 source headings produce distinct parsed/stored XML entries; zero duplicate IDs remain. An in-memory duplicate-ID probe still keeps only the last entry, so the general parser recurrence risk is unchanged. The historical data collision remains Resolved.
 
 ### DI-003 — Truncated multiline note for `L051953`
 
@@ -289,12 +304,13 @@ Exact neighboring source context is in inventory.ill_lines. Non-ASCII code point
 ```
 
 - **Current XML:** L051953/notes/note exactly matches this complete source value, including the former continuation. The current dictionary has zero untagged nonempty entry lines. The correction is present in both representations and was imported in 745d5d0; no pending source correction remains for this case.
-- **Resolution scope:** the accidental line break and truncated note are fixed. General parser behavior for hypothetical future untagged input is unchanged and remains a separate PAQ-019 implementation concern, not an unresolved L051953 data issue. See PAQ-013.
+- **Resolution scope:** the accidental line break and truncated note are fixed. Fresh revalidation confirms the complete TXT NOTE exactly equals the stored XML note and zero untagged nonempty dictionary lines remain. General parser behavior for hypothetical future untagged input is unchanged and remains a separate PAQ-019 implementation concern, not an unresolved L051953 data issue. See PAQ-013.
 
 ### DI-009 — Numbered-marker sequence irregularities
 
 - **Status:** Resolved
 - **14 October method/results:** scanned all 37,708 recognized numbered markers across 5,665 TXT blocks. Zero sequences now have gaps, restarts or out-of-order labels under the same zero-based consecutive-number diagnostic. All ten previously listed texts now have consecutive labels; their XML roundtrip marker labels and derived row numbers were also checked. TXT and XML both contain 37,708 source rows after DI-006's corrected marker was recognized.
+- **Fresh post-repair verification:** all 37,708 exact source marker lines occur in the same order in stored XML roundtrip data; all 37,708 derived rows preserve their source payloads and consecutive XML row numbering. NULL is now a tree row, so roundtrip comment positions changed where necessary without altering marker labels/order. No sequence anomaly has recurred.
 - **Resolution scope:** the documented numbering irregularities are fixed in current imported data. Marker labels remain nonsemantic under PAQ-003; this does not independently approve linguistic content or infer the intent of any other issue. Some source payload/order details changed along with numbering; original evidence is retained as history, not described as unchanged.
 
 #### Current corrected sequences
@@ -329,7 +345,7 @@ Exact neighboring source context is in inventory.ill_lines. Non-ASCII code point
 
 The historical table and inventory preserve the earlier sequences/context. The then-proposed MYS.3.276b correction is now present as 0,1,2,3,4; no additional source edits were made by this task.
 
-## After approved 4f1eada XML repair revalidation (14 October 2026)
+## Full register revalidation at 171c191 (14 October 2026)
 
 | Issue | Current finding / status |
 |---|---|
@@ -338,8 +354,8 @@ The historical table and inventory preserve the earlier sequences/context. The t
 | DI-003 | L051953 complete source NOTE equals XML note; zero untagged nonempty dictionary lines. Resolved data issue; generic continuation support remains separate. |
 | DI-004 | All twenty ILL rows recognized; fifteen non-ASCII forms repaired, zero stored artifacts. Resolved; future retagging Deferred. |
 | DI-005 | All 347 source nulls recognized/roundtripped and stored as empty XML syntax nodes. Resolved. |
-| DI-006 | Corrected attached marker remains; one unexplained SM.29.2 bare star. Mixed status unchanged; no guessed repair. |
-| DI-007 | Seven remaining header/content mismatches after restoring ILL material; no header/source corrections applied. Open. |
+| DI-006 | Partially resolved: attached marker/boundary is correct; one opaque SM.29.2 bare star remains Open, preserved without guessed semantics. |
+| DI-007 | Partially resolved: five content cases removed; 640 exact, 5,018 spacing-only and seven content mismatches remain. MYS.16.3791 is only partly addressed; legacy reporting gap remains Open. |
 | DI-008 | Six numbered source payloads still contain x placeholders; terminology/schema decision remains Open. |
 | DI-009 | 37,708 markers; zero numbering anomalies. Resolved. |
 | DI-010 | All fourteen LOG;@2 occurrences remain. Open semantic decision. |
@@ -347,3 +363,5 @@ The historical table and inventory preserve the earlier sequences/context. The t
 | DI-012 | All 243 traces remain empty with exact roundtrip; trace semantics Confirmed and current special-terminal representation Resolved. Future ILL retagging Deferred. |
 
 The approved repair changed exactly 45 corpus XML files and the import manifest. Applied outputs match the verified stage exactly. No TXT, dictionary or unrelated XML was modified. Audit hashes cover the source files; source revisions are unchanged. The repair introduces no automatic synchronization or new source-of-truth policy. Remaining editorial decisions stay separate.
+
+This full-register recheck changed only `data-issues.md`. Current Open work is DI-006's bare-star interpretation, DI-007's seven content differences and reporting implementation, DI-008 terminology/schema, DI-010 suffix semantics and DI-011 preservation/normalization gaps. Existing Resolved data cases remain Resolved within their documented scope; future ILL retagging and broader identifier/repertoire decisions remain separate Deferred/Open matters. No new fully resolved issue was inferred from semantic understanding alone.

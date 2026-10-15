@@ -1,7 +1,7 @@
 """Explicit, one-way import of committed primary TXT with a pinned preview.
 
 Never pulls, commits, pushes, deletes corpus files, or writes to source repos.
-See docs/primary-txt-import.md for the workflow and validation limits.
+See docs/guides/primary-txt-import.md for the workflow and validation limits.
 """
 
 from __future__ import annotations
@@ -15,6 +15,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
+import stat
 import subprocess
 import sys
 import uuid
@@ -506,23 +508,129 @@ def _apply(root: Path) -> dict:
     return {"replaced": len(payloads) - 1, "manifest_updated": True}
 
 
+def cleanup(root: Path) -> dict:
+    """Remove only unreferenced history, after validating the entire deletion set."""
+    def unlinked(path: Path) -> None:
+        info = path.lstat()
+        if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+            raise ImportFailure(f"Cleanup refuses linked/reparse paths: {path}")
+
+    def identifier(value) -> str:
+        if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{32}", value):
+            raise ImportFailure("Cleanup cannot identify the retained import artifacts")
+        return value
+
+    def scan_failed(error: OSError) -> None:
+        raise ImportFailure(f"Cleanup cannot inspect artifact tree: {error}") from error
+
+    root = root.resolve()
+    cache = root / CACHE
+    unlinked(cache)
+    with exclusive_import(root):
+        for relative in ("transaction.json", "preview.json"):
+            unlinked(cache / relative)
+        journal = read_json(cache / "transaction.json")
+        plan = read_json(cache / "preview.json")
+        manifest = read_json(destination(root, MANIFEST))
+        if not all(isinstance(value, dict) for value in (journal, plan, manifest)):
+            raise ImportFailure("Cleanup requires a manifest, saved preview and completed transaction")
+        if journal.get("status") != "complete":
+            raise ImportFailure("Cleanup requires a completed transaction; preserve recovery artifacts")
+        latest = identifier(journal.get("preview_id"))
+        current = identifier(plan.get("id"))
+        if (manifest.get("schema") != SCHEMA or plan.get("schema") != SCHEMA
+                or manifest.get("preview_id") != latest or plan.get("coj_root") != str(root)):
+            raise ImportFailure("Cleanup found inconsistent manifest/preview/transaction state")
+        records = journal.get("files")
+        if (not isinstance(records, list) or not records
+                or not all(isinstance(item, dict) and "backup" in item
+                           and isinstance(item.get("target"), str) and managed_path(item["target"])
+                           for item in records)
+                or MANIFEST not in {item["target"] for item in records}):
+            raise ImportFailure("Cleanup cannot identify the completed transaction's backup")
+        backups = set()
+        for record in records:
+            backup = record.get("backup")
+            if backup is None:
+                continue
+            if not isinstance(backup, str) or not re.fullmatch(
+                    rf"{re.escape(CACHE)}/backups/[0-9a-f]{{32}}/[0-9]+\.backup", backup):
+                raise ImportFailure("Cleanup found an unexpected backup reference")
+            if not destination(root, backup).is_file():
+                raise ImportFailure(f"Cleanup cannot find a retained backup: {backup}")
+            backups.add(backup.split("/")[2])
+        if len(backups) != 1:
+            raise ImportFailure("Cleanup cannot uniquely identify the completed transaction's backup")
+
+        # Current previews may be newer than the last apply (including no-op applies).
+        # Their payloads must remain available for a later --apply.
+        writes = plan.get("writes")
+        normalization = plan.get("normalization") or {}
+        if not isinstance(writes, list) or not isinstance(normalization, dict):
+            raise ImportFailure("Cleanup found an invalid saved preview")
+        extra_writes = normalization.get("writes", [])
+        if not isinstance(extra_writes, list):
+            raise ImportFailure("Cleanup found invalid normalization payloads")
+        for item in writes + extra_writes:
+            payload = item.get("payload") if isinstance(item, dict) else None
+            prefix = f"{CACHE}/previews/{current}/"
+            if (not isinstance(payload, str) or not payload.startswith(prefix)
+                    or Path(payload).parent.as_posix() != prefix.rstrip("/")
+                    or not destination(root, payload).is_file()):
+                raise ImportFailure("Cleanup cannot identify the current preview's payloads")
+
+        removals = []
+        for category, retained in (("previews", {latest, current}), ("backups", backups)):
+            parent = cache / category
+            unlinked(parent)
+            entries = list(parent.iterdir())
+            if not retained.issubset({entry.name for entry in entries}):
+                raise ImportFailure(f"Cleanup cannot find retained {category}")
+            for entry in entries:
+                unlinked(entry)
+                identifier(entry.name)
+                if not entry.is_dir() or not entry.resolve().is_relative_to(parent.resolve()):
+                    raise ImportFailure(f"Cleanup refuses unexpected artifact: {entry}")
+                size = 0
+                for directory, directories, files in os.walk(entry, followlinks=False, onerror=scan_failed):
+                    for name in directories + files:
+                        child = Path(directory) / name
+                        unlinked(child)
+                        if name in files:
+                            if not child.is_file():
+                                raise ImportFailure(f"Cleanup refuses non-file artifact: {child}")
+                            size += child.stat().st_size
+                if entry.name not in retained:
+                    removals.append((entry, size))
+        # Nothing is removed until all state, references and directory trees pass.
+        deleted = []
+        reclaimed = 0
+        for path, size in removals:
+            shutil.rmtree(path)
+            deleted.append(path.relative_to(root).as_posix())
+            reclaimed += size
+        return {"deleted": deleted, "reclaimed_bytes": reclaimed}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     operation = parser.add_mutually_exclusive_group(required=True)
     operation.add_argument("--preview", action="store_true")
     operation.add_argument("--apply", action="store_true")
+    operation.add_argument("--cleanup", action="store_true",
+                           help="Manually remove unreferenced historical preview/backup directories")
     parser.add_argument("--normalize-xml", action="store_true",
                         help="Preview step 2: canonicalize all data/xml files on the post-import state")
     parser.add_argument("--source-root", type=Path, default=Path("D:/Lanxin/Desktop/ONCOJ"))
     args = parser.parse_args()
-    if args.normalize_xml and args.apply:
+    if args.normalize_xml and not args.preview:
         parser.error("Use --normalize-xml with --preview; --apply follows the exact saved preview")
     try:
         if args.preview:
             plan = preview(PROJECT, args.source_root, normalize_xml=args.normalize_xml)
             print(summary(plan))
             return 2 if plan["blockers"] else 0
-        print(json.dumps(apply(PROJECT), indent=2))
+        print(json.dumps(cleanup(PROJECT) if args.cleanup else apply(PROJECT), indent=2))
         return 0
     except (ImportFailure, OSError, ValueError) as error:
         print(f"Import stopped: {error}", file=sys.stderr)

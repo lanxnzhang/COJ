@@ -60,6 +60,167 @@ def establish(root, source):
     return plan
 
 
+@pytest.fixture
+def cleanup_history(tmp_path):
+    root = tmp_path / "coj"
+    cache = root / importer.CACHE
+    old, latest = "a" * 32, "b" * 32
+    for category in ("previews", "backups"):
+        for identity in (old, latest):
+            write(cache / category / identity / "0.backup", "historical payload")
+    importer.write_json(root / importer.MANIFEST, {"schema": importer.SCHEMA, "preview_id": latest})
+    importer.write_json(cache / "transaction.json", {
+        "status": "complete", "preview_id": latest,
+        "files": [{"target": importer.MANIFEST,
+                   "backup": f"{importer.CACHE}/backups/{latest}/0.backup"}],
+    })
+    importer.write_json(cache / "preview.json", {
+        "schema": importer.SCHEMA, "id": latest, "coj_root": str(root), "writes": [],
+    })
+    write(cache / "preview.txt", "current report")
+    write(root / "data/txt/trees/MYS_16.txt", "preserve corpus")
+    return root, cache, old, latest
+
+
+def test_cleanup_deletes_only_history_and_is_repeatable(cleanup_history):
+    root, cache, old, latest = cleanup_history
+    before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    deleted_files = {path for path in before if old in path.parts}
+    result = importer.cleanup(root)
+    assert set(result["deleted"]) == {
+        f"{importer.CACHE}/{category}/{old}" for category in ("previews", "backups")}
+    assert result["reclaimed_bytes"] == sum(len(before[path]) for path in deleted_files)
+    for path, content in before.items():
+        assert not path.exists() if path in deleted_files else path.read_bytes() == content
+    assert not (cache / "import.lock").exists()
+    assert importer.cleanup(root) == {"deleted": [], "reclaimed_bytes": 0}
+
+
+def test_cleanup_keeps_newer_unapplied_preview(cleanup_history):
+    root, cache, old, latest = cleanup_history
+    pending = "c" * 32
+    payload = f"{importer.CACHE}/previews/{pending}/0.payload"
+    write(root / payload, "pending replacement")
+    plan = importer.read_json(cache / "preview.json")
+    plan.update(id=pending, writes=[{"payload": payload}])
+    importer.write_json(cache / "preview.json", plan)
+    importer.cleanup(root)
+    assert {path.name for path in (cache / "previews").iterdir()} == {pending, latest}
+    assert (root / payload).read_text() == "pending replacement"
+
+
+@pytest.mark.parametrize("problem", [
+    "preparing", "applying", "rolled_back", "manifest_mismatch", "missing_preview",
+    "missing_backup", "unidentified_backup", "unexpected_entry", "escaping_backup",
+    "escaping_payload", "malformed_journal", "missing_journal", "missing_plan", "invalid_record",
+])
+def test_cleanup_refuses_uncertain_state_without_deleting(cleanup_history, problem):
+    root, cache, old, latest = cleanup_history
+    journal = importer.read_json(cache / "transaction.json")
+    if problem in {"preparing", "applying", "rolled_back"}:
+        journal["status"] = problem
+    elif problem == "manifest_mismatch":
+        importer.write_json(root / importer.MANIFEST, {"schema": importer.SCHEMA, "preview_id": old})
+    elif problem == "missing_preview":
+        (cache / "previews" / latest / "0.backup").unlink()
+        (cache / "previews" / latest).rmdir()
+    elif problem == "missing_backup":
+        (cache / "backups" / latest / "0.backup").unlink()
+    elif problem == "unidentified_backup":
+        journal["files"][0]["backup"] = None
+    elif problem == "invalid_record":
+        del journal["files"][0]["backup"]
+    elif problem == "unexpected_entry":
+        write(cache / "backups/unexpected.txt", "do not delete")
+    elif problem == "escaping_backup":
+        journal["files"][0]["backup"] = "../outside/0.backup"
+    elif problem == "escaping_payload":
+        plan = importer.read_json(cache / "preview.json")
+        plan["writes"] = [{"payload": f"{importer.CACHE}/previews/{latest}/../../outside"}]
+        importer.write_json(cache / "preview.json", plan)
+    importer.write_json(cache / "transaction.json", journal)
+    if problem == "malformed_journal":
+        write(cache / "transaction.json", "{")
+    elif problem == "missing_journal":
+        (cache / "transaction.json").unlink()
+    elif problem == "missing_plan":
+        (cache / "preview.json").unlink()
+    before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    with pytest.raises((importer.ImportFailure, OSError, ValueError)):
+        importer.cleanup(root)
+    assert {path: path.read_bytes() for path in root.rglob("*") if path.is_file()} == before
+
+
+def test_cleanup_respects_import_lock(cleanup_history):
+    root, cache, old, latest = cleanup_history
+    with importer.exclusive_import(root):
+        with pytest.raises(importer.ImportFailure, match="Another import"):
+            importer.cleanup(root)
+    assert (cache / "previews" / old).exists()
+
+
+def test_cleanup_refuses_unreadable_tree(cleanup_history, monkeypatch):
+    root, cache, old, latest = cleanup_history
+    def unreadable(*args, **kwargs):
+        kwargs["onerror"](PermissionError("unreadable directory"))
+    monkeypatch.setattr(importer.os, "walk", unreadable)
+    with pytest.raises(importer.ImportFailure, match="cannot inspect"):
+        importer.cleanup(root)
+    assert (cache / "previews" / old).exists()
+    assert (cache / "backups" / old).exists()
+
+
+def test_cleanup_rejects_link_before_any_deletion(cleanup_history, tmp_path):
+    root, cache, old, latest = cleanup_history
+    outside = tmp_path / "outside"
+    write(outside / "precious.txt", "keep")
+    link = cache / "backups" / old / "linked"
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except OSError:
+        # Windows directory junctions do not require symlink privileges.
+        result = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(outside)],
+                                capture_output=True)
+        if result.returncode:
+            pytest.skip("Neither symlink nor junction creation is available")
+    with pytest.raises(importer.ImportFailure, match="linked/reparse"):
+        importer.cleanup(root)
+    assert (cache / "previews" / old).exists()
+    assert (outside / "precious.txt").read_text() == "keep"
+
+
+def test_cleanup_after_real_import(repositories):
+    root, source = repositories
+    previous = establish(root, source)
+    write(source / "oncoj_source/trees/BS.txt", TEXT.replace("BS.1", "BS.2"))
+    commit(source / "oncoj_source")
+    latest = importer.preview(root, source, normalize_xml=True)
+    assert not latest["blockers"]
+    importer.apply(root)
+    assert (root / importer.CACHE / "previews" / previous["id"]).is_dir()
+    assert len(list((root / importer.CACHE / "backups").iterdir())) == 2
+    before = {path: path.read_bytes() for path in (root / "data").rglob("*") if path.is_file()}
+    result = importer.cleanup(root)
+    assert f"{importer.CACHE}/previews/{previous['id']}" in result["deleted"]
+    assert {path.name for path in (root / importer.CACHE / "previews").iterdir()} == {latest["id"]}
+    assert len(list((root / importer.CACHE / "backups").iterdir())) == 1
+    assert all(path.read_bytes() == content for path, content in before.items())
+
+
+def test_cleanup_cli_is_explicit(cleanup_history, monkeypatch, capsys):
+    root, cache, old, latest = cleanup_history
+    monkeypatch.setattr(importer, "PROJECT", root)
+    monkeypatch.setattr("sys.argv", ["import_primary_txt.py", "--cleanup"])
+    assert importer.main() == 0
+    assert json.loads(capsys.readouterr().out)["reclaimed_bytes"] > 0
+    for arguments in (["--cleanup", "--apply"], ["--cleanup", "--preview"],
+                      ["--cleanup", "--normalize-xml"], []):
+        monkeypatch.setattr("sys.argv", ["import_primary_txt.py", *arguments])
+        with pytest.raises(SystemExit) as error:
+            importer.main()
+        assert error.value.code == 2
+
+
 def test_preview_only_and_committed_source(repositories):
     root, source = repositories
     write(source / "oncoj_source/trees/BS.txt", "uncommitted broken text")
