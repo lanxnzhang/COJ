@@ -425,7 +425,7 @@ Update this PAQ with the investigation results, including the relevant earlier T
 
 #### Investigation / decision history (13 October 2026)
 
-Historical fix recovered: TODO After commit a36a1af identified BS.1's two NP-ADV constituents accidentally merged across CP-FINAL marker rows. Commit 4cc54dd restored 4,020 marker-derived boundaries (report: 26,105 unique annotation lines, 1,818 passages, 105 XML documents; 4,089 additional separated nodes). `reports/kanji_marker_boundaries.md`, the repeatable migration and TestKanjiMarkerSyntaxBoundaries retain the evidence.
+Historical fix recovered: TODO After commit a36a1af identified BS.1's two NP-ADV constituents accidentally merged across CP-FINAL marker rows. Commit 4cc54dd restored 4,020 marker-derived boundaries (report: 26,105 unique annotation lines, 1,818 passages, 105 XML documents; 4,089 additional separated nodes). `reports/migrations/kanji_marker_boundaries.md`, the repeatable migration and TestKanjiMarkerSyntaxBoundaries retain the evidence.
 
 Current marker parent path means a new **child below that parent**, not a split of the parent named in the marker; `_starts_new_syntax_child()` and `_build_children()` enforce this. Numbers themselves are not semantic under PAQ-003; source text/order, segment events and constituent separation are meaningful. Exact path spelling, marker labels and positioned raw lines are needed for retained TXT reproduction. XML retains both hierarchy and roundtrip comments; SYN imports hierarchy and whole original bytes but has no complete marker-event export adapter. Do not simplify existing preservation merely because some bookkeeping might eventually be derivable.
 

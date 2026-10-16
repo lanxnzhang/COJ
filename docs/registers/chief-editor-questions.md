@@ -31,7 +31,7 @@ Rechecked 13 October 2026 against current imported data and Stage 1–3 SYN auth
 - **Answer:** ASCII x-based forms represent illegible/damaged source text; ILL means illegible and is appropriate here. Dictionary L099997 has GLOSS `ILLEGIBLE`, MEANING `[illegible word]`, and placeholder FORM/KANA `xxxxxxxxxx`; it is not a license to substitute that placeholder for an actual occurrence.
 - Non-ASCII forms such as `莫囂圓隣之` preserve known source characters whose linguistic transcription is undetermined. They are genuine special word forms, retained in the tree, textual material/header and search, rather than syntax tags. Preserve imported headers independently; do not automatically rewrite them.
 - **Deferred:** the chief editor is considering a different future tag for the second situation. Keep current ILL and L099997 assignments; no new tag or data migration is chosen.
-- **Implementation:** corrected TXT parsing recognizes current special ILL forms in the form slot. The explicitly approved repair now stores all fifteen special forms correctly; DI-004 is Resolved and future retagging remains Deferred. See the [applied XML patch](../../reports/special-terminals-4f1eada-preview.patch).
+- **Implementation:** corrected TXT parsing recognizes current special ILL forms in the form slot. The explicitly approved repair now stores all fifteen special forms correctly; DI-004 is Resolved and future retagging remains Deferred. See the [applied XML patch](../../reports/archive/special-terminals-4f1eada/special-terminals-4f1eada-preview.patch).
 
 ## CEQ-005 — Meaning of `NULL,*`
 

@@ -24,7 +24,7 @@ from coj.core.corpus import (
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 DATA = REPOSITORY / "data"
-DEFAULT_REPORT = REPOSITORY / "reports" / "kanji_marker_boundaries.md"
+DEFAULT_REPORT = REPOSITORY / "reports" / "migrations" / "kanji_marker_boundaries.md"
 
 
 @dataclass(frozen=True)

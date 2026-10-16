@@ -17,7 +17,7 @@ from coj.core.corpus import CorpusDocument, CorpusLine, _canonical_sentence_id
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 DATA = REPOSITORY / "data"
-DEFAULT_REPORT = REPOSITORY / "reports" / "multipart_words.md"
+DEFAULT_REPORT = REPOSITORY / "reports" / "migrations" / "multipart_words.md"
 
 
 @dataclass(frozen=True)

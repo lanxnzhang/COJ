@@ -1430,7 +1430,7 @@ Please:
 Please do not record items if they are currently uncertain or subject to further discussion. If you are unsure about anything, please ask me. Keep the content of the guidelines concise and consistent; there is no need to include useless examples of errors—such as those that serve merely as historical data rather than helping to explain the guidelines.
 
 ### After commit 88f3e30
-Please update and prune `docs/annotation-guidelines.md` based on the **confirmed** findings in `reports/annotation-audit-5558e2a.md`.
+Please update and prune `docs/annotation-guidelines.md` based on the **confirmed** findings in `reports/audits/annotation-5558e2a/annotation-audit-5558e2a.md`.
 I also confirm that the intended word-level segmentation for the revised KK.30 structure is:
 `awokakiyamagomoreru`
 Treat this as an author-confirmed acceptance case.
@@ -2555,6 +2555,147 @@ Do not implement imported-tree regrouping as an ad-hoc Stage 3 operation; that s
 Add/update focused tests for toggle multi-selection, Script range behavior, Auto-collapse on/off, exact live attestation navigation, refreshed statistics, and zero-attestation behavior.
 If anything here requires a linguistic/workflow assumption not established by the current design or repository evidence, ask me before deciding or implementing it. Do not guess.
 After implementation, briefly summarize what changed and how I should test these interactions.
+
+### After commit 30b1dfc
+Before implementing Stage 4, review the current repository and prepare a concise implementation/design assessment for hierarchy/tree structural editing. Do not change code yet.
+Stage 3 is now accepted. Stage 4 should extend the same persistent annotated hierarchy already used by Editing. Do not introduce a separate syntax-tree copy, staging tree, or parallel mutable representation.
+Please inspect:
+- the current Editing hierarchy/model and Stage 3 UI;
+- the existing Workbench tree generation, rendering and browsing functionality;
+- reusable treditor tree layout/rendering, navigation and display code;
+- current authoring state, command and undo infrastructure;
+- syntax-tree-authoring-design.md;
+- relevant tests and representative real corpus trees.
+Workbench currently provides useful tree generation/visualization and browsing, rather than structural authoring. Reuse its rendering/layout/navigation infrastructure where appropriate, while designing Stage 4 structural editing against the current persistent authoring model rather than extending any reduced display representation.
+The intended Stage 4 interaction remains:
+- ordinary local editing should feel close to text editing;
+- direct editing of node contents;
+- Enter for convenient node creation where appropriate;
+- Tab / Shift+Tab for small local hierarchy adjustments;
+- reuse the current click-to-toggle multi-selection for structural operations;
+- Wrap in Parent for efficiently grouping adjacent existing nodes/subtrees upward;
+- movement/reparenting and unwrap where useful;
+- generated indentation/tree guides rather than manually maintained whitespace;
+- session undo/redo, without persisting operation history in .syn.json;
+- preserve persistent node identities, Source/alignment links and annotations through structural edits.
+Please investigate specifically:
+1. Wrap in Parent: how it should operate with the current multi-selection model, including adjacency, sibling/parent constraints, whole-subtree selection and unary wrapping.
+2. Text-like editing: what Enter and Tab/Shift+Tab can safely mean without conflicting with inline tag/form/lemma/Script editing, autocomplete and normal focus behavior.
+3. Movement/reparenting: how existing nodes/subtrees can move while preserving identity, child order, Source coverage, alignment, annotations and relevant legacy/compatibility anchors.
+4. Stage 3 integration: how structural Candidates that propose a new grouping for an existing imported hierarchy can later invoke the same safe Stage 4 structural commands instead of maintaining a separate regrouping implementation.
+5. Deletion and unwrap: which behaviors are already determined by the design and which cases involving referenced annotations/compatibility data still require an explicit decision.
+6. Rendering reuse: which parts of the existing Workbench/tree visualization code are suitable for the Editing hierarchy, and where the current Stage 3 compact hierarchy should remain the primary editing surface instead.
+7. Efficient interaction: what mouse/keyboard operations would make repeated tree construction practical without turning every small structural edit into a dialog or toolbar operation.
+8. Undo/redo and validation: what atomic commands/invariants are needed so structural edits remain reversible within the session and cannot silently create cycles, duplicate placement, lost references or corrupted yield.
+Use the KK.67 workflow as one concrete acceptance example:
+ADJ-STM taka
+VB-ADC  yuku
+P-FOC   ya
+
+→ select taka + yuku and Wrap in Parent →
+
+VB-ADC
+  ADJ-STM taka
+  VB-ADC yuku
+P-FOC ya
+
+→ select that VB-ADC subtree + ya and Wrap in Parent →
+
+MK
+  VB-ADC
+    ADJ-STM taka
+    VB-ADC yuku
+  P-FOC ya
+
+Also inspect substantially more complex existing corpus trees so the structural-editing design is not optimized only for this simple example.
+Please report:
+- what existing code can safely be reused;
+- the proposed Stage 4 command/interaction architecture;
+- the main invariants and tests needed;
+- only the genuine implementation-critical semantic/workflow questions that require my decision before implementation.
+Do not reopen decisions already settled in the design. Distinguish actual Stage 4 blockers from questions that can safely remain deferred.
+Do not implement Stage 4 yet. Do not guess unresolved behavior. If the repository evidence and current design do not determine something that must be decided for implementation, ask me before choosing a behavior.
+
+#### After commit 30b1dfc (2)
+Perform a read-only audit of the entire current corpus for the following two classes of annotation problems. Produce **two separate series of reports** under `COJ/reports/`: one series for lemma-ID/word-form problems and one series for compound annotation/structural problems. Each series may contain multiple appropriately organized report files where useful for clarity, scale, or later processing.
+Do not modify corpus TXT/XML data, dictionary data, implementation code, or existing data-issue registers. Do not add these findings to `data-issues.md`. This task is investigation and reporting only.
+
+1. Lemma ID / word-form inconsistencies
+Inspect corpus nodes carrying lemma IDs and validate them against the current dictionary.
+Identify and classify at least:
+- **Nonexistent lemma IDs:** a node references a lemma ID for which no corresponding dictionary entry exists.
+- **Lemma/form mismatches:** the referenced dictionary entry exists, but the node's actual word form does not correspond to any form recorded for that lemma.
+For example, if a node has word form `no` and lemma ID `L090824`, but `L090824` contains only the dictionary form `ye`, report it as a mismatch.
+Respect the dictionary's actual representation, including legitimate multiple forms. Do not report a mismatch merely because one dictionary form differs if another valid form of the same entry matches the corpus word form.
+For every finding, provide sufficient evidence for both human review and possible later Codex-assisted correction of the ONCOJ source: document/text ID, precise source location where available, relevant TXT line/context, tree/node context, actual word form, annotated lemma ID, and relevant dictionary evidence.
+Keep nonexistent-ID and form-mismatch cases clearly distinguishable.
+
+2. Compound annotation and structural inconsistencies
+Base this audit on **existing dictionary entries with explicit compound definitions**. Do not search for or infer potential compounds for words that do not already have an appropriate lemma entry and compound definition in the dictionary.
+For example:
+```text
+=== L080722
+.GLOSS	young chestnut grove
+.MEANING	grove of young chestnut trees
+.FORM	wakakurusu
+.KANA	ワカクルス
+.POS	noun
+.COMPOUND	ref_target=L007209	waka
+.COMPOUND	ref_target=L060382	kurusu
+```
+
+defines `wakakurusu` (`L080722`) as a compound of `waka` (`L007209`) and `kurusu` (`L060382`).
+Audit corpus occurrences against such dictionary-defined compound structures and classify at least:
+
+A. Compound mother annotated, child lemma annotation missing
+The compound mother has the compound lemma ID (e.g. `wakakurusu` → `L080722`) and component child nodes exist, but one or more children lack the lemma IDs specified by the dictionary compound definition.
+
+B. Compound represented directly as a terminal
+The dictionary defines the lemma as a compound, but the corpus occurrence is represented directly as a terminal such as `wakakurusu`, without the expected component-node structure.
+
+C. Components annotated, compound-mother lemma missing
+The expected component nodes (e.g. `waka` and `kurusu`) carry the expected component lemma IDs and an appropriate compound mother exists, but the mother lacks the compound lemma ID (e.g. `L080722`).
+
+D. Components present but compound mother missing
+The expected component nodes are present/identifiable, but there is no corresponding compound mother node representing the dictionary-defined compound.
+Identify other analogous violations of the existing compound annotation scheme when they are clearly supported by the dictionary definitions and corpus structure. Classify and explain additional patterns separately rather than forcing them into A–D.
+Do not infer compound structure merely from apparent segmentation or linguistic intuition.
+
+Correction evidence
+For cases where the available evidence uniquely determines the intended correction, provide especially detailed and structured evidence.
+These reports will be reviewed by me and may later be supplied directly to Codex to assist with correcting the original ONCOJ TXT data. Therefore, make the correction evidence sufficiently precise and self-contained for reliable later programmatic or Codex-assisted work, not merely for manual human correction.
+For each unambiguous correction candidate, include where available:
+- corpus document/file;
+- text ID;
+- precise physical/source line;
+- exact relevant original TXT lines and sufficient neighboring context;
+- current tree/node structure;
+- current word forms and lemma annotations;
+- relevant dictionary entry and compound definition;
+- expected component lemma IDs/forms;
+- exact nature/category of the inconsistency;
+- evidence establishing the intended correction;
+- the correction that the source annotation/structure would need to express.
+Clearly distinguish:
+- **unambiguous correction candidates**, where the evidence uniquely supports a correction;
+- **review-required cases**, where more than one interpretation remains possible.
+Do not apply any correction during this task.
+
+Reports
+Create **two report series** under `COJ/reports/`:
+1. a lemma-ID/word-form inconsistency report series;
+2. a compound annotation/structure inconsistency report series.
+Organize each series into as many report files as are useful for readability, scale, and later reuse. Do not artificially force all results into one file per series, but also do not fragment the results unnecessarily.
+Each series should provide:
+- methodology and scope;
+- summary counts by category;
+- detailed inventories;
+- clear source/dictionary evidence;
+- explicit separation of unambiguous correction candidates from review-required cases.
+Use stable, explicit identifiers and source locations where practical so that the reports can later serve as reliable input for Codex-assisted ONCOJ correction.
+Do not create unrelated inventories, patches, snapshots, or redundant audit artifacts.
+Before drawing conclusions, inspect the actual current dictionary and corpus models so that the audit follows the project's real lemma, form, compound, tree, and roundtrip representations rather than assuming a schema.
+If any classification rule, representation, compound convention, or intended interpretation is unclear, ask me before proceeding. Do not guess, silently normalize data, or invent annotation rules.
 
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.

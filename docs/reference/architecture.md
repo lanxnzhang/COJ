@@ -205,8 +205,8 @@ Browser ──HTTP──> scripteditor/app.py ──subprocess──> worker + G
 11. `scripteditor/worker.py` — processor execution and before/after proposal extraction.
 12. `scripteditor/static/app.js` — experimental review UI state and decisions.
 13. `scripts/data_conversion/README.md` — current documented XML block conventions.
-14. `reports/multipart_words.md` — evidence for the multipart-word migration.
-15. `reports/kanji_marker_boundaries.md` — evidence for marker-derived syntax boundaries.
+14. `reports/migrations/multipart_words.md` — evidence for the multipart-word migration.
+15. `reports/migrations/kanji_marker_boundaries.md` — evidence for marker-derived syntax boundaries.
 16. `tests/test_corpus.py` — executable expectations for TXT/XML corpus behavior.
 17. `tests/test_dictionary.py` and `tests/test_export.py` — executable dictionary and serialization expectations.
 18. `treditor/workbench.py` and `treditor/static/workbench.js` — temporary Workbench parsing and browser panes.

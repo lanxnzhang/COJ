@@ -325,7 +325,7 @@ The reference is not a complete formal grammar of every allowable combination. T
 - [Scripteditor POS mapping](../../scripteditor/scripts/lemma_forgui.py): dictionary-candidate preferences for `N-DVB`, `N-COMP`, `N-PRD`, and `NUMCL`.
 - [Tag tests](../../tests/test_tags.py) and [corpus tests](../../tests/test_corpus.py): recognized writing modes and tag preservation. Passing tests establish supported behavior, not linguistic meaning.
 - [Export tests](../../tests/test_export.py): lowercase-root preservation and internal lemma annotations.
-- [Marker-boundary migration report](../../reports/kanji_marker_boundaries.md) and [multipart-word report](../../reports/multipart_words.md): source examples and structural changes, generally not definitions of unlisted labels.
+- [Marker-boundary migration report](../../reports/migrations/kanji_marker_boundaries.md) and [multipart-word report](../../reports/migrations/multipart_words.md): source examples and structural changes, generally not definitions of unlisted labels.
 - [Compound processor notebook](../../notebooks/compound_lemma_processor.ipynb): experimental grouping heuristics, expressly not annotation policy under the project author's clarification.
 - Git history: initial `src/oncoj/tags.py` already includes explanations such as “compound,” “back-phonographic,” and “ordinal logographic.” Later renaming to `coj` and addition of the browser abbreviation mapping do not supply independent confirmation of those definitions.
 

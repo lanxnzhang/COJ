@@ -153,7 +153,7 @@ Example:
 - Each part retains its form, writing-mode tag, and optional tag distinction index.
 - XML → TXT emits one path line per part in stored order.
 - `;@N` means a genuinely separate sibling and prevents multipart grouping.
-- Historical migration evidence: 3,018 words made from 6,109 original lines in 1,792 texts across 84 documents (`reports/multipart_words.md`).
+- Historical migration evidence: 3,018 words made from 6,109 original lines in 1,792 texts across 84 documents (`reports/migrations/multipart_words.md`).
 
 ### Other forms and legacy tags
 
@@ -192,7 +192,7 @@ The recursive builder groups consecutive lines sharing the node key at each dept
 2. an unsuffixed occurrence beside explicitly suffixed occurrences (represented by inferred XML index 1);
 3. a numbered marker boundary between otherwise identical-looking runs.
 
-The marker-boundary migration restored 4,020 constituent boundaries covering 26,105 original annotation lines in 1,818 texts across 105 documents (`reports/kanji_marker_boundaries.md`).
+The marker-boundary migration restored 4,020 constituent boundaries covering 26,105 original annotation lines in 1,818 texts across 105 documents (`reports/migrations/kanji_marker_boundaries.md`).
 
 ## Derived `<raw-text>`
 
