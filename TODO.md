@@ -2697,6 +2697,169 @@ Do not create unrelated inventories, patches, snapshots, or redundant audit arti
 Before drawing conclusions, inspect the actual current dictionary and corpus models so that the audit follows the project's real lemma, form, compound, tree, and roundtrip representations rather than assuming a schema.
 If any classification rule, representation, compound convention, or intended interpretation is unclear, ask me before proceeding. Do not guess, silently normalize data, or invent annotation rules.
 
+### After commit c890931
+Perform a rigorous corpus-wide investigation of all **MK (枕詞)** annotations and produce four research tables. Accuracy is essential: these outputs will be used for academic research.
+
+Use whatever current corpus representations are most reliable for each piece of information (TXT, XML, dictionary, derived structures, etc.). Do not privilege a file format merely for consistency. The tables should represent the underlying corpus data accurately.
+
+Do not modify any corpus, TXT/XML, dictionary, annotation, or source data.
+
+Save the four tables under:
+
+`D:\Lanxin\Desktop\COJ-backup\MK`
+
+This location is outside the current repository.
+
+Prefer an Excel workbook with clearly named sheets if that provides the most convenient and reliable browsing format. Other supporting formats may be used only when genuinely useful.
+
+#### General rules
+
+Sort MK forms according to **Japanese gojūon order (あいうえお順)**, not Latin/ASCII alphabetical order. Group all occurrences of the same MK together before proceeding to the next MK.
+
+Use dictionary meanings and existing corpus/dictionary evidence. Do not invent meanings, lemma relationships, morphological analyses, modifier relationships, or readings.
+
+Distinguish carefully between:
+- **MK frequency**: number of corpus occurrences of that form explicitly annotated as MK;
+- **total occurrences**: number of occurrences of the same linguistic form/string in the entire corpus, regardless of whether it is annotated as MK;
+- **lemma frequency**: total corpus occurrences carrying a particular lemma ID;
+- **MK–modifier count**: number of times a particular modifier target occurs as the target of a particular MK.
+
+These quantities must not be conflated.
+
+#### Table 1 — All explicitly annotated MK occurrences
+
+Create an occurrence-level table containing every occurrence explicitly annotated as MK.
+
+For each occurrence include, in a sensible column order:
+
+- MK form;
+- MK meaning;
+- MK lemma ID, if present;
+- MK frequency;
+- MK total occurrences across the corpus, including both MK-annotated and non-MK occurrences of the same form;
+- modifier/modified-target form (transcription);
+- modifier/target meaning;
+- modifier/target lemma ID, if present;
+- modifier/target lemma frequency across the entire corpus;
+- full **kanji/source text of the poetic line containing the MK**;
+- full transcription of the **following poetic line**;
+- full kanji/source text of the **following poetic line**;
+- text ID;
+- poetic line number within that text, with the first line numbered `1`.
+
+Do **not** add a separate full-transcription column for the MK's own poetic line.
+
+Because the corpus does not currently align source kanji to individual words or syllables, do not attempt to infer a word-level kanji substring for the MK or its modifier.
+
+If the MK occurs on the final poetic line, leave the following-line transcription and kanji/source-text fields empty.
+
+Keep occurrences of the same MK together, with MK groups ordered by Japanese gojūon order.
+
+#### Table 2 — MK forms and component structure
+
+Create a form-level summary of the internal component structure of MK expressions.
+
+For each distinct MK form include:
+
+- MK form;
+- MK meaning;
+- MK lemma ID, if present;
+- MK frequency;
+- MK total occurrences;
+- its component(s), preserving their structural/order relationship;
+- each component's lemma ID, if present;
+- each component's lemma frequency across the entire corpus.
+
+For example, if `word1` is an MK consisting structurally of `word2 + word3`, the table should make clear that:
+- `word1` as an MK may have frequency 100;
+- `word2`'s lemma may have corpus-wide frequency 200;
+- `word3`'s lemma may have corpus-wide frequency 300.
+
+Do not expand this table to individual text occurrences.
+
+Do not infer components where the corpus/dictionary/tree evidence does not establish them.
+
+#### Table 3 — MK × modifier distribution
+
+Aggregate Table 1 by MK form and modifier/target.
+
+For each MK, show:
+- MK form;
+- MK meaning;
+- MK lemma ID, if present;
+- MK frequency;
+- each distinct modifier/target form;
+- modifier/target meaning;
+- modifier/target lemma ID, if present;
+- **MK–modifier count**: how many times that target is actually modified by that MK.
+
+For example, if an MK occurs 100 times and modifies:
+- `word5` 50 times;
+- `word6` 30 times;
+- `word7` 20 times;
+
+the table should represent those three distributions explicitly.
+
+This is an aggregate table and should not list individual texts.
+
+#### Table 4 — Same-form occurrences not explicitly annotated as MK
+
+Starting from the forms actually attested as explicitly annotated MKs, search the entire corpus for occurrences of the **same linguistic form/word sequence** that are **not explicitly annotated as MK**.
+
+For example, if `opobune no` occurs in some places with MK annotation and elsewhere as the same sequence without MK annotation, Table 4 should contain the latter occurrences.
+
+Do not duplicate occurrences already included in Table 1.
+
+Do not restrict matching to one particular TXT/XML serialization or identical tree representation if the same linguistic sequence can be identified reliably through the corpus data. At the same time, do not use approximate matching or infer that a different form is equivalent.
+
+For each such occurrence include, as far as the existing evidence reliably permits:
+
+- MK-equivalent form;
+- meaning associated with the known MK form;
+- known MK lemma ID, if established;
+- explicitly annotated MK frequency for that form;
+- total occurrences of that form across the corpus;
+- modifier/target form (transcription);
+- modifier/target meaning;
+- modifier/target lemma ID, if present;
+- modifier/target lemma frequency across the entire corpus;
+- full kanji/source text of the poetic line containing the occurrence;
+- full transcription of the following poetic line;
+- full kanji/source text of the following poetic line;
+- text ID;
+- poetic line number, with the first line numbered `1`.
+
+If the occurrence is on the final line, leave the following-line fields empty.
+
+Table 4 is a candidate inventory. The absence of an MK annotation must **not by itself** be classified as a corpus error.
+
+#### Data-quality report
+
+While performing this investigation, check carefully for source-data problems that could affect the reliability of the MK study, such as inconsistent or suspicious MK annotations, lemma annotations, modifier relationships, segmentation/tree structures, dictionary relationships, or other genuine data inconsistencies.
+
+If such issues are found, create an appropriate investigation report under `COJ/reports/`.
+
+Do **not** duplicate Table 4 in that report merely because those occurrences lack MK annotation. Table 4 already records that phenomenon.
+
+The report should distinguish established problems from uncertain cases and provide sufficient source evidence for later review. Do not modify the source data or add findings to an existing issue register unless separately authorized.
+
+#### Validation
+
+Cross-check counts and relationships where possible rather than relying on a single representation when another current representation can independently verify the result.
+
+Before finalizing the tables, verify that:
+- every explicitly annotated MK occurrence is accounted for;
+- Table 1 occurrence counts agree with the MK frequencies reported in the summary tables;
+- total-occurrence counts include both MK and non-MK occurrences of the same form;
+- modifier lemma frequencies count lemma IDs corpus-wide, not surface-form strings;
+- Table 3 MK–modifier counts reconcile with Table 1;
+- Table 4 excludes all occurrences already explicitly annotated as MK;
+- Japanese gojūon ordering is applied consistently.
+
+Keep a clear distinction between directly attested data and derived aggregation.
+
+If any aspect of MK identification, modifier identification, poetic-line boundaries, frequency calculation, form matching, Japanese ordering, dictionary interpretation, or any other relevant data convention is unclear, ask me before proceeding. Do not guess or silently introduce new linguistic rules.
+
 ### TBD
 2. The current search interface features separate buttons for "Text search" and "TGrep2," requiring users to switch between them—which is quite inconvenient. Could these be merged into a single search box? This would allow users to perform either type of search directly in one place, with the program automatically detecting the input and returning the appropriate results.
 
